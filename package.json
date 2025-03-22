@@ -43,5 +43,6 @@
     "workerDirectory": [
       "apps/delivery-web/public"
     ]
-  }
+  },
+  "node": "20.9.0"
 }
