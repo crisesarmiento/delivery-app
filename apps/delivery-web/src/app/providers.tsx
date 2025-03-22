@@ -1,40 +1,25 @@
 'use client';
 
-import { ReactNode, useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
-interface ProvidersProps {
-  children: ReactNode;
-}
-
-export function Providers({ children }: ProvidersProps) {
-  const [mswReady, setMswReady] = useState(false);
-
+export function Providers({ children }: { children: React.ReactNode }) {
   useEffect(() => {
-    async function initMsw() {
+    const initMocks = async () => {
       if (process.env.NODE_ENV === 'development') {
         try {
           const { worker } = await import('../mocks/browser');
-          await worker.start({
-            onUnhandledRequest: 'bypass',
+          await worker?.start({
+            onUnhandledRequest: 'bypass', // Don't warn about unhandled requests
           });
-          setMswReady(true);
+          console.log('🔶 MSW initialized');
         } catch (error) {
-          console.error('Error starting MSW worker:', error);
-          // Even if MSW fails, we should show the app
-          setMswReady(true);
+          console.error('❌ MSW initialization failed:', error);
         }
-      } else {
-        // In production, no need to initialize MSW
-        setMswReady(true);
       }
-    }
+    };
 
-    initMsw();
+    initMocks();
   }, []);
-
-  if (!mswReady) {
-    return <div>Loading API mocks...</div>;
-  }
 
   return <>{children}</>;
 }

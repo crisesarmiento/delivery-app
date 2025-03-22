@@ -1,8 +1,15 @@
-// We're using 'msw' types without installing the package yet.
-// This file will be used once we resolve the dependency conflicts and install MSW.
+// We're using MSW (Mock Service Worker) for API mocking
+// https://mswjs.io/
 
-import { setupWorker } from 'msw';
 import { handlers } from './handlers';
 
 // This configures a Service Worker with the given request handlers.
-export const worker = setupWorker(...handlers);
+let worker: any;
+
+// Use dynamic import to prevent build errors
+if (typeof window !== 'undefined') {
+  const { setupWorker } = require('msw/browser');
+  worker = setupWorker(...handlers);
+}
+
+export { worker };
