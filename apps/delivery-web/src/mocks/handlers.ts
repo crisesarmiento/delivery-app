@@ -8,14 +8,14 @@ export const handlers = [
       ctx.status(200),
       ctx.json({
         success: true,
-        data: branches
+        data: branches,
       })
     );
   }),
 
   rest.get('/api/branches/:id', (req, res, ctx) => {
-    const { id } = req.params;
-    const branch = branches.find(branch => branch.id === id);
+    const id = req.params.id as string;
+    const branch = branches.find((branch) => branch.id === id);
 
     if (!branch) {
       return res(
@@ -23,7 +23,7 @@ export const handlers = [
         ctx.json({
           success: false,
           error: 'NotFound',
-          message: `Branch with id ${id} not found`
+          message: `Branch with id ${id} not found`,
         })
       );
     }
@@ -32,22 +32,25 @@ export const handlers = [
       ctx.status(200),
       ctx.json({
         success: true,
-        data: branch
+        data: branch,
       })
     );
   }),
 
   // Products API handlers
   rest.get('/api/products', (req, res, ctx) => {
-    const branchId = req.url.searchParams.get('branchId');
+    const url = new URL(req.url);
+    const branchId = url.searchParams.get('branchId');
 
     if (branchId) {
-      const filteredProducts = products.filter(product => product.branchId === branchId);
+      const filteredProducts = products.filter(
+        (product) => product.branchId === branchId
+      );
       return res(
         ctx.status(200),
         ctx.json({
           success: true,
-          data: filteredProducts
+          data: filteredProducts,
         })
       );
     }
@@ -56,14 +59,14 @@ export const handlers = [
       ctx.status(200),
       ctx.json({
         success: true,
-        data: products
+        data: products,
       })
     );
   }),
 
   rest.get('/api/products/:id', (req, res, ctx) => {
-    const { id } = req.params;
-    const product = products.find(product => product.id === id);
+    const id = req.params.id as string;
+    const product = products.find((product) => product.id === id);
 
     if (!product) {
       return res(
@@ -71,7 +74,7 @@ export const handlers = [
         ctx.json({
           success: false,
           error: 'NotFound',
-          message: `Product with id ${id} not found`
+          message: `Product with id ${id} not found`,
         })
       );
     }
@@ -80,22 +83,23 @@ export const handlers = [
       ctx.status(200),
       ctx.json({
         success: true,
-        data: product
+        data: product,
       })
     );
   }),
 
   // Orders API handlers
   rest.get('/api/orders', (req, res, ctx) => {
-    const userId = req.url.searchParams.get('userId');
+    const url = new URL(req.url);
+    const userId = url.searchParams.get('userId');
 
     if (userId) {
-      const userOrders = orders.filter(order => order.userId === userId);
+      const userOrders = orders.filter((order) => order.userId === userId);
       return res(
         ctx.status(200),
         ctx.json({
           success: true,
-          data: userOrders
+          data: userOrders,
         })
       );
     }
@@ -104,14 +108,14 @@ export const handlers = [
       ctx.status(200),
       ctx.json({
         success: true,
-        data: orders
+        data: orders,
       })
     );
   }),
 
   rest.get('/api/orders/:id', (req, res, ctx) => {
-    const { id } = req.params;
-    const order = orders.find(order => order.id === id);
+    const id = req.params.id as string;
+    const order = orders.find((order) => order.id === id);
 
     if (!order) {
       return res(
@@ -119,7 +123,7 @@ export const handlers = [
         ctx.json({
           success: false,
           error: 'NotFound',
-          message: `Order with id ${id} not found`
+          message: `Order with id ${id} not found`,
         })
       );
     }
@@ -128,7 +132,7 @@ export const handlers = [
       ctx.status(200),
       ctx.json({
         success: true,
-        data: order
+        data: order,
       })
     );
   }),
@@ -141,23 +145,23 @@ export const handlers = [
       id: `order-${Date.now()}`,
       ...orderData,
       status: 'pending',
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     };
 
     return res(
       ctx.status(201),
       ctx.json({
         success: true,
-        data: newOrder
+        data: newOrder,
       })
     );
   }),
 
   rest.patch('/api/orders/:id/status', async (req, res, ctx) => {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { status } = await req.json();
 
-    const orderIndex = orders.findIndex(order => order.id === id);
+    const orderIndex = orders.findIndex((order) => order.id === id);
 
     if (orderIndex === -1) {
       return res(
@@ -165,7 +169,7 @@ export const handlers = [
         ctx.json({
           success: false,
           error: 'NotFound',
-          message: `Order with id ${id} not found`
+          message: `Order with id ${id} not found`,
         })
       );
     }
@@ -173,15 +177,15 @@ export const handlers = [
     // In a real API this would update the database
     const updatedOrder = {
       ...orders[orderIndex],
-      status
+      status,
     };
 
     return res(
       ctx.status(200),
       ctx.json({
         success: true,
-        data: updatedOrder
+        data: updatedOrder,
       })
     );
-  })
+  }),
 ];

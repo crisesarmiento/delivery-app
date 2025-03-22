@@ -1,4 +1,7 @@
+'use client';
+
 import { Branch } from '../../types';
+import { Card, Text, Group, Badge, Stack, Image } from '@mantine/core';
 
 interface BranchCardProps {
   branch: Branch;
@@ -7,68 +10,38 @@ interface BranchCardProps {
 
 export function BranchCard({ branch, onClick }: BranchCardProps) {
   return (
-    <div
-      className="branch-card"
+    <Card
+      shadow="sm"
+      padding="lg"
+      radius="md"
+      withBorder
       onClick={onClick}
-      style={{
-        border: '1px solid #e0e0e0',
-        borderRadius: '8px',
-        padding: '16px',
-        margin: '8px 0',
-        cursor: 'pointer',
-        display: 'flex',
-        flexDirection: 'column',
-        transition: 'transform 0.2s, box-shadow 0.2s',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-      }}
+      style={{ cursor: 'pointer' }}
     >
       {branch.imageUrl && (
-        <div
-          className="branch-image"
-          style={{
-            height: '160px',
-            backgroundImage: `url(${branch.imageUrl})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            borderRadius: '4px',
-            marginBottom: '12px',
-          }}
-        />
+        <Card.Section>
+          <Image src={branch.imageUrl} height={160} alt={branch.name} />
+        </Card.Section>
       )}
-      <div className="branch-info">
-        <h3 style={{ margin: '0 0 8px', fontSize: '18px', fontWeight: 600 }}>
+
+      <Stack mt="md" mb="xs">
+        <Text fw={500} size="lg">
           {branch.name}
-        </h3>
-        <p style={{ margin: '0 0 8px', fontSize: '14px', color: '#666' }}>
+        </Text>
+        <Text size="sm" c="dimmed">
           {branch.address}
-        </p>
-        <div
-          className="branch-status"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            fontSize: '14px',
-            color: branch.isOpen ? '#43a047' : '#e53935',
-            fontWeight: 500,
-          }}
-        >
-          <span
-            style={{
-              display: 'inline-block',
-              width: '8px',
-              height: '8px',
-              borderRadius: '50%',
-              backgroundColor: branch.isOpen ? '#43a047' : '#e53935',
-              marginRight: '6px',
-            }}
-          />
-          {branch.isOpen ? 'Open' : 'Closed'}
-          <span style={{ marginLeft: 'auto', color: '#666' }}>
+        </Text>
+
+        <Group justify="space-between" mt="md">
+          <Badge color={branch.isOpen ? 'green' : 'red'} variant="light">
+            {branch.isOpen ? 'Abierto' : 'Cerrado'}
+          </Badge>
+          <Text size="xs" c="dimmed">
             {branch.openingHours}
-          </span>
-        </div>
-      </div>
-    </div>
+          </Text>
+        </Group>
+      </Stack>
+    </Card>
   );
 }
 

@@ -4,6 +4,16 @@ import { useState, useEffect } from 'react';
 import { Branch } from '../types';
 import { branchesApi } from '../services/api';
 import BranchCard from '../components/BranchCard/BranchCard';
+import {
+  Container,
+  Title,
+  Text,
+  SimpleGrid,
+  Loader,
+  Alert,
+  Box,
+  Divider,
+} from '@mantine/core';
 
 export default function HomePage() {
   const [branches, setBranches] = useState<Branch[]>([]);
@@ -37,69 +47,50 @@ export default function HomePage() {
   };
 
   return (
-    <main className="main-container" style={{
-      padding: '20px',
-      maxWidth: '1200px',
-      margin: '0 auto',
-    }}>
-      <h1 style={{ fontSize: '28px', marginBottom: '24px' }}>
+    <Container size="lg" py="xl">
+      <Title order={1} mb="md">
         Smarty Delivery
-      </h1>
+      </Title>
 
-      <section>
-        <h2 style={{ fontSize: '22px', marginBottom: '16px' }}>
-          Select a Restaurant
-        </h2>
+      <Box mb="xl">
+        <Title order={2} mb="lg">
+          Selecciona un Restaurante
+        </Title>
 
         {loading && (
-          <div style={{ textAlign: 'center', padding: '40px 0' }}>
-            Loading...
-          </div>
+          <Box ta="center" py="xl">
+            <Loader size="md" />
+          </Box>
         )}
 
         {error && (
-          <div style={{
-            padding: '20px',
-            backgroundColor: '#ffebee',
-            color: '#c62828',
-            borderRadius: '4px',
-            marginBottom: '20px'
-          }}>
+          <Alert color="red" title="Error" mb="lg">
             {error}
-          </div>
+          </Alert>
         )}
 
-        <div className="branches-grid" style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-          gap: '20px',
-        }}>
-          {branches.map(branch => (
+        <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
+          {branches.map((branch) => (
             <BranchCard
               key={branch.id}
               branch={branch}
               onClick={() => handleBranchClick(branch.id)}
             />
           ))}
-        </div>
+        </SimpleGrid>
 
         {branches.length === 0 && !loading && !error && (
-          <div style={{ textAlign: 'center', padding: '40px 0', color: '#666' }}>
-            No restaurants available at the moment.
-          </div>
+          <Text ta="center" c="dimmed" py="xl">
+            No hay restaurantes disponibles en este momento.
+          </Text>
         )}
-      </section>
+      </Box>
 
-      <footer style={{
-        marginTop: '60px',
-        padding: '20px 0',
-        borderTop: '1px solid #eee',
-        textAlign: 'center',
-        color: '#666',
-        fontSize: '14px'
-      }}>
-        <p>© 2023 Smarty Delivery. All rights reserved.</p>
-      </footer>
-    </main>
+      <Divider my="xl" />
+
+      <Box component="footer" ta="center" c="dimmed" py="md" fz="sm">
+        <Text>© 2023 Smarty Delivery. Todos los derechos reservados.</Text>
+      </Box>
+    </Container>
   );
 }

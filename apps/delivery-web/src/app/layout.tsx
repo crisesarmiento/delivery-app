@@ -1,4 +1,7 @@
+import React from 'react';
 import './global.css';
+import { MantineProvider } from '@mantine/core';
+import { Providers } from './providers';
 
 export const metadata = {
   title: 'Smarty Delivery',
@@ -11,18 +14,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="es">
       <body>
-        {/*
-          Mantine providers will be added here when dependencies are installed.
-          The structure will look like:
-          <MantineProvider>
-            <ColorSchemeProvider>
-              {children}
-            </ColorSchemeProvider>
-          </MantineProvider>
-        */}
-        {children}
+        <MantineProvider defaultColorScheme="light">
+          <Providers>{children}</Providers>
+        </MantineProvider>
       </body>
     </html>
   );
