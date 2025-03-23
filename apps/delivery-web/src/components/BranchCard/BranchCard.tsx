@@ -21,13 +21,14 @@ export function BranchCard({ branch, onClick }: BranchCardProps) {
       onClick={onClick}
       style={{
         boxSizing: 'border-box',
-        width: '200px',
+        width: '100%',
+        maxWidth: '240px',
         height: '242px',
         background: isHovered ? '#E3E8EF' : '#FFFFFF',
         border: `1px solid ${isHovered ? '#C9CDD5' : '#EEF2F6'}`,
         boxShadow:
           '0px 1px 3px rgba(0, 0, 0, 0.05), 0px 20px 25px -5px rgba(0, 0, 0, 0.05), 0px 10px 10px -5px rgba(0, 0, 0, 0.04)',
-        borderRadius: '4px',
+        borderRadius: '8px',
         padding: '6px 6px 8px 8px',
         transition: 'background 0.2s, border 0.2s',
         cursor: 'pointer',
@@ -39,13 +40,14 @@ export function BranchCard({ branch, onClick }: BranchCardProps) {
       <Box
         style={{
           position: 'relative',
-          width: '184px',
+          width: '100%',
           height: '184px',
-          backgroundImage: `url(${branch.imageUrl})`,
+          backgroundImage: `url(${
+            branch.imageUrl || '/images/branches/default.png'
+          })`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          borderTopLeftRadius: '4px',
-          borderTopRightRadius: '4px',
+          borderRadius: '4px',
         }}
       >
         <BranchBadge isOpen={branch.isOpen} />
