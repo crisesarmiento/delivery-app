@@ -1,38 +1,8 @@
 import { IBranch, IOrder, IOrderItem, IProduct, OrderStatus } from '../types';
+import { branchesMock } from './branches.mock';
 
 // Mock branches data
-export const branches: IBranch[] = [
-  {
-    id: 'branch-1',
-    name: 'Smarty Downtown',
-    address: '123 Main St, Downtown',
-    isOpen: true,
-    openingHours: '10:00 AM - 10:00 PM',
-    phoneNumber: '+1 (555) 123-4567',
-    imageUrl:
-      'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop',
-  },
-  {
-    id: 'branch-2',
-    name: 'Smarty Uptown',
-    address: '456 Park Ave, Uptown',
-    isOpen: true,
-    openingHours: '8:00 AM - 9:00 PM',
-    phoneNumber: '+1 (555) 987-6543',
-    imageUrl:
-      'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&auto=format&fit=crop',
-  },
-  {
-    id: 'branch-3',
-    name: 'Smarty Westside',
-    address: '789 Ocean Blvd, Westside',
-    isOpen: false,
-    openingHours: '9:00 AM - 11:00 PM',
-    phoneNumber: '+1 (555) 456-7890',
-    imageUrl:
-      'https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=800&auto=format&fit=crop',
-  },
-];
+export const branches: IBranch[] = branchesMock;
 
 // Categories for products
 export const categories = ['Burgers', 'Pizza', 'Drinks', 'Desserts', 'Sides'];
