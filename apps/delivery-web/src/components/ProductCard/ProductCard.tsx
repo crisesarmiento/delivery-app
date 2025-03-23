@@ -1,6 +1,6 @@
 'use client';
 
-import { Product } from '../../types';
+import { IProduct } from '../../types';
 import {
   Card,
   Text,
@@ -13,7 +13,7 @@ import {
 } from '@mantine/core';
 
 interface ProductCardProps {
-  product: Product;
+  product: IProduct;
   onAddToCart?: () => void;
 }
 

@@ -1,16 +1,11 @@
-import {
-  ApiResponse,
-  Branch,
-  Order,
-  Product
-} from '../types';
+import { IApiResponse, IBranch, IOrder, IProduct, OrderStatus } from '../types';
 import { branches, orders, products } from '../mocks/data';
 
 // Delay function to simulate network latency
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Generic fetch function with error handling
-async function fetchData<T>(url: string): Promise<ApiResponse<T>> {
+async function fetchData<T>(url: string): Promise<IApiResponse<T>> {
   try {
     // In a real app, this would be a fetch call
     // For now, we'll just simulate a successful response
@@ -34,7 +29,7 @@ async function fetchData<T>(url: string): Promise<ApiResponse<T>> {
       data = [...branches];
     } else if (url.startsWith('/api/branches/')) {
       const branchId = url.split('/').pop();
-      data = branches.find(branch => branch.id === branchId);
+      data = branches.find((branch) => branch.id === branchId);
       if (!data) {
         return {
           success: false,
@@ -44,10 +39,10 @@ async function fetchData<T>(url: string): Promise<ApiResponse<T>> {
       }
     } else if (url.startsWith('/api/products?branchId=')) {
       const branchId = url.split('=').pop();
-      data = products.filter(product => product.branchId === branchId);
+      data = products.filter((product) => product.branchId === branchId);
     } else if (url.startsWith('/api/products/')) {
       const productId = url.split('/').pop();
-      data = products.find(product => product.id === productId);
+      data = products.find((product) => product.id === productId);
       if (!data) {
         return {
           success: false,
@@ -57,10 +52,10 @@ async function fetchData<T>(url: string): Promise<ApiResponse<T>> {
       }
     } else if (url.startsWith('/api/orders?userId=')) {
       const userId = url.split('=').pop();
-      data = orders.filter(order => order.userId === userId);
+      data = orders.filter((order) => order.userId === userId);
     } else if (url.startsWith('/api/orders/')) {
       const orderId = url.split('/')[2];
-      data = orders.find(order => order.id === orderId);
+      data = orders.find((order) => order.id === orderId);
       if (!data) {
         return {
           success: false,
@@ -81,51 +76,54 @@ async function fetchData<T>(url: string): Promise<ApiResponse<T>> {
     return {
       success: false,
       error: 'UnknownError',
-      message: error instanceof Error ? error.message : 'Unknown error occurred',
+      message:
+        error instanceof Error ? error.message : 'Unknown error occurred',
     };
   }
 }
 
 // API functions for branches
 export const branchesApi = {
-  getBranches: async (): Promise<ApiResponse<Branch[]>> => {
-    return fetchData<Branch[]>('/api/branches');
+  getBranches: async (): Promise<IApiResponse<IBranch[]>> => {
+    return fetchData<IBranch[]>('/api/branches');
   },
 
-  getBranchById: async (id: string): Promise<ApiResponse<Branch>> => {
-    return fetchData<Branch>(`/api/branches/${id}`);
+  getBranchById: async (id: string): Promise<IApiResponse<IBranch>> => {
+    return fetchData<IBranch>(`/api/branches/${id}`);
   },
 };
 
 // API functions for products
 export const productsApi = {
-  getProducts: async (branchId: string): Promise<ApiResponse<Product[]>> => {
-    return fetchData<Product[]>(`/api/products?branchId=${branchId}`);
+  getProducts: async (branchId: string): Promise<IApiResponse<IProduct[]>> => {
+    return fetchData<IProduct[]>(`/api/products?branchId=${branchId}`);
   },
 
-  getProductById: async (id: string): Promise<ApiResponse<Product>> => {
-    return fetchData<Product>(`/api/products/${id}`);
+  getProductById: async (id: string): Promise<IApiResponse<IProduct>> => {
+    return fetchData<IProduct>(`/api/products/${id}`);
   },
 };
 
 // API functions for orders
 export const ordersApi = {
-  getOrders: async (userId: string): Promise<ApiResponse<Order[]>> => {
-    return fetchData<Order[]>(`/api/orders?userId=${userId}`);
+  getOrders: async (userId: string): Promise<IApiResponse<IOrder[]>> => {
+    return fetchData<IOrder[]>(`/api/orders?userId=${userId}`);
   },
 
-  getOrderById: async (id: string): Promise<ApiResponse<Order>> => {
-    return fetchData<Order>(`/api/orders/${id}`);
+  getOrderById: async (id: string): Promise<IApiResponse<IOrder>> => {
+    return fetchData<IOrder>(`/api/orders/${id}`);
   },
 
-  createOrder: async (order: Omit<Order, 'id' | 'createdAt' | 'status'>): Promise<ApiResponse<Order>> => {
+  createOrder: async (
+    order: Omit<IOrder, 'id' | 'createdAt' | 'status'>
+  ): Promise<IApiResponse<IOrder>> => {
     // In a real app, this would be a POST request
     await delay(800); // Simulate network delay
 
-    const newOrder: Order = {
+    const newOrder: IOrder = {
       id: `order-${Date.now()}`,
       ...order,
-      status: 'pending',
+      status: OrderStatus.Pending,
       createdAt: new Date().toISOString(),
     };
 
@@ -137,11 +135,14 @@ export const ordersApi = {
     };
   },
 
-  updateOrderStatus: async (id: string, status: Order['status']): Promise<ApiResponse<Order>> => {
+  updateOrderStatus: async (
+    id: string,
+    status: IOrder['status']
+  ): Promise<IApiResponse<IOrder>> => {
     // In a real app, this would be a PATCH request
     await delay(500); // Simulate network delay
 
-    const orderIndex = orders.findIndex(order => order.id === id);
+    const orderIndex = orders.findIndex((order) => order.id === id);
     if (orderIndex === -1) {
       return {
         success: false,
