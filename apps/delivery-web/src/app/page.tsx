@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Branch } from '../types';
+import { IBranch } from '../types';
 import { branchesApi } from '../services/api';
 import BranchCard from '../components/BranchCard/BranchCard';
 import {
@@ -16,7 +16,7 @@ import {
 } from '@mantine/core';
 
 export default function HomePage() {
-  const [branches, setBranches] = useState<Branch[]>([]);
+  const [branches, setBranches] = useState<IBranch[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
