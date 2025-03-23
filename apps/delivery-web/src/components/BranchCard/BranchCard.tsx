@@ -1,7 +1,7 @@
 'use client';
 
 import { IBranch } from '../../types';
-import { Card, Text, Box, Group } from '@mantine/core';
+import { Card, Text, Box } from '@mantine/core';
 import { IconClock } from '@tabler/icons-react';
 import BranchBadge from './Badge';
 import BranchHoursTooltip from './BranchHoursTooltip';
@@ -52,68 +52,74 @@ export function BranchCard({ branch, onClick }: BranchCardProps) {
       </Box>
 
       {/* White box with branch name */}
-      <Group
+      <Box
         style={{
           padding: '10px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          background: 'transparent',
           position: 'relative',
         }}
       >
-        <Text
+        <Box
           style={{
-            fontFamily: 'Inter',
-            fontStyle: 'normal',
-            fontWeight: 600,
-            fontSize: '16px',
-            lineHeight: '24px',
-            color: '#000000',
-            letterSpacing: '0%',
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            textAlign: 'center',
           }}
         >
-          {branch.description}
-        </Text>
+          <Text
+            style={{
+              fontFamily: 'Inter',
+              fontStyle: 'normal',
+              fontWeight: 600,
+              fontSize: '16px',
+              lineHeight: '24px',
+              color: '#000000',
+              letterSpacing: '0%',
+            }}
+          >
+            {branch.description}
+          </Text>
+        </Box>
 
-        <BranchHoursTooltip
-          isVisible={showTooltip}
-          trigger={
-            <Box
-              style={{
-                cursor: 'pointer',
-                padding: '4px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                background: showTooltip
-                  ? 'rgba(240, 240, 240, 0.8)'
-                  : 'transparent',
-                borderRadius: '4px',
-              }}
-              onMouseEnter={() => setShowTooltip(true)}
-              onMouseLeave={() => setShowTooltip(false)}
-              onClick={(e) => {
-                // Prevent card click when clicking the icon
-                e.stopPropagation();
-              }}
-            >
-              <IconClock
-                size={18}
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <BranchHoursTooltip
+            isVisible={showTooltip}
+            trigger={
+              <Box
                 style={{
-                  color: showTooltip
-                    ? '#101828'
-                    : isHovered
-                    ? '#667085'
-                    : '#939393',
-                  transition: 'color 0.2s',
-                  background: 'transparent',
+                  cursor: 'pointer',
+                  padding: '4px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: showTooltip
+                    ? 'rgba(240, 240, 240, 0.8)'
+                    : 'transparent',
+                  borderRadius: '4px',
                 }}
-              />
-            </Box>
-          }
-        />
-      </Group>
+                onMouseEnter={() => setShowTooltip(true)}
+                onMouseLeave={() => setShowTooltip(false)}
+                onClick={(e) => {
+                  // Prevent card click when clicking the icon
+                  e.stopPropagation();
+                }}
+              >
+                <IconClock
+                  size={18}
+                  style={{
+                    color: showTooltip
+                      ? '#101828'
+                      : isHovered
+                      ? '#667085'
+                      : '#939393',
+                    transition: 'color 0.2s',
+                  }}
+                />
+              </Box>
+            }
+          />
+        </div>
+      </Box>
     </Card>
   );
 }
