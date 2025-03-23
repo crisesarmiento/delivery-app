@@ -1,96 +1,101 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { IBranch } from '../types';
-import { branchesApi } from '../services/api';
+import { Container, ActionIcon, rem, Box, Text, Divider } from '@mantine/core';
 import BranchCard from '../components/BranchCard/BranchCard';
+import { branchesMock } from '../mocks/branches.mock';
 import Header from '../components/Header';
-import {
-  Container,
-  Title,
-  Text,
-  SimpleGrid,
-  Loader,
-  Alert,
-  Box,
-  Divider,
-} from '@mantine/core';
 
 export default function HomePage() {
-  const [branches, setBranches] = useState<IBranch[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    async function fetchBranches() {
-      try {
-        const response = await branchesApi.getBranches();
-        if (response.success && response.data) {
-          setBranches(response.data);
-        } else {
-          setError(response.message || 'Failed to fetch branches');
-        }
-      } catch (err) {
-        setError('An unexpected error occurred');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchBranches();
-  }, []);
-
-  const handleBranchClick = (branchId: string) => {
-    // This will be implemented in the future to navigate to branch details
-    console.log(`Branch clicked: ${branchId}`);
-    // Future implementation will use Next.js router to navigate to the branch page
-  };
+  const branches = branchesMock;
 
   return (
     <>
       <Header showSearchBar={true} />
-      <Container size="lg" py="xl">
-        <Box mb="xl">
-          <Title order={2} mb="lg">
-            Selecciona un Restaurante
-          </Title>
-
-          {loading && (
-            <Box ta="center" py="xl">
-              <Loader size="md" />
-            </Box>
-          )}
-
-          {error && (
-            <Alert color="red" title="Error" mb="lg">
-              {error}
-            </Alert>
-          )}
-
-          <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
-            {branches.map((branch) => (
-              <BranchCard
-                key={branch.id}
-                branch={branch}
-                onClick={() => handleBranchClick(branch.id)}
-              />
+      <Box style={{ backgroundColor: '#fff' }}>
+        <Container size="xl" py="xl">
+          <Box
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+              gap: rem(20),
+              marginBottom: rem(40),
+            }}
+          >
+            {branches.map((branch, index) => (
+              <Container
+                key={`${branch.id}-${index}`}
+                style={{
+                  textAlign: 'center',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginTop: '24px',
+                }}
+              >
+                <BranchCard
+                  branch={branch}
+                  onClick={() => {
+                    console.log(`Branch clicked: ${branch.name}`);
+                  }}
+                />
+              </Container>
             ))}
-          </SimpleGrid>
+          </Box>
 
-          {branches.length === 0 && !loading && !error && (
-            <Text ta="center" c="dimmed" py="xl">
-              No hay restaurantes disponibles en este momento.
+          <Divider my="xl" />
+
+          <Container style={{ padding: '20px 0' }}>
+            <Box style={{ marginBottom: '20px' }}>
+              <Text fw={600}>Powered by</Text>
+              <Text fw={700} size="xl">
+                SMARTY
+              </Text>
+            </Box>
+
+            <Box
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <Box style={{ display: 'flex', gap: '15px' }}>
+                <ActionIcon variant="subtle" color="gray" radius="xl">
+                  <span style={{ fontFamily: 'serif', fontWeight: 'bold' }}>
+                    f
+                  </span>
+                </ActionIcon>
+                <ActionIcon variant="subtle" color="gray" radius="xl">
+                  <span style={{ fontFamily: 'serif', fontWeight: 'bold' }}>
+                    t
+                  </span>
+                </ActionIcon>
+                <ActionIcon variant="subtle" color="gray" radius="xl">
+                  <span style={{ fontFamily: 'serif', fontWeight: 'bold' }}>
+                    i
+                  </span>
+                </ActionIcon>
+              </Box>
+
+              <Container>
+                <Box style={{ display: 'flex', gap: '20px' }}>
+                  <Text size="sm" c="dimmed">
+                    Acerca de Smarty
+                  </Text>
+                  <Text size="sm" c="dimmed">
+                    Contacto
+                  </Text>
+                </Box>
+              </Container>
+            </Box>
+
+            <Text size="xs" c="dimmed" ta="center" mt={20}>
+              Copyright 2023 smarty.com | Todos los derechos reservados |
+              Política de privacidad | Términos y Condiciones de Uso
             </Text>
-          )}
-        </Box>
-
-        <Divider my="xl" />
-
-        <Box component="footer" ta="center" c="dimmed" py="md" fz="sm">
-          <Text>© 2023 Smarty Delivery. Todos los derechos reservados.</Text>
-        </Box>
-      </Container>
+          </Container>
+        </Container>
+      </Box>
     </>
   );
 }

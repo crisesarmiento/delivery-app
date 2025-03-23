@@ -11,9 +11,9 @@ import {
   ActionIcon,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { IconSearch } from '@tabler/icons-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { IconSearch } from '@tabler/icons-react';
 
 interface NavItem {
   label: string;
@@ -21,7 +21,7 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: 'Sucursales', href: '/' },
+  { label: 'Sucursales', href: '/branches' },
   { label: 'Sobre Nosotros', href: '/about' },
 ];
 
@@ -179,7 +179,7 @@ export function Header({ showSearchBar = true }: HeaderProps) {
                       padding: '3px',
                     }}
                   >
-                    <IconSearch size="18px" stroke={2} color="#000000" />
+                    <IconSearch size={16} stroke={2} color="#000000" />
                   </ActionIcon>
                 }
                 styles={{
