@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { IBranch } from '../types';
 import { branchesApi } from '../services/api';
 import BranchCard from '../components/BranchCard/BranchCard';
+import Header from '../components/Header';
 import {
   Container,
   Title,
@@ -47,50 +48,49 @@ export default function HomePage() {
   };
 
   return (
-    <Container size="lg" py="xl">
-      <Title order={1} mb="md">
-        Smarty Delivery
-      </Title>
+    <>
+      <Header showSearchBar={true} />
+      <Container size="lg" py="xl">
+        <Box mb="xl">
+          <Title order={2} mb="lg">
+            Selecciona un Restaurante
+          </Title>
 
-      <Box mb="xl">
-        <Title order={2} mb="lg">
-          Selecciona un Restaurante
-        </Title>
+          {loading && (
+            <Box ta="center" py="xl">
+              <Loader size="md" />
+            </Box>
+          )}
 
-        {loading && (
-          <Box ta="center" py="xl">
-            <Loader size="md" />
-          </Box>
-        )}
+          {error && (
+            <Alert color="red" title="Error" mb="lg">
+              {error}
+            </Alert>
+          )}
 
-        {error && (
-          <Alert color="red" title="Error" mb="lg">
-            {error}
-          </Alert>
-        )}
+          <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
+            {branches.map((branch) => (
+              <BranchCard
+                key={branch.id}
+                branch={branch}
+                onClick={() => handleBranchClick(branch.id)}
+              />
+            ))}
+          </SimpleGrid>
 
-        <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
-          {branches.map((branch) => (
-            <BranchCard
-              key={branch.id}
-              branch={branch}
-              onClick={() => handleBranchClick(branch.id)}
-            />
-          ))}
-        </SimpleGrid>
+          {branches.length === 0 && !loading && !error && (
+            <Text ta="center" c="dimmed" py="xl">
+              No hay restaurantes disponibles en este momento.
+            </Text>
+          )}
+        </Box>
 
-        {branches.length === 0 && !loading && !error && (
-          <Text ta="center" c="dimmed" py="xl">
-            No hay restaurantes disponibles en este momento.
-          </Text>
-        )}
-      </Box>
+        <Divider my="xl" />
 
-      <Divider my="xl" />
-
-      <Box component="footer" ta="center" c="dimmed" py="md" fz="sm">
-        <Text>© 2023 Smarty Delivery. Todos los derechos reservados.</Text>
-      </Box>
-    </Container>
+        <Box component="footer" ta="center" c="dimmed" py="md" fz="sm">
+          <Text>© 2023 Smarty Delivery. Todos los derechos reservados.</Text>
+        </Box>
+      </Container>
+    </>
   );
 }
