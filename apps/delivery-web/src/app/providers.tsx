@@ -1,25 +1,10 @@
 'use client';
 
-import { useEffect } from 'react';
+import { ReactNode } from 'react';
 
-export function Providers({ children }: { children: React.ReactNode }) {
-  useEffect(() => {
-    const initMocks = async () => {
-      if (process.env.NODE_ENV === 'development') {
-        try {
-          const { worker } = await import('../mocks/browser');
-          await worker?.start({
-            onUnhandledRequest: 'bypass', // Don't warn about unhandled requests
-          });
-          console.log('🔶 MSW initialized');
-        } catch (error) {
-          console.error('❌ MSW initialization failed:', error);
-        }
-      }
-    };
-
-    initMocks();
-  }, []);
+export function Providers({ children }: { children: ReactNode }) {
+  // According to the rules, we should avoid MSW for this MVP
+  // Using simple mock implementations (e.g., JSON files or in-memory data)
 
   return <>{children}</>;
 }
