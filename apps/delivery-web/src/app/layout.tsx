@@ -1,6 +1,6 @@
 import React from 'react';
 import './global.css';
-import { MantineProvider } from '@mantine/core';
+import { ThemeProvider } from './ThemeProvider';
 import { Providers } from './providers';
 
 export const metadata = {
@@ -16,9 +16,9 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body>
-        <MantineProvider defaultColorScheme="light">
+        <ThemeProvider>
           <Providers>{children}</Providers>
-        </MantineProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

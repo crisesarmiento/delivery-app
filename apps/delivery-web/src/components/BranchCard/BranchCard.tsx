@@ -1,10 +1,10 @@
 'use client';
 
-import { Branch } from '../../types';
+import { IBranch } from '../../types';
 import { Card, Text, Group, Badge, Stack, Image } from '@mantine/core';
 
 interface BranchCardProps {
-  branch: Branch;
+  branch: IBranch;
   onClick?: () => void;
 }
 
