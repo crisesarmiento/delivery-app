@@ -2,6 +2,7 @@ import React from 'react';
 import './global.css';
 import { ThemeProvider } from './ThemeProvider';
 import { Providers } from './providers';
+import Footer from '@/components/Footer';
 
 export const metadata = {
   title: 'Smarty Delivery',
@@ -18,6 +19,7 @@ export default function RootLayout({
       <body>
         <ThemeProvider>
           <Providers>{children}</Providers>
+          <Footer />
         </ThemeProvider>
       </body>
     </html>
