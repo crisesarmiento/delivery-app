@@ -1,97 +1,166 @@
 'use client';
 
-import { Box, Text, Stack, Group } from '@mantine/core';
-import { IconClock } from '@tabler/icons-react';
-import { ReactNode } from 'react';
+import { Box, Text } from '@mantine/core';
+import React from 'react';
 
 interface BranchHoursTooltipProps {
-  trigger: ReactNode;
   isVisible: boolean;
+  trigger: React.ReactNode;
 }
 
-export function BranchHoursTooltip({
-  trigger,
+export default function BranchHoursTooltip({
   isVisible,
+  trigger,
 }: BranchHoursTooltipProps) {
-  if (!isVisible) {
-    return <>{trigger}</>;
-  }
-
   return (
-    <Box style={{ position: 'relative' }}>
+    <div style={{ position: 'relative' }}>
       {trigger}
 
-      <Box
-        style={{
-          position: 'absolute',
-          bottom: '100%',
-          right: '0',
-          width: '290px',
-          padding: '16px',
-          borderRadius: '8px',
-          backgroundColor: 'white',
-          border: '1px solid #eee',
-          boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
-          zIndex: 1000,
-          marginBottom: '10px',
-          fontFamily: 'Inter',
-        }}
-      >
-        {/* Triangle pointer */}
-        <Box
+      {isVisible && (
+        <div
           style={{
             position: 'absolute',
-            bottom: '-6px',
-            right: '20px',
-            width: '12px',
-            height: '12px',
+            bottom: '130%',
+            right: '-100px',
+            marginBottom: '8px',
             backgroundColor: 'white',
-            border: '1px solid #eee',
-            borderTop: 'none',
-            borderLeft: 'none',
-            transform: 'rotate(45deg)',
-          }}
-        />
-
-        <Box
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            marginBottom: '16px',
+            border: '1px solid #EEF2F6',
+            boxShadow:
+              '0px 4px 6px -1px rgba(0, 0, 0, 0.1), 0px 2px 4px -1px rgba(0, 0, 0, 0.06)',
+            borderRadius: '8px',
+            padding: '12px',
+            zIndex: 1000,
+            width: '240px',
           }}
         >
-          <IconClock
-            size={18}
-            style={{ color: '#101828', marginRight: '8px' }}
+          {/* Triangle pointer */}
+          <div
+            style={{
+              position: 'absolute',
+              bottom: '-6px',
+              right: '110px',
+              width: '12px',
+              height: '12px',
+              backgroundColor: 'white',
+              border: '1px solid #EEF2F6',
+              borderTop: 'none',
+              borderLeft: 'none',
+              transform: 'rotate(45deg)',
+              boxShadow: '2px 2px 2px rgba(0, 0, 0, 0.03)',
+              zIndex: 999,
+            }}
           />
-          <Text fw={600} size="md">
-            Horarios
-          </Text>
-        </Box>
 
-        <Stack gap="sm">
-          <Group justify="space-between" style={{ width: '100%' }}>
-            <Text size="sm">Lunes a Jueves</Text>
-            <Text size="sm" c="dimmed">
-              19:00 hs - 00:00 hs
+          <Box>
+            <Text
+              style={{
+                fontFamily: 'Inter',
+                fontWeight: 600,
+                fontSize: '14px',
+                lineHeight: '20px',
+                color: '#101828',
+                marginBottom: '8px',
+              }}
+            >
+              Horario
             </Text>
-          </Group>
 
-          <Group justify="space-between" style={{ width: '100%' }}>
-            <Text size="sm">Viernes a Domingo</Text>
-            <Stack gap={4} align="flex-end">
-              <Text size="sm" c="dimmed">
-                11:00 hs - 15:00 hs
-              </Text>
-              <Text size="sm" c="dimmed">
-                19:00 hs - 00:00 hs
-              </Text>
-            </Stack>
-          </Group>
-        </Stack>
-      </Box>
-    </Box>
+            <Box>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  marginBottom: '4px',
+                }}
+              >
+                <Text
+                  style={{
+                    fontFamily: 'Inter',
+                    fontWeight: 400,
+                    fontSize: '14px',
+                    lineHeight: '20px',
+                    color: '#667085',
+                  }}
+                >
+                  Lunes a Viernes
+                </Text>
+                <Text
+                  style={{
+                    fontFamily: 'Inter',
+                    fontWeight: 500,
+                    fontSize: '14px',
+                    lineHeight: '20px',
+                    color: '#101828',
+                  }}
+                >
+                  8:00 - 17:00
+                </Text>
+              </div>
+
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  marginBottom: '4px',
+                }}
+              >
+                <Text
+                  style={{
+                    fontFamily: 'Inter',
+                    fontWeight: 400,
+                    fontSize: '14px',
+                    lineHeight: '20px',
+                    color: '#667085',
+                  }}
+                >
+                  Sábado
+                </Text>
+                <Text
+                  style={{
+                    fontFamily: 'Inter',
+                    fontWeight: 500,
+                    fontSize: '14px',
+                    lineHeight: '20px',
+                    color: '#101828',
+                  }}
+                >
+                  9:00 - 14:00
+                </Text>
+              </div>
+
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <Text
+                  style={{
+                    fontFamily: 'Inter',
+                    fontWeight: 400,
+                    fontSize: '14px',
+                    lineHeight: '20px',
+                    color: '#667085',
+                  }}
+                >
+                  Domingo
+                </Text>
+                <Text
+                  style={{
+                    fontFamily: 'Inter',
+                    fontWeight: 500,
+                    fontSize: '14px',
+                    lineHeight: '20px',
+                    color: '#101828',
+                  }}
+                >
+                  Cerrado
+                </Text>
+              </div>
+            </Box>
+          </Box>
+        </div>
+      )}
+    </div>
   );
 }
-
-export default BranchHoursTooltip;
