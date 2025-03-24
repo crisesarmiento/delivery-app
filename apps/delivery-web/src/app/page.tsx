@@ -4,7 +4,10 @@ import { Box } from '@mantine/core';
 import BranchCard from '../components/BranchCard/BranchCard';
 import { branchesMock } from '../mocks/branches.mock';
 import Header from '../components/Header';
+import { useRouter } from 'next/navigation';
+
 export default function HomePage() {
+  const router = useRouter();
   const branches = branchesMock;
 
   return (
@@ -34,6 +37,7 @@ export default function HomePage() {
                   branch={branch}
                   onClick={() => {
                     console.log(`Branch clicked: ${branch.name}`);
+                    router.push(`/branches/${branch.id}`);
                   }}
                 />
               </Box>

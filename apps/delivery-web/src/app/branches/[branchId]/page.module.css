@@ -1,0 +1,81 @@
+.productPageContainer {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #ffffff;
+}
+
+.headerContainer {
+  padding: 16px;
+  background-color: #ffffff;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.branchInfo {
+  margin-bottom: 16px;
+}
+
+.searchInput {
+  margin-bottom: 8px;
+}
+
+.categoriesContainer {
+  background-color: #f8f9fa;
+  overflow-x: auto;
+  padding: 8px 16px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.tabsList {
+  display: flex;
+  gap: 16px;
+  border-bottom: none;
+}
+
+.tab {
+  padding: 8px 16px;
+  background-color: #ffffff;
+  border-radius: 20px;
+  color: #495057;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: 1px solid #dee2e6;
+}
+
+.tab[data-active] {
+  background-color: #b3ff00;
+  color: #000000;
+  border-color: #b3ff00;
+}
+
+.productsContainer {
+  flex: 1;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 16px;
+  overflow-y: auto;
+}
+
+.cartButton {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #b3ff00;
+  color: #000000;
+  border-radius: 50px;
+  padding: 8px 24px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
