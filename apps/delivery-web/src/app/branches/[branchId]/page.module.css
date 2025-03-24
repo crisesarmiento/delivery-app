@@ -40,8 +40,16 @@
   flex: 1;
   padding: 16px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, 200px);
+  gap: 24px;
+  overflow-y: auto;
+  background-color: #ffffff;
+  justify-content: space-between;
+}
+
+.sectionsContainer {
+  flex: 1;
+  padding: 16px;
   overflow-y: auto;
   background-color: #ffffff;
 }
@@ -57,4 +65,15 @@
   font-weight: 600;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   z-index: 10;
+}
+
+@media (max-width: 768px) {
+  .productPageContainer {
+    padding: 0 16px;
+  }
+
+  .productsContainer {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+  }
 }

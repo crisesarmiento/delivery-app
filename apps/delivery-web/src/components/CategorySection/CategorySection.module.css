@@ -1,0 +1,62 @@
+.categorySection {
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+  padding: 12px 16px;
+  border-radius: 4px;
+  border: 1px solid #e3e8ef;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  margin-bottom: 16px;
+  transition: background-color 0.2s;
+}
+
+.sectionHeader:hover {
+  background-color: #f8fafc;
+}
+
+.sectionTitle {
+  font-family: 'Inter';
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+  color: #101828;
+}
+
+.toggleButton {
+  background: transparent;
+  color: #667085;
+  padding: 0;
+  height: 24px;
+  width: 24px;
+  min-width: unset;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggleButton:hover {
+  background: #f8fafc;
+}
+
+.productsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 200px);
+  gap: 24px;
+  padding: 0;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 768px) {
+  .productsGrid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+  }
+}

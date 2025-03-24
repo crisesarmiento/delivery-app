@@ -2,17 +2,9 @@
 
 import { useState } from 'react';
 import { IProduct } from '../../types';
-import {
-  Card,
-  Text,
-  Badge,
-  Image,
-  Overlay,
-  Box,
-  ActionIcon,
-  Flex,
-} from '@mantine/core';
-import { IconPlus, IconMinus } from '@tabler/icons-react';
+import { Card, Text, Badge, Image, Overlay, Flex } from '@mantine/core';
+import styles from './ProductCard.module.css';
+import DiscountBadge from '../DiscountBadge';
 
 interface ProductCardProps {
   product: IProduct;
@@ -21,139 +13,77 @@ interface ProductCardProps {
 
 export function ProductCard({ product, onAddToCart }: ProductCardProps) {
   const [isHovered, setIsHovered] = useState(false);
-  const [quantity, setQuantity] = useState(1);
 
-  const addToCart = () => {
-    if (onAddToCart && product.isAvailable) {
-      onAddToCart(product, quantity);
-    }
-  };
+  // Check if product has discount (this would typically come from the product data)
+  const hasDiscount =
+    product.name.toLowerCase().includes('promo') || Math.random() > 0.7;
 
-  const increaseQuantity = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setQuantity((prev) => prev + 1);
-  };
+  // Calculate original price (this would typically come from the product data)
+  const originalPrice = hasDiscount ? (product.price * 1.2).toFixed(2) : null;
 
-  const decreaseQuantity = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (quantity > 1) {
-      setQuantity((prev) => prev - 1);
-    }
-  };
+  // Calculate discount percentage (this would typically come from the product data)
+  const discountPercentage = hasDiscount ? 20 : 0;
 
   return (
     <Card
-      shadow="sm"
-      p="xs"
-      radius="md"
-      withBorder
-      style={{
-        boxSizing: 'border-box',
-        width: '100%',
-        background: isHovered ? '#E3E8EF' : '#FFFFFF',
-        border: `1px solid ${isHovered ? '#C9CDD5' : '#EEF2F6'}`,
-        borderRadius: '8px',
-        transition: 'background 0.2s, border 0.2s',
-        cursor: 'pointer',
-        overflow: 'visible',
-        position: 'relative',
-      }}
+      className={styles.productCard}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      onClick={addToCart}
+      style={{
+        boxShadow: isHovered
+          ? '0px 4px 8px rgba(0, 0, 0, 0.1)'
+          : '0px 1px 3px rgba(0, 0, 0, 0.1)',
+        backgroundColor: isHovered ? 'rgba(227, 232, 239, 1)' : 'white',
+        border: isHovered
+          ? '1px solid rgba(201, 205, 212, 1)'
+          : 'rgba(238, 242, 246, 1)',
+      }}
     >
       {!product.isAvailable && (
-        <Overlay color="#000" backgroundOpacity={0.6} blur={1} radius="md">
+        <Overlay color="#000" backgroundOpacity={0.6} blur={1}>
           <Badge
             size="xl"
             color="red"
             variant="filled"
-            style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-            }}
+            className={styles.unavailableBadge}
           >
             No Disponible
           </Badge>
         </Overlay>
       )}
 
-      {/* Show discount badge only when there's a discount */}
-      {false && (
-        <Badge
-          size="sm"
-          color="green"
-          variant="filled"
-          className="discount-badge"
-          style={{
-            position: 'absolute',
-            top: '10px',
-            left: '10px',
-            backgroundColor: '#B3FF00',
-            color: '#000000',
-            zIndex: 2,
-            fontSize: '10px',
-          }}
-        >
-          -20% OFF
-        </Badge>
+      {/* Discount badge */}
+      {hasDiscount && (
+        <DiscountBadge
+          discountPercentage={discountPercentage}
+          className={styles.discountBadge}
+        />
       )}
 
-      {product.imageUrl && (
-        <Box
-          style={{
-            width: '100%',
-            height: '120px',
-            overflow: 'hidden',
-            borderRadius: '4px',
-            marginBottom: '8px',
-          }}
-        >
+      {/* Image container */}
+      <div className={styles.imageContainer}>
+        {product.imageUrl && (
           <Image
             src={product.imageUrl}
-            height={120}
-            fit="cover"
             alt={product.name}
+            className={styles.image}
           />
-        </Box>
-      )}
+        )}
+      </div>
 
-      <Text fw={600} size="sm" mt="xs" lineClamp={1}>
-        {product.name}
-      </Text>
-
-      <Text size="xs" c="dimmed" lineClamp={2} mb="xs">
-        {product.description}
-      </Text>
-
-      <Flex justify="space-between" align="center" mt="auto">
-        <Text fw={700} size="md" c="#101828">
-          ${product.price.toFixed(2)}
+      {/* Content container */}
+      <div className={styles.contentContainer}>
+        <Text className={styles.productName} title={product.name}>
+          {product.name}
         </Text>
 
-        {isHovered && product.isAvailable && (
-          <Flex gap="xs" align="center">
-            <ActionIcon size="xs" variant="subtle" onClick={decreaseQuantity}>
-              <IconMinus size={12} />
-            </ActionIcon>
-
-            <Text fw={500} size="xs">
-              {quantity}
-            </Text>
-
-            <ActionIcon
-              size="xs"
-              variant="filled"
-              style={{ backgroundColor: '#B3FF00', color: 'black' }}
-              onClick={increaseQuantity}
-            >
-              <IconPlus size={12} />
-            </ActionIcon>
-          </Flex>
-        )}
-      </Flex>
+        <Flex className={styles.priceContainer}>
+          {hasDiscount && originalPrice && (
+            <Text className={styles.originalPrice}>${originalPrice}</Text>
+          )}
+          <Text className={styles.price}>${product.price.toFixed(2)}</Text>
+        </Flex>
+      </div>
     </Card>
   );
 }

@@ -1,17 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Text, Box, Button } from '@mantine/core';
 import { IconShoppingCart } from '@tabler/icons-react';
 import { productsMock } from '../../../mocks/products.mock';
 import { branchesMock } from '../../../mocks/branches.mock';
-import ProductCard from '../../../components/ProductCard/ProductCard';
 import { IBranch, IProduct } from '../../../types';
 import styles from './page.module.css';
 import ProductsHeader from '@/components/Header/ProductsHeader';
 import CategoryTabs from '@/components/CategoryTabs/CategoryTabs';
 import CartDrawer from '@/components/CartDrawer';
+import CategorySection from '@/components/CategorySection';
 
 interface CartItem {
   productId: string;
@@ -23,6 +23,7 @@ export default function BranchProductsPage() {
   const params = useParams();
   const router = useRouter();
   const branchId = (params?.branchId as string) || '';
+  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   useEffect(() => {
     console.log('Dynamic route params:', params);
@@ -37,6 +38,9 @@ export default function BranchProductsPage() {
   const [activeTab, setActiveTab] = useState('promo');
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [cartDrawerOpened, setCartDrawerOpened] = useState(false);
+  const [expandedSections, setExpandedSections] = useState<
+    Record<string, boolean>
+  >({});
 
   // Find the current branch
   const currentBranch = branchesMock.find((branch) => branch.id === branchId);
@@ -52,14 +56,6 @@ export default function BranchProductsPage() {
 
   // Get products for this branch
   const branchProducts = productsMock[branchId] || [];
-
-  // Filter products based on search and active category
-  const filteredProducts = branchProducts.filter(
-    (product) =>
-      product.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-      (activeTab === 'promo' ||
-        product.category.toLowerCase().includes(activeTab.toLowerCase()))
-  );
 
   // Handle back navigation
   const handleBack = () => {
@@ -112,12 +108,69 @@ export default function BranchProductsPage() {
     }
   });
 
+  // Initialize expanded sections state
+  useEffect(() => {
+    const initialExpandedState = categories.reduce((acc, category) => {
+      acc[category.toLowerCase()] =
+        category.toLowerCase() === activeTab.toLowerCase();
+      return acc;
+    }, {} as Record<string, boolean>);
+
+    setExpandedSections(initialExpandedState);
+  }, []);
+
   // Handle tab change
   const handleTabChange = (value: string | null) => {
     if (value) {
       setActiveTab(value);
+
+      // Update expanded sections based on active tab
+      setExpandedSections((prev) => {
+        const newState = { ...prev };
+        Object.keys(newState).forEach((key) => {
+          newState[key] = key === value.toLowerCase();
+        });
+        return newState;
+      });
+
+      // Scroll to the selected category section
+      const sectionElement = sectionRefs.current[value.toLowerCase()];
+      if (sectionElement) {
+        sectionElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }
   };
+
+  // Handle section toggle
+  const handleSectionToggle = (category: string, isExpanded: boolean) => {
+    setExpandedSections((prev) => ({
+      ...prev,
+      [category.toLowerCase()]: isExpanded,
+    }));
+
+    if (isExpanded) {
+      setActiveTab(category.toLowerCase());
+    }
+  };
+
+  // Group products by category
+  const productsByCategory = categories.reduce((acc, category) => {
+    const categoryProducts = branchProducts
+      .filter((product) =>
+        category.toLowerCase() === 'promo'
+          ? product.category.toLowerCase().includes('promo')
+          : product.category.toLowerCase() === category.toLowerCase()
+      )
+      .filter((product) =>
+        product.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+
+    if (categoryProducts.length > 0) {
+      acc[category] = categoryProducts;
+    }
+
+    return acc;
+  }, {} as Record<string, IProduct[]>);
 
   return (
     <Box className={styles.productPageContainer}>
@@ -137,24 +190,32 @@ export default function BranchProductsPage() {
         onTabChange={handleTabChange}
       />
 
-      {/* Products section */}
-      <Box className={styles.productsContainer}>
-        {filteredProducts.length > 0 ? (
-          filteredProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onAddToCart={addToCart}
-            />
+      {/* Category sections */}
+      <Box className={styles.sectionsContainer}>
+        {Object.keys(productsByCategory).length > 0 ? (
+          Object.entries(productsByCategory).map(([category, products]) => (
+            <div
+              key={category}
+              ref={(el) => {
+                sectionRefs.current[category.toLowerCase()] = el;
+              }}
+            >
+              <CategorySection
+                title={category}
+                products={products}
+                onAddToCart={addToCart}
+                isInitiallyExpanded={
+                  expandedSections[category.toLowerCase()] || false
+                }
+                onToggleExpand={(isExpanded) =>
+                  handleSectionToggle(category, isExpanded)
+                }
+              />
+            </div>
           ))
         ) : (
-          <Text
-            ta="center"
-            fz="lg"
-            c="dimmed"
-            style={{ gridColumn: '1 / -1', padding: '40px 0' }}
-          >
-            No hay productos disponibles en esta categoría
+          <Text ta="center" fz="lg" c="dimmed" style={{ padding: '40px 0' }}>
+            No hay productos disponibles
           </Text>
         )}
       </Box>
