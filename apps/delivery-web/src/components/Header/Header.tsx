@@ -1,29 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  Box,
-  Drawer,
-  Stack,
-  Text,
-  UnstyledButton,
-  TextInput,
-  ActionIcon,
-} from '@mantine/core';
+import { Box, Text, TextInput, ActionIcon } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconSearch } from '@tabler/icons-react';
-import Link from 'next/link';
 import Image from 'next/image';
-
-interface NavItem {
-  label: string;
-  href: string;
-}
-
-const NAV_ITEMS: NavItem[] = [
-  { label: 'Sucursales', href: '/branches' },
-  { label: 'Sobre Nosotros', href: '/about' },
-];
+import { useRouter } from 'next/navigation';
+import { MenuDrawer } from '../MenuDrawer/MenuDrawer';
 
 interface HeaderProps {
   showSearchBar?: boolean;
@@ -32,6 +15,12 @@ interface HeaderProps {
 export function Header({ showSearchBar = true }: HeaderProps) {
   const [opened, { toggle, close }] = useDisclosure(false);
   const [searchValue, setSearchValue] = useState('');
+  const router = useRouter();
+
+  const handleNavigate = (route: string) => {
+    router.push(route);
+    close();
+  };
 
   return (
     <>
@@ -230,33 +219,7 @@ export function Header({ showSearchBar = true }: HeaderProps) {
       <Box style={{ height: '283px' }} />
 
       {/* Mobile Navigation Drawer */}
-      <Drawer
-        opened={opened}
-        onClose={close}
-        title="Menú"
-        position="left"
-        size="xs"
-      >
-        <Stack gap="md" mt="md">
-          {NAV_ITEMS.map((item) => (
-            <UnstyledButton
-              key={item.label}
-              component={Link}
-              href={item.href}
-              onClick={close}
-              style={{
-                padding: '12px 16px',
-                borderRadius: '4px',
-                '&:hover': {
-                  backgroundColor: '#f5f5f5',
-                },
-              }}
-            >
-              <Text size="md">{item.label}</Text>
-            </UnstyledButton>
-          ))}
-        </Stack>
-      </Drawer>
+      <MenuDrawer opened={opened} onClose={close} onNavigate={handleNavigate} />
     </>
   );
 }
