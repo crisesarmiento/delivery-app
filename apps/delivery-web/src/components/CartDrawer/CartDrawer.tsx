@@ -1,213 +1,84 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import {
-  Drawer,
-  Box,
-  Text,
-  Stack,
-  Group,
-  Button,
-  ActionIcon,
-  Image,
-  ScrollArea,
-} from '@mantine/core';
-import { IconPlus, IconMinus, IconTrash } from '@tabler/icons-react';
-import { IOrderItem } from '@/types';
+import { Drawer, Box, Text, Flex, Button } from '@mantine/core';
+import { IProduct } from '../../types';
 
-// Constants for text
-const CART_TEXTS = {
-  TITLE: 'Tu Pedido',
-  EMPTY_CART: 'Tu carrito está vacío',
-  EMPTY_CART_DESCRIPTION: 'Agrega productos para comenzar tu pedido',
-  TOTAL: 'Total',
-  CHECKOUT: 'Ir a Pagar',
-  CONTINUE_SHOPPING: 'Seguir Comprando',
-};
-
-// Extended order item with imageUrl
-interface CartItem extends IOrderItem {
-  imageUrl?: string;
+interface CartItem {
+  productId: string;
+  quantity: number;
+  product: IProduct;
 }
 
 interface CartDrawerProps {
   opened: boolean;
   onClose: () => void;
-  items: CartItem[];
-  onUpdateItemQuantity: (itemId: string, quantity: number) => void;
-  onRemoveItem: (itemId: string) => void;
+  cartItems: CartItem[];
+  cartTotal: number;
 }
 
-export function CartDrawer({
+export default function CartDrawer({
   opened,
   onClose,
-  items = [],
-  onUpdateItemQuantity,
-  onRemoveItem,
+  cartItems,
+  cartTotal,
 }: CartDrawerProps) {
-  const [total, setTotal] = useState(0);
-
-  // Calculate total when items change
-  useEffect(() => {
-    const newTotal = items.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0
-    );
-    setTotal(newTotal);
-  }, [items]);
-
-  const formatPrice = (price: number) => {
-    return `$${price.toFixed(0)}`;
-  };
-
   return (
     <Drawer
       opened={opened}
       onClose={onClose}
+      title="Mi Pedido"
+      padding="xl"
+      size="sm"
       position="right"
-      size="md"
-      scrollAreaComponent={ScrollArea.Autosize}
-      title={
-        <Text fz="xl" fw={700}>
-          {CART_TEXTS.TITLE}
-        </Text>
-      }
-      styles={{
-        header: {
-          padding: '1rem',
-        },
-        title: {
-          width: '100%',
-          textAlign: 'center',
-        },
-        close: {
-          color: '#000000',
-          '&:hover': {
-            backgroundColor: '#F7F7F7',
-          },
-        },
-        body: {
-          padding: 0,
-        },
-      }}
     >
-      {items.length === 0 ? (
-        <Box p="xl" style={{ textAlign: 'center' }}>
-          <Text fz="lg" fw={600} mb="md">
-            {CART_TEXTS.EMPTY_CART}
-          </Text>
-          <Text c="dimmed" mb="xl">
-            {CART_TEXTS.EMPTY_CART_DESCRIPTION}
-          </Text>
-          <Button
-            onClick={onClose}
-            variant="filled"
-            color="primary"
-            size="md"
-            fullWidth
-          >
-            {CART_TEXTS.CONTINUE_SHOPPING}
-          </Button>
-        </Box>
-      ) : (
+      {cartItems.length > 0 ? (
         <>
-          <ScrollArea h="calc(100vh - 200px)" offsetScrollbars>
-            <Stack p="md" gap="md">
-              {items.map((item) => (
-                <Box
-                  key={item.id}
-                  p="md"
-                  style={{ borderBottom: '1px solid #E5E5E5' }}
-                >
-                  <Group
-                    justify="space-between"
-                    wrap="nowrap"
-                    align="flex-start"
-                  >
-                    {item.imageUrl && (
-                      <Image
-                        src={item.imageUrl}
-                        alt={item.name}
-                        width={60}
-                        height={60}
-                        radius="md"
-                      />
-                    )}
-                    <Box style={{ flex: 1 }}>
-                      <Text fw={600}>{item.name}</Text>
-                      <Text fz="sm" c="dimmed">
-                        {formatPrice(item.price)}
-                      </Text>
-                    </Box>
-                    <Box>
-                      <Group gap="xs">
-                        <ActionIcon
-                          size="sm"
-                          variant="subtle"
-                          color="gray"
-                          onClick={() =>
-                            onUpdateItemQuantity(
-                              item.id,
-                              Math.max(1, item.quantity - 1)
-                            )
-                          }
-                        >
-                          <IconMinus size={16} />
-                        </ActionIcon>
-                        <Text>{item.quantity}</Text>
-                        <ActionIcon
-                          size="sm"
-                          variant="subtle"
-                          color="gray"
-                          onClick={() =>
-                            onUpdateItemQuantity(item.id, item.quantity + 1)
-                          }
-                        >
-                          <IconPlus size={16} />
-                        </ActionIcon>
-                        <ActionIcon
-                          size="sm"
-                          variant="subtle"
-                          color="red"
-                          ml="sm"
-                          onClick={() => onRemoveItem(item.id)}
-                        >
-                          <IconTrash size={16} />
-                        </ActionIcon>
-                      </Group>
-                      <Text ta="right" fw={600} mt="xs">
-                        {formatPrice(item.price * item.quantity)}
-                      </Text>
-                    </Box>
-                  </Group>
-                </Box>
-              ))}
-            </Stack>
-          </ScrollArea>
+          {cartItems.map((item) => (
+            <Box
+              key={item.productId}
+              mb="md"
+              p="xs"
+              style={{ borderBottom: '1px solid #eee' }}
+            >
+              <Flex justify="space-between" align="center">
+                <Text fw={500}>{item.product.name}</Text>
+                <Text fw={700}>
+                  ${(item.product.price * item.quantity).toFixed(2)}
+                </Text>
+              </Flex>
+              <Flex justify="space-between" align="center" mt="xs">
+                <Text size="sm" c="dimmed">
+                  Cantidad: {item.quantity}
+                </Text>
+                <Text size="sm">${item.product.price.toFixed(2)} c/u</Text>
+              </Flex>
+            </Box>
+          ))}
 
-          <Box
-            p="md"
-            style={{
-              position: 'sticky',
-              bottom: 0,
-              backgroundColor: 'white',
-              borderTop: '1px solid #E5E5E5',
-            }}
-          >
-            <Group justify="space-between" mb="md">
-              <Text fw={600}>{CART_TEXTS.TOTAL}</Text>
-              <Text fw={700} fz="lg">
-                {formatPrice(total)}
+          <Box mt="xl">
+            <Flex justify="space-between" align="center" mb="md">
+              <Text fw={700} size="lg">
+                Total:
               </Text>
-            </Group>
-            <Button variant="filled" color="primary" size="md" fullWidth>
-              {CART_TEXTS.CHECKOUT}
+              <Text fw={700} size="lg">
+                ${cartTotal.toFixed(2)}
+              </Text>
+            </Flex>
+
+            <Button
+              fullWidth
+              size="md"
+              style={{ backgroundColor: '#B3FF00', color: '#000' }}
+            >
+              Finalizar Pedido
             </Button>
           </Box>
         </>
+      ) : (
+        <Text ta="center" fz="lg" c="dimmed" my="xl">
+          No hay productos en el carrito
+        </Text>
       )}
     </Drawer>
   );
 }
-
-export default CartDrawer;

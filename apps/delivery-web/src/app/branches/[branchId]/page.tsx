@@ -2,15 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import {
-  Text,
-  Box,
-  Tabs,
-  Drawer,
-  Button,
-  ScrollArea,
-  Flex,
-} from '@mantine/core';
+import { Text, Box, Button } from '@mantine/core';
 import { IconShoppingCart } from '@tabler/icons-react';
 import { productsMock } from '../../../mocks/products.mock';
 import { branchesMock } from '../../../mocks/branches.mock';
@@ -18,6 +10,8 @@ import ProductCard from '../../../components/ProductCard/ProductCard';
 import { IBranch, IProduct } from '../../../types';
 import styles from './page.module.css';
 import ProductsHeader from '@/components/Header/ProductsHeader';
+import CategoryTabs from '@/components/CategoryTabs/CategoryTabs';
+import CartDrawer from '@/components/CartDrawer';
 
 interface CartItem {
   productId: string;
@@ -133,35 +127,15 @@ export default function BranchProductsPage() {
         onBackClick={handleBack}
         searchValue={searchQuery}
         onSearchChange={handleSearchChange}
+        onCartClick={() => setCartDrawerOpened(true)}
       />
 
       {/* Categories tabs */}
-      <Box>
-        <Text ml="md" my="md" fw={600} size="lg">
-          Categorías
-        </Text>
-        <ScrollArea className={styles.categoriesContainer}>
-          <Tabs
-            value={activeTab}
-            onChange={handleTabChange}
-            classNames={{
-              root: styles.tabsList,
-              tab: styles.tab,
-            }}
-          >
-            <Tabs.List>
-              {categories.map((category) => (
-                <Tabs.Tab
-                  key={category.toLowerCase()}
-                  value={category.toLowerCase()}
-                >
-                  {category}
-                </Tabs.Tab>
-              ))}
-            </Tabs.List>
-          </Tabs>
-        </ScrollArea>
-      </Box>
+      <CategoryTabs
+        categories={categories}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+      />
 
       {/* Products section */}
       <Box className={styles.productsContainer}>
@@ -197,63 +171,12 @@ export default function BranchProductsPage() {
       )}
 
       {/* Cart drawer */}
-      <Drawer
+      <CartDrawer
         opened={cartDrawerOpened}
         onClose={() => setCartDrawerOpened(false)}
-        title="Mi Pedido"
-        padding="xl"
-        size="sm"
-        position="right"
-      >
-        {cartItems.length > 0 ? (
-          <>
-            {cartItems.map((item) => (
-              <Box
-                key={item.productId}
-                mb="md"
-                p="xs"
-                style={{ borderBottom: '1px solid #eee' }}
-              >
-                <Flex justify="space-between" align="center">
-                  <Text fw={500}>{item.product.name}</Text>
-                  <Text fw={700}>
-                    ${(item.product.price * item.quantity).toFixed(2)}
-                  </Text>
-                </Flex>
-                <Flex justify="space-between" align="center" mt="xs">
-                  <Text size="sm" c="dimmed">
-                    Cantidad: {item.quantity}
-                  </Text>
-                  <Text size="sm">${item.product.price.toFixed(2)} c/u</Text>
-                </Flex>
-              </Box>
-            ))}
-
-            <Box mt="xl">
-              <Flex justify="space-between" align="center" mb="md">
-                <Text fw={700} size="lg">
-                  Total:
-                </Text>
-                <Text fw={700} size="lg">
-                  ${cartTotal.toFixed(2)}
-                </Text>
-              </Flex>
-
-              <Button
-                fullWidth
-                size="md"
-                style={{ backgroundColor: '#B3FF00', color: '#000' }}
-              >
-                Finalizar Pedido
-              </Button>
-            </Box>
-          </>
-        ) : (
-          <Text ta="center" fz="lg" c="dimmed" my="xl">
-            No hay productos en el carrito
-          </Text>
-        )}
-      </Drawer>
+        cartItems={cartItems}
+        cartTotal={cartTotal}
+      />
     </Box>
   );
 }
