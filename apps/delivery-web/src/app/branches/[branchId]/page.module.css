@@ -12,17 +12,19 @@
   top: 0;
   z-index: 10;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  text-align: center;
 }
 
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .branchInfo {
-  margin-bottom: 16px;
+  margin-bottom: 12px;
+  text-align: left;
 }
 
 .searchInput {
@@ -30,16 +32,17 @@
 }
 
 .categoriesContainer {
-  background-color: #f8f9fa;
+  background-color: #ffffff;
   overflow-x: auto;
-  padding: 8px 16px;
-  border-bottom: 1px solid #e9ecef;
+  padding: 0 16px;
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .tabsList {
   display: flex;
   gap: 16px;
   border-bottom: none;
+  margin-bottom: 0;
 }
 
 .tab {
@@ -62,9 +65,10 @@
   flex: 1;
   padding: 16px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 16px;
   overflow-y: auto;
+  background-color: #ffffff;
 }
 
 .cartButton {

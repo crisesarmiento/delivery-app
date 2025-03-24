@@ -135,13 +135,19 @@ export default function BranchProductsPage() {
           <ActionIcon size="lg" onClick={handleBack}>
             <IconArrowLeft size={24} />
           </ActionIcon>
-          <Title order={3}>PUNTO {currentBranch?.name || ''}</Title>
+          <Title order={3} style={{ margin: '0 auto' }}>
+            PUNTO {currentBranch?.name || ''}
+          </Title>
           <div></div> {/* Empty div for spacing */}
         </Group>
 
         <Box className={styles.branchInfo}>
-          <Title order={2}>{currentBranch?.name || ''}</Title>
-          <Text size="sm">{currentBranch?.address || ''}</Text>
+          <Text fw={500} size="md">
+            {currentBranch?.name || ''}
+          </Text>
+          <Text size="sm" c="dimmed">
+            {currentBranch?.address || ''}
+          </Text>
         </Box>
 
         <TextInput
