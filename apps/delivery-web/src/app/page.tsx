@@ -3,16 +3,32 @@
 import { Box } from '@mantine/core';
 import BranchCard from '../components/BranchCard/BranchCard';
 import { branchesMock } from '../mocks/branches.mock';
-import Header from '../components/Header';
+import { Header } from '../components/Header/Header';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 export default function HomePage() {
   const router = useRouter();
   const branches = branchesMock;
+  const [searchValue, setSearchValue] = useState('');
+
+  // Filter branches based on search
+  const filteredBranches = searchValue
+    ? branches.filter(
+        (branch) =>
+          branch.name.toLowerCase().includes(searchValue.toLowerCase()) ||
+          branch.address.toLowerCase().includes(searchValue.toLowerCase())
+      )
+    : branches;
 
   return (
     <>
-      <Header showSearchBar={true} />
+      <Header
+        showSearchBar={true}
+        searchValue={searchValue}
+        onSearchChange={setSearchValue}
+      />
+
       <Box style={{ backgroundColor: '#fff', padding: '0 80px' }}>
         <Box py="xl">
           <Box
@@ -23,7 +39,7 @@ export default function HomePage() {
               marginBottom: '23px',
             }}
           >
-            {branches.map((branch, index) => (
+            {filteredBranches.map((branch, index) => (
               <Box
                 key={`${branch.id}-${index}`}
                 style={{

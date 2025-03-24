@@ -5,32 +5,6 @@
   background-color: #ffffff;
 }
 
-.headerContainer {
-  padding: 16px;
-  background-color: #ffffff;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  text-align: center;
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
-}
-
-.branchInfo {
-  margin-bottom: 12px;
-  text-align: left;
-}
-
-.searchInput {
-  margin-bottom: 8px;
-}
-
 .categoriesContainer {
   background-color: #ffffff;
   overflow-x: auto;

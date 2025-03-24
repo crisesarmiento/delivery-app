@@ -3,28 +3,21 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import {
-  Title,
-  TextInput,
-  ActionIcon,
   Text,
   Box,
   Tabs,
-  Group,
   Drawer,
   Button,
   ScrollArea,
   Flex,
 } from '@mantine/core';
-import {
-  IconSearch,
-  IconArrowLeft,
-  IconShoppingCart,
-} from '@tabler/icons-react';
+import { IconShoppingCart } from '@tabler/icons-react';
 import { productsMock } from '../../../mocks/products.mock';
 import { branchesMock } from '../../../mocks/branches.mock';
 import ProductCard from '../../../components/ProductCard/ProductCard';
-import { IProduct } from '../../../types';
+import { IBranch, IProduct } from '../../../types';
 import styles from './page.module.css';
+import ProductsHeader from '@/components/Header/ProductsHeader';
 
 interface CartItem {
   productId: string;
@@ -79,6 +72,11 @@ export default function BranchProductsPage() {
     router.push('/');
   };
 
+  // Handle search
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+  };
+
   // Add product to cart
   const addToCart = (product: IProduct, quantity: number) => {
     // Check if product already in cart
@@ -129,74 +127,41 @@ export default function BranchProductsPage() {
 
   return (
     <Box className={styles.productPageContainer}>
-      {/* Header */}
-      <Box className={styles.headerContainer}>
-        <Group className={styles.header}>
-          <ActionIcon size="lg" onClick={handleBack}>
-            <IconArrowLeft size={24} />
-          </ActionIcon>
-          <Title order={3} style={{ margin: '0 auto' }}>
-            PUNTO {currentBranch?.name || ''}
-          </Title>
-          <div></div> {/* Empty div for spacing */}
-        </Group>
-
-        <Box className={styles.branchInfo}>
-          <Text fw={500} size="md">
-            {currentBranch?.name || ''}
-          </Text>
-          <Text size="sm" c="dimmed">
-            {currentBranch?.address || ''}
-          </Text>
-        </Box>
-
-        <TextInput
-          className={styles.searchInput}
-          placeholder="Buscar un Producto..."
-          value={searchQuery}
-          onChange={(event) => setSearchQuery(event.currentTarget.value)}
-          rightSection={
-            <ActionIcon
-              style={{
-                width: '32px',
-                height: '32px',
-                backgroundColor: '#B3FF00',
-                borderRadius: '7px',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                padding: '3px',
-              }}
-            >
-              <IconSearch size={16} stroke={2} color="#000000" />
-            </ActionIcon>
-          }
-          rightSectionWidth={42}
-        />
-      </Box>
+      {/* Use the reusable Header component with product page configuration */}
+      <ProductsHeader
+        branch={currentBranch as IBranch}
+        onBackClick={handleBack}
+        searchValue={searchQuery}
+        onSearchChange={handleSearchChange}
+      />
 
       {/* Categories tabs */}
-      <ScrollArea className={styles.categoriesContainer}>
-        <Tabs
-          value={activeTab}
-          onChange={handleTabChange}
-          classNames={{
-            root: styles.tabsList,
-            tab: styles.tab,
-          }}
-        >
-          <Tabs.List>
-            {categories.map((category) => (
-              <Tabs.Tab
-                key={category.toLowerCase()}
-                value={category.toLowerCase()}
-              >
-                {category}
-              </Tabs.Tab>
-            ))}
-          </Tabs.List>
-        </Tabs>
-      </ScrollArea>
+      <Box>
+        <Text ml="md" my="md" fw={600} size="lg">
+          Categorías
+        </Text>
+        <ScrollArea className={styles.categoriesContainer}>
+          <Tabs
+            value={activeTab}
+            onChange={handleTabChange}
+            classNames={{
+              root: styles.tabsList,
+              tab: styles.tab,
+            }}
+          >
+            <Tabs.List>
+              {categories.map((category) => (
+                <Tabs.Tab
+                  key={category.toLowerCase()}
+                  value={category.toLowerCase()}
+                >
+                  {category}
+                </Tabs.Tab>
+              ))}
+            </Tabs.List>
+          </Tabs>
+        </ScrollArea>
+      </Box>
 
       {/* Products section */}
       <Box className={styles.productsContainer}>
