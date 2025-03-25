@@ -3,7 +3,7 @@
 import { Box } from '@mantine/core';
 import BranchCard from '../components/BranchCard/BranchCard';
 import { branchesMock } from '../mocks/branches.mock';
-import { Header } from '../components/Header/Header';
+import Header from '../components/Header/Header';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 

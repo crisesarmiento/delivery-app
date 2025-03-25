@@ -1,6 +1,6 @@
 import React from 'react';
 import './global.css';
-import { ThemeProvider } from './ThemeProvider';
+import ThemeProvider from './ThemeProvider';
 import { Providers } from './providers';
 import Footer from '@/components/Footer';
 

@@ -2,8 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Text, Box, Button } from '@mantine/core';
-import { IconShoppingCart } from '@tabler/icons-react';
+import { Text, Box } from '@mantine/core';
 import { productsMock } from '../../../mocks/products.mock';
 import { branchesMock } from '../../../mocks/branches.mock';
 import { IBranch, IProduct } from '../../../types';
@@ -28,10 +27,7 @@ export default function BranchProductsPage() {
   useEffect(() => {
     console.log('Dynamic route params:', params);
     console.log('Branch ID:', branchId);
-    console.log(
-      'Available products for this branch:',
-      productsMock[branchId] || []
-    );
+    console.log('Available products for this branch:', productsMock || []);
   }, [params, branchId]);
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -55,7 +51,7 @@ export default function BranchProductsPage() {
   }, [currentBranch, branchId, router]);
 
   // Get products for this branch
-  const branchProducts = productsMock[branchId] || [];
+  const branchProducts = productsMock || [];
 
   // Handle back navigation
   const handleBack = () => {
@@ -180,7 +176,6 @@ export default function BranchProductsPage() {
         onBackClick={handleBack}
         searchValue={searchQuery}
         onSearchChange={handleSearchChange}
-        onCartClick={() => setCartDrawerOpened(true)}
       />
 
       {/* Categories tabs */}
@@ -220,17 +215,6 @@ export default function BranchProductsPage() {
           </Text>
         )}
       </Box>
-
-      {/* Cart button */}
-      {cartItems.length > 0 && (
-        <Button
-          className={styles.cartButton}
-          leftSection={<IconShoppingCart size={18} />}
-          onClick={() => setCartDrawerOpened(true)}
-        >
-          Ver Carrito (${cartTotal.toFixed(2)})
-        </Button>
-      )}
 
       {/* Cart drawer */}
       <CartDrawer

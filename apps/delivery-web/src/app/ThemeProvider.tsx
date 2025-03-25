@@ -8,10 +8,12 @@ interface ThemeProviderProps {
   children: ReactNode;
 }
 
-export function ThemeProvider({ children }: ThemeProviderProps) {
+const ThemeProvider = ({ children }: ThemeProviderProps) => {
   return (
     <MantineProvider theme={theme} defaultColorScheme="light">
       {children}
     </MantineProvider>
   );
-}
+};
+
+export default ThemeProvider;

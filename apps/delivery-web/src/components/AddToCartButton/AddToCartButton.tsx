@@ -9,11 +9,11 @@ interface AddToCartButtonProps {
   className?: string;
 }
 
-export function AddToCartButton({
+const AddToCartButton = ({
   product,
   onAddToCart,
   className,
-}: AddToCartButtonProps) {
+}: AddToCartButtonProps) => {
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (product.isAvailable) {
@@ -30,6 +30,6 @@ export function AddToCartButton({
       <IconShoppingCart size={20} />
     </ActionIcon>
   );
-}
+};
 
 export default AddToCartButton;

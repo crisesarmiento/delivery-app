@@ -16,12 +16,12 @@ interface CartDrawerProps {
   cartTotal: number;
 }
 
-export default function CartDrawer({
+const CartDrawer = ({
   opened,
   onClose,
   cartItems,
   cartTotal,
-}: CartDrawerProps) {
+}: CartDrawerProps) => {
   return (
     <Drawer
       opened={opened}
@@ -81,4 +81,6 @@ export default function CartDrawer({
       )}
     </Drawer>
   );
-}
+};
+
+export default CartDrawer;

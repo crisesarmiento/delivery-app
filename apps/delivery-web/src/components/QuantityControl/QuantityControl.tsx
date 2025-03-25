@@ -15,15 +15,17 @@ interface QuantityControlProps {
   maxQuantity?: number;
   onChange?: (quantity: number) => void;
   onAddToCart?: () => void;
+  isDisabled?: boolean;
 }
 
-export function QuantityControl({
+const QuantityControl = ({
   initialQuantity = 0,
-  minQuantity = 1,
+  minQuantity = 0,
   maxQuantity = 99,
   onChange,
   onAddToCart,
-}: QuantityControlProps) {
+  isDisabled = false,
+}: QuantityControlProps) => {
   const [quantity, setQuantity] = useState(initialQuantity);
 
   useEffect(() => {
@@ -77,6 +79,6 @@ export function QuantityControl({
       </Button>
     </Flex>
   );
-}
+};
 
 export default QuantityControl;

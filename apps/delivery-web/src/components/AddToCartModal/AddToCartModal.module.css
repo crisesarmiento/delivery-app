@@ -1,0 +1,410 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modalWrapper {
+  position: relative;
+  max-width: 750px;
+  width: 100%;
+  margin: 1.75rem auto;
+}
+
+.modalContent {
+  position: relative;
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+  padding: 0;
+  overflow: hidden;
+}
+
+.modalHeader {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 24px 32px;
+  background-color: #000000;
+  height: 190px;
+  position: relative;
+}
+
+.modalTitle {
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 38px;
+  color: #ffffff;
+  margin-top: 43px;
+}
+
+.modalPrice {
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 36px;
+  line-height: 45px;
+  color: #ffffff;
+  margin-top: 7px;
+}
+
+.modalOriginalPrice {
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 18px;
+  text-decoration-line: line-through;
+  color: #939393;
+  margin-left: 15px;
+}
+
+.discountBadge {
+  position: absolute;
+  top: 24px;
+  left: 32px;
+  background-color: #b3ff00;
+  border-radius: 16px;
+  padding: 8px;
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 18px;
+  color: #000000;
+}
+
+.closeButton {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  color: #ffffff;
+  width: 18px;
+  height: 18px;
+  background-color: #000000;
+}
+
+.container {
+  padding: 24px 32px;
+  gap: 16px;
+  position: relative;
+  padding-bottom: 80px;
+}
+
+.imageContainer {
+  width: 256px;
+  height: 288px;
+  border-radius: 6px;
+  overflow: hidden;
+  flex-shrink: 0;
+  position: absolute;
+  right: 32px;
+  top: 24px;
+}
+
+.productImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.contentContainer {
+  max-width: 410px;
+  flex: 1;
+  gap: 16px;
+}
+
+.productName {
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 32px;
+  color: #000000;
+}
+
+.productIngredients {
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 28px;
+  color: #000000;
+  margin-bottom: 16px;
+}
+
+.additionalInfo {
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  color: #000000;
+  margin-bottom: 16px;
+}
+
+.quantityContainer {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-top: 24px;
+}
+
+.footerContainer {
+  padding: 16px 32px;
+  background-color: #ffffff;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  height: 72px;
+  border-top: 1px solid #eef2f6;
+}
+
+.footerActions {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  position: relative;
+}
+
+.quantityControlWrapper {
+  position: absolute;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  gap: 41px;
+  width: 197px;
+  height: 40px;
+  border: 1px solid #eef2f6;
+  border-radius: 4px;
+}
+
+.addToCartButton {
+  margin-left: auto;
+  width: 465px;
+  height: 40px;
+  background: #000000;
+  border-radius: 4px;
+  padding: 0;
+  box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.03);
+}
+
+.addToCartContent {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 16px;
+}
+
+.addToCartLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.addToCartRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.addToCartText {
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  color: #b3ff00;
+}
+
+.subtotalText {
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  color: #b3ff00;
+}
+
+.commentInput {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0px;
+  position: relative;
+  width: 402px;
+  height: 124px;
+  margin-bottom: 24px;
+}
+
+.commentInput textarea {
+  box-sizing: border-box;
+  padding: 10px 12px;
+  width: 402px;
+  height: 102px;
+  border: 1px solid #eef2f6;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  resize: none;
+}
+
+.commentInput textarea:focus {
+  outline: none;
+  border: 1px solid #0091ff;
+}
+
+.commentLabel {
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 18px;
+  color: #000000;
+  margin-bottom: 4px;
+}
+
+.commentCounter {
+  width: 100%;
+  height: 18px;
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  color: #6c7684;
+  margin-top: 4px;
+}
+
+.sectionHeader {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 8px;
+  width: 686px;
+  height: 37px;
+  background: #f8fafc;
+  border: 1px solid #eef2f6;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  justify-content: space-between;
+}
+
+.sectionTitle {
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  color: #000000;
+}
+
+.ingredientRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  width: 686px;
+}
+
+.ingredientName {
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 18px;
+  color: #000000;
+}
+
+.ingredientDivider {
+  width: 686px;
+  height: 0px;
+  border: 0.7px solid #eef2f6;
+  margin: 0;
+}
+
+.quantityControl {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  gap: 8px;
+  width: 105px;
+  height: 32px;
+  background: #ffffff;
+  border: 1px solid #eef2f6;
+  border-radius: 4px;
+}
+
+.quantityText {
+  width: 17px;
+  height: 18px;
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 18px;
+  text-align: center;
+  color: #000000;
+}
+
+.priceTag {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 4px 8px;
+  gap: 6px;
+  height: 20px;
+  background: #b3ff00;
+  border-radius: 16px;
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 18px;
+  color: #000000;
+  margin-left: 8px;
+}
+
+.checkboxContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.checkbox {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+.checkedBox {
+  background: #b3ff00;
+  border-radius: 4px;
+}

@@ -3,7 +3,7 @@
 import { Container, Title, Text, Button } from '@mantine/core';
 import { useRouter } from 'next/navigation';
 
-export default function BranchNotFound() {
+const BranchNotFound = () => {
   const router = useRouter();
 
   return (
@@ -19,4 +19,6 @@ export default function BranchNotFound() {
       </Button>
     </Container>
   );
-}
+};
+
+export default BranchNotFound;

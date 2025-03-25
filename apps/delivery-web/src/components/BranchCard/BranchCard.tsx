@@ -12,7 +12,7 @@ interface BranchCardProps {
   onClick?: () => void;
 }
 
-export function BranchCard({ branch, onClick }: BranchCardProps) {
+const BranchCard = ({ branch, onClick }: BranchCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
 
@@ -131,6 +131,6 @@ export function BranchCard({ branch, onClick }: BranchCardProps) {
       </Box>
     </Card>
   );
-}
+};
 
 export default BranchCard;

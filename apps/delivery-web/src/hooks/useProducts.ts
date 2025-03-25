@@ -15,14 +15,12 @@ export const useProducts = (branchId: string) => {
 
     try {
       // Product mock data varies by branch ID
-      const mockData: Record<string, IProduct[]> = productsMock;
+      const mockData: IProduct[] = productsMock;
 
       // Debug the data source
       console.log(
         `useProducts - mockData for branchId ${branchId}:`,
-        mockData[branchId]
-          ? JSON.stringify(mockData[branchId].slice(0, 2)) + '...'
-          : 'undefined'
+        mockData ? JSON.stringify(mockData.slice(0, 2)) + '...' : 'undefined'
       );
 
       // Simulate network delay
@@ -31,7 +29,7 @@ export const useProducts = (branchId: string) => {
       // Mock response
       const mockResponse: IApiResponse<IProduct[]> = {
         success: true,
-        data: mockData[branchId] || [],
+        data: mockData,
       };
 
       if (mockResponse.success) {

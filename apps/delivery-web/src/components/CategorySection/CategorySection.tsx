@@ -13,13 +13,13 @@ interface CategorySectionProps {
   onToggleExpand?: (isExpanded: boolean) => void;
 }
 
-export default function CategorySection({
+const CategorySection = ({
   title,
   products,
   onAddToCart,
   isInitiallyExpanded = false,
   onToggleExpand,
-}: CategorySectionProps) {
+}: CategorySectionProps) => {
   const [isExpanded, setIsExpanded] = useState(isInitiallyExpanded);
 
   useEffect(() => {
@@ -60,4 +60,6 @@ export default function CategorySection({
       )}
     </Box>
   );
-}
+};
+
+export default CategorySection;

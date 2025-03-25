@@ -140,3 +140,33 @@
   text-align: center;
   color: #000000;
 }
+
+.cartIconContainer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: auto;
+  height: auto;
+  padding: 8px;
+  border-radius: 50px;
+  background-color: #b3ff00;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 2;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.cartIconContainer:hover {
+  background-color: #a2e600;
+  transform: translate(-50%, -50%) scale(1.05);
+}
+
+.cartIcon {
+  color: #000000;
+}

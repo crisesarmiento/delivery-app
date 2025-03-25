@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Box, Text, Flex, Title, ActionIcon } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconShoppingCart, IconChevronLeft } from '@tabler/icons-react';
+import { IconChevronLeft } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { MenuDrawer } from '../MenuDrawer/MenuDrawer';
 import { Logo, MenuButton, SearchBar } from './HeaderComponents';
@@ -14,7 +14,6 @@ interface ProductsHeaderProps {
   onBackClick?: () => void;
   searchValue?: string;
   onSearchChange?: (value: string) => void;
-  onCartClick?: () => void;
 }
 
 export function ProductsHeader({
@@ -22,7 +21,6 @@ export function ProductsHeader({
   onBackClick,
   searchValue = '',
   onSearchChange,
-  onCartClick,
 }: ProductsHeaderProps) {
   const { name, address, phoneNumber } = branch;
   const [opened, { toggle, close }] = useDisclosure(false);
@@ -284,30 +282,6 @@ export function ProductsHeader({
               }}
             />
           </Box>
-
-          {/* Shopping cart button */}
-          {onCartClick && (
-            <ActionIcon
-              onClick={onCartClick}
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                padding: '9px',
-                gap: '8px',
-                position: 'absolute',
-                width: '35px',
-                height: '35px',
-                left: '163px',
-                top: '567px',
-                background: '#B3FF00',
-                borderRadius: '17.5px',
-                zIndex: 10,
-              }}
-            >
-              <IconShoppingCart size={16} color="#000000" />
-            </ActionIcon>
-          )}
         </Box>
 
         {/* Menu Drawer */}

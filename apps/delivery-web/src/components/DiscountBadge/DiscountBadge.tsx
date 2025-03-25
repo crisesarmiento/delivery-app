@@ -5,15 +5,15 @@ interface DiscountBadgeProps {
   className?: string;
 }
 
-export function DiscountBadge({
+const DiscountBadge = ({
   discountPercentage = 20,
   className,
-}: DiscountBadgeProps) {
+}: DiscountBadgeProps) => {
   return (
     <div className={`${styles.discountBadge} ${className || ''}`}>
       {discountPercentage}% OFF
     </div>
   );
-}
+};
 
 export default DiscountBadge;

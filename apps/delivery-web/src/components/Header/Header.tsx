@@ -13,11 +13,11 @@ interface HeaderProps {
   onSearchChange?: (value: string) => void;
 }
 
-export function Header({
+const Header = ({
   showSearchBar = true,
   searchValue = '',
   onSearchChange,
-}: HeaderProps) {
+}: HeaderProps) => {
   const [opened, { toggle, close }] = useDisclosure(false);
   const [internalSearchValue, setInternalSearchValue] = useState(searchValue);
   const router = useRouter();
@@ -206,6 +206,6 @@ export function Header({
       <MenuDrawer opened={opened} onClose={close} onNavigate={handleNavigate} />
     </>
   );
-}
+};
 
 export default Header;

@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function BranchesRedirect() {
+const BranchesRedirect = () => {
   const router = useRouter();
 
   useEffect(() => {
@@ -13,4 +13,6 @@ export default function BranchesRedirect() {
 
   // Return an empty div while redirecting
   return <div></div>;
-}
+};
+
+export default BranchesRedirect;
