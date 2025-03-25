@@ -344,59 +344,20 @@ const AddToCartModal = ({
               <Button
                 className={styles.addToCartButton}
                 onClick={handleAddToCart}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '0 16px',
-                  background: '#000000',
-                  borderRadius: '4px',
-                  boxShadow: '0px 1px 8px rgba(0, 0, 0, 0.03)',
-                  height: '40px',
-                }}
               >
-                <Flex
-                  style={{
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    flexDirection: 'row',
-                    width: '100%',
-                    padding: '0 16px',
-                    margin: '0 32px',
-                    background: '#000000',
-                    borderRadius: '4px',
-                    boxShadow: '0px 1px 8px rgba(0, 0, 0, 0.03)',
-                    height: '40px',
-                    display: 'flex',
-                  }}
-                >
-                  <Box
-                    style={{
-                      display: 'flex',
-                      // alignItems: '',
-                      width: '100%',
-                    }}
-                  >
+                <div className={styles.addToCartContent}>
+                  <div className={styles.addToCartLeft}>
                     <IconShoppingCart size={24} color="#B3FF00" />
                     <Text className={styles.addToCartText}>
                       Agregar al carrito
                     </Text>
-                  </Box>
-                  <Box
-                    display="flex"
-                    style={{
-                      alignItems: 'flex-end',
-                      justifyContent: 'flex-end',
-                      width: '100%',
-                      margin: '0 32px',
-                    }}
-                  >
+                  </div>
+                  <div className={styles.addToCartRight}>
                     <Text className={styles.subtotalText}>
                       Subtotal: ${(product.price * quantity).toFixed(2)}
                     </Text>
-                  </Box>
-                </Flex>
+                  </div>
+                </div>
               </Button>
             </Flex>
           </div>
