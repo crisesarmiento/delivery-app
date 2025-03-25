@@ -26,6 +26,7 @@ interface AddToCartModalProps {
   opened: boolean;
   onClose: () => void;
   onAddToCart: (quantity: number) => void;
+  initialQuantity?: number;
 }
 
 const AddToCartModal = ({
@@ -33,8 +34,9 @@ const AddToCartModal = ({
   opened,
   onClose,
   onAddToCart,
+  initialQuantity = 1,
 }: AddToCartModalProps) => {
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(initialQuantity);
   const modalRef = useRef<HTMLDivElement>(null);
   const [showIngredients, setShowIngredients] = useState(true);
   const [showCondiments, setShowCondiments] = useState(true);
@@ -83,10 +85,10 @@ const AddToCartModal = ({
     };
   }, [opened, onClose]);
 
-  // Only set initial quantity when component mounts
+  // Only set initial quantity when component mounts or initialQuantity changes
   useEffect(() => {
-    setQuantity(1);
-  }, []); // Empty dependency array means this runs only once on mount
+    setQuantity(initialQuantity);
+  }, [initialQuantity]);
 
   if (!opened) return null;
 

@@ -108,19 +108,20 @@ const ProductCard = ({
           {/* Cart icon or quantity indicator */}
           {product.isAvailable && (
             <>
-              {quantity > 0 && !showQuantityControl && !isHovered && (
+              {quantity > 0 && !showQuantityControl && (
                 <Box
                   className={styles.quantityBadge}
                   onClick={(e) => {
                     e.stopPropagation();
                     setShowQuantityControl(true);
                   }}
+                  onMouseEnter={() => setShowQuantityControl(true)}
                 >
                   <Text className={styles.quantityBadgeText}>{quantity}</Text>
                 </Box>
               )}
 
-              {isHovered && quantity === 0 && (
+              {isHovered && (
                 <Box
                   className={styles.cartIconContainer}
                   onClick={handleCartIconClick}
@@ -134,10 +135,18 @@ const ProductCard = ({
               )}
 
               {showQuantityControl && (
-                <Box className={styles.quantityControlContainer}>
+                <Box
+                  className={styles.quantityControlContainer}
+                  onMouseLeave={() => setShowQuantityControl(false)}
+                >
                   <QuantityControl
                     initialQuantity={quantity || 1}
-                    onChange={(newQuantity) => setQuantity(newQuantity)}
+                    onChange={(newQuantity) => {
+                      setQuantity(newQuantity);
+                      if (newQuantity === 0) {
+                        setShowQuantityControl(false);
+                      }
+                    }}
                     onAddToCart={() => {
                       if (onAddToCart && product) {
                         onAddToCart(product, quantity);
@@ -174,6 +183,7 @@ const ProductCard = ({
         opened={showModal}
         onClose={() => setShowModal(false)}
         onAddToCart={handleAddToCart}
+        initialQuantity={quantity}
       />
     </>
   );
