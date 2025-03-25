@@ -83,6 +83,11 @@ const AddToCartModal = ({
     };
   }, [opened, onClose]);
 
+  // Only set initial quantity when component mounts
+  useEffect(() => {
+    setQuantity(1);
+  }, []); // Empty dependency array means this runs only once on mount
+
   if (!opened) return null;
 
   const handleUpdateIngredient = (index: number, change: number) => {
