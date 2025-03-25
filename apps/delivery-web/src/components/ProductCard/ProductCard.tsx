@@ -2,19 +2,27 @@
 
 import { useState } from 'react';
 import { IProduct } from '../../types';
-import { Card, Text, Badge, Image, Overlay, Flex } from '@mantine/core';
+import { Card, Text, Badge, Image, Overlay, Flex, Box } from '@mantine/core';
 import styles from './ProductCard.module.css';
 import DiscountBadge from '../DiscountBadge';
+import QuantityControl from '../QuantityControl';
 
 interface ProductCardProps {
   product: IProduct;
   onAddToCart?: (product: IProduct, quantity: number) => void;
+  initialQuantity?: number;
 }
 
-export function ProductCard({ product, onAddToCart }: ProductCardProps) {
+export function ProductCard({
+  product,
+  onAddToCart,
+  initialQuantity = 0,
+}: ProductCardProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const [quantity, setQuantity] = useState(initialQuantity);
+  const [showQuantityControl, setShowQuantityControl] = useState(false);
 
-  // Check if product has discount (this would typically come from the product data)
+  // Check if product has discount
   const hasDiscount =
     product.name.toLowerCase().includes('promo') || Math.random() > 0.7;
 
@@ -39,27 +47,6 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
           : 'rgba(238, 242, 246, 1)',
       }}
     >
-      {!product.isAvailable && (
-        <Overlay color="#000" backgroundOpacity={0.6} blur={1}>
-          <Badge
-            size="xl"
-            color="red"
-            variant="filled"
-            className={styles.unavailableBadge}
-          >
-            No Disponible
-          </Badge>
-        </Overlay>
-      )}
-
-      {/* Discount badge */}
-      {hasDiscount && (
-        <DiscountBadge
-          discountPercentage={discountPercentage}
-          className={styles.discountBadge}
-        />
-      )}
-
       {/* Image container */}
       <div className={styles.imageContainer}>
         {product.imageUrl && (
@@ -69,6 +56,55 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
             className={styles.image}
           />
         )}
+
+        {!product.isAvailable && (
+          <Overlay color="#000" backgroundOpacity={0.6} blur={1}>
+            <Badge
+              size="xl"
+              color="red"
+              variant="filled"
+              className={styles.unavailableBadge}
+            >
+              No Disponible
+            </Badge>
+          </Overlay>
+        )}
+
+        {/* Discount badge */}
+        {hasDiscount && product.isAvailable && (
+          <DiscountBadge
+            discountPercentage={discountPercentage}
+            className={styles.discountBadge}
+          />
+        )}
+
+        {/* Quantity indicator or control */}
+        {product.isAvailable && (
+          <>
+            {quantity > 0 && !showQuantityControl && !isHovered && (
+              <Box
+                className={styles.quantityBadge}
+                onClick={() => setShowQuantityControl(true)}
+              >
+                <Text className={styles.quantityBadgeText}>{quantity}</Text>
+              </Box>
+            )}
+
+            {(showQuantityControl || isHovered) && (
+              <Box className={styles.quantityControlContainer}>
+                <QuantityControl
+                  initialQuantity={quantity || 1}
+                  onChange={(newQuantity) => setQuantity(newQuantity)}
+                  onAddToCart={() => {
+                    if (onAddToCart && product) {
+                      onAddToCart(product, quantity);
+                    }
+                  }}
+                />
+              </Box>
+            )}
+          </>
+        )}
       </div>
 
       {/* Content container */}
@@ -77,7 +113,11 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
           {product.name}
         </Text>
 
-        <Flex className={styles.priceContainer}>
+        <Flex
+          className={styles.priceContainer}
+          direction="column"
+          align="center"
+        >
           {hasDiscount && originalPrice && (
             <Text className={styles.originalPrice}>${originalPrice}</Text>
           )}

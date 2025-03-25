@@ -9,7 +9,10 @@
   padding: 6px 8px;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible;
+  transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s,
+    border 0.2s;
+  margin: 0; /* Ensure no margins */
 }
 
 .imageContainer {
@@ -30,6 +33,7 @@
   display: flex;
   flex-direction: column;
   flex: 1;
+  min-height: 60px;
 }
 
 .productName {
@@ -51,6 +55,10 @@
   flex-direction: column;
   margin-top: auto;
   margin-bottom: 8px;
+  min-height: 36px;
+  justify-content: center;
+  position: relative;
+  z-index: 15; /* Ensure prices are always visible, even on hover */
 }
 
 .originalPrice {
@@ -61,6 +69,7 @@
   text-align: center;
   text-decoration: line-through;
   color: #667085;
+  margin-bottom: 2px;
 }
 
 .price {
@@ -78,16 +87,56 @@
   left: 8px;
 }
 
-.addToCartButton {
-  position: absolute;
-  bottom: 12px;
-  right: 12px;
-}
-
 .unavailableBadge {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 5;
+}
+
+/* Quantity controls styling */
+.quantityControlContainer {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+}
+
+.quantityControl {
+  background: #ffffff;
+  border-radius: 4px;
+  padding: 3px;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.quantityBadge {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border-radius: 4px;
+  min-width: 27px;
+  height: 24px;
+  padding: 3px 6px;
+  cursor: pointer;
+  z-index: 3;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.quantityBadgeText {
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 18px;
+  text-align: center;
+  color: #000000;
 }

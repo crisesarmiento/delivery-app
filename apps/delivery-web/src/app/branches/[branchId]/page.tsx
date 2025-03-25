@@ -199,6 +199,7 @@ export default function BranchProductsPage() {
               ref={(el) => {
                 sectionRefs.current[category.toLowerCase()] = el;
               }}
+              style={{ margin: 0, padding: 0 }}
             >
               <CategorySection
                 title={category}
