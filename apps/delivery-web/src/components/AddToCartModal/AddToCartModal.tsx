@@ -323,11 +323,24 @@ const AddToCartModal = ({
           <div className={styles.footerContainer}>
             <Flex className={styles.footerActions}>
               <div className={styles.quantityControlWrapper}>
-                <IconTrash
-                  size={26}
-                  stroke={1.5}
-                  style={{ cursor: 'pointer' }}
-                />
+                {quantity <= 1 ? (
+                  <IconTrash
+                    size={26}
+                    stroke={1.5}
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => {
+                      setQuantity(0);
+                      onClose();
+                    }}
+                  />
+                ) : (
+                  <IconCircleMinus
+                    size={26}
+                    stroke={1.5}
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => setQuantity(quantity - 1)}
+                  />
+                )}
                 <Text fw={600}>{quantity}</Text>
                 <IconCirclePlus
                   size={26}
