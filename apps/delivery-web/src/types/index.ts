@@ -2,25 +2,27 @@
 
 // Branch type
 export interface IBranch {
-  id: string;
+  id: string | number;
   name: string;
   description: string;
   address: string;
-  isOpen: boolean;
-  openingHours: string;
-  phoneNumber: string;
+  phoneNumber?: string;
+  openingHours?: string;
+  isOpen?: boolean;
   imageUrl?: string;
 }
 
 // Product type
 export interface IProduct {
-  id: string;
+  id: string | number;
   name: string;
-  description: string;
+  description?: string;
   price: number;
-  category: string;
   imageUrl?: string;
   isAvailable: boolean;
+  ingredients?: string;
+  category?: string;
+  tags?: string[];
   branchId: string;
 }
 

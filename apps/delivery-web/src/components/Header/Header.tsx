@@ -1,20 +1,25 @@
 'use client';
 
 import { useState } from 'react';
-import { Box, Text, TextInput, ActionIcon } from '@mantine/core';
+import { Box, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconSearch } from '@tabler/icons-react';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { MenuDrawer } from '../MenuDrawer/MenuDrawer';
+import { Logo, MenuButton, SearchBar } from './HeaderComponents';
 
 interface HeaderProps {
   showSearchBar?: boolean;
+  searchValue?: string;
+  onSearchChange?: (value: string) => void;
 }
 
-export function Header({ showSearchBar = true }: HeaderProps) {
+const Header = ({
+  showSearchBar = true,
+  searchValue = '',
+  onSearchChange,
+}: HeaderProps) => {
   const [opened, { toggle, close }] = useDisclosure(false);
-  const [searchValue, setSearchValue] = useState('');
+  const [internalSearchValue, setInternalSearchValue] = useState(searchValue);
   const router = useRouter();
 
   const handleNavigate = (route: string) => {
@@ -22,6 +27,15 @@ export function Header({ showSearchBar = true }: HeaderProps) {
     close();
   };
 
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = event.currentTarget.value;
+    setInternalSearchValue(newValue);
+    if (onSearchChange) {
+      onSearchChange(newValue);
+    }
+  };
+
+  // Home page header
   return (
     <>
       {/* Fixed hero header */}
@@ -85,40 +99,26 @@ export function Header({ showSearchBar = true }: HeaderProps) {
           }}
         >
           {/* Logo */}
-          <Text
+          <Box
             style={{
               position: 'absolute',
               left: '71px',
               top: '29px',
-              fontFamily: 'Inter, sans-serif',
-              fontStyle: 'normal',
-              fontWeight: 800,
-              fontSize: '16px',
-              lineHeight: '100%',
-              color: '#FFFFFF',
             }}
           >
-            PUNTO 33
-          </Text>
+            <Logo />
+          </Box>
 
           {/* Menu icon */}
           <Box
             style={{
               position: 'absolute',
-              width: '32px',
-              height: '32px',
               left: '23px',
               top: '23px',
               cursor: 'pointer',
             }}
-            onClick={toggle}
           >
-            <Image
-              src="/images/hamburguer-menu.svg"
-              width={32}
-              height={32}
-              alt="Menu"
-            />
+            <MenuButton onClick={toggle} />
           </Box>
 
           {/* SUCURSALES heading */}
@@ -151,26 +151,10 @@ export function Header({ showSearchBar = true }: HeaderProps) {
                 filter: 'drop-shadow(0px 4px 16px rgba(0, 0, 0, 0.1))',
               }}
             >
-              <TextInput
+              <SearchBar
+                value={onSearchChange ? searchValue : internalSearchValue}
+                onChange={handleSearchChange}
                 placeholder="Busca una sucursal..."
-                value={searchValue}
-                onChange={(event) => setSearchValue(event.currentTarget.value)}
-                rightSection={
-                  <ActionIcon
-                    style={{
-                      width: '32px',
-                      height: '32px',
-                      backgroundColor: '#B3FF00',
-                      borderRadius: '7px',
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      padding: '3px',
-                    }}
-                  >
-                    <IconSearch size={16} stroke={2} color="#000000" />
-                  </ActionIcon>
-                }
                 styles={{
                   root: {
                     width: '100%',
@@ -222,6 +206,6 @@ export function Header({ showSearchBar = true }: HeaderProps) {
       <MenuDrawer opened={opened} onClose={close} onNavigate={handleNavigate} />
     </>
   );
-}
+};
 
 export default Header;

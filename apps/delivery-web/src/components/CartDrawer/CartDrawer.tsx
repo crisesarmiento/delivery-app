@@ -1,213 +1,316 @@
 'use client';
 
+import { Box, Text, Flex, Button, Divider } from '@mantine/core';
+import { IProduct } from '../../types';
 import { useEffect, useState } from 'react';
-import {
-  Drawer,
-  Box,
-  Text,
-  Stack,
-  Group,
-  Button,
-  ActionIcon,
-  Image,
-  ScrollArea,
-} from '@mantine/core';
-import { IconPlus, IconMinus, IconTrash } from '@tabler/icons-react';
-import { IOrderItem } from '@/types';
+import { IconShoppingCart, IconTrash } from '@tabler/icons-react';
 
-// Constants for text
-const CART_TEXTS = {
-  TITLE: 'Tu Pedido',
-  EMPTY_CART: 'Tu carrito está vacío',
-  EMPTY_CART_DESCRIPTION: 'Agrega productos para comenzar tu pedido',
-  TOTAL: 'Total',
-  CHECKOUT: 'Ir a Pagar',
-  CONTINUE_SHOPPING: 'Seguir Comprando',
-};
-
-// Extended order item with imageUrl
-interface CartItem extends IOrderItem {
-  imageUrl?: string;
+interface CartItem {
+  productId: string;
+  quantity: number;
+  product: IProduct;
 }
 
 interface CartDrawerProps {
   opened: boolean;
   onClose: () => void;
-  items: CartItem[];
-  onUpdateItemQuantity: (itemId: string, quantity: number) => void;
-  onRemoveItem: (itemId: string) => void;
+  cartItems: CartItem[];
+  cartTotal: number;
 }
 
-export function CartDrawer({
+const CartDrawer = ({
   opened,
   onClose,
-  items = [],
-  onUpdateItemQuantity,
-  onRemoveItem,
-}: CartDrawerProps) {
-  const [total, setTotal] = useState(0);
+  cartItems,
+  cartTotal,
+}: CartDrawerProps) => {
+  const [isVisible, setIsVisible] = useState(false);
 
-  // Calculate total when items change
   useEffect(() => {
-    const newTotal = items.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0
-    );
-    setTotal(newTotal);
-  }, [items]);
+    setIsVisible(opened);
+  }, [opened]);
 
-  const formatPrice = (price: number) => {
-    return `$${price.toFixed(0)}`;
-  };
+  // Debug log to check if cartItems data is being received
+  useEffect(() => {
+    console.log('CartDrawer received cartItems:', cartItems);
+    console.log('CartDrawer is visible:', isVisible);
+  }, [cartItems, isVisible]);
 
-  return (
-    <Drawer
-      opened={opened}
-      onClose={onClose}
-      position="right"
-      size="md"
-      scrollAreaComponent={ScrollArea.Autosize}
-      title={
-        <Text fz="xl" fw={700}>
-          {CART_TEXTS.TITLE}
-        </Text>
-      }
-      styles={{
-        header: {
-          padding: '1rem',
-        },
-        title: {
-          width: '100%',
-          textAlign: 'center',
-        },
-        close: {
-          color: '#000000',
-          '&:hover': {
-            backgroundColor: '#F7F7F7',
-          },
-        },
-        body: {
-          padding: 0,
-        },
-      }}
-    >
-      {items.length === 0 ? (
-        <Box p="xl" style={{ textAlign: 'center' }}>
-          <Text fz="lg" fw={600} mb="md">
-            {CART_TEXTS.EMPTY_CART}
-          </Text>
-          <Text c="dimmed" mb="xl">
-            {CART_TEXTS.EMPTY_CART_DESCRIPTION}
-          </Text>
-          <Button
-            onClick={onClose}
-            variant="filled"
-            color="primary"
-            size="md"
-            fullWidth
-          >
-            {CART_TEXTS.CONTINUE_SHOPPING}
-          </Button>
-        </Box>
-      ) : (
-        <>
-          <ScrollArea h="calc(100vh - 200px)" offsetScrollbars>
-            <Stack p="md" gap="md">
-              {items.map((item) => (
-                <Box
-                  key={item.id}
-                  p="md"
-                  style={{ borderBottom: '1px solid #E5E5E5' }}
-                >
-                  <Group
-                    justify="space-between"
-                    wrap="nowrap"
-                    align="flex-start"
-                  >
-                    {item.imageUrl && (
-                      <Image
-                        src={item.imageUrl}
-                        alt={item.name}
-                        width={60}
-                        height={60}
-                        radius="md"
-                      />
-                    )}
-                    <Box style={{ flex: 1 }}>
-                      <Text fw={600}>{item.name}</Text>
-                      <Text fz="sm" c="dimmed">
-                        {formatPrice(item.price)}
-                      </Text>
-                    </Box>
-                    <Box>
-                      <Group gap="xs">
-                        <ActionIcon
-                          size="sm"
-                          variant="subtle"
-                          color="gray"
-                          onClick={() =>
-                            onUpdateItemQuantity(
-                              item.id,
-                              Math.max(1, item.quantity - 1)
-                            )
-                          }
-                        >
-                          <IconMinus size={16} />
-                        </ActionIcon>
-                        <Text>{item.quantity}</Text>
-                        <ActionIcon
-                          size="sm"
-                          variant="subtle"
-                          color="gray"
-                          onClick={() =>
-                            onUpdateItemQuantity(item.id, item.quantity + 1)
-                          }
-                        >
-                          <IconPlus size={16} />
-                        </ActionIcon>
-                        <ActionIcon
-                          size="sm"
-                          variant="subtle"
-                          color="red"
-                          ml="sm"
-                          onClick={() => onRemoveItem(item.id)}
-                        >
-                          <IconTrash size={16} />
-                        </ActionIcon>
-                      </Group>
-                      <Text ta="right" fw={600} mt="xs">
-                        {formatPrice(item.price * item.quantity)}
-                      </Text>
-                    </Box>
-                  </Group>
-                </Box>
-              ))}
-            </Stack>
-          </ScrollArea>
-
-          <Box
-            p="md"
+  // For empty cart - compact floating card with specified dimensions
+  if (cartItems.length === 0) {
+    return (
+      <Box
+        style={{
+          position: 'absolute',
+          top: '406px',
+          right: isVisible ? '40px' : '-240px',
+          width: '200px',
+          height: '242px',
+          backgroundColor: '#FFFFFF',
+          border: '1px solid #EEF2F6',
+          boxShadow: '0px 4px 16px rgba(0, 0, 0, 0.1)',
+          borderRadius: '12px',
+          transition: 'right 0.3s ease',
+          zIndex: 1000,
+          overflow: 'hidden',
+        }}
+      >
+        <Flex
+          justify="flex-start"
+          align="center"
+          style={{ height: '32px', padding: '10px 16px' }}
+        >
+          <Text
             style={{
-              position: 'sticky',
-              bottom: 0,
-              backgroundColor: 'white',
-              borderTop: '1px solid #E5E5E5',
+              fontFamily: 'Inter',
+              fontSize: '12px',
+              lineHeight: '18px',
+              color: '#000000',
+              fontWeight: 500,
+              height: '18px',
             }}
           >
-            <Group justify="space-between" mb="md">
-              <Text fw={600}>{CART_TEXTS.TOTAL}</Text>
-              <Text fw={700} fz="lg">
-                {formatPrice(total)}
+            Mi pedido
+          </Text>
+        </Flex>
+
+        <Divider
+          style={{
+            width: '175px',
+            borderWidth: '0.7px',
+            borderStyle: 'solid',
+            borderColor: '#EEF2F6',
+            margin: '0 auto',
+          }}
+        />
+
+        <Flex
+          direction="column"
+          align="center"
+          justify="center"
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '40px 16px',
+            gap: '16px',
+          }}
+        >
+          <IconShoppingCart
+            style={{
+              width: '34px',
+              height: '34px',
+              color: '#939393',
+            }}
+          />
+          <Text
+            style={{
+              fontFamily: 'Inter',
+              fontWeight: 500,
+              fontSize: '12px',
+              lineHeight: '18px',
+              color: '#939393',
+              textAlign: 'center',
+              maxWidth: '180px',
+              margin: '0 auto',
+            }}
+          >
+            Tu carrito está vacío. Agregá productos para comenzar tu pedido.
+          </Text>
+        </Flex>
+      </Box>
+    );
+  }
+
+  // For non-empty cart - show items and checkout option
+  return (
+    <Box
+      style={{
+        position: 'absolute',
+        top: '406px',
+        right: isVisible ? '40px' : '-240px',
+        width: '200px',
+        maxHeight: '242px',
+        background: '#FFFFFF',
+        border: '1px solid #EEF2F6',
+        boxShadow: '0px 4px 16px rgba(0, 0, 0, 0.1)',
+        borderRadius: '4px',
+        transition: 'right 0.3s ease',
+        zIndex: 1000,
+        overflow: 'hidden',
+        boxSizing: 'border-box',
+        padding: '12px 0',
+      }}
+    >
+      <Box style={{ position: 'relative', padding: '0 16px 8px' }}>
+        <Text
+          style={{
+            fontFamily: 'Inter',
+            fontSize: '12px',
+            lineHeight: '18px',
+            fontWeight: 500,
+            color: '#000000',
+          }}
+        >
+          Mi pedido
+        </Text>
+        <Box style={{ position: 'absolute', top: 0, right: 16 }}>
+          <IconTrash
+            size={18}
+            stroke={1.5}
+            style={{ cursor: 'pointer' }}
+            onClick={onClose}
+          />
+        </Box>
+      </Box>
+
+      <Divider
+        style={{
+          width: '90%',
+          margin: '0 auto 8px',
+          borderWidth: '0.7px',
+          borderStyle: 'solid',
+          borderColor: '#EEF2F6',
+        }}
+      />
+
+      <Box
+        style={{
+          maxHeight: '200px',
+          overflowY: 'auto',
+          padding: '4px 16px 8px',
+        }}
+      >
+        {cartItems.map((item, index) => (
+          <Box key={item.productId} mb={12}>
+            <Box
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <Box style={{ display: 'flex', alignItems: 'center' }}>
+                <Text
+                  style={{
+                    color: '#939393',
+                    fontFamily: 'Inter',
+                    fontSize: '10px',
+                    lineHeight: '18px',
+                    fontWeight: 400,
+                    marginRight: '4px',
+                  }}
+                >
+                  {item.quantity}x
+                </Text>
+                <Text
+                  style={{
+                    fontFamily: 'Inter',
+                    fontSize: '10px',
+                    lineHeight: '18px',
+                    fontWeight: 400,
+                    color: '#000000',
+                  }}
+                >
+                  {item.product.name}
+                </Text>
+              </Box>
+              <Text
+                style={{
+                  fontFamily: 'Inter',
+                  fontSize: '10px',
+                  lineHeight: '18px',
+                  fontWeight: 400,
+                  color: '#000000',
+                  textAlign: 'right',
+                }}
+              >
+                ${(item.product.price * item.quantity).toLocaleString()}
               </Text>
-            </Group>
-            <Button variant="filled" color="primary" size="md" fullWidth>
-              {CART_TEXTS.CHECKOUT}
-            </Button>
+            </Box>
           </Box>
-        </>
-      )}
-    </Drawer>
+        ))}
+      </Box>
+
+      <Divider
+        style={{
+          width: '90%',
+          margin: '0 auto 8px',
+          borderWidth: '0.7px',
+          borderStyle: 'solid',
+          borderColor: '#EEF2F6',
+        }}
+      />
+
+      <Box style={{ padding: '8px 16px 0' }}>
+        <Box
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '16px',
+          }}
+        >
+          <Text
+            style={{
+              fontFamily: 'Inter',
+              fontSize: '12px',
+              lineHeight: '18px',
+              fontWeight: 500,
+            }}
+          >
+            Total
+          </Text>
+          <Text
+            style={{
+              fontFamily: 'Inter',
+              fontSize: '12px',
+              lineHeight: '18px',
+              fontWeight: 500,
+              textAlign: 'right',
+            }}
+          >
+            ${cartTotal.toLocaleString()}
+          </Text>
+        </Box>
+
+        <Button
+          fullWidth
+          style={{
+            backgroundColor: '#000000',
+            color: '#B3FF00',
+            height: '40px',
+            fontSize: '16px',
+            lineHeight: '20px',
+            borderRadius: '4px',
+            fontFamily: 'Inter',
+            fontWeight: 600,
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Box
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: '12px',
+            }}
+          >
+            <IconShoppingCart size={20} color="#B3FF00" stroke={2} />
+            <Text
+              style={{ color: '#B3FF00', fontSize: '16px', fontWeight: 600 }}
+            >
+              Ver Carrito
+            </Text>
+          </Box>
+        </Button>
+      </Box>
+    </Box>
   );
-}
+};
 
 export default CartDrawer;

@@ -1,0 +1,67 @@
+.productPageContainer {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #ffffff;
+  padding: 0 80px 0 80px;
+  padding-right: 296px;
+}
+
+.categoriesContainer {
+  background-color: #ffffff;
+  overflow-x: auto;
+  padding: 0 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.tabsList {
+  display: flex;
+  gap: 16px;
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.tab {
+  padding: 8px 16px;
+  background-color: #ffffff;
+  border-radius: 20px;
+  color: #495057;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: 1px solid #dee2e6;
+}
+
+.tab[data-active] {
+  background-color: #b3ff00;
+  color: #000000;
+  border-color: #b3ff00;
+}
+
+.productsContainer {
+  flex: 1;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 200px);
+  gap: 16px;
+  overflow-y: auto;
+  background-color: #ffffff;
+  justify-content: space-between;
+}
+
+.sectionsContainer {
+  flex: 1;
+  padding: 0px;
+  overflow-y: auto;
+  background-color: #ffffff;
+}
+
+@media (max-width: 768px) {
+  .productPageContainer {
+    padding: 0 16px;
+  }
+
+  .productsContainer {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+  }
+}

@@ -12,13 +12,19 @@ interface BranchCardProps {
   onClick?: () => void;
 }
 
-export function BranchCard({ branch, onClick }: BranchCardProps) {
+const BranchCard = ({ branch, onClick }: BranchCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
 
+  const handleClick = () => {
+    if (onClick && branch.isOpen) {
+      onClick();
+    }
+  };
+
   return (
     <Card
-      onClick={onClick}
+      onClick={handleClick}
       style={{
         boxSizing: 'border-box',
         width: '100%',
@@ -31,7 +37,8 @@ export function BranchCard({ branch, onClick }: BranchCardProps) {
         borderRadius: '8px',
         padding: '6px 6px 8px 8px',
         transition: 'background 0.2s, border 0.2s',
-        cursor: 'pointer',
+        cursor: branch.isOpen ? 'pointer' : 'not-allowed',
+        opacity: branch.isOpen ? 1 : 0.7,
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -50,7 +57,7 @@ export function BranchCard({ branch, onClick }: BranchCardProps) {
           borderRadius: '4px',
         }}
       >
-        <BranchBadge isOpen={branch.isOpen} />
+        <BranchBadge isOpen={branch.isOpen ?? false} />
       </Box>
 
       {/* White box with branch name */}
@@ -124,6 +131,6 @@ export function BranchCard({ branch, onClick }: BranchCardProps) {
       </Box>
     </Card>
   );
-}
+};
 
 export default BranchCard;
