@@ -16,6 +16,7 @@ interface CartDrawerProps {
   onClose: () => void;
   cartItems: CartItem[];
   cartTotal: number;
+  onClearCart?: () => void;
 }
 
 const CartDrawer = ({
@@ -23,6 +24,7 @@ const CartDrawer = ({
   onClose,
   cartItems,
   cartTotal,
+  onClearCart,
 }: CartDrawerProps) => {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -34,7 +36,20 @@ const CartDrawer = ({
   useEffect(() => {
     console.log('CartDrawer received cartItems:', cartItems);
     console.log('CartDrawer is visible:', isVisible);
-  }, [cartItems, isVisible]);
+    console.log('onClearCart function provided:', !!onClearCart);
+  }, [cartItems, isVisible, onClearCart]);
+
+  const handleClearCart = () => {
+    console.log('Trash icon clicked, attempting to clear cart');
+    if (onClearCart) {
+      console.log('onClearCart function exists, calling it');
+      onClearCart();
+    } else {
+      console.log('onClearCart function is not provided');
+      // Fallback implementation if onClearCart is not provided
+      alert('Please implement onClearCart function in the parent component');
+    }
+  };
 
   // For empty cart - compact floating card with specified dimensions
   if (cartItems.length === 0) {
@@ -160,7 +175,7 @@ const CartDrawer = ({
             size={18}
             stroke={1.5}
             style={{ cursor: 'pointer' }}
-            onClick={onClose}
+            onClick={handleClearCart}
           />
         </Box>
       </Box>

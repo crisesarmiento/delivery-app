@@ -25,6 +25,7 @@ export default function BranchProductsPage() {
     items: cartContextItems,
     addToCart: addToCartContext,
     getTotalPrice,
+    clearCart,
   } = useCart();
 
   useEffect(() => {
@@ -182,6 +183,11 @@ export default function BranchProductsPage() {
     return acc;
   }, {} as Record<string, IProduct[]>);
 
+  // Add a function to handle clearing the cart
+  const handleClearCart = () => {
+    clearCart();
+  };
+
   return (
     <Box className={styles.productPageContainer}>
       {/* Use the reusable Header component with product page configuration */}
@@ -236,6 +242,7 @@ export default function BranchProductsPage() {
         onClose={() => setCartDrawerOpened(false)}
         cartItems={cartItems}
         cartTotal={cartTotal}
+        onClearCart={handleClearCart}
       />
     </Box>
   );
