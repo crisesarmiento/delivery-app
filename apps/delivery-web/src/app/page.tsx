@@ -52,7 +52,6 @@ export default function HomePage() {
                 <BranchCard
                   branch={branch}
                   onClick={() => {
-                    console.log(`Branch clicked: ${branch.name}`);
                     router.push(`/branches/${branch.id}`);
                   }}
                 />

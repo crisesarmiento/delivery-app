@@ -21,7 +21,6 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
   const { getCartItemQuantity, updateCartItem, addToCart } = useCart();
   const quantity = getCartItemQuantity(product.id);
-  console.log('ProductCard rendered with product:', product);
 
   // Check if product has discount
   const hasDiscount =
@@ -36,14 +35,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
   const handleCartIconClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    console.log('Cart icon clicked');
     setShowModal(true);
-    console.log('showModal set to true:', true);
   };
 
   const handleAddToCart = (newQuantity: number) => {
-    console.log('Adding to cart:', product.name, 'quantity:', newQuantity);
-
     if (newQuantity === 0) {
       updateCartItem(product.id, { quantity: 0 });
     } else {

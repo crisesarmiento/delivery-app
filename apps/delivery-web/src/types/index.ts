@@ -3,10 +3,11 @@
 // Branch type
 export interface IBranch {
   id: string | number;
-  nombre: string;
-  direccion: string;
-  telefono?: string;
-  horario?: string;
+  name: string;
+  description: string;
+  address: string;
+  phoneNumber?: string;
+  openingHours?: string;
   isOpen?: boolean;
   imageUrl?: string;
 }
@@ -22,6 +23,7 @@ export interface IProduct {
   ingredients?: string;
   category?: string;
   tags?: string[];
+  branchId: string;
 }
 
 // Order status enum

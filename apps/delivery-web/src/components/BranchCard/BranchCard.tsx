@@ -57,7 +57,7 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
           borderRadius: '4px',
         }}
       >
-        <BranchBadge isOpen={branch.isOpen} />
+        <BranchBadge isOpen={branch.isOpen ?? false} />
       </Box>
 
       {/* White box with branch name */}

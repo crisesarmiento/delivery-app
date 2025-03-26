@@ -70,6 +70,7 @@ const commonCondiments: ICondimentOption[] = [
 export const products: IProductWithCustomization[] = [
   {
     id: '1',
+    branchId: '1',
     name: 'Hamburguesa Clásica',
     description: 'Hamburguesa de carne con lechuga, tomate y queso cheddar',
     price: 8500,
@@ -88,6 +89,7 @@ export const products: IProductWithCustomization[] = [
   },
   {
     id: '2',
+    branchId: '1',
     name: 'Hamburguesa con Bacon',
     description:
       'Hamburguesa de carne con bacon crujiente, queso y cebolla caramelizada',
@@ -110,6 +112,7 @@ export const products: IProductWithCustomization[] = [
   },
   {
     id: '3',
+    branchId: '1',
     name: 'Hamburguesa Vegetariana',
     description:
       'Hamburguesa vegetariana con medallón de lentejas, lechuga y tomate',
@@ -153,6 +156,7 @@ export const products: IProductWithCustomization[] = [
   },
   {
     id: '4',
+    branchId: '1',
     name: 'Promo Barbacoa',
     description: 'Hamburguesa BBQ con papas fritas y bebida',
     price: 12800,
@@ -185,6 +189,7 @@ export const products: IProductWithCustomization[] = [
   },
   {
     id: '5',
+    branchId: '1',
     name: 'Papas Fritas',
     description: 'Crujientes papas fritas',
     price: 3500,
@@ -217,6 +222,7 @@ export const products: IProductWithCustomization[] = [
   },
   {
     id: '6',
+    branchId: '1',
     name: 'Lomo Completo Grande',
     description: 'Sándwich de lomo grande con lechuga, tomate y mayonesa',
     price: 19.5,
@@ -234,6 +240,7 @@ export const products: IProductWithCustomization[] = [
   },
   {
     id: '7',
+    branchId: '1',
     name: 'Lomo de Pollo',
     description: 'Sándwich de pollo grillado con lechuga y tomate',
     price: 15.99,
@@ -251,6 +258,7 @@ export const products: IProductWithCustomization[] = [
   },
   {
     id: '8',
+    branchId: '1',
     name: 'Lomo Veggie',
     description:
       'Sándwich vegetariano con proteína vegetal y vegetales frescos',

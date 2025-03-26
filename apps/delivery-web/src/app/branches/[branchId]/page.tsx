@@ -33,7 +33,7 @@ export default function BranchProductsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('promo');
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [cartDrawerOpened, setCartDrawerOpened] = useState(false);
+  const [cartDrawerOpened, setCartDrawerOpened] = useState(true);
   const [expandedSections, setExpandedSections] = useState<
     Record<string, boolean>
   >({});

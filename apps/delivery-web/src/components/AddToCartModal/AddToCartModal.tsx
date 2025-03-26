@@ -38,6 +38,7 @@ const AddToCartModal = ({
   onAddToCart,
   initialQuantity = 1,
 }: AddToCartModalProps) => {
+  const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(initialQuantity);
   const modalRef = useRef<HTMLDivElement>(null);
   const [showIngredients, setShowIngredients] = useState(true);
@@ -174,11 +175,6 @@ const AddToCartModal = ({
     // Get selected ingredients and condiments
     const selectedIngredients = ingredients.filter((ing) => ing.quantity > 0);
 
-    // Calculate additional cost from ingredients
-    const additionalCost = selectedIngredients.reduce((total, ing) => {
-      return total + (ing.price || 0) * ing.quantity;
-    }, 0);
-
     // Create cart item with customizations
     const cartItem: CartItem = {
       product,
@@ -188,6 +184,7 @@ const AddToCartModal = ({
       comments: comments.trim() || undefined,
     };
 
+    addToCart(cartItem);
     onAddToCart(quantity);
   };
 
