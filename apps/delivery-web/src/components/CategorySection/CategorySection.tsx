@@ -50,11 +50,7 @@ const CategorySection = ({
       {isExpanded && (
         <Box className={styles.productsGrid}>
           {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onAddToCart={onAddToCart}
-            />
+            <ProductCard key={product.id} product={product} />
           ))}
         </Box>
       )}

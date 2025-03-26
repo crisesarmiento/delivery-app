@@ -21,6 +21,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
   const { getCartItemQuantity, updateCartItem, addToCart } = useCart();
   const quantity = getCartItemQuantity(product.id);
+  console.log('ProductCard rendered with product:', product);
 
   // Check if product has discount
   const hasDiscount =

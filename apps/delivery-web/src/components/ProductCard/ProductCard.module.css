@@ -1,7 +1,7 @@
 .productCard {
   box-sizing: border-box;
   width: 200px;
-  height: 256px;
+  height: 253px;
   background: #ffffff;
   border-radius: 8px;
   cursor: pointer;
@@ -9,7 +9,7 @@
   padding: 6px 8px;
   display: flex;
   flex-direction: column;
-  overflow: visible;
+  overflow: hidden;
   transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s,
     border 0.2s;
   margin: 0; /* Ensure no margins */
@@ -17,7 +17,7 @@
 
 .imageContainer {
   width: 100%;
-  height: 184px;
+  height: 181px;
   position: relative;
   background: #000;
 }
@@ -29,11 +29,11 @@
 }
 
 .contentContainer {
-  padding: 12px;
+  padding: 2px 4px;
   display: flex;
   flex-direction: column;
   flex: 1;
-  min-height: 60px;
+  height: 60px;
 }
 
 .productName {
@@ -42,7 +42,7 @@
   line-height: 18px;
   font-weight: 400;
   color: #667085;
-  margin-bottom: 4px;
+  margin-bottom: 0px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -51,11 +51,11 @@
 }
 
 .priceContainer {
+  height: 36px;
   display: flex;
   flex-direction: column;
   margin-top: auto;
-  margin-bottom: 8px;
-  min-height: 36px;
+  margin-bottom: 2px;
   justify-content: center;
   position: relative;
   z-index: 15; /* Ensure prices are always visible, even on hover */
@@ -70,6 +70,7 @@
   text-decoration: line-through;
   color: #667085;
   margin-bottom: 2px;
+  z-index: 15;
 }
 
 .price {
@@ -79,6 +80,7 @@
   line-height: 18px;
   text-align: center;
   color: #101828;
+  z-index: 15;
 }
 
 .discountBadge {
