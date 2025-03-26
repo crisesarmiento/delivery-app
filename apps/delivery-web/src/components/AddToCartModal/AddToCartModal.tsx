@@ -14,6 +14,8 @@ import {
 } from '@tabler/icons-react';
 import { IProduct } from '../../types';
 import styles from './AddToCartModal.module.css';
+import { getProductById } from '../../mocks/products.mock';
+import { useCart, CartItem } from '../../context/CartContext';
 
 interface IngredientItem {
   name: string;
@@ -40,17 +42,42 @@ const AddToCartModal = ({
   const modalRef = useRef<HTMLDivElement>(null);
   const [showIngredients, setShowIngredients] = useState(true);
   const [showCondiments, setShowCondiments] = useState(true);
+  const [comments, setComments] = useState('');
 
-  // Mocked ingredients based on the product
-  const [ingredients, setIngredients] = useState<IngredientItem[]>([
-    { name: 'Lechuga', quantity: 2 },
-    { name: 'Tomate', quantity: 0, price: 1000 },
-    { name: 'Cebolla morada', quantity: 0 },
-    { name: 'Cebolla caramelizada', quantity: 0 },
-  ]);
+  // Get product with customization options from mock
+  const productWithCustomization = getProductById(product.id);
 
-  // Mocked condiments
-  const [condiments, setCondiments] = useState<string[]>(['Mayonesa']);
+  // Initialize ingredients based on the product customization options
+  const [ingredients, setIngredients] = useState<IngredientItem[]>([]);
+
+  // Initialize condiments
+  const [condiments, setCondiments] = useState<string[]>([]);
+
+  // Set up initial ingredients and condiments from product data
+  useEffect(() => {
+    if (productWithCustomization && opened) {
+      // Set up ingredients
+      const initialIngredients =
+        productWithCustomization.customization.ingredientOptions.map(
+          (option) => ({
+            name: option.name,
+            quantity: option.default ? 1 : 0,
+            price: option.price,
+          })
+        );
+      setIngredients(initialIngredients);
+
+      // Set up condiments
+      const initialCondiments =
+        productWithCustomization.customization.condimentOptions
+          .filter((option) => option.default)
+          .map((option) => option.name);
+      setCondiments(initialCondiments);
+
+      // Reset comments
+      setComments('');
+    }
+  }, [productWithCustomization, opened]);
 
   // Calculate if product has discount (for demo purposes)
   const hasDiscount =
@@ -96,10 +123,37 @@ const AddToCartModal = ({
     const newIngredients = [...ingredients];
     const newQuantity = newIngredients[index].quantity + change;
 
+    // Check if we have reached max ingredients selection
+    const currentSelections = newIngredients.filter(
+      (ing) => ing.quantity > 0
+    ).length;
+    const maxSelections =
+      productWithCustomization?.customization?.maxIngredientSelections || 5;
+
+    // Only allow adding if we haven't reached the max
+    if (
+      change > 0 &&
+      newQuantity > 0 &&
+      currentSelections >= maxSelections &&
+      newIngredients[index].quantity === 0
+    ) {
+      console.log('Reached max ingredient selections');
+      return;
+    }
+
     // Check limits
     if (newQuantity >= 0) {
-      newIngredients[index].quantity = newQuantity;
-      setIngredients(newIngredients);
+      // Check if there's a max quantity for this ingredient
+      const ingredientOption =
+        productWithCustomization?.customization?.ingredientOptions.find(
+          (opt) => opt.name === newIngredients[index].name
+        );
+      const maxQuantity = ingredientOption?.maxQuantity || 2;
+
+      if (newQuantity <= maxQuantity) {
+        newIngredients[index].quantity = newQuantity;
+        setIngredients(newIngredients);
+      }
     }
   };
 
@@ -107,19 +161,53 @@ const AddToCartModal = ({
     if (condiments.includes(condiment)) {
       setCondiments(condiments.filter((c) => c !== condiment));
     } else {
-      setCondiments([...condiments, condiment]);
+      // Check if we've reached the max condiment selections
+      const maxCondiments =
+        productWithCustomization?.customization?.maxCondimentSelections || 3;
+      if (condiments.length < maxCondiments) {
+        setCondiments([...condiments, condiment]);
+      }
     }
   };
 
   const handleAddToCart = () => {
+    // Get selected ingredients and condiments
+    const selectedIngredients = ingredients.filter((ing) => ing.quantity > 0);
+
+    // Calculate additional cost from ingredients
+    const additionalCost = selectedIngredients.reduce((total, ing) => {
+      return total + (ing.price || 0) * ing.quantity;
+    }, 0);
+
+    // Create cart item with customizations
+    const cartItem: CartItem = {
+      product,
+      quantity,
+      ingredients: selectedIngredients,
+      condiments,
+      comments: comments.trim() || undefined,
+    };
+
     onAddToCart(quantity);
+  };
+
+  // Comments handler
+  const handleCommentsChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    setComments(event.currentTarget.value);
+    const currentLength = event.currentTarget.value.length;
+    const commentCounter = document.getElementById('commentCounter');
+    if (commentCounter) {
+      commentCounter.innerText = `${currentLength}/100`;
+    }
   };
 
   return (
     <div className={styles.modalOverlay}>
       <div className={styles.modalWrapper}>
         <div ref={modalRef} className={styles.modalContent}>
-          {/* Black header */}
+          {/* Black header - fixed */}
           <div className={styles.modalHeader}>
             {hasDiscount && (
               <div className={styles.discountBadge}>
@@ -159,174 +247,196 @@ const AddToCartModal = ({
 
           {/* Content area */}
           <div className={styles.container}>
-            {/* Product image on the right */}
-            <Box className={styles.imageContainer}>
-              {product.imageUrl && (
-                <Image
-                  src={product.imageUrl}
-                  alt={product.name}
-                  className={styles.productImage}
-                />
-              )}
-            </Box>
+            {/* Product image and basic info section */}
+            <div className={styles.topSection}>
+              {/* Basic product info on the left */}
+              <Box className={styles.contentContainer}>
+                <div className={styles.fixedProductInfo}>
+                  <Text className={styles.productIngredients}>
+                    {product.ingredients}
+                  </Text>
+                  <Text className={styles.additionalInfo}>
+                    En comentarios, aclaranos si lo preferis sin chimi. Gracias!
+                  </Text>
 
-            {/* Product details on the left */}
-            <Box className={styles.contentContainer}>
-              <Text className={styles.productIngredients}>
-                {product.ingredients}
-              </Text>
-              <Text className={styles.additionalInfo}>
-                En comentarios, aclaranos si lo preferis sin chimi. Gracias!
-              </Text>
-
-              <Box className={styles.commentInput}>
-                <Text className={styles.commentLabel}>Comentarios</Text>
-                <Textarea
-                  placeholder=""
-                  maxLength={100}
-                  autosize={false}
-                  onChange={(event) => {
-                    const currentLength = event.currentTarget.value.length;
-                    const commentCounter =
-                      document.getElementById('commentCounter');
-                    if (commentCounter) {
-                      commentCounter.innerText = `${currentLength}/100`;
-                    }
-                  }}
-                />
-                <Text id="commentCounter" className={styles.commentCounter}>
-                  0/100
-                </Text>
+                  {productWithCustomization?.customization?.allowComments && (
+                    <Box className={styles.commentInput}>
+                      <Text className={styles.commentLabel}>Comentarios</Text>
+                      <Textarea
+                        placeholder=""
+                        maxLength={100}
+                        autosize={false}
+                        value={comments}
+                        onChange={handleCommentsChange}
+                      />
+                      <Text
+                        id="commentCounter"
+                        className={styles.commentCounter}
+                      >
+                        {comments.length}/100
+                      </Text>
+                    </Box>
+                  )}
+                </div>
               </Box>
 
-              {/* Ingredients section */}
-              <Box mb={20}>
-                <Box
-                  className={styles.sectionHeader}
-                  onClick={() => setShowIngredients(!showIngredients)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <Text className={styles.sectionTitle}>
-                    Elige hasta 2 Ingredientes
-                  </Text>
-                  {showIngredients ? (
-                    <IconChevronUp size={24} stroke={1.5} />
-                  ) : (
-                    <IconChevronDown size={24} stroke={1.5} />
-                  )}
-                </Box>
-
-                {showIngredients && (
-                  <>
-                    {ingredients.map((ingredient, index) => (
-                      <Box key={ingredient.name}>
-                        <Box className={styles.ingredientRow}>
-                          <Flex align="center" gap={10}>
-                            <Text className={styles.ingredientName}>
-                              {ingredient.name}
-                            </Text>
-                            {ingredient.price && (
-                              <Box className={styles.priceTag}>
-                                + ${ingredient.price.toLocaleString()}
-                              </Box>
-                            )}
-                          </Flex>
-
-                          <Box className={styles.quantityControl}>
-                            <IconCircleMinus
-                              size={18}
-                              stroke={1.5}
-                              style={{ cursor: 'pointer' }}
-                              onClick={() => handleUpdateIngredient(index, -1)}
-                            />
-                            <Text className={styles.quantityText}>
-                              {ingredient.quantity}
-                            </Text>
-                            <IconCirclePlus
-                              size={18}
-                              stroke={1.5}
-                              style={{
-                                cursor: 'pointer',
-                                background:
-                                  ingredient.quantity > 0
-                                    ? '#B3FF00'
-                                    : 'transparent',
-                                borderRadius: '50%',
-                              }}
-                              onClick={() => handleUpdateIngredient(index, 1)}
-                            />
-                          </Box>
-                        </Box>
-                        {index < ingredients.length - 1 && (
-                          <hr className={styles.ingredientDivider} />
-                        )}
-                      </Box>
-                    ))}
-                  </>
+              {/* Product image on the right */}
+              <Box className={styles.imageContainer}>
+                {product.imageUrl && (
+                  <Image
+                    src={product.imageUrl}
+                    alt={product.name}
+                    className={styles.productImage}
+                  />
                 )}
               </Box>
+            </div>
+
+            {/* Scrollable sections - full width */}
+            <div className={styles.scrollableContent}>
+              {/* Ingredients section */}
+              {(productWithCustomization?.customization?.ingredientOptions
+                ?.length ?? 0) > 0 && (
+                <Box mb={20}>
+                  <Box
+                    className={styles.sectionHeader}
+                    onClick={() => setShowIngredients(!showIngredients)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <Text className={styles.sectionTitle}>
+                      Elige hasta{' '}
+                      {productWithCustomization?.customization
+                        ?.maxIngredientSelections || 5}{' '}
+                      Ingredientes
+                    </Text>
+                    {showIngredients ? (
+                      <IconChevronUp size={24} stroke={1.5} />
+                    ) : (
+                      <IconChevronDown size={24} stroke={1.5} />
+                    )}
+                  </Box>
+
+                  {showIngredients && (
+                    <>
+                      {ingredients.map((ingredient, index) => (
+                        <Box key={ingredient.name}>
+                          <Box className={styles.ingredientRow}>
+                            <Flex align="center" gap={10}>
+                              <Text className={styles.ingredientName}>
+                                {ingredient.name}
+                              </Text>
+                              {ingredient.price && (
+                                <Box className={styles.priceTag}>
+                                  + ${ingredient.price.toLocaleString()}
+                                </Box>
+                              )}
+                            </Flex>
+
+                            <Box className={styles.quantityControl}>
+                              <IconCircleMinus
+                                size={18}
+                                stroke={1.5}
+                                style={{ cursor: 'pointer' }}
+                                onClick={() =>
+                                  handleUpdateIngredient(index, -1)
+                                }
+                              />
+                              <Text className={styles.quantityText}>
+                                {ingredient.quantity}
+                              </Text>
+                              <IconCirclePlus
+                                size={18}
+                                stroke={1.5}
+                                style={{
+                                  cursor: 'pointer',
+                                  background:
+                                    ingredient.quantity > 0
+                                      ? '#B3FF00'
+                                      : 'transparent',
+                                  borderRadius: '50%',
+                                }}
+                                onClick={() => handleUpdateIngredient(index, 1)}
+                              />
+                            </Box>
+                          </Box>
+                          {index < ingredients.length - 1 && (
+                            <hr className={styles.ingredientDivider} />
+                          )}
+                        </Box>
+                      ))}
+                    </>
+                  )}
+                </Box>
+              )}
 
               {/* Condiments section */}
-              <Box mb={20}>
-                <Box
-                  className={styles.sectionHeader}
-                  onClick={() => setShowCondiments(!showCondiments)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <Text className={styles.sectionTitle}>Elige 2 Aderezos</Text>
-                  {showCondiments ? (
-                    <IconChevronUp size={24} stroke={1.5} />
-                  ) : (
-                    <IconChevronDown size={24} stroke={1.5} />
+              {(productWithCustomization?.customization?.condimentOptions
+                ?.length ?? 0) > 0 && (
+                <Box mb={20}>
+                  <Box
+                    className={styles.sectionHeader}
+                    onClick={() => setShowCondiments(!showCondiments)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <Text className={styles.sectionTitle}>
+                      Elige{' '}
+                      {productWithCustomization?.customization
+                        ?.maxCondimentSelections || 3}{' '}
+                      Aderezos
+                    </Text>
+                    {showCondiments ? (
+                      <IconChevronUp size={24} stroke={1.5} />
+                    ) : (
+                      <IconChevronDown size={24} stroke={1.5} />
+                    )}
+                  </Box>
+
+                  {showCondiments && (
+                    <>
+                      {productWithCustomization?.customization?.condimentOptions.map(
+                        (condiment, index) => (
+                          <Box key={condiment.name}>
+                            <Box className={styles.ingredientRow}>
+                              <Text className={styles.ingredientName}>
+                                {condiment.name}
+                              </Text>
+                              <Box
+                                className={`${styles.checkbox} ${
+                                  condiments.includes(condiment.name)
+                                    ? styles.checkedBox
+                                    : ''
+                                }`}
+                                onClick={() =>
+                                  handleToggleCondiment(condiment.name)
+                                }
+                                style={{ cursor: 'pointer' }}
+                              >
+                                {condiments.includes(condiment.name) && (
+                                  <IconCheck
+                                    size={16}
+                                    stroke={1.5}
+                                    color="#000000"
+                                  />
+                                )}
+                              </Box>
+                            </Box>
+                            {index <
+                              (productWithCustomization?.customization
+                                ?.condimentOptions.length || 0) -
+                                1 && (
+                              <hr className={styles.ingredientDivider} />
+                            )}
+                          </Box>
+                        )
+                      )}
+                    </>
                   )}
                 </Box>
-
-                {showCondiments && (
-                  <>
-                    <Box className={styles.ingredientRow}>
-                      <Text className={styles.ingredientName}>Mayonesa</Text>
-                      <Box
-                        className={`${styles.checkbox} ${
-                          condiments.includes('Mayonesa')
-                            ? styles.checkedBox
-                            : ''
-                        }`}
-                        onClick={() => handleToggleCondiment('Mayonesa')}
-                        style={{ cursor: 'pointer' }}
-                      >
-                        {condiments.includes('Mayonesa') && (
-                          <IconCheck size={16} stroke={1.5} color="#000000" />
-                        )}
-                      </Box>
-                    </Box>
-                    <hr className={styles.ingredientDivider} />
-
-                    <Box className={styles.ingredientRow}>
-                      <Text className={styles.ingredientName}>Ketchup</Text>
-                      <Box
-                        className={`${styles.checkbox} ${
-                          condiments.includes('Ketchup')
-                            ? styles.checkedBox
-                            : ''
-                        }`}
-                        onClick={() => handleToggleCondiment('Ketchup')}
-                        style={{
-                          cursor: 'pointer',
-                          border: '1px solid #939393',
-                        }}
-                      >
-                        {condiments.includes('Ketchup') && (
-                          <IconCheck size={16} stroke={1.5} color="#000000" />
-                        )}
-                      </Box>
-                    </Box>
-                  </>
-                )}
-              </Box>
-            </Box>
+              )}
+            </div>
           </div>
 
-          {/* Footer with action buttons */}
+          {/* Footer with action buttons - fixed */}
           <div className={styles.footerContainer}>
             <Flex className={styles.footerActions}>
               <div className={styles.quantityControlWrapper}>

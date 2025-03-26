@@ -1,6 +1,6 @@
 import { IBranch, IOrder, IOrderItem, IProduct, OrderStatus } from '../types';
 import { branchesMock } from './branches.mock';
-import { productsMock } from './products.mock';
+import { products as productsMock } from './products.mock';
 
 // Mock branches data
 export const branches: IBranch[] = branchesMock;

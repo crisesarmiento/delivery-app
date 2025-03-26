@@ -2,27 +2,26 @@
 
 // Branch type
 export interface IBranch {
-  id: string;
-  name: string;
-  description: string;
-  address: string;
-  isOpen: boolean;
-  openingHours: string;
-  phoneNumber: string;
+  id: string | number;
+  nombre: string;
+  direccion: string;
+  telefono?: string;
+  horario?: string;
+  isOpen?: boolean;
   imageUrl?: string;
 }
 
 // Product type
 export interface IProduct {
-  id: string;
+  id: string | number;
   name: string;
-  description: string;
-  ingredients: string;
+  description?: string;
   price: number;
-  category: string;
   imageUrl?: string;
   isAvailable: boolean;
-  branchId: string;
+  ingredients?: string;
+  category?: string;
+  tags?: string[];
 }
 
 // Order status enum

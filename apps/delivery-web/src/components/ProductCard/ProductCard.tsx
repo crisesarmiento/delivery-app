@@ -8,22 +8,19 @@ import styles from './ProductCard.module.css';
 import DiscountBadge from '../DiscountBadge';
 import QuantityControl from '../QuantityControl';
 import AddToCartModal from '../AddToCartModal/AddToCartModal';
+import { useCart } from '../../context/CartContext';
 
 interface ProductCardProps {
   product: IProduct;
-  onAddToCart?: (product: IProduct, quantity: number) => void;
-  initialQuantity?: number;
 }
 
-const ProductCard = ({
-  product,
-  onAddToCart,
-  initialQuantity = 0,
-}: ProductCardProps) => {
+const ProductCard = ({ product }: ProductCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
-  const [quantity, setQuantity] = useState(initialQuantity);
   const [showQuantityControl, setShowQuantityControl] = useState(false);
   const [showModal, setShowModal] = useState(false);
+
+  const { getCartItemQuantity, updateCartItem, addToCart } = useCart();
+  const quantity = getCartItemQuantity(product.id);
 
   // Check if product has discount
   const hasDiscount =
@@ -45,18 +42,18 @@ const ProductCard = ({
 
   const handleAddToCart = (newQuantity: number) => {
     console.log('Adding to cart:', product.name, 'quantity:', newQuantity);
-    if (onAddToCart && product) {
-      onAddToCart(product, newQuantity);
-      setQuantity(newQuantity);
-      setShowModal(false);
-    }
-  };
 
-  // const handleQuantityControlClick = () => {
-  //   if (quantity > 0) {
-  //     setShowQuantityControl(true);
-  //   }
-  // };
+    if (newQuantity === 0) {
+      updateCartItem(product.id, { quantity: 0 });
+    } else {
+      addToCart({
+        product,
+        quantity: newQuantity,
+      });
+    }
+
+    setShowModal(false);
+  };
 
   return (
     <>
@@ -142,14 +139,17 @@ const ProductCard = ({
                   <QuantityControl
                     initialQuantity={quantity || 1}
                     onChange={(newQuantity) => {
-                      setQuantity(newQuantity);
                       if (newQuantity === 0) {
+                        updateCartItem(product.id, { quantity: 0 });
                         setShowQuantityControl(false);
+                      } else {
+                        updateCartItem(product.id, { quantity: newQuantity });
                       }
                     }}
                     onAddToCart={() => {
-                      if (onAddToCart && product) {
-                        onAddToCart(product, quantity);
+                      if (product && quantity > 0) {
+                        // Just update the quantity without opening modal
+                        updateCartItem(product.id, { quantity: quantity + 1 });
                       }
                     }}
                   />

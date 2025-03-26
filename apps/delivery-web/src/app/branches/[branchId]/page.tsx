@@ -3,13 +3,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Text, Box } from '@mantine/core';
-import { productsMock } from '../../../mocks/products.mock';
+import { products } from '../../../mocks/products.mock';
 import { branchesMock } from '../../../mocks/branches.mock';
 import { IBranch, IProduct } from '../../../types';
 import styles from './page.module.css';
 import ProductsHeader from '@/components/Header/ProductsHeader';
 import CategoryTabs from '@/components/CategoryTabs/CategoryTabs';
-import CartDrawer from '@/components/CartDrawer';
+import CartDrawer from '@/components/CartDrawer/CartDrawer';
 import CategorySection from '@/components/CategorySection';
 
 interface CartItem {
@@ -27,7 +27,7 @@ export default function BranchProductsPage() {
   useEffect(() => {
     console.log('Dynamic route params:', params);
     console.log('Branch ID:', branchId);
-    console.log('Available products for this branch:', productsMock || []);
+    console.log('Available products for this branch:', products || []);
   }, [params, branchId]);
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -51,7 +51,7 @@ export default function BranchProductsPage() {
   }, [currentBranch, branchId, router]);
 
   // Get products for this branch
-  const branchProducts = productsMock || [];
+  const branchProducts = products || [];
 
   // Handle back navigation
   const handleBack = () => {
@@ -67,7 +67,7 @@ export default function BranchProductsPage() {
   const addToCart = (product: IProduct, quantity: number) => {
     // Check if product already in cart
     const existingItemIndex = cartItems.findIndex(
-      (item) => item.productId === product.id
+      (item) => item.productId === String(product.id)
     );
 
     if (existingItemIndex !== -1) {
@@ -80,7 +80,7 @@ export default function BranchProductsPage() {
       setCartItems([
         ...cartItems,
         {
-          productId: product.id,
+          productId: String(product.id),
           quantity,
           product,
         },
@@ -98,9 +98,10 @@ export default function BranchProductsPage() {
 
   // Create categories for tabs from products
   const categories = ['Promo'];
-  branchProducts.forEach((product) => {
-    if (!categories.includes(product.category)) {
-      categories.push(product.category);
+  branchProducts.forEach((product: IProduct) => {
+    const category = product.category;
+    if (category && !categories.includes(category)) {
+      categories.push(category);
     }
   });
 
@@ -152,13 +153,15 @@ export default function BranchProductsPage() {
   // Group products by category
   const productsByCategory = categories.reduce((acc, category) => {
     const categoryProducts = branchProducts
-      .filter((product) =>
+      .filter((product: IProduct) =>
         category.toLowerCase() === 'promo'
-          ? product.category.toLowerCase().includes('promo')
-          : product.category.toLowerCase() === category.toLowerCase()
+          ? product.category?.toLowerCase().includes('promo') ?? false
+          : product.category?.toLowerCase() === category.toLowerCase()
       )
-      .filter((product) =>
-        product.name.toLowerCase().includes(searchQuery.toLowerCase())
+      .filter(
+        (product: IProduct) =>
+          product.name?.toLowerCase().includes(searchQuery.toLowerCase()) ??
+          false
       );
 
     if (categoryProducts.length > 0) {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { IProduct, IApiResponse } from '@/types';
-import { productsMock } from '@/mocks/products.mock';
+import { products as productsMock } from '@/mocks/products.mock';
 
 export const useProducts = (branchId: string) => {
   const [products, setProducts] = useState<IProduct[]>([]);
