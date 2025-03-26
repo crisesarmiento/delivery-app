@@ -318,16 +318,15 @@ const AddToCartModal = ({
                       {ingredients.map((ingredient, index) => (
                         <Box key={ingredient.name}>
                           <Box className={styles.ingredientRow}>
-                            <Flex align="center" gap={10}>
-                              <Text className={styles.ingredientName}>
-                                {ingredient.name}
-                              </Text>
-                              {ingredient.price && (
-                                <Box className={styles.priceTag}>
-                                  + ${ingredient.price.toLocaleString()}
-                                </Box>
-                              )}
-                            </Flex>
+                            <Text className={styles.ingredientName}>
+                              {ingredient.name}
+                            </Text>
+
+                            {ingredient.price && (
+                              <Box className={styles.priceTag}>
+                                + ${ingredient.price.toLocaleString()}
+                              </Box>
+                            )}
 
                             <Box className={styles.quantityControl}>
                               <IconCircleMinus

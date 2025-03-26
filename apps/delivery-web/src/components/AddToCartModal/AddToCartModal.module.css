@@ -357,6 +357,7 @@
   font-size: 10px;
   line-height: 18px;
   color: #000000;
+  flex: 1;
 }
 
 .ingredientDivider {
@@ -378,6 +379,7 @@
   background: #ffffff;
   border: 1px solid #eef2f6;
   border-radius: 4px;
+  margin-left: 10px;
 }
 
 .quantityText {
@@ -397,9 +399,9 @@
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  padding: 4px 8px;
-  gap: 6px;
+  padding: 5px 8px;
   height: 20px;
+  width: 55px;
   background: #b3ff00;
   border-radius: 16px;
   font-family: 'Inter', sans-serif;
@@ -408,7 +410,9 @@
   font-size: 10px;
   line-height: 18px;
   color: #000000;
-  margin-left: 8px;
+  white-space: nowrap;
+  margin-left: auto;
+  margin-right: 10px;
 }
 
 .checkboxContainer {
