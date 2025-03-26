@@ -1,0 +1,36 @@
+.title {
+  color: white;
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.searchContainer {
+  margin-bottom: 1.5rem;
+  display: flex;
+}
+
+.searchInput {
+  max-width: 400px;
+  flex: 1;
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(184px, 1fr));
+  gap: 1rem;
+}
+
+/* Media queries for responsive grid */
+@media (max-width: 768px) {
+  .cardGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .cardGrid {
+    grid-template-columns: 1fr;
+  }
+}
