@@ -3,7 +3,7 @@
 import { Box, Text, Flex, Button, Divider } from '@mantine/core';
 import { IProduct } from '../../types';
 import { useEffect, useState } from 'react';
-import { IconShoppingCart } from '@tabler/icons-react';
+import { IconShoppingCart, IconTrash } from '@tabler/icons-react';
 
 interface CartItem {
   productId: string;
@@ -29,6 +29,12 @@ const CartDrawer = ({
   useEffect(() => {
     setIsVisible(opened);
   }, [opened]);
+
+  // Debug log to check if cartItems data is being received
+  useEffect(() => {
+    console.log('CartDrawer received cartItems:', cartItems);
+    console.log('CartDrawer is visible:', isVisible);
+  }, [cartItems, isVisible]);
 
   // For empty cart - compact floating card with specified dimensions
   if (cartItems.length === 0) {
@@ -122,125 +128,185 @@ const CartDrawer = ({
     <Box
       style={{
         position: 'absolute',
-        top: '330px',
-        right: isVisible ? '40px' : '-360px',
+        top: '406px',
+        right: isVisible ? '40px' : '-240px',
         width: '200px',
-        backgroundColor: '#FFFFFF',
+        maxHeight: '242px',
+        background: '#FFFFFF',
         border: '1px solid #EEF2F6',
-        boxShadow:
-          '0px 10px 10px -5px rgba(0, 0, 0, 0.04), 0px 20px 25px -5px rgba(0, 0, 0, 0.05), 0px 1px 3px rgba(0, 0, 0, 0.05)',
+        boxShadow: '0px 4px 16px rgba(0, 0, 0, 0.1)',
         borderRadius: '4px',
         transition: 'right 0.3s ease',
         zIndex: 1000,
         overflow: 'hidden',
         boxSizing: 'border-box',
+        padding: '12px 0',
       }}
     >
-      <Box p="md">
-        <Flex justify="space-between" align="center">
-          <Text fw={500} fz="md">
-            Mi pedido
-          </Text>
-          <Button
-            variant="subtle"
-            size="sm"
+      <Box style={{ position: 'relative', padding: '0 16px 8px' }}>
+        <Text
+          style={{
+            fontFamily: 'Inter',
+            fontSize: '12px',
+            lineHeight: '18px',
+            fontWeight: 500,
+            color: '#000000',
+          }}
+        >
+          Mi pedido
+        </Text>
+        <Box style={{ position: 'absolute', top: 0, right: 16 }}>
+          <IconTrash
+            size={18}
+            stroke={1.5}
+            style={{ cursor: 'pointer' }}
             onClick={onClose}
-            style={{ padding: 0 }}
-          >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M6 18L18 6M6 6L18 18"
-                stroke="black"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </Button>
-        </Flex>
+          />
+        </Box>
       </Box>
 
-      <Box
-        style={{ width: '100%', height: '1px', backgroundColor: '#EEF2F6' }}
+      <Divider
+        style={{
+          width: '90%',
+          margin: '0 auto 8px',
+          borderWidth: '0.7px',
+          borderStyle: 'solid',
+          borderColor: '#EEF2F6',
+        }}
       />
 
       <Box
-        style={{ maxHeight: '130px', overflowY: 'auto', padding: '8px 16px' }}
+        style={{
+          maxHeight: '200px',
+          overflowY: 'auto',
+          padding: '4px 16px 8px',
+        }}
       >
-        {cartItems.map((item) => (
-          <Box
-            key={item.productId}
-            mb="xs"
-            style={{ borderBottom: '1px solid #eee', paddingBottom: '8px' }}
-          >
-            <Flex justify="space-between" align="center">
-              <Text fw={500} fz="xs">
-                {item.quantity}x {item.product.name}
+        {cartItems.map((item, index) => (
+          <Box key={item.productId} mb={12}>
+            <Box
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <Box style={{ display: 'flex', alignItems: 'center' }}>
+                <Text
+                  style={{
+                    color: '#939393',
+                    fontFamily: 'Inter',
+                    fontSize: '10px',
+                    lineHeight: '18px',
+                    fontWeight: 400,
+                    marginRight: '4px',
+                  }}
+                >
+                  {item.quantity}x
+                </Text>
+                <Text
+                  style={{
+                    fontFamily: 'Inter',
+                    fontSize: '10px',
+                    lineHeight: '18px',
+                    fontWeight: 400,
+                    color: '#000000',
+                  }}
+                >
+                  {item.product.name}
+                </Text>
+              </Box>
+              <Text
+                style={{
+                  fontFamily: 'Inter',
+                  fontSize: '10px',
+                  lineHeight: '18px',
+                  fontWeight: 400,
+                  color: '#000000',
+                  textAlign: 'right',
+                }}
+              >
+                ${(item.product.price * item.quantity).toLocaleString()}
               </Text>
-              <Text fw={700} fz="xs">
-                ${(item.product.price * item.quantity).toFixed(0)}
-              </Text>
-            </Flex>
+            </Box>
           </Box>
         ))}
       </Box>
 
-      <Box p="md" pt="xs">
-        <Flex justify="space-between" align="center" mb="md">
-          <Text fw={700} fz="sm">
+      <Divider
+        style={{
+          width: '90%',
+          margin: '0 auto 8px',
+          borderWidth: '0.7px',
+          borderStyle: 'solid',
+          borderColor: '#EEF2F6',
+        }}
+      />
+
+      <Box style={{ padding: '8px 16px 0' }}>
+        <Box
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '16px',
+          }}
+        >
+          <Text
+            style={{
+              fontFamily: 'Inter',
+              fontSize: '12px',
+              lineHeight: '18px',
+              fontWeight: 500,
+            }}
+          >
             Total
           </Text>
-          <Text fw={700} fz="sm">
-            ${cartTotal.toFixed(0)}
+          <Text
+            style={{
+              fontFamily: 'Inter',
+              fontSize: '12px',
+              lineHeight: '18px',
+              fontWeight: 500,
+              textAlign: 'right',
+            }}
+          >
+            ${cartTotal.toLocaleString()}
           </Text>
-        </Flex>
+        </Box>
 
         <Button
           fullWidth
           style={{
-            backgroundColor: '#F2FE55',
-            color: '#000',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '8px',
-            height: '48px',
-            fontSize: '14px',
+            backgroundColor: '#000000',
+            color: '#B3FF00',
+            height: '40px',
+            fontSize: '16px',
+            lineHeight: '20px',
             borderRadius: '4px',
+            fontFamily: 'Inter',
+            fontWeight: 600,
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
           }}
         >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
+          <Box
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: '12px',
+            }}
           >
-            <path
-              d="M3 6H22L19 16H6L3 6Z"
-              stroke="black"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M8 21C9.10457 21 10 20.1046 10 19C10 17.8954 9.10457 17 8 17C6.89543 17 6 17.8954 6 19C6 20.1046 6.89543 21 8 21Z"
-              stroke="black"
-              strokeWidth="2"
-            />
-            <path
-              d="M17 21C18.1046 21 19 20.1046 19 19C19 17.8954 18.1046 17 17 17C15.8954 17 15 17.8954 15 19C15 20.1046 15.8954 21 17 21Z"
-              stroke="black"
-              strokeWidth="2"
-            />
-          </svg>
-          Ver Carrito
+            <IconShoppingCart size={20} color="#B3FF00" stroke={2} />
+            <Text
+              style={{ color: '#B3FF00', fontSize: '16px', fontWeight: 600 }}
+            >
+              Ver Carrito
+            </Text>
+          </Box>
         </Button>
       </Box>
     </Box>

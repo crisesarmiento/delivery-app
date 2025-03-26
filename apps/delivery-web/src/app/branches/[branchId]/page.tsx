@@ -11,18 +11,21 @@ import ProductsHeader from '@/components/Header/ProductsHeader';
 import CategoryTabs from '@/components/CategoryTabs/CategoryTabs';
 import CartDrawer from '@/components/CartDrawer/CartDrawer';
 import CategorySection from '@/components/CategorySection';
-
-interface CartItem {
-  productId: string;
-  quantity: number;
-  product: IProduct;
-}
+import {
+  useCart,
+  CartItem as CartContextItem,
+} from '../../../context/CartContext';
 
 export default function BranchProductsPage() {
   const params = useParams();
   const router = useRouter();
   const branchId = (params?.branchId as string) || '';
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const {
+    items: cartContextItems,
+    addToCart: addToCartContext,
+    getTotalPrice,
+  } = useCart();
 
   useEffect(() => {
     console.log('Dynamic route params:', params);
@@ -32,7 +35,6 @@ export default function BranchProductsPage() {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('promo');
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [cartDrawerOpened, setCartDrawerOpened] = useState(true);
   const [expandedSections, setExpandedSections] = useState<
     Record<string, boolean>
@@ -65,36 +67,45 @@ export default function BranchProductsPage() {
 
   // Add product to cart
   const addToCart = (product: IProduct, quantity: number) => {
-    // Check if product already in cart
-    const existingItemIndex = cartItems.findIndex(
-      (item) => item.productId === String(product.id)
-    );
+    console.log('Adding product to cart:', { product, quantity });
 
-    if (existingItemIndex !== -1) {
-      // Update quantity if already in cart
-      const updatedItems = [...cartItems];
-      updatedItems[existingItemIndex].quantity += quantity;
-      setCartItems(updatedItems);
-    } else {
-      // Add new item to cart
-      setCartItems([
-        ...cartItems,
-        {
-          productId: String(product.id),
-          quantity,
-          product,
-        },
-      ]);
+    // Validate product data before adding to cart
+    if (!product || !product.id) {
+      console.error('Invalid product data:', product);
+      return;
     }
+
+    if (quantity <= 0) {
+      console.error('Invalid quantity:', quantity);
+      return;
+    }
+
+    // Use the CartContext to add item to cart
+    const cartItem: CartContextItem = {
+      product: {
+        ...product,
+        id: String(product.id),
+      },
+      quantity,
+    };
+
+    console.log('Adding to cart context:', cartItem);
+    addToCartContext(cartItem);
 
     // Open cart drawer
     setCartDrawerOpened(true);
+    console.log('Cart drawer opened:', true);
   };
 
-  // Calculate cart total
-  const cartTotal = cartItems.reduce((total, item) => {
-    return total + item.product.price * item.quantity;
-  }, 0);
+  // Convert cart context items to format expected by CartDrawer
+  const cartItems = cartContextItems.map((item) => ({
+    productId: String(item.product.id),
+    quantity: item.quantity,
+    product: item.product,
+  }));
+
+  // Get cart total from context
+  const cartTotal = getTotalPrice();
 
   // Create categories for tabs from products
   const categories = ['Promo'];
