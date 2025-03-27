@@ -1,5 +1,17 @@
 // Basic types for the Smarty delivery web app
 
+// Branch opening hours type
+export interface IOpeningHours {
+  weekdays: {
+    open: string; // Format: "HH:MM" in 24h format
+    close: string; // Format: "HH:MM" in 24h format
+  };
+  weekend: {
+    open: string;
+    close: string;
+  };
+}
+
 // Branch type
 export interface IBranch {
   id: string | number;
@@ -7,8 +19,9 @@ export interface IBranch {
   description: string;
   address: string;
   phoneNumber?: string;
-  openingHours?: string;
-  isOpen?: boolean;
+  openingHours?: string; // Legacy field for display purposes
+  openingHoursStructured?: IOpeningHours; // Structured opening hours for logic
+  isOpen?: boolean; // Will be calculated based on current time and openingHoursStructured
   imageUrl?: string;
 }
 

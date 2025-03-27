@@ -1,30 +1,53 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { IProduct } from '../../types';
 import { Card, Text, Badge, Image, Overlay, Flex, Box } from '@mantine/core';
-import { IconShoppingCart } from '@tabler/icons-react';
+import {
+  IconShoppingCart,
+  IconTrash,
+  IconCircleMinus,
+  IconCirclePlus,
+} from '@tabler/icons-react';
 import styles from './ProductCard.module.css';
 import DiscountBadge from '../DiscountBadge';
-import QuantityControl from '../QuantityControl';
 import AddToCartModal from '../AddToCartModal/AddToCartModal';
-import { useCart } from '../../context/CartContext';
+import { useCart, CartItem } from '../../context/CartContext';
 
 interface ProductCardProps {
   product: IProduct;
+  isDisabled?: boolean;
 }
 
-const ProductCard = ({ product }: ProductCardProps) => {
+const ProductCard = ({ product, isDisabled = false }: ProductCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [showQuantityControl, setShowQuantityControl] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
-  const { getCartItemQuantity, updateCartItem, addToCart } = useCart();
-  const quantity = getCartItemQuantity(product.id);
+  const { updateCartItem, addToCart, getCartItemsByProductId } = useCart();
 
-  // Check if product has discount
-  const hasDiscount =
-    product.name.toLowerCase().includes('promo') || Math.random() > 0.7;
+  // Get all instances of this product in the cart
+  const cartItems = getCartItemsByProductId(product.id);
+
+  // Get total quantity of this product in the cart (all versions combined)
+  const quantity = cartItems.reduce((total, item) => total + item.quantity, 0);
+
+  // Check if product has discount - use a stable approach
+  const hasDiscount = useMemo(() => {
+    // Check if name includes 'promo' or use a deterministic approach based on product id
+    if (product.name.toLowerCase().includes('promo')) {
+      return true;
+    }
+
+    // Use product ID to determine discount in a type-safe way
+    if (typeof product.id === 'number') {
+      return product.id % 3 === 0;
+    } else {
+      // For string IDs, use the string length
+      const idString = String(product.id);
+      return idString.length % 3 === 0;
+    }
+  }, [product.id, product.name]);
 
   // Calculate original price (this would typically come from the product data)
   const originalPrice = hasDiscount ? (product.price * 1.2).toFixed(2) : null;
@@ -35,13 +58,28 @@ const ProductCard = ({ product }: ProductCardProps) => {
   const handleCartIconClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
+
+    // Don't open modal if product is disabled
+    if (isDisabled) return;
+
     setShowModal(true);
   };
 
-  const handleAddToCart = (newQuantity: number) => {
+  const handleAddToCart = (newQuantity: number, cartItem?: CartItem) => {
+    // Don't update cart if product is disabled
+    if (isDisabled) return;
+
     if (newQuantity === 0) {
-      updateCartItem(product.id, { quantity: 0 });
+      // If there are multiple instances of this product, we'll remove one at a time
+      if (cartItems.length > 0) {
+        // Remove the first instance found
+        updateCartItem(product.id, { quantity: 0 }, cartItems[0].uniqueId);
+      }
+    } else if (cartItem) {
+      // Use the cart item with customizations if provided
+      addToCart(cartItem);
     } else {
+      // Fallback to adding a basic product
       addToCart({
         product,
         quantity: newQuantity,
@@ -65,6 +103,8 @@ const ProductCard = ({ product }: ProductCardProps) => {
           border: isHovered
             ? '1px solid rgba(201, 205, 212, 1)'
             : 'rgba(238, 242, 246, 1)',
+          opacity: isDisabled ? 0.7 : 1,
+          cursor: isDisabled ? 'default' : 'pointer',
         }}
       >
         {/* Image container */}
@@ -77,15 +117,15 @@ const ProductCard = ({ product }: ProductCardProps) => {
             />
           )}
 
-          {!product.isAvailable && (
+          {(!product.isAvailable || isDisabled) && (
             <Overlay color="#000" backgroundOpacity={0.6} blur={1}>
               <Badge
                 size="xl"
-                color="red"
+                color={isDisabled ? 'gray' : 'red'}
                 variant="filled"
                 className={styles.unavailableBadge}
               >
-                No Disponible
+                {isDisabled ? 'Sucursal Cerrada' : 'No Disponible'}
               </Badge>
             </Overlay>
           )}
@@ -106,15 +146,35 @@ const ProductCard = ({ product }: ProductCardProps) => {
                   className={styles.quantityBadge}
                   onClick={(e) => {
                     e.stopPropagation();
-                    setShowQuantityControl(true);
+                    // If only one item type, show quantity control
+                    // If multiple versions, open modal to select which one to modify
+                    if (cartItems.length === 1) {
+                      setShowQuantityControl(true);
+                    } else {
+                      setShowModal(true);
+                    }
                   }}
                   onMouseEnter={() => setShowQuantityControl(true)}
+                  onMouseLeave={(e) => {
+                    // Check if we're not hovering over the quantity control
+                    const elementUnderMouse = document.elementFromPoint(
+                      e.clientX,
+                      e.clientY
+                    );
+                    if (
+                      !elementUnderMouse?.closest(
+                        `.${styles.quantityControlContainer}`
+                      )
+                    ) {
+                      setShowQuantityControl(false);
+                    }
+                  }}
                 >
                   <Text className={styles.quantityBadgeText}>{quantity}</Text>
                 </Box>
               )}
 
-              {isHovered && (
+              {isHovered && !isDisabled && (
                 <Box
                   className={styles.cartIconContainer}
                   onClick={handleCartIconClick}
@@ -132,23 +192,102 @@ const ProductCard = ({ product }: ProductCardProps) => {
                   className={styles.quantityControlContainer}
                   onMouseLeave={() => setShowQuantityControl(false)}
                 >
-                  <QuantityControl
-                    initialQuantity={quantity || 1}
-                    onChange={(newQuantity) => {
-                      if (newQuantity === 0) {
-                        updateCartItem(product.id, { quantity: 0 });
-                        setShowQuantityControl(false);
-                      } else {
-                        updateCartItem(product.id, { quantity: newQuantity });
-                      }
-                    }}
-                    onAddToCart={() => {
-                      if (product && quantity > 0) {
-                        // Just update the quantity without opening modal
-                        updateCartItem(product.id, { quantity: quantity + 1 });
-                      }
-                    }}
-                  />
+                  <Box className={styles.controlButtons}>
+                    {quantity <= 1 ? (
+                      <IconTrash
+                        size={20}
+                        stroke={1.5}
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => {
+                          if (cartItems.length === 1) {
+                            // Remove single item
+                            updateCartItem(
+                              product.id,
+                              { quantity: 0 },
+                              cartItems[0].uniqueId
+                            );
+                          } else {
+                            // Remove all items of this product
+                            cartItems.forEach((item) => {
+                              updateCartItem(
+                                product.id,
+                                { quantity: 0 },
+                                item.uniqueId
+                              );
+                            });
+                          }
+                          setShowQuantityControl(false);
+                        }}
+                      />
+                    ) : (
+                      <IconCircleMinus
+                        size={20}
+                        stroke={1.5}
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => {
+                          if (cartItems.length === 1) {
+                            // Decrease single item
+                            updateCartItem(
+                              product.id,
+                              { quantity: cartItems[0].quantity - 1 },
+                              cartItems[0].uniqueId
+                            );
+                          } else {
+                            // Decrease one from the first item
+                            const firstItem = cartItems[0];
+                            if (firstItem.quantity > 1) {
+                              updateCartItem(
+                                product.id,
+                                { quantity: firstItem.quantity - 1 },
+                                firstItem.uniqueId
+                              );
+                            } else {
+                              // If first item has quantity 1, remove it
+                              updateCartItem(
+                                product.id,
+                                { quantity: 0 },
+                                firstItem.uniqueId
+                              );
+                            }
+                          }
+                        }}
+                      />
+                    )}
+
+                    <Text style={{ margin: '0 8px', fontWeight: 600 }}>
+                      {quantity}
+                    </Text>
+
+                    <IconCirclePlus
+                      size={20}
+                      stroke={1.5}
+                      style={{
+                        cursor: 'pointer',
+                        background: '#B3FF00',
+                        borderRadius: '50%',
+                      }}
+                      onClick={() => {
+                        if (cartItems.length === 1) {
+                          // Increase single item
+                          updateCartItem(
+                            product.id,
+                            { quantity: cartItems[0].quantity + 1 },
+                            cartItems[0].uniqueId
+                          );
+                        } else if (cartItems.length > 1) {
+                          // For multiple variations, open the modal when adding more
+                          setShowQuantityControl(false);
+                          setShowModal(true);
+                        } else {
+                          // No items in cart, add basic product
+                          addToCart({
+                            product,
+                            quantity: 1,
+                          });
+                        }
+                      }}
+                    />
+                  </Box>
                 </Box>
               )}
             </>
@@ -179,7 +318,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
         opened={showModal}
         onClose={() => setShowModal(false)}
         onAddToCart={handleAddToCart}
-        initialQuantity={quantity}
+        initialQuantity={1}
       />
     </>
   );

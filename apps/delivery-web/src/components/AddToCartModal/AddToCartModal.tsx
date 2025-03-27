@@ -15,7 +15,7 @@ import {
 import { IProduct } from '../../types';
 import styles from './AddToCartModal.module.css';
 import { getProductById } from '../../mocks/products.mock';
-import { useCart, CartItem } from '../../context/CartContext';
+import { CartItem } from '../../context/CartContext';
 
 interface IngredientItem {
   name: string;
@@ -27,8 +27,11 @@ interface AddToCartModalProps {
   product: IProduct;
   opened: boolean;
   onClose: () => void;
-  onAddToCart: (quantity: number) => void;
+  onAddToCart: (quantity: number, cartItem?: CartItem) => void;
   initialQuantity?: number;
+  initialIngredients?: IngredientItem[];
+  initialCondiments?: string[];
+  initialComments?: string;
 }
 
 const AddToCartModal = ({
@@ -37,54 +40,126 @@ const AddToCartModal = ({
   onClose,
   onAddToCart,
   initialQuantity = 1,
+  initialIngredients,
+  initialCondiments,
+  initialComments,
 }: AddToCartModalProps) => {
-  const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(initialQuantity);
   const modalRef = useRef<HTMLDivElement>(null);
   const [showIngredients, setShowIngredients] = useState(true);
   const [showCondiments, setShowCondiments] = useState(true);
-  const [comments, setComments] = useState('');
+  const [comments, setComments] = useState(initialComments || '');
 
   // Get product with customization options from mock
   const productWithCustomization = getProductById(product.id);
 
   // Initialize ingredients based on the product customization options
-  const [ingredients, setIngredients] = useState<IngredientItem[]>([]);
+  const [ingredients, setIngredients] = useState<IngredientItem[]>(
+    initialIngredients || []
+  );
 
   // Initialize condiments
-  const [condiments, setCondiments] = useState<string[]>([]);
+  const [condiments, setCondiments] = useState<string[]>(
+    initialCondiments || []
+  );
+
+  // For debugging - log what we're getting
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('AddToCartModal - Product:', product.id, product.name);
+      console.log('AddToCartModal - Initial ingredients:', initialIngredients);
+      console.log('AddToCartModal - Initial condiments:', initialCondiments);
+      console.log(
+        'AddToCartModal - Product with customization:',
+        productWithCustomization
+      );
+    }
+  }, [
+    product,
+    initialIngredients,
+    initialCondiments,
+    productWithCustomization,
+  ]);
+
+  // Calculate if product has discount (for demo purposes)
+  const hasDiscount =
+    product.name.toLowerCase().includes('promo') ||
+    (typeof product.id === 'number'
+      ? product.id % 3 === 0
+      : String(product.id).length % 3 === 0);
+  const discountPercentage = hasDiscount ? 10 : 0;
+  const originalPrice = hasDiscount ? (product.price * 1.1).toFixed(2) : null;
 
   // Set up initial ingredients and condiments from product data
   useEffect(() => {
     if (productWithCustomization && opened) {
-      // Set up ingredients
-      const initialIngredients =
+      // Check if we're editing an existing item with customizations
+      const isEditingExistingItem =
+        initialIngredients && initialIngredients.length > 0;
+
+      console.log('Is editing existing item:', isEditingExistingItem);
+      console.log('Initial ingredients provided:', initialIngredients);
+
+      // Initialize with all available options from the product
+      const defaultIngredients =
         productWithCustomization.customization.ingredientOptions.map(
-          (option) => ({
-            name: option.name,
-            quantity: option.default ? 1 : 0,
-            price: option.price,
-          })
+          (option) => {
+            // For existing items being edited, use their existing customizations
+            if (isEditingExistingItem) {
+              // Look for this ingredient in initialIngredients
+              const existingIngredient = initialIngredients.find(
+                (ing) => ing.name === option.name
+              );
+
+              // If found, use its quantity, otherwise default to 0 (not selected)
+              return {
+                name: option.name,
+                quantity:
+                  existingIngredient !== undefined
+                    ? existingIngredient.quantity
+                    : 0,
+                price: option.price,
+              };
+            } else {
+              // For new items or a new variant, use product defaults
+              return {
+                name: option.name,
+                quantity: option.default ? 1 : 0,
+                price: option.price,
+              };
+            }
+          }
         );
-      setIngredients(initialIngredients);
 
-      // Set up condiments
-      const initialCondiments =
-        productWithCustomization.customization.condimentOptions
-          .filter((option) => option.default)
-          .map((option) => option.name);
-      setCondiments(initialCondiments);
+      console.log('Setting ingredients to:', defaultIngredients);
+      setIngredients(defaultIngredients);
 
-      // Reset comments
-      setComments('');
+      // For condiments, similar approach
+      const allCondiments =
+        productWithCustomization.customization.condimentOptions.map(
+          (option) => option.name
+        );
+
+      // Initialize condiments based on whether we're editing or creating new
+      let selectedCondiments;
+
+      if (isEditingExistingItem && initialCondiments) {
+        // For existing items, use what's already selected
+        selectedCondiments = allCondiments.filter((condimentName) =>
+          initialCondiments.includes(condimentName)
+        );
+      } else {
+        // For new items, use default selections
+        selectedCondiments =
+          productWithCustomization.customization.condimentOptions
+            .filter((option) => option.default)
+            .map((option) => option.name);
+      }
+
+      console.log('Setting condiments to:', selectedCondiments);
+      setCondiments(selectedCondiments);
     }
-  }, [productWithCustomization, opened]);
-
-  // Calculate if product has discount (for demo purposes)
-  const hasDiscount =
-    product.name.toLowerCase().includes('promo') || Math.random() > 0.7;
-  const discountPercentage = hasDiscount ? 20 : 0;
-  const originalPrice = hasDiscount ? (product.price * 1.2).toFixed(2) : null;
+  }, [productWithCustomization, opened, initialIngredients, initialCondiments]);
 
   useEffect(() => {
     console.log('AddToCartModal rendered, opened:', opened);
@@ -113,10 +188,12 @@ const AddToCartModal = ({
     };
   }, [opened, onClose]);
 
-  // Only set initial quantity when component mounts or initialQuantity changes
+  // Only set initial quantity when component mounts or initialQuantity changes or when modal opens
   useEffect(() => {
-    setQuantity(initialQuantity);
-  }, [initialQuantity]);
+    if (opened) {
+      setQuantity(initialQuantity);
+    }
+  }, [initialQuantity, opened]);
 
   if (!opened) return null;
 
@@ -182,10 +259,11 @@ const AddToCartModal = ({
       ingredients: selectedIngredients,
       condiments,
       comments: comments.trim() || undefined,
+      totalPrice: calculateTotalPrice(),
     };
 
-    addToCart(cartItem);
-    onAddToCart(quantity);
+    // Pass the cartItem to the parent component
+    onAddToCart(quantity, cartItem);
   };
 
   // Comments handler
@@ -198,6 +276,16 @@ const AddToCartModal = ({
     if (commentCounter) {
       commentCounter.innerText = `${currentLength}/100`;
     }
+  };
+
+  // Calculate total price including ingredients
+  const calculateTotalPrice = () => {
+    const basePrice = product.price;
+    const ingredientsPrice = ingredients
+      .filter((ing) => ing.quantity > 0)
+      .reduce((sum, ing) => sum + (ing.price || 0) * ing.quantity, 0);
+
+    return (basePrice + ingredientsPrice) * quantity;
   };
 
   return (
@@ -315,51 +403,61 @@ const AddToCartModal = ({
 
                   {showIngredients && (
                     <>
-                      {ingredients.map((ingredient, index) => (
-                        <Box key={ingredient.name}>
-                          <Box className={styles.ingredientRow}>
-                            <Text className={styles.ingredientName}>
-                              {ingredient.name}
-                            </Text>
+                      {ingredients.map((ingredient, index) => {
+                        // Create stable unique key for each ingredient
+                        const ingredientKey = `ingredient-${ingredient.name.replace(
+                          /\s+/g,
+                          '-'
+                        )}-${index}`;
 
-                            {ingredient.price && (
-                              <Box className={styles.priceTag}>
-                                + ${ingredient.price.toLocaleString()}
-                              </Box>
-                            )}
-
-                            <Box className={styles.quantityControl}>
-                              <IconCircleMinus
-                                size={18}
-                                stroke={1.5}
-                                style={{ cursor: 'pointer' }}
-                                onClick={() =>
-                                  handleUpdateIngredient(index, -1)
-                                }
-                              />
-                              <Text className={styles.quantityText}>
-                                {ingredient.quantity}
+                        return (
+                          <Box key={ingredientKey}>
+                            <Box className={styles.ingredientRow}>
+                              <Text className={styles.ingredientName}>
+                                {ingredient.name}
                               </Text>
-                              <IconCirclePlus
-                                size={18}
-                                stroke={1.5}
-                                style={{
-                                  cursor: 'pointer',
-                                  background:
-                                    ingredient.quantity > 0
-                                      ? '#B3FF00'
-                                      : 'transparent',
-                                  borderRadius: '50%',
-                                }}
-                                onClick={() => handleUpdateIngredient(index, 1)}
-                              />
+
+                              {ingredient.price && (
+                                <Box className={styles.priceTag}>
+                                  + ${ingredient.price.toLocaleString()}
+                                </Box>
+                              )}
+
+                              <Box className={styles.quantityControl}>
+                                <IconCircleMinus
+                                  size={18}
+                                  stroke={1.5}
+                                  style={{ cursor: 'pointer' }}
+                                  onClick={() =>
+                                    handleUpdateIngredient(index, -1)
+                                  }
+                                />
+                                <Text className={styles.quantityText}>
+                                  {ingredient.quantity}
+                                </Text>
+                                <IconCirclePlus
+                                  size={18}
+                                  stroke={1.5}
+                                  style={{
+                                    cursor: 'pointer',
+                                    background:
+                                      ingredient.quantity > 0
+                                        ? '#B3FF00'
+                                        : 'transparent',
+                                    borderRadius: '50%',
+                                  }}
+                                  onClick={() =>
+                                    handleUpdateIngredient(index, 1)
+                                  }
+                                />
+                              </Box>
                             </Box>
+                            {index < ingredients.length - 1 && (
+                              <hr className={styles.ingredientDivider} />
+                            )}
                           </Box>
-                          {index < ingredients.length - 1 && (
-                            <hr className={styles.ingredientDivider} />
-                          )}
-                        </Box>
-                      ))}
+                        );
+                      })}
                     </>
                   )}
                 </Box>
@@ -390,40 +488,47 @@ const AddToCartModal = ({
                   {showCondiments && (
                     <>
                       {productWithCustomization?.customization?.condimentOptions.map(
-                        (condiment, index) => (
-                          <Box key={condiment.name}>
-                            <Box className={styles.ingredientRow}>
-                              <Text className={styles.ingredientName}>
-                                {condiment.name}
-                              </Text>
-                              <Box
-                                className={`${styles.checkbox} ${
-                                  condiments.includes(condiment.name)
-                                    ? styles.checkedBox
-                                    : ''
-                                }`}
-                                onClick={() =>
-                                  handleToggleCondiment(condiment.name)
-                                }
-                                style={{ cursor: 'pointer' }}
-                              >
-                                {condiments.includes(condiment.name) && (
-                                  <IconCheck
-                                    size={16}
-                                    stroke={1.5}
-                                    color="#000000"
-                                  />
-                                )}
+                        (condiment, index) => {
+                          // Create stable unique key for each condiment
+                          const condimentKey = `condiment-${
+                            condiment.id || condiment.name.replace(/\s+/g, '-')
+                          }-${index}`;
+
+                          return (
+                            <Box key={condimentKey}>
+                              <Box className={styles.ingredientRow}>
+                                <Text className={styles.ingredientName}>
+                                  {condiment.name}
+                                </Text>
+                                <Box
+                                  className={`${styles.checkbox} ${
+                                    condiments.includes(condiment.name)
+                                      ? styles.checkedBox
+                                      : ''
+                                  }`}
+                                  onClick={() =>
+                                    handleToggleCondiment(condiment.name)
+                                  }
+                                  style={{ cursor: 'pointer' }}
+                                >
+                                  {condiments.includes(condiment.name) && (
+                                    <IconCheck
+                                      size={16}
+                                      stroke={1.5}
+                                      color="#000000"
+                                    />
+                                  )}
+                                </Box>
                               </Box>
+                              {index <
+                                (productWithCustomization?.customization
+                                  ?.condimentOptions.length || 0) -
+                                  1 && (
+                                <hr className={styles.ingredientDivider} />
+                              )}
                             </Box>
-                            {index <
-                              (productWithCustomization?.customization
-                                ?.condimentOptions.length || 0) -
-                                1 && (
-                              <hr className={styles.ingredientDivider} />
-                            )}
-                          </Box>
-                        )
+                          );
+                        }
                       )}
                     </>
                   )}
@@ -443,6 +548,7 @@ const AddToCartModal = ({
                     style={{ cursor: 'pointer' }}
                     onClick={() => {
                       setQuantity(0);
+                      onAddToCart(0);
                       onClose();
                     }}
                   />
@@ -480,7 +586,7 @@ const AddToCartModal = ({
                   </div>
                   <div className={styles.addToCartRight}>
                     <Text className={styles.subtotalText}>
-                      Subtotal: ${(product.price * quantity).toFixed(2)}
+                      Subtotal: ${calculateTotalPrice().toFixed(2)}
                     </Text>
                   </div>
                 </div>
