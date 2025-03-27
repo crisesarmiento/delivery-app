@@ -243,6 +243,7 @@ export default function BranchProductsPage() {
         cartItems={cartItems}
         cartTotal={cartTotal}
         onClearCart={handleClearCart}
+        branchId={branchId}
       />
     </Box>
   );

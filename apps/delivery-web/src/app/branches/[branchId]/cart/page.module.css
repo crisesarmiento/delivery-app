@@ -1,0 +1,441 @@
+.checkoutPageContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  background: #ffffff;
+}
+
+.contentContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 0 80px;
+  margin-top: 47px;
+  width: 100%;
+}
+
+.leftSection {
+  width: 510px;
+  background: #ffffff;
+  border: 1px solid #eef2f6;
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  padding: 20px;
+}
+
+.rightSection {
+  width: 730px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.orderBox {
+  background: #ffffff;
+  border: 1px solid #eef2f6;
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  padding: 20px;
+  height: 531px;
+}
+
+.summaryBox {
+  background: #ffffff;
+  border: 1px solid #eef2f6;
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sectionTitle {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 30px;
+  color: #000000;
+  margin-bottom: 20px;
+}
+
+.sectionSubtitle {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 30px;
+  color: #000000;
+  margin-bottom: 10px;
+}
+
+.deliveryToggle {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 20px;
+}
+
+.toggleButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+  padding: 0 16px;
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.activeToggle {
+  background: #b3ff00;
+  border-radius: 4px 0px 0px 4px;
+  color: #000000;
+}
+
+.inactiveToggle {
+  background: #f8fafc;
+  border-radius: 0px 4px 4px 0px;
+  color: #364152;
+}
+
+.formLabel {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  color: #000000;
+  margin-bottom: 4px;
+}
+
+.formField {
+  margin-bottom: 16px;
+}
+
+.textAreaLabel {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 18px;
+  color: #000000;
+  margin-bottom: 4px;
+}
+
+.textAreaCounter {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 18px;
+  color: #6c7684;
+  text-align: right;
+  margin-top: 4px;
+}
+
+.divider {
+  border-color: #eef2f6;
+  margin: 20px 0;
+}
+
+.summaryDivider {
+  border-color: #e0e0e0;
+  margin: 16px 0;
+  height: 1px;
+  width: 100%;
+  background-color: #e0e0e0;
+  opacity: 1;
+}
+
+.radioButton {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+  color: #000000;
+}
+
+.radioButtonInactive {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  color: #6c7684;
+}
+
+.radioContainer {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.radioInput {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 1px solid #eef2f6;
+  border-radius: 50%;
+  background-color: #ffffff;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.02);
+  margin: 0;
+  padding: 0;
+  position: relative;
+  cursor: pointer;
+}
+
+.radioInput:checked {
+  border-color: #000000;
+}
+
+.radioInput:checked::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #000000;
+}
+
+.productRow {
+  display: flex;
+  padding: 12px 0;
+}
+
+.productImage {
+  width: 120px;
+  height: 120px;
+  border-radius: 6px;
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.productDetails {
+  flex: 1;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.productName {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  color: #000000;
+}
+
+.editLink {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 18px;
+  color: #939393;
+  text-decoration: underline;
+  margin-top: 4px;
+  cursor: pointer;
+}
+
+.productPrice {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+  color: #000000;
+  text-align: right;
+}
+
+.productOriginalPrice {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 18px;
+  color: #939393;
+  text-decoration-line: line-through;
+  text-align: right;
+}
+
+.priceLine {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  align-items: center;
+}
+
+.priceLabel {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 28px;
+  color: #000000;
+}
+
+.totalLabel {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 30px;
+  color: #000000;
+}
+
+.priceValue {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 28px;
+  color: #000000;
+  text-align: right;
+}
+
+.discountValue {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 28px;
+  color: #e02d3c;
+  text-align: right;
+}
+
+.totalValue {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 30px;
+  color: #000000;
+  text-align: right;
+}
+
+.confirmButton {
+  background: #000000;
+  box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.03);
+  border-radius: 8px;
+  color: #b3ff00;
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+  width: 100%;
+  height: 56px;
+  margin-top: 32px;
+  padding: 16px;
+  transition: background-color 0.2s;
+}
+
+.confirmButton:hover {
+  background: #1a1a1a;
+}
+
+.quantityControls {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.scrollableProductsContainer {
+  max-height: 380px;
+  overflow-y: auto;
+}
+
+.cityProvinceRow {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  gap: 16px;
+}
+
+.cityProvinceItem {
+  flex: 1;
+  width: 50%;
+}
+
+.formInput {
+  width: 100% !important;
+  height: 48px !important;
+  padding: 12px !important;
+  box-sizing: border-box !important;
+  font-size: 16px !important;
+  line-height: 24px !important;
+}
+
+/* Styles for NumberInput wrapper and controls */
+.numberInput {
+  width: 100% !important;
+}
+
+.numberInput input {
+  width: 100% !important;
+  height: 48px !important;
+  padding: 12px !important;
+  box-sizing: border-box !important;
+  font-size: 16px !important;
+  line-height: 24px !important;
+  border: 1px solid #eef2f6 !important;
+  border-radius: 4px !important;
+}
+
+.noteTextarea {
+  width: 100% !important;
+}
+
+.noteTextarea textarea {
+  width: 100% !important;
+  padding: 8px 12px !important;
+  min-height: 98px !important;
+  resize: none !important;
+  border: 1px solid #eef2f6 !important;
+  border-radius: 8px !important;
+}
+
+.requiredAsterisk {
+  color: #e02d3c;
+  margin-left: 2px;
+}
+
+@media (max-width: 1400px) {
+  .contentContainer {
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .leftSection,
+  .rightSection {
+    width: 90%;
+    max-width: 730px;
+  }
+}
+
+@media (max-width: 768px) {
+  .contentContainer {
+    padding: 0 16px;
+  }
+
+  .leftSection,
+  .rightSection {
+    width: 100%;
+  }
+}

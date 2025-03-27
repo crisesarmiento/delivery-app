@@ -1,6 +1,7 @@
 'use client';
 
 import { Box, Text, Flex, Button, Divider } from '@mantine/core';
+import { useRouter } from 'next/navigation';
 import { IProduct } from '../../types';
 import { useEffect, useState } from 'react';
 import { IconShoppingCart, IconTrash } from '@tabler/icons-react';
@@ -17,6 +18,7 @@ interface CartDrawerProps {
   cartItems: CartItem[];
   cartTotal: number;
   onClearCart?: () => void;
+  branchId?: string;
 }
 
 const CartDrawer = ({
@@ -25,8 +27,10 @@ const CartDrawer = ({
   cartItems,
   cartTotal,
   onClearCart,
+  branchId,
 }: CartDrawerProps) => {
   const [isVisible, setIsVisible] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setIsVisible(opened);
@@ -48,6 +52,15 @@ const CartDrawer = ({
       console.log('onClearCart function is not provided');
       // Fallback implementation if onClearCart is not provided
       alert('Please implement onClearCart function in the parent component');
+    }
+  };
+
+  const handleGoToCheckout = () => {
+    if (branchId) {
+      router.push(`/branches/${branchId}/cart`);
+    } else {
+      console.error('Branch ID not provided to CartDrawer');
+      alert('No se puede acceder al carrito sin una sucursal seleccionada');
     }
   };
 
@@ -292,6 +305,7 @@ const CartDrawer = ({
 
         <Button
           fullWidth
+          onClick={handleGoToCheckout}
           style={{
             backgroundColor: '#000000',
             color: '#B3FF00',
