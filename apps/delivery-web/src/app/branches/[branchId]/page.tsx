@@ -17,6 +17,7 @@ import {
   useCart,
   CartItem as CartContextItem,
 } from '../../../context/CartContext';
+import { isBranchOpen } from '@/utils/branch';
 
 export default function BranchProductsPage() {
   const params = useParams();
@@ -38,7 +39,29 @@ export default function BranchProductsPage() {
   >({});
 
   // Find the current branch
-  const currentBranch = branchesMock.find((branch) => branch.id === branchId);
+  const [currentBranch, setCurrentBranch] = useState<IBranch | undefined>(
+    branchesMock.find((branch) => branch.id === branchId)
+  );
+
+  // Check if branch is open on component mount and every minute
+  useEffect(() => {
+    const branch = branchesMock.find((b) => b.id === branchId);
+    if (branch) {
+      setCurrentBranch({
+        ...branch,
+        isOpen: isBranchOpen(branch),
+      });
+
+      // Update status every minute
+      const intervalId = setInterval(() => {
+        setCurrentBranch((prev) =>
+          prev ? { ...prev, isOpen: isBranchOpen(prev) } : undefined
+        );
+      }, 60000);
+
+      return () => clearInterval(intervalId);
+    }
+  }, [branchId]);
 
   // Handle case when branch is not found
   useEffect(() => {
@@ -63,6 +86,12 @@ export default function BranchProductsPage() {
 
   // Add product to cart
   const addToCart = (product: IProduct, quantity: number) => {
+    // Check if branch is closed
+    if (currentBranch && !currentBranch.isOpen) {
+      alert('Lo sentimos, esta sucursal está cerrada en este momento.');
+      return;
+    }
+
     // Validate product data before adding to cart
     if (!product || !product.id) {
       console.error(ERROR_TEXTS.INVALID_PRODUCT, product);
@@ -188,6 +217,8 @@ export default function BranchProductsPage() {
         onBackClick={handleBack}
         searchValue={searchQuery}
         onSearchChange={handleSearchChange}
+        isClosed={currentBranch ? !currentBranch.isOpen : false}
+        closedMessage="La sucursal se encuentra cerrada en este momento."
       />
       <CategoryTabs
         categories={categories}
@@ -220,6 +251,7 @@ export default function BranchProductsPage() {
                   onToggleExpand={(isExpanded) =>
                     handleSectionToggle(category, isExpanded)
                   }
+                  isDisabled={currentBranch ? !currentBranch.isOpen : false}
                 />
               </div>
             ))

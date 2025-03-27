@@ -21,7 +21,7 @@ import {
 import styles from './page.module.css';
 import ProductsHeader from '@/components/Header/ProductsHeader';
 import { branchesMock } from '../../../../mocks/branches.mock';
-import { useCart } from '../../../../context/CartContext';
+import { useCart, CartItem } from '../../../../context/CartContext';
 import { IBranch, IProduct } from '../../../../types';
 import { CHECKOUT_TEXTS, COMMON_TEXTS } from '../../../../config/constants';
 import AddToCartModal from '@/components/AddToCartModal/AddToCartModal';
@@ -43,9 +43,12 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState('transfer');
   const [paymentAmount, setPaymentAmount] = useState<number | ''>('');
 
-  // State for product editing
+  // State for product editing and uniqueId tracking
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<IProduct | null>(null);
+  const [currentItemUniqueId, setCurrentItemUniqueId] = useState<
+    string | undefined
+  >();
 
   // Find the current branch
   const currentBranch = branchesMock.find((branch) => branch.id === branchId);
@@ -64,8 +67,31 @@ export default function CheckoutPage() {
 
   // Calculate prices
   const subtotal = getTotalPrice();
-  const productDiscount = 500; // Example values from the design
-  const paymentDiscount = 200;
+
+  // Calculate product discount (10% of products with discount)
+  const productDiscount = items.reduce((total, item) => {
+    // Check if product has discount based on its name or ID
+    const hasDiscount =
+      item.product.name.toLowerCase().includes('promo') ||
+      (typeof item.product.id === 'number'
+        ? item.product.id % 3 === 0
+        : String(item.product.id).length % 3 === 0);
+
+    if (hasDiscount) {
+      // Calculate 10% of the product price
+      return total + item.product.price * item.quantity * 0.1;
+    }
+    return total;
+  }, 0);
+
+  // Calculate payment method discount (10% of subtotal after product discounts)
+  // Only apply if payment method is transfer or cash
+  const paymentDiscountRate =
+    paymentMethod === 'transfer' || paymentMethod === 'cash' ? 0.1 : 0;
+  const paymentDiscount = Math.round(
+    (subtotal - productDiscount) * paymentDiscountRate
+  );
+
   const shippingCost = 1500;
   const total = subtotal - productDiscount - paymentDiscount + shippingCost;
 
@@ -121,24 +147,58 @@ export default function CheckoutPage() {
   };
 
   // Open edit modal for a product
-  const handleEditProduct = (product: IProduct) => {
-    setCurrentProduct(product);
+  const handleEditProduct = (item: CartItem) => {
+    console.log('Editing product with details:', item);
+    console.log('Item uniqueId:', item.uniqueId);
+    console.log('Item ingredients:', item.ingredients);
+    console.log('Item condiments:', item.condiments);
+
+    if (!item.uniqueId) {
+      console.error('Error: Attempting to edit an item without a uniqueId');
+    }
+
+    // Important: When editing a product, create a full copy of the product
+    // with any customizations from the cart to ensure we're working with the same data
+    const productForEdit = {
+      ...item.product,
+    };
+
+    setCurrentProduct(productForEdit);
     setEditModalOpen(true);
+    // Store the uniqueId to ensure we update the right variant
+    setCurrentItemUniqueId(item.uniqueId);
   };
 
   // Close edit modal
   const handleCloseEditModal = () => {
     setEditModalOpen(false);
     setCurrentProduct(null);
+    setCurrentItemUniqueId(undefined);
   };
 
   // Handle add to cart (update) from modal
-  const handleAddToCart = (quantity: number) => {
+  const handleAddToCart = (
+    quantity: number,
+    customizations?: {
+      ingredients?: { name: string; quantity: number; price?: number }[];
+      condiments?: string[];
+      comments?: string;
+      totalPrice?: number;
+    }
+  ) => {
     if (currentProduct) {
-      updateCartItem(currentProduct.id, { quantity });
+      updateCartItem(
+        currentProduct.id,
+        {
+          quantity,
+          ...customizations,
+        },
+        currentItemUniqueId
+      );
     }
     setEditModalOpen(false);
     setCurrentProduct(null);
+    setCurrentItemUniqueId(undefined);
   };
 
   // Handle payment amount change
@@ -425,18 +485,27 @@ export default function CheckoutPage() {
 
             {/* Scrollable Products Container */}
             <Box className={styles.scrollableProductsContainer}>
-              {items.map((item) => {
-                // Check if product has discount
+              {items.map((item, itemIndex) => {
+                // Check if product has discount using the same logic as the productDiscount calculation
                 const hasDiscount =
                   item.product.name.toLowerCase().includes('promo') ||
-                  Math.random() > 0.7;
-                const discountPercentage = hasDiscount ? 20 : 0;
+                  (typeof item.product.id === 'number'
+                    ? item.product.id % 3 === 0
+                    : String(item.product.id).length % 3 === 0);
+                const discountPercentage = hasDiscount ? 10 : 0;
+
+                // Use the item's totalPrice (if it has customizations) or calculate based on product price
+                const itemBasePrice = item.totalPrice || item.product.price;
                 const originalPrice = hasDiscount
-                  ? (item.product.price * 1.2).toFixed(2)
+                  ? (itemBasePrice * 1.1).toFixed(2)
                   : null;
 
+                // Create a stable unique key for each item
+                const itemKey =
+                  item.uniqueId || `item-${item.product.id}-${itemIndex}`;
+
                 return (
-                  <Box key={item.product.id}>
+                  <Box key={itemKey}>
                     <Box className={styles.productRow}>
                       <Image
                         src={item.product.imageUrl}
@@ -448,9 +517,30 @@ export default function CheckoutPage() {
                         <Text className={styles.productName}>
                           {item.product.name}
                         </Text>
+
+                        {/* Show customizations if any */}
+                        {item.ingredients && item.ingredients.length > 0 && (
+                          <Text size="xs" color="dimmed" mt={2}>
+                            {item.ingredients
+                              .filter((ing) => ing.quantity > 0) // Only display ingredients with quantity > 0
+                              .map((ing) => `${ing.name} x${ing.quantity}`)
+                              .join(', ')}
+                          </Text>
+                        )}
+                        {item.condiments && item.condiments.length > 0 && (
+                          <Text size="xs" color="dimmed" mt={2}>
+                            {item.condiments.join(', ')}
+                          </Text>
+                        )}
+                        {item.comments && (
+                          <Text size="xs" color="dimmed" mt={2} fs="italic">
+                            {item.comments}
+                          </Text>
+                        )}
+
                         <Text
                           className={styles.editLink}
-                          onClick={() => handleEditProduct(item.product)}
+                          onClick={() => handleEditProduct(item)}
                         >
                           Editar
                         </Text>
@@ -464,10 +554,7 @@ export default function CheckoutPage() {
                         }}
                       >
                         <Text className={styles.productPrice}>
-                          $
-                          {(
-                            item.product.price * item.quantity
-                          ).toLocaleString()}
+                          ${(itemBasePrice * item.quantity).toLocaleString()}
                         </Text>
                         {hasDiscount && originalPrice && (
                           <Text className={styles.productOriginalPrice}>
@@ -485,19 +572,37 @@ export default function CheckoutPage() {
                               size={26}
                               stroke={1.5}
                               style={{ cursor: 'pointer' }}
-                              onClick={() => removeFromCart(item.product.id)}
+                              onClick={() => {
+                                if (item.uniqueId) {
+                                  updateCartItem(
+                                    item.product.id,
+                                    { quantity: 0 },
+                                    item.uniqueId
+                                  );
+                                } else {
+                                  removeFromCart(item.product.id);
+                                }
+                              }}
                             />
                           ) : (
                             <IconCircleMinus
                               size={26}
                               stroke={1.5}
                               style={{ cursor: 'pointer' }}
-                              onClick={() =>
-                                handleQuantityUpdate(
-                                  item.product.id,
-                                  item.quantity - 1
-                                )
-                              }
+                              onClick={() => {
+                                if (item.uniqueId) {
+                                  updateCartItem(
+                                    item.product.id,
+                                    { quantity: item.quantity - 1 },
+                                    item.uniqueId
+                                  );
+                                } else {
+                                  handleQuantityUpdate(
+                                    item.product.id,
+                                    item.quantity - 1
+                                  );
+                                }
+                              }}
                             />
                           )}
 
@@ -511,12 +616,20 @@ export default function CheckoutPage() {
                               borderRadius: '50%',
                               cursor: 'pointer',
                             }}
-                            onClick={() =>
-                              handleQuantityUpdate(
-                                item.product.id,
-                                item.quantity + 1
-                              )
-                            }
+                            onClick={() => {
+                              if (item.uniqueId) {
+                                updateCartItem(
+                                  item.product.id,
+                                  { quantity: item.quantity + 1 },
+                                  item.uniqueId
+                                );
+                              } else {
+                                handleQuantityUpdate(
+                                  item.product.id,
+                                  item.quantity + 1
+                                );
+                              }
+                            }}
                           />
                         </Box>
                       </Box>
@@ -610,10 +723,41 @@ export default function CheckoutPage() {
           product={currentProduct}
           opened={editModalOpen}
           onClose={handleCloseEditModal}
-          onAddToCart={handleAddToCart}
+          onAddToCart={(quantity, cartItem) => {
+            if (cartItem) {
+              // If we have a full cartItem with customizations, use it
+              const { ingredients, condiments, comments, totalPrice } =
+                cartItem;
+              handleAddToCart(quantity, {
+                ingredients,
+                condiments,
+                comments,
+                totalPrice,
+              });
+            } else {
+              // Otherwise just update the quantity
+              handleAddToCart(quantity);
+            }
+          }}
           initialQuantity={
-            items.find((item) => item.product.id === currentProduct.id)
+            // Only use uniqueId to find the exact item being edited - don't fall back to product ID matching
+            items.find((item) => item.uniqueId === currentItemUniqueId)
               ?.quantity || 1
+          }
+          initialIngredients={
+            // Only use uniqueId to find the exact item being edited
+            items.find((item) => item.uniqueId === currentItemUniqueId)
+              ?.ingredients
+          }
+          initialCondiments={
+            // Only use uniqueId to find the exact item being edited
+            items.find((item) => item.uniqueId === currentItemUniqueId)
+              ?.condiments
+          }
+          initialComments={
+            // Only use uniqueId to find the exact item being edited
+            items.find((item) => item.uniqueId === currentItemUniqueId)
+              ?.comments
           }
         />
       )}

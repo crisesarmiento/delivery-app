@@ -16,10 +16,21 @@
   border-bottom: 1px solid #eef2f6;
 }
 
+/* Adjust position when notification is present */
+.hasNotification .headerContainer {
+  top: 34px; /* Height of the notification */
+}
+
 .contentWrapper {
   display: flex;
   flex: 1;
   position: relative;
+  padding-top: 34px; /* Space for the fixed notification */
+}
+
+/* Remove extra padding when no notification */
+.pageContainer:not(.hasNotification) .contentWrapper {
+  padding-top: 0;
 }
 
 .sidebarContainer {

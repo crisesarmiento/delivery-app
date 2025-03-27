@@ -14,6 +14,7 @@ interface CartItem {
   productId: string;
   quantity: number;
   product: IProduct;
+  uniqueId?: string;
 }
 
 interface CartDrawerProps {
@@ -97,9 +98,12 @@ const CartDrawer = ({
           padding: '4px 16px 8px',
         }}
       >
-        {cartItems.map((item) => (
-          <CartItem key={item.productId} item={item} />
-        ))}
+        {cartItems.map((item, index) => {
+          // Create a stable unique key for each cart item
+          const itemKey =
+            item.uniqueId || `cart-item-${item.productId}-${index}`;
+          return <CartItem key={itemKey} item={item} />;
+        })}
       </Box>
 
       <CartFooter cartTotal={cartTotal} onCheckout={handleGoToCheckout} />

@@ -88,7 +88,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     // Sort and stringify ingredients to ensure consistent ordering
     const ingredientsStr = item.ingredients
       ? JSON.stringify(
-          item.ingredients.sort((a, b) => a.name.localeCompare(b.name))
+          item.ingredients
+            .filter((ing) => ing.quantity > 0) // Only include ingredients with quantity > 0
+            .sort((a, b) => a.name.localeCompare(b.name))
         )
       : '';
 
@@ -151,10 +153,16 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       if (uniqueId) {
         // If uniqueId is provided, use it to find the exact item instance
         existingItemIndex = prevItems.findIndex((i) => i.uniqueId === uniqueId);
+        console.log(
+          `Updating item with uniqueId: ${uniqueId}, found at index: ${existingItemIndex}`
+        );
       } else {
         // Fallback to product ID for backward compatibility
         existingItemIndex = prevItems.findIndex(
           (i) => String(i.product.id) === String(productId)
+        );
+        console.log(
+          `Updating item with productId: ${productId}, found at index: ${existingItemIndex}`
         );
       }
 
@@ -164,6 +172,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           ...updatedItems[existingItemIndex],
           ...updates,
         };
+
+        console.log('Updated item:', updatedItems[existingItemIndex]);
 
         // If quantity is 0, remove the item
         if (updates.quantity === 0) {

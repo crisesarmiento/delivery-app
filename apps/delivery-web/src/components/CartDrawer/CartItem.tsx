@@ -2,7 +2,6 @@
 
 import { Box, Text } from '@mantine/core';
 import { IProduct } from '../../types';
-import { CartItem as CartItemType } from '../../context/CartContext';
 
 interface CartItemProps {
   item: {

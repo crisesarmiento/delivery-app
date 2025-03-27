@@ -11,6 +11,7 @@ interface CategorySectionProps {
   onAddToCart: (product: IProduct, quantity: number) => void;
   isInitiallyExpanded?: boolean;
   onToggleExpand?: (isExpanded: boolean) => void;
+  isDisabled?: boolean;
 }
 
 const CategorySection = ({
@@ -19,6 +20,7 @@ const CategorySection = ({
   onAddToCart,
   isInitiallyExpanded = false,
   onToggleExpand,
+  isDisabled = false,
 }: CategorySectionProps) => {
   const [isExpanded, setIsExpanded] = useState(isInitiallyExpanded);
 
@@ -41,7 +43,11 @@ const CategorySection = ({
         isExpanded={isExpanded}
         onToggle={toggleExpand}
       />
-      {isExpanded && <ProductGrid products={products} />}
+      {isExpanded && (
+        <>
+          <ProductGrid products={products} isDisabled={isDisabled} />
+        </>
+      )}
     </Box>
   );
 };
