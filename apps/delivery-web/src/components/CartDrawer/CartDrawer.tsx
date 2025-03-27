@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { IProduct } from '../../types';
 import { useEffect, useState } from 'react';
 import { IconShoppingCart, IconTrash } from '@tabler/icons-react';
-import { CART_TEXTS } from '../../config/constants';
+import { CART_TEXTS, ERROR_TEXTS } from '../../config/constants';
 
 interface CartItem {
   productId: string;
@@ -37,28 +37,16 @@ const CartDrawer = ({
     setIsVisible(opened);
   }, [opened]);
 
-  // Debug log to check if cartItems data is being received
-  useEffect(() => {
-    console.log('CartDrawer received cartItems:', cartItems);
-    console.log('CartDrawer is visible:', isVisible);
-    console.log('onClearCart function provided:', !!onClearCart);
-  }, [cartItems, isVisible, onClearCart]);
-
   const handleClearCart = () => {
     // Add confirmation dialog before clearing cart
-    const confirmClear = window.confirm(
-      '¿Estás seguro que deseas vaciar el carrito?'
-    );
+    const confirmClear = window.confirm(CART_TEXTS.CART_EMPTY_CONFIRM);
 
     if (confirmClear) {
-      console.log('Trash icon clicked, attempting to clear cart');
       if (onClearCart) {
-        console.log('onClearCart function exists, calling it');
         onClearCart();
       } else {
-        console.log('onClearCart function is not provided');
         // Fallback implementation if onClearCart is not provided
-        alert('Please implement onClearCart function in the parent component');
+        alert(ERROR_TEXTS.MISSING_CALLBACK);
       }
     }
   };
@@ -68,7 +56,7 @@ const CartDrawer = ({
       router.push(`/branches/${branchId}/cart`);
     } else {
       console.error('Branch ID not provided to CartDrawer');
-      alert('No se puede acceder al carrito sin una sucursal seleccionada');
+      alert(CART_TEXTS.NO_BRANCH_SELECTED);
     }
   };
 
@@ -296,7 +284,7 @@ const CartDrawer = ({
               fontWeight: 500,
             }}
           >
-            Total
+            {CART_TEXTS.TOTAL}
           </Text>
           <Text
             style={{
@@ -341,7 +329,7 @@ const CartDrawer = ({
             <Text
               style={{ color: '#B3FF00', fontSize: '16px', fontWeight: 600 }}
             >
-              Ver Carrito
+              {CART_TEXTS.VIEW_CART}
             </Text>
           </Box>
         </Button>

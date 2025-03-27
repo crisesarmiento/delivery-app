@@ -11,7 +11,7 @@ import ProductsHeader from '@/components/Header/ProductsHeader';
 import CategoryTabs from '@/components/CategoryTabs/CategoryTabs';
 import CartDrawer from '@/components/CartDrawer/CartDrawer';
 import CategorySection from '@/components/CategorySection';
-import { COMMON_TEXTS } from '../../../config/constants';
+import { COMMON_TEXTS, ERROR_TEXTS } from '../../../config/constants';
 import {
   useCart,
   CartItem as CartContextItem,
@@ -29,12 +29,6 @@ export default function BranchProductsPage() {
     clearCart,
   } = useCart();
 
-  useEffect(() => {
-    console.log('Dynamic route params:', params);
-    console.log('Branch ID:', branchId);
-    console.log('Available products for this branch:', products || []);
-  }, [params, branchId]);
-
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('promo');
   const [cartDrawerOpened, setCartDrawerOpened] = useState(true);
@@ -48,7 +42,6 @@ export default function BranchProductsPage() {
   // Handle case when branch is not found
   useEffect(() => {
     if (!currentBranch && branchId) {
-      console.log('Branch not found:', branchId);
       alert(COMMON_TEXTS.BRANCH_NOT_FOUND);
       router.push('/branches');
     }
@@ -69,16 +62,14 @@ export default function BranchProductsPage() {
 
   // Add product to cart
   const addToCart = (product: IProduct, quantity: number) => {
-    console.log('Adding product to cart:', { product, quantity });
-
     // Validate product data before adding to cart
     if (!product || !product.id) {
-      console.error('Invalid product data:', product);
+      console.error(ERROR_TEXTS.INVALID_PRODUCT, product);
       return;
     }
 
     if (quantity <= 0) {
-      console.error('Invalid quantity:', quantity);
+      console.error(ERROR_TEXTS.INVALID_QUANTITY, quantity);
       return;
     }
 
@@ -91,12 +82,10 @@ export default function BranchProductsPage() {
       quantity,
     };
 
-    console.log('Adding to cart context:', cartItem);
     addToCartContext(cartItem);
 
     // Open cart drawer
     setCartDrawerOpened(true);
-    console.log('Cart drawer opened:', true);
   };
 
   // Convert cart context items to format expected by CartDrawer
@@ -232,7 +221,7 @@ export default function BranchProductsPage() {
           ))
         ) : (
           <Text ta="center" fz="lg" c="dimmed" style={{ padding: '40px 0' }}>
-            No hay productos disponibles
+            {COMMON_TEXTS.NO_PRODUCTS_AVAILABLE}
           </Text>
         )}
       </Box>

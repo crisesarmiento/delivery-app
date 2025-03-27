@@ -9,6 +9,11 @@ export const CART_TEXTS = {
     'Tu carrito está vacío. Agregá productos para comenzar tu pedido.',
   CHECKOUT: 'Realizar pedido',
   CLEAR_CART: 'Limpiar carrito',
+  VIEW_CART: 'Ver Carrito',
+  CART_EMPTY_CONFIRM: '¿Estás seguro que deseas vaciar el carrito?',
+  TOTAL: 'Total',
+  NO_BRANCH_SELECTED:
+    'No se puede acceder al carrito sin una sucursal seleccionada',
 };
 
 export const CHECKOUT_TEXTS = {
@@ -41,4 +46,33 @@ export const COMMON_TEXTS = {
   BRANCH_NOT_FOUND:
     'Sucursal no encontrada. Redirigiendo a la página de sucursales.',
   ORDER_CONFIRMED: '¡Pedido confirmado! Gracias por tu compra.',
+};
+
+export const ERROR_TEXTS = {
+  GENERAL_ERROR_TITLE: 'Ha ocurrido un error',
+  GENERAL_ERROR_MESSAGE:
+    'Lo sentimos, algo salió mal. Por favor intenta recargar la página.',
+  RELOAD_PAGE: 'Recargar página',
+  MISSING_CALLBACK:
+    'Please implement onClearCart function in the parent component',
+  INVALID_PRODUCT: 'Producto inválido',
+  INVALID_QUANTITY: 'Cantidad inválida',
+};
+
+export const LOADING_TEXTS = {
+  LOADING: 'Cargando...',
+  PROCESSING: 'Procesando...',
+  REDIRECTING: 'Redirigiendo...',
+};
+
+export const PRODUCT_TEXTS = {
+  ADD_TO_CART: 'Agregar al carrito',
+  PRODUCT_DETAILS: 'Detalles del producto',
+  INGREDIENTS: 'Ingredientes',
+  CUSTOMIZATION: 'Personalización',
+  QUANTITY: 'Cantidad',
+};
+
+export const CATEGORY_TEXTS = {
+  PROMO: 'Promociones',
 };
