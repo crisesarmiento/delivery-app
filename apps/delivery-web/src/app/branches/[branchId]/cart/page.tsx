@@ -1,0 +1,604 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import {
+  Box,
+  Text,
+  TextInput,
+  Textarea,
+  Divider,
+  Button,
+  Image,
+  NumberInput,
+  Flex,
+} from '@mantine/core';
+import {
+  IconTrash,
+  IconCirclePlus,
+  IconCircleMinus,
+} from '@tabler/icons-react';
+import styles from './page.module.css';
+import ProductsHeader from '@/components/Header/ProductsHeader';
+import { branchesMock } from '../../../../mocks/branches.mock';
+import { useCart } from '../../../../context/CartContext';
+import { IBranch, IProduct } from '../../../../types';
+import AddToCartModal from '@/components/AddToCartModal/AddToCartModal';
+
+export default function CheckoutPage() {
+  const params = useParams();
+  const router = useRouter();
+  const branchId = (params?.branchId as string) || '';
+  const { items, updateCartItem, removeFromCart, getTotalPrice } = useCart();
+
+  // State for the form
+  const [deliveryMethod, setDeliveryMethod] = useState('delivery');
+  const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
+  const [city, setCity] = useState('');
+  const [province, setProvince] = useState('');
+  const [note, setNote] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('transfer');
+  const [paymentAmount, setPaymentAmount] = useState<number | ''>('');
+
+  // State for product editing
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [currentProduct, setCurrentProduct] = useState<IProduct | null>(null);
+
+  // Find the current branch
+  const currentBranch = branchesMock.find((branch) => branch.id === branchId);
+
+  // Handle back navigation
+  const handleBack = () => {
+    router.push(`/branches/${branchId}`);
+  };
+
+  // Redirect if branch is not found
+  useEffect(() => {
+    if (!currentBranch && branchId) {
+      router.push('/branches');
+    }
+  }, [currentBranch, branchId, router]);
+
+  // Calculate prices
+  const subtotal = getTotalPrice();
+  const productDiscount = 500; // Example values from the design
+  const paymentDiscount = 200;
+  const shippingCost = 1500;
+  const total = subtotal - productDiscount - paymentDiscount + shippingCost;
+
+  // Handle checkout
+  const handleCheckout = () => {
+    // Here you would implement the checkout logic
+    console.log('Checkout initiated with data:', {
+      deliveryMethod,
+      fullName,
+      phone,
+      address,
+      city,
+      province,
+      note,
+      paymentMethod,
+      paymentAmount,
+      cartItems: items,
+      totalAmount: total,
+    });
+
+    // For demo purposes, alert the user and redirect
+    alert('¡Pedido confirmado! Gracias por tu compra.');
+    router.push(`/branches/${branchId}`);
+  };
+
+  // Handle product quantity update
+  const handleQuantityUpdate = (
+    productId: string | number,
+    newQuantity: number
+  ) => {
+    if (newQuantity === 0) {
+      removeFromCart(productId);
+    } else {
+      updateCartItem(productId, { quantity: newQuantity });
+    }
+  };
+
+  // Open edit modal for a product
+  const handleEditProduct = (product: IProduct) => {
+    setCurrentProduct(product);
+    setEditModalOpen(true);
+  };
+
+  // Close edit modal
+  const handleCloseEditModal = () => {
+    setEditModalOpen(false);
+    setCurrentProduct(null);
+  };
+
+  // Handle add to cart (update) from modal
+  const handleAddToCart = (quantity: number) => {
+    if (currentProduct) {
+      updateCartItem(currentProduct.id, { quantity });
+    }
+    setEditModalOpen(false);
+    setCurrentProduct(null);
+  };
+
+  // Handle payment amount change
+  const handlePaymentAmountChange = (value: string | number) => {
+    setPaymentAmount(
+      typeof value === 'string' ? (value === '' ? '' : Number(value)) : value
+    );
+  };
+
+  // Check if cart is empty
+  if (items.length === 0) {
+    router.push(`/branches/${branchId}`);
+    return null;
+  }
+
+  return (
+    <Box className={styles.checkoutPageContainer}>
+      {/* Header */}
+      <ProductsHeader
+        branch={currentBranch as IBranch}
+        onBackClick={handleBack}
+      />
+
+      <Box className={styles.contentContainer}>
+        {/* Left Section - Delivery Details */}
+        <Box className={styles.leftSection} style={{ paddingBottom: '50px' }}>
+          <Text className={styles.sectionTitle}>Detalle de entrega</Text>
+
+          {/* Delivery Method Toggle */}
+          <Flex className={styles.deliveryToggle}>
+            <Box
+              className={`${styles.toggleButton} ${
+                deliveryMethod === 'delivery'
+                  ? styles.activeToggle
+                  : styles.inactiveToggle
+              }`}
+              onClick={() => setDeliveryMethod('delivery')}
+            >
+              <Text>Delivery</Text>
+            </Box>
+            <Box
+              className={`${styles.toggleButton} ${
+                deliveryMethod === 'pickup'
+                  ? styles.activeToggle
+                  : styles.inactiveToggle
+              }`}
+              onClick={() => setDeliveryMethod('pickup')}
+            >
+              <Text>Retiro</Text>
+            </Box>
+          </Flex>
+
+          {/* Customer Information Form */}
+          <Box className={styles.formField}>
+            <Text className={styles.formLabel}>
+              Nombre completo<span className={styles.requiredAsterisk}>*</span>
+            </Text>
+            <TextInput
+              placeholder=""
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              required
+              classNames={{ input: styles.formInput }}
+              style={{
+                border: '1px solid #EFF2F6',
+                borderRadius: '4px',
+              }}
+            />
+          </Box>
+
+          <Box className={styles.formField}>
+            <Text className={styles.formLabel}>
+              Teléfono<span className={styles.requiredAsterisk}>*</span>
+            </Text>
+            <TextInput
+              placeholder=""
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              required
+              classNames={{ input: styles.formInput }}
+              style={{
+                border: '1px solid #EFF2F6',
+                borderRadius: '4px',
+              }}
+            />
+          </Box>
+
+          {deliveryMethod === 'delivery' && (
+            <>
+              <Box className={styles.formField}>
+                <Text className={styles.formLabel}>
+                  Domicilio<span className={styles.requiredAsterisk}>*</span>
+                </Text>
+                <TextInput
+                  placeholder=""
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  required
+                  classNames={{ input: styles.formInput }}
+                  style={{
+                    border: '1px solid #EFF2F6',
+                    borderRadius: '4px',
+                  }}
+                />
+              </Box>
+
+              <div className={styles.cityProvinceRow}>
+                <Box
+                  className={`${styles.formField} ${styles.cityProvinceItem}`}
+                >
+                  <Text className={styles.formLabel}>
+                    Ciudad<span className={styles.requiredAsterisk}>*</span>
+                  </Text>
+                  <TextInput
+                    placeholder=""
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    required
+                    classNames={{ input: styles.formInput }}
+                    style={{
+                      border: '1px solid #EFF2F6',
+                      borderRadius: '4px',
+                    }}
+                  />
+                </Box>
+
+                <Box
+                  className={`${styles.formField} ${styles.cityProvinceItem}`}
+                >
+                  <Text className={styles.formLabel}>
+                    Provincia<span className={styles.requiredAsterisk}>*</span>
+                  </Text>
+                  <TextInput
+                    placeholder=""
+                    value={province}
+                    onChange={(e) => setProvince(e.target.value)}
+                    required
+                    classNames={{ input: styles.formInput }}
+                    style={{
+                      border: '1px solid #EFF2F6',
+                      borderRadius: '4px',
+                    }}
+                  />
+                </Box>
+              </div>
+            </>
+          )}
+
+          {/* Note for the restaurant */}
+          <Box style={{ marginTop: 16 }}>
+            <Text className={styles.textAreaLabel}>Nota para el local</Text>
+            <Textarea
+              placeholder=""
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              maxLength={100}
+              minRows={3}
+              classNames={{
+                root: styles.noteTextarea,
+                wrapper: styles.noteTextarea,
+                input: styles.noteTextarea,
+              }}
+            />
+            <Text className={styles.textAreaCounter}>{note.length}/100</Text>
+          </Box>
+
+          <Divider className={styles.divider} />
+
+          {/* Payment Method Section */}
+          <Text className={styles.sectionTitle}>Forma de pago</Text>
+
+          <Box>
+            <Box
+              mb={12}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                cursor: 'pointer',
+              }}
+              onClick={() => setPaymentMethod('transfer')}
+            >
+              <div className={styles.radioContainer}>
+                <input
+                  type="radio"
+                  checked={paymentMethod === 'transfer'}
+                  onChange={() => setPaymentMethod('transfer')}
+                  className={styles.radioInput}
+                />
+              </div>
+              <Text
+                className={
+                  paymentMethod === 'transfer'
+                    ? styles.radioButton
+                    : styles.radioButtonInactive
+                }
+              >
+                Transferencia Bancaria (Descuento 10%)
+              </Text>
+            </Box>
+
+            <Box
+              mb={12}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                cursor: 'pointer',
+              }}
+              onClick={() => setPaymentMethod('mercadopago')}
+            >
+              <div className={styles.radioContainer}>
+                <input
+                  type="radio"
+                  checked={paymentMethod === 'mercadopago'}
+                  onChange={() => setPaymentMethod('mercadopago')}
+                  className={styles.radioInput}
+                />
+              </div>
+              <Text
+                className={
+                  paymentMethod === 'mercadopago'
+                    ? styles.radioButton
+                    : styles.radioButtonInactive
+                }
+              >
+                Mercado Pago
+              </Text>
+            </Box>
+
+            <Box
+              mb={16}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                cursor: 'pointer',
+              }}
+              onClick={() => setPaymentMethod('cash')}
+            >
+              <div className={styles.radioContainer}>
+                <input
+                  type="radio"
+                  checked={paymentMethod === 'cash'}
+                  onChange={() => setPaymentMethod('cash')}
+                  className={styles.radioInput}
+                />
+              </div>
+              <Text
+                className={
+                  paymentMethod === 'cash'
+                    ? styles.radioButton
+                    : styles.radioButtonInactive
+                }
+              >
+                Efectivo (Descuento 10%)
+              </Text>
+            </Box>
+          </Box>
+
+          {/* Payment Amount */}
+          <Box className={styles.formField} style={{ marginBottom: '0' }}>
+            <Text className={styles.formLabel}>Con cuánto vas a pagar?</Text>
+            <NumberInput
+              placeholder=""
+              value={paymentAmount}
+              onChange={handlePaymentAmountChange}
+              min={0}
+              classNames={{
+                root: styles.numberInput,
+                input: styles.formInput,
+                wrapper: styles.numberInput,
+              }}
+            />
+          </Box>
+        </Box>
+
+        {/* Right Section */}
+        <Box className={styles.rightSection}>
+          {/* Order Box */}
+          <Box className={styles.orderBox}>
+            <Text className={styles.sectionTitle}>Mi pedido</Text>
+            <Divider
+              className={styles.summaryDivider}
+              style={{ marginTop: -4, marginBottom: 16 }}
+            />
+
+            {/* Scrollable Products Container */}
+            <Box className={styles.scrollableProductsContainer}>
+              {items.map((item) => {
+                // Check if product has discount
+                const hasDiscount =
+                  item.product.name.toLowerCase().includes('promo') ||
+                  Math.random() > 0.7;
+                const discountPercentage = hasDiscount ? 20 : 0;
+                const originalPrice = hasDiscount
+                  ? (item.product.price * 1.2).toFixed(2)
+                  : null;
+
+                return (
+                  <Box key={item.product.id}>
+                    <Box className={styles.productRow}>
+                      <Image
+                        src={item.product.imageUrl}
+                        alt={item.product.name}
+                        className={styles.productImage}
+                      />
+
+                      <Box className={styles.productDetails}>
+                        <Text className={styles.productName}>
+                          {item.product.name}
+                        </Text>
+                        <Text
+                          className={styles.editLink}
+                          onClick={() => handleEditProduct(item.product)}
+                        >
+                          Editar
+                        </Text>
+                      </Box>
+
+                      <Box
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'flex-end',
+                        }}
+                      >
+                        <Text className={styles.productPrice}>
+                          $
+                          {(
+                            item.product.price * item.quantity
+                          ).toLocaleString()}
+                        </Text>
+                        {hasDiscount && originalPrice && (
+                          <Text className={styles.productOriginalPrice}>
+                            $
+                            {(
+                              parseFloat(originalPrice) * item.quantity
+                            ).toLocaleString()}
+                          </Text>
+                        )}
+
+                        {/* Quantity controls */}
+                        <Box className={styles.quantityControls}>
+                          {item.quantity <= 1 ? (
+                            <IconTrash
+                              size={26}
+                              stroke={1.5}
+                              style={{ cursor: 'pointer' }}
+                              onClick={() => removeFromCart(item.product.id)}
+                            />
+                          ) : (
+                            <IconCircleMinus
+                              size={26}
+                              stroke={1.5}
+                              style={{ cursor: 'pointer' }}
+                              onClick={() =>
+                                handleQuantityUpdate(
+                                  item.product.id,
+                                  item.quantity - 1
+                                )
+                              }
+                            />
+                          )}
+
+                          <Text fw={600}>{item.quantity}</Text>
+
+                          <IconCirclePlus
+                            size={26}
+                            stroke={1.5}
+                            style={{
+                              background: '#B3FF00',
+                              borderRadius: '50%',
+                              cursor: 'pointer',
+                            }}
+                            onClick={() =>
+                              handleQuantityUpdate(
+                                item.product.id,
+                                item.quantity + 1
+                              )
+                            }
+                          />
+                        </Box>
+                      </Box>
+                    </Box>
+                    <Divider
+                      className={styles.summaryDivider}
+                      style={{ margin: '8px 0' }}
+                    />
+                  </Box>
+                );
+              })}
+            </Box>
+          </Box>
+
+          {/* Summary Box */}
+          <Box className={styles.summaryBox}>
+            <Box>
+              <Text className={styles.sectionTitle}>Resumen</Text>
+              <Divider
+                className={styles.summaryDivider}
+                style={{ marginTop: -4 }}
+              />
+
+              {/* Price Summary */}
+              <Box className={styles.priceLine}>
+                <Text className={styles.priceLabel}>Productos</Text>
+                <Text className={styles.priceValue}>
+                  ${subtotal.toLocaleString()}
+                </Text>
+              </Box>
+
+              <Box className={styles.priceLine}>
+                <Text className={styles.priceLabel}>
+                  Descuento de productos
+                </Text>
+                <Text className={styles.discountValue}>
+                  -${productDiscount.toLocaleString()}
+                </Text>
+              </Box>
+
+              <Divider className={styles.summaryDivider} />
+
+              <Box className={styles.priceLine}>
+                <Text className={styles.sectionSubtitle}>Subtotal</Text>
+                <Text className={styles.priceValue}>
+                  ${(subtotal - productDiscount).toLocaleString()}
+                </Text>
+              </Box>
+
+              <Box className={styles.priceLine}>
+                <Text className={styles.priceLabel}>
+                  Descuento forma de pago
+                </Text>
+                <Text className={styles.discountValue}>
+                  -${paymentDiscount.toLocaleString()}
+                </Text>
+              </Box>
+
+              <Box className={styles.priceLine}>
+                <Text className={styles.priceLabel}>Envío</Text>
+                <Text className={styles.priceValue}>
+                  ${shippingCost.toLocaleString()}
+                </Text>
+              </Box>
+
+              <Divider className={styles.summaryDivider} />
+
+              <Box className={styles.priceLine}>
+                <Text className={styles.totalLabel}>Total</Text>
+                <Text className={styles.totalValue}>
+                  ${total.toLocaleString()}
+                </Text>
+              </Box>
+            </Box>
+
+            {/* Confirm Button */}
+            <Button
+              className={styles.confirmButton}
+              onClick={handleCheckout}
+              fullWidth
+            >
+              Confirmar pedido
+            </Button>
+          </Box>
+        </Box>
+      </Box>
+
+      {/* Edit Product Modal */}
+      {editModalOpen && currentProduct && (
+        <AddToCartModal
+          product={currentProduct}
+          opened={editModalOpen}
+          onClose={handleCloseEditModal}
+          onAddToCart={handleAddToCart}
+          initialQuantity={
+            items.find((item) => item.product.id === currentProduct.id)
+              ?.quantity || 1
+          }
+        />
+      )}
+    </Box>
+  );
+}
