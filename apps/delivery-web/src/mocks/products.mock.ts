@@ -300,7 +300,20 @@ export const getProductsByCategory = (
 export const getProductById = (
   id: string | number
 ): IProductWithCustomization | undefined => {
-  return products.find((product) => String(product.id) === String(id));
+  // Convert ID to string for comparison
+  const stringId = String(id);
+
+  // Log this for debugging
+  console.log(`Looking for product with ID: ${stringId}`);
+
+  // Find the product
+  const product = products.find((product) => String(product.id) === stringId);
+
+  if (!product) {
+    console.warn(`Product with ID ${stringId} not found`);
+  }
+
+  return product;
 };
 
 export default products;

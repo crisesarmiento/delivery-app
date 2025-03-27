@@ -6,17 +6,22 @@ import { useDisclosure } from '@mantine/hooks';
 import { useRouter } from 'next/navigation';
 import { MenuDrawer } from '../MenuDrawer/MenuDrawer';
 import { Logo, MenuButton, SearchBar } from './HeaderComponents';
+import ClosedNotification from '../ClosedNotification';
 
 interface HeaderProps {
   showSearchBar?: boolean;
   searchValue?: string;
   onSearchChange?: (value: string) => void;
+  showClosedNotification?: boolean;
+  closedMessage?: string;
 }
 
 const Header = ({
   showSearchBar = true,
   searchValue = '',
   onSearchChange,
+  showClosedNotification = false,
+  closedMessage,
 }: HeaderProps) => {
   const [opened, { toggle, close }] = useDisclosure(false);
   const [internalSearchValue, setInternalSearchValue] = useState(searchValue);
@@ -38,6 +43,9 @@ const Header = ({
   // Home page header
   return (
     <>
+      {/* Closed notification banner */}
+      {showClosedNotification && <ClosedNotification message={closedMessage} />}
+
       {/* Fixed hero header */}
       <Box
         component="header"
@@ -46,7 +54,7 @@ const Header = ({
           width: '100%',
           height: '283px',
           left: '0px',
-          top: '0px',
+          top: showClosedNotification ? '34px' : '0px',
           zIndex: 100,
         }}
       >

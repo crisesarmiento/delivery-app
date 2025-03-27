@@ -11,10 +11,13 @@ import ProductsHeader from '@/components/Header/ProductsHeader';
 import CategoryTabs from '@/components/CategoryTabs/CategoryTabs';
 import CartDrawer from '@/components/CartDrawer/CartDrawer';
 import CategorySection from '@/components/CategorySection';
+import BasePage from '@/components/BasePage';
+import { COMMON_TEXTS, ERROR_TEXTS } from '../../../config/constants';
 import {
   useCart,
   CartItem as CartContextItem,
 } from '../../../context/CartContext';
+import { isBranchOpen } from '@/utils/branch';
 
 export default function BranchProductsPage() {
   const params = useParams();
@@ -25,13 +28,8 @@ export default function BranchProductsPage() {
     items: cartContextItems,
     addToCart: addToCartContext,
     getTotalPrice,
+    clearCart,
   } = useCart();
-
-  useEffect(() => {
-    console.log('Dynamic route params:', params);
-    console.log('Branch ID:', branchId);
-    console.log('Available products for this branch:', products || []);
-  }, [params, branchId]);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('promo');
@@ -41,13 +39,34 @@ export default function BranchProductsPage() {
   >({});
 
   // Find the current branch
-  const currentBranch = branchesMock.find((branch) => branch.id === branchId);
+  const [currentBranch, setCurrentBranch] = useState<IBranch | undefined>(
+    branchesMock.find((branch) => branch.id === branchId)
+  );
+
+  // Check if branch is open on component mount and every minute
+  useEffect(() => {
+    const branch = branchesMock.find((b) => b.id === branchId);
+    if (branch) {
+      setCurrentBranch({
+        ...branch,
+        isOpen: isBranchOpen(branch),
+      });
+
+      // Update status every minute
+      const intervalId = setInterval(() => {
+        setCurrentBranch((prev) =>
+          prev ? { ...prev, isOpen: isBranchOpen(prev) } : undefined
+        );
+      }, 60000);
+
+      return () => clearInterval(intervalId);
+    }
+  }, [branchId]);
 
   // Handle case when branch is not found
   useEffect(() => {
     if (!currentBranch && branchId) {
-      console.log('Branch not found:', branchId);
-      alert('Branch not found. Redirecting to branches page.');
+      alert(COMMON_TEXTS.BRANCH_NOT_FOUND);
       router.push('/branches');
     }
   }, [currentBranch, branchId, router]);
@@ -67,16 +86,20 @@ export default function BranchProductsPage() {
 
   // Add product to cart
   const addToCart = (product: IProduct, quantity: number) => {
-    console.log('Adding product to cart:', { product, quantity });
+    // Check if branch is closed
+    if (currentBranch && !currentBranch.isOpen) {
+      alert('Lo sentimos, esta sucursal está cerrada en este momento.');
+      return;
+    }
 
     // Validate product data before adding to cart
     if (!product || !product.id) {
-      console.error('Invalid product data:', product);
+      console.error(ERROR_TEXTS.INVALID_PRODUCT, product);
       return;
     }
 
     if (quantity <= 0) {
-      console.error('Invalid quantity:', quantity);
+      console.error(ERROR_TEXTS.INVALID_QUANTITY, quantity);
       return;
     }
 
@@ -89,12 +112,10 @@ export default function BranchProductsPage() {
       quantity,
     };
 
-    console.log('Adding to cart context:', cartItem);
     addToCartContext(cartItem);
 
     // Open cart drawer
     setCartDrawerOpened(true);
-    console.log('Cart drawer opened:', true);
   };
 
   // Convert cart context items to format expected by CartDrawer
@@ -102,6 +123,7 @@ export default function BranchProductsPage() {
     productId: String(item.product.id),
     quantity: item.quantity,
     product: item.product,
+    totalPrice: item.totalPrice,
   }));
 
   // Get cart total from context
@@ -182,53 +204,64 @@ export default function BranchProductsPage() {
     return acc;
   }, {} as Record<string, IProduct[]>);
 
-  return (
-    <Box className={styles.productPageContainer}>
-      {/* Use the reusable Header component with product page configuration */}
+  // Add a function to handle clearing the cart
+  const handleClearCart = () => {
+    clearCart();
+  };
+
+  // Header component for the BasePage
+  const Header = (
+    <>
       <ProductsHeader
         branch={currentBranch as IBranch}
         onBackClick={handleBack}
         searchValue={searchQuery}
         onSearchChange={handleSearchChange}
+        isClosed={currentBranch ? !currentBranch.isOpen : false}
+        closedMessage="La sucursal se encuentra cerrada en este momento."
       />
-
-      {/* Categories tabs */}
       <CategoryTabs
         categories={categories}
         activeTab={activeTab}
         onTabChange={handleTabChange}
       />
+    </>
+  );
 
-      {/* Category sections */}
-      <Box className={styles.sectionsContainer}>
-        {Object.keys(productsByCategory).length > 0 ? (
-          Object.entries(productsByCategory).map(([category, products]) => (
-            <div
-              key={category}
-              ref={(el) => {
-                sectionRefs.current[category.toLowerCase()] = el;
-              }}
-              style={{ margin: 0, padding: 0 }}
-            >
-              <CategorySection
-                title={category}
-                products={products}
-                onAddToCart={addToCart}
-                isInitiallyExpanded={
-                  expandedSections[category.toLowerCase()] || false
-                }
-                onToggleExpand={(isExpanded) =>
-                  handleSectionToggle(category, isExpanded)
-                }
-              />
-            </div>
-          ))
-        ) : (
-          <Text ta="center" fz="lg" c="dimmed" style={{ padding: '40px 0' }}>
-            No hay productos disponibles
-          </Text>
-        )}
-      </Box>
+  return (
+    <>
+      <BasePage headerSlot={Header} className={styles.productPageContainer}>
+        <Box className={styles.sectionsContainer}>
+          {Object.keys(productsByCategory).length > 0 ? (
+            Object.entries(productsByCategory).map(([category, products]) => (
+              <div
+                key={category}
+                ref={(el) => {
+                  sectionRefs.current[category.toLowerCase()] = el;
+                }}
+                style={{ margin: 0, padding: 0 }}
+              >
+                <CategorySection
+                  title={category}
+                  products={products}
+                  onAddToCart={addToCart}
+                  isInitiallyExpanded={
+                    expandedSections[category.toLowerCase()] || false
+                  }
+                  onToggleExpand={(isExpanded) =>
+                    handleSectionToggle(category, isExpanded)
+                  }
+                  isDisabled={currentBranch ? !currentBranch.isOpen : false}
+                />
+              </div>
+            ))
+          ) : (
+            <Text ta="center" fz="lg" c="dimmed" style={{ padding: '40px 0' }}>
+              {COMMON_TEXTS.NO_PRODUCTS_AVAILABLE}
+            </Text>
+          )}
+        </Box>
+      </BasePage>
 
       {/* Cart drawer */}
       <CartDrawer
@@ -236,7 +269,9 @@ export default function BranchProductsPage() {
         onClose={() => setCartDrawerOpened(false)}
         cartItems={cartItems}
         cartTotal={cartTotal}
+        onClearCart={handleClearCart}
+        branchId={branchId}
       />
-    </Box>
+    </>
   );
 }

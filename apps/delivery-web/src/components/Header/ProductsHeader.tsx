@@ -8,12 +8,15 @@ import { useRouter } from 'next/navigation';
 import { MenuDrawer } from '../MenuDrawer/MenuDrawer';
 import { Logo, MenuButton, SearchBar } from './HeaderComponents';
 import { IBranch } from '@/types';
+import ClosedNotification from '../ClosedNotification';
 
 interface ProductsHeaderProps {
   branch: IBranch;
   onBackClick?: () => void;
   searchValue?: string;
   onSearchChange?: (value: string) => void;
+  isClosed?: boolean;
+  closedMessage?: string;
 }
 
 export function ProductsHeader({
@@ -21,6 +24,8 @@ export function ProductsHeader({
   onBackClick,
   searchValue = '',
   onSearchChange,
+  isClosed = false,
+  closedMessage,
 }: ProductsHeaderProps) {
   const { name, address, phoneNumber } = branch;
   const [opened, { toggle, close }] = useDisclosure(false);
@@ -42,6 +47,9 @@ export function ProductsHeader({
 
   return (
     <>
+      {/* Closed notification banner */}
+      {isClosed && <ClosedNotification message={closedMessage} />}
+
       {/* Fixed hero header */}
       <Box
         component="header"
@@ -50,7 +58,7 @@ export function ProductsHeader({
           width: '100%',
           height: '283px',
           left: '0px',
-          top: '0px',
+          top: isClosed ? '34px' : '0px',
           zIndex: 100,
         }}
       >
