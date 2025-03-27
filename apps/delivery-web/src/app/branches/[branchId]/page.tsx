@@ -11,6 +11,7 @@ import ProductsHeader from '@/components/Header/ProductsHeader';
 import CategoryTabs from '@/components/CategoryTabs/CategoryTabs';
 import CartDrawer from '@/components/CartDrawer/CartDrawer';
 import CategorySection from '@/components/CategorySection';
+import BasePage from '@/components/BasePage';
 import { COMMON_TEXTS, ERROR_TEXTS } from '../../../config/constants';
 import {
   useCart,
@@ -93,6 +94,7 @@ export default function BranchProductsPage() {
     productId: String(item.product.id),
     quantity: item.quantity,
     product: item.product,
+    totalPrice: item.totalPrice,
   }));
 
   // Get cart total from context
@@ -178,53 +180,56 @@ export default function BranchProductsPage() {
     clearCart();
   };
 
-  return (
-    <Box className={styles.productPageContainer}>
-      {/* Use the reusable Header component with product page configuration */}
+  // Header component for the BasePage
+  const Header = (
+    <>
       <ProductsHeader
         branch={currentBranch as IBranch}
         onBackClick={handleBack}
         searchValue={searchQuery}
         onSearchChange={handleSearchChange}
       />
-
-      {/* Categories tabs */}
       <CategoryTabs
         categories={categories}
         activeTab={activeTab}
         onTabChange={handleTabChange}
       />
+    </>
+  );
 
-      {/* Category sections */}
-      <Box className={styles.sectionsContainer}>
-        {Object.keys(productsByCategory).length > 0 ? (
-          Object.entries(productsByCategory).map(([category, products]) => (
-            <div
-              key={category}
-              ref={(el) => {
-                sectionRefs.current[category.toLowerCase()] = el;
-              }}
-              style={{ margin: 0, padding: 0 }}
-            >
-              <CategorySection
-                title={category}
-                products={products}
-                onAddToCart={addToCart}
-                isInitiallyExpanded={
-                  expandedSections[category.toLowerCase()] || false
-                }
-                onToggleExpand={(isExpanded) =>
-                  handleSectionToggle(category, isExpanded)
-                }
-              />
-            </div>
-          ))
-        ) : (
-          <Text ta="center" fz="lg" c="dimmed" style={{ padding: '40px 0' }}>
-            {COMMON_TEXTS.NO_PRODUCTS_AVAILABLE}
-          </Text>
-        )}
-      </Box>
+  return (
+    <>
+      <BasePage headerSlot={Header} className={styles.productPageContainer}>
+        <Box className={styles.sectionsContainer}>
+          {Object.keys(productsByCategory).length > 0 ? (
+            Object.entries(productsByCategory).map(([category, products]) => (
+              <div
+                key={category}
+                ref={(el) => {
+                  sectionRefs.current[category.toLowerCase()] = el;
+                }}
+                style={{ margin: 0, padding: 0 }}
+              >
+                <CategorySection
+                  title={category}
+                  products={products}
+                  onAddToCart={addToCart}
+                  isInitiallyExpanded={
+                    expandedSections[category.toLowerCase()] || false
+                  }
+                  onToggleExpand={(isExpanded) =>
+                    handleSectionToggle(category, isExpanded)
+                  }
+                />
+              </div>
+            ))
+          ) : (
+            <Text ta="center" fz="lg" c="dimmed" style={{ padding: '40px 0' }}>
+              {COMMON_TEXTS.NO_PRODUCTS_AVAILABLE}
+            </Text>
+          )}
+        </Box>
+      </BasePage>
 
       {/* Cart drawer */}
       <CartDrawer
@@ -235,6 +240,6 @@ export default function BranchProductsPage() {
         onClearCart={handleClearCart}
         branchId={branchId}
       />
-    </Box>
+    </>
   );
 }

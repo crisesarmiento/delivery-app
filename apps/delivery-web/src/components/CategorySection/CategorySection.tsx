@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Box, Button, Text, Flex } from '@mantine/core';
-import { IconChevronDown, IconChevronUp } from '@tabler/icons-react';
+import { Box } from '@mantine/core';
 import { IProduct } from '../../types';
-import ProductCard from '../ProductCard/ProductCard';
+import ProductGrid from '../ProductGrid';
+import SectionHeader from '../SectionHeader';
 import styles from './CategorySection.module.css';
 
 interface CategorySectionProps {
@@ -36,24 +36,12 @@ const CategorySection = ({
 
   return (
     <Box className={styles.categorySection}>
-      <Flex className={styles.sectionHeader} onClick={toggleExpand}>
-        <Text className={styles.sectionTitle}>{title}</Text>
-        <Button variant="subtle" p={0} className={styles.toggleButton}>
-          {isExpanded ? (
-            <IconChevronUp size={20} stroke={1.5} />
-          ) : (
-            <IconChevronDown size={20} stroke={1.5} />
-          )}
-        </Button>
-      </Flex>
-
-      {isExpanded && (
-        <Box className={styles.productsGrid}>
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </Box>
-      )}
+      <SectionHeader
+        title={title}
+        isExpanded={isExpanded}
+        onToggle={toggleExpand}
+      />
+      {isExpanded && <ProductGrid products={products} />}
     </Box>
   );
 };

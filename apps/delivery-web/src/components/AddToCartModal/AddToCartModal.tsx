@@ -27,7 +27,7 @@ interface AddToCartModalProps {
   product: IProduct;
   opened: boolean;
   onClose: () => void;
-  onAddToCart: (quantity: number) => void;
+  onAddToCart: (quantity: number, cartItem?: CartItem) => void;
   initialQuantity?: number;
 }
 
@@ -113,10 +113,12 @@ const AddToCartModal = ({
     };
   }, [opened, onClose]);
 
-  // Only set initial quantity when component mounts or initialQuantity changes
+  // Only set initial quantity when component mounts or initialQuantity changes or when modal opens
   useEffect(() => {
-    setQuantity(initialQuantity);
-  }, [initialQuantity]);
+    if (opened) {
+      setQuantity(initialQuantity);
+    }
+  }, [initialQuantity, opened]);
 
   if (!opened) return null;
 
@@ -182,10 +184,11 @@ const AddToCartModal = ({
       ingredients: selectedIngredients,
       condiments,
       comments: comments.trim() || undefined,
+      totalPrice: calculateTotalPrice(),
     };
 
-    addToCart(cartItem);
-    onAddToCart(quantity);
+    // Pass the cartItem to the parent component
+    onAddToCart(quantity, cartItem);
   };
 
   // Comments handler
@@ -198,6 +201,16 @@ const AddToCartModal = ({
     if (commentCounter) {
       commentCounter.innerText = `${currentLength}/100`;
     }
+  };
+
+  // Calculate total price including ingredients
+  const calculateTotalPrice = () => {
+    const basePrice = product.price;
+    const ingredientsPrice = ingredients
+      .filter((ing) => ing.quantity > 0)
+      .reduce((sum, ing) => sum + (ing.price || 0) * ing.quantity, 0);
+
+    return (basePrice + ingredientsPrice) * quantity;
   };
 
   return (
@@ -316,7 +329,7 @@ const AddToCartModal = ({
                   {showIngredients && (
                     <>
                       {ingredients.map((ingredient, index) => (
-                        <Box key={ingredient.name}>
+                        <Box key={`ingredient-${index}`}>
                           <Box className={styles.ingredientRow}>
                             <Text className={styles.ingredientName}>
                               {ingredient.name}
@@ -391,7 +404,7 @@ const AddToCartModal = ({
                     <>
                       {productWithCustomization?.customization?.condimentOptions.map(
                         (condiment, index) => (
-                          <Box key={condiment.name}>
+                          <Box key={`condiment-${index}`}>
                             <Box className={styles.ingredientRow}>
                               <Text className={styles.ingredientName}>
                                 {condiment.name}
@@ -443,6 +456,7 @@ const AddToCartModal = ({
                     style={{ cursor: 'pointer' }}
                     onClick={() => {
                       setQuantity(0);
+                      onAddToCart(0);
                       onClose();
                     }}
                   />
@@ -480,7 +494,7 @@ const AddToCartModal = ({
                   </div>
                   <div className={styles.addToCartRight}>
                     <Text className={styles.subtotalText}>
-                      Subtotal: ${(product.price * quantity).toFixed(2)}
+                      Subtotal: ${calculateTotalPrice().toFixed(2)}
                     </Text>
                   </div>
                 </div>
