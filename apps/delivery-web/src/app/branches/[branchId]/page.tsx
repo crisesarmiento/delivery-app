@@ -11,6 +11,7 @@ import ProductsHeader from '@/components/Header/ProductsHeader';
 import CategoryTabs from '@/components/CategoryTabs/CategoryTabs';
 import CartDrawer from '@/components/CartDrawer/CartDrawer';
 import CategorySection from '@/components/CategorySection';
+import { COMMON_TEXTS } from '../../../config/constants';
 import {
   useCart,
   CartItem as CartContextItem,
@@ -48,7 +49,7 @@ export default function BranchProductsPage() {
   useEffect(() => {
     if (!currentBranch && branchId) {
       console.log('Branch not found:', branchId);
-      alert('Branch not found. Redirecting to branches page.');
+      alert(COMMON_TEXTS.BRANCH_NOT_FOUND);
       router.push('/branches');
     }
   }, [currentBranch, branchId, router]);

@@ -1,6 +1,12 @@
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from 'react';
 import { IProduct } from '../types';
 
 // Define cart item interface with product customizations
@@ -49,6 +55,26 @@ export const useCart = () => useContext(CartContext);
 // Provider component to wrap the application
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [items, setItems] = useState<CartItem[]>([]);
+
+  // Load cart from localStorage on initial render
+  useEffect(() => {
+    const savedCart = localStorage.getItem('smarty-cart');
+    if (savedCart) {
+      try {
+        const parsedCart = JSON.parse(savedCart);
+        if (Array.isArray(parsedCart)) {
+          setItems(parsedCart);
+        }
+      } catch (error) {
+        console.error('Error parsing cart from localStorage:', error);
+      }
+    }
+  }, []);
+
+  // Save cart to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('smarty-cart', JSON.stringify(items));
+  }, [items]);
 
   // Add a new item or update existing one
   const addToCart = (item: CartItem) => {

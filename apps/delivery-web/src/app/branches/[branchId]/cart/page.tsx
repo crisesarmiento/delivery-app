@@ -23,6 +23,7 @@ import ProductsHeader from '@/components/Header/ProductsHeader';
 import { branchesMock } from '../../../../mocks/branches.mock';
 import { useCart } from '../../../../context/CartContext';
 import { IBranch, IProduct } from '../../../../types';
+import { CHECKOUT_TEXTS, COMMON_TEXTS } from '../../../../config/constants';
 import AddToCartModal from '@/components/AddToCartModal/AddToCartModal';
 
 export default function CheckoutPage() {
@@ -70,6 +71,23 @@ export default function CheckoutPage() {
 
   // Handle checkout
   const handleCheckout = () => {
+    // Validate required fields
+    const errors = [];
+
+    if (!fullName.trim()) errors.push(CHECKOUT_TEXTS.FULL_NAME);
+    if (!phone.trim()) errors.push(CHECKOUT_TEXTS.PHONE);
+
+    if (deliveryMethod === 'delivery') {
+      if (!address.trim()) errors.push(CHECKOUT_TEXTS.ADDRESS);
+      if (!city.trim()) errors.push(CHECKOUT_TEXTS.CITY);
+      if (!province.trim()) errors.push(CHECKOUT_TEXTS.PROVINCE);
+    }
+
+    if (errors.length > 0) {
+      alert(`${CHECKOUT_TEXTS.VALIDATION_ERROR} ${errors.join(', ')}`);
+      return;
+    }
+
     // Here you would implement the checkout logic
     console.log('Checkout initiated with data:', {
       deliveryMethod,
@@ -86,7 +104,7 @@ export default function CheckoutPage() {
     });
 
     // For demo purposes, alert the user and redirect
-    alert('¡Pedido confirmado! Gracias por tu compra.');
+    alert(COMMON_TEXTS.ORDER_CONFIRMED);
     router.push(`/branches/${branchId}`);
   };
 

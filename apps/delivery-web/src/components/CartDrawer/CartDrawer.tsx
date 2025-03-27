@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { IProduct } from '../../types';
 import { useEffect, useState } from 'react';
 import { IconShoppingCart, IconTrash } from '@tabler/icons-react';
+import { CART_TEXTS } from '../../config/constants';
 
 interface CartItem {
   productId: string;
@@ -44,14 +45,21 @@ const CartDrawer = ({
   }, [cartItems, isVisible, onClearCart]);
 
   const handleClearCart = () => {
-    console.log('Trash icon clicked, attempting to clear cart');
-    if (onClearCart) {
-      console.log('onClearCart function exists, calling it');
-      onClearCart();
-    } else {
-      console.log('onClearCart function is not provided');
-      // Fallback implementation if onClearCart is not provided
-      alert('Please implement onClearCart function in the parent component');
+    // Add confirmation dialog before clearing cart
+    const confirmClear = window.confirm(
+      '¿Estás seguro que deseas vaciar el carrito?'
+    );
+
+    if (confirmClear) {
+      console.log('Trash icon clicked, attempting to clear cart');
+      if (onClearCart) {
+        console.log('onClearCart function exists, calling it');
+        onClearCart();
+      } else {
+        console.log('onClearCart function is not provided');
+        // Fallback implementation if onClearCart is not provided
+        alert('Please implement onClearCart function in the parent component');
+      }
     }
   };
 
@@ -98,7 +106,7 @@ const CartDrawer = ({
               height: '18px',
             }}
           >
-            Mi pedido
+            {CART_TEXTS.CART_TITLE}
           </Text>
         </Flex>
 
@@ -144,7 +152,7 @@ const CartDrawer = ({
               margin: '0 auto',
             }}
           >
-            Tu carrito está vacío. Agregá productos para comenzar tu pedido.
+            {CART_TEXTS.EMPTY_CART}
           </Text>
         </Flex>
       </Box>
@@ -181,7 +189,7 @@ const CartDrawer = ({
             color: '#000000',
           }}
         >
-          Mi pedido
+          {CART_TEXTS.CART_TITLE}
         </Text>
         <Box style={{ position: 'absolute', top: 0, right: 16 }}>
           <IconTrash
