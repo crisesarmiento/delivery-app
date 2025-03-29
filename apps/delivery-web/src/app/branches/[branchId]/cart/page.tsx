@@ -492,7 +492,7 @@ export default function CheckoutPage() {
                   (typeof item.product.id === 'number'
                     ? item.product.id % 3 === 0
                     : String(item.product.id).length % 3 === 0);
-                const discountPercentage = hasDiscount ? 10 : 0;
+                // const discountPercentage = hasDiscount ? 10 : 0;
 
                 // Use the item's totalPrice (if it has customizations) or calculate based on product price
                 const itemBasePrice = item.totalPrice || item.product.price;

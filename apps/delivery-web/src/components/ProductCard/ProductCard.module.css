@@ -12,7 +12,7 @@
   overflow: hidden;
   transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s,
     border 0.2s;
-  margin: 0; /* Ensure no margins */
+  margin: 24px 0; /* Add equal top and bottom margin */
 }
 
 .imageContainer {

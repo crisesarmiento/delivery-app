@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Text, Box } from '@mantine/core';
+import { Text, Box, useMantineTheme, Container } from '@mantine/core';
 import { products } from '../../../mocks/products.mock';
 import { branchesMock } from '../../../mocks/branches.mock';
 import { IBranch, IProduct } from '../../../types';
@@ -12,7 +12,11 @@ import CategoryTabs from '@/components/CategoryTabs/CategoryTabs';
 import CartDrawer from '@/components/CartDrawer/CartDrawer';
 import CategorySection from '@/components/CategorySection';
 import BasePage from '@/components/BasePage';
-import { COMMON_TEXTS, ERROR_TEXTS } from '../../../config/constants';
+import {
+  COMMON_TEXTS,
+  ERROR_TEXTS,
+  BRANCH_TEXTS,
+} from '../../../config/constants';
 import {
   useCart,
   CartItem as CartContextItem,
@@ -22,6 +26,7 @@ import { isBranchOpen } from '@/utils/branch';
 export default function BranchProductsPage() {
   const params = useParams();
   const router = useRouter();
+  const theme = useMantineTheme();
   const branchId = (params?.branchId as string) || '';
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const {
@@ -61,6 +66,7 @@ export default function BranchProductsPage() {
 
       return () => clearInterval(intervalId);
     }
+    return undefined; // Explicit return for the path when branch is not found
   }, [branchId]);
 
   // Handle case when branch is not found
@@ -72,23 +78,23 @@ export default function BranchProductsPage() {
   }, [currentBranch, branchId, router]);
 
   // Get products for this branch
-  const branchProducts = products || [];
+  const branchProducts = useMemo(() => products || [], []);
 
   // Handle back navigation
-  const handleBack = () => {
+  const handleBack = (): void => {
     router.push('/');
   };
 
   // Handle search
-  const handleSearchChange = (value: string) => {
+  const handleSearchChange = (value: string): void => {
     setSearchQuery(value);
   };
 
   // Add product to cart
-  const addToCart = (product: IProduct, quantity: number) => {
+  const addToCart = (product: IProduct, quantity: number): void => {
     // Check if branch is closed
     if (currentBranch && !currentBranch.isOpen) {
-      alert('Lo sentimos, esta sucursal está cerrada en este momento.');
+      alert(BRANCH_TEXTS.BRANCH_CLOSED_ALERT);
       return;
     }
 
@@ -130,13 +136,16 @@ export default function BranchProductsPage() {
   const cartTotal = getTotalPrice();
 
   // Create categories for tabs from products
-  const categories = ['Promo'];
-  branchProducts.forEach((product: IProduct) => {
-    const category = product.category;
-    if (category && !categories.includes(category)) {
-      categories.push(category);
-    }
-  });
+  const categories = useMemo(() => {
+    const categoryList = ['Promo'];
+    branchProducts.forEach((product: IProduct) => {
+      const category = product.category;
+      if (category && !categoryList.includes(category)) {
+        categoryList.push(category);
+      }
+    });
+    return categoryList;
+  }, [branchProducts]);
 
   // Initialize expanded sections state
   useEffect(() => {
@@ -147,10 +156,10 @@ export default function BranchProductsPage() {
     }, {} as Record<string, boolean>);
 
     setExpandedSections(initialExpandedState);
-  }, []);
+  }, [activeTab, categories]);
 
   // Handle tab change
-  const handleTabChange = (value: string | null) => {
+  const handleTabChange = (value: string | null): void => {
     if (value) {
       setActiveTab(value);
 
@@ -172,13 +181,13 @@ export default function BranchProductsPage() {
   };
 
   // Handle section toggle
-  const handleSectionToggle = (category: string, isExpanded: boolean) => {
+  const handleSectionToggle = (category: string, isExpanded: boolean): void => {
     setExpandedSections((prev) => ({
       ...prev,
       [category.toLowerCase()]: isExpanded,
     }));
 
-    if (isExpanded) {
+    if (isExpanded && activeTab !== category.toLowerCase()) {
       setActiveTab(category.toLowerCase());
     }
   };
@@ -186,15 +195,16 @@ export default function BranchProductsPage() {
   // Group products by category
   const productsByCategory = categories.reduce((acc, category) => {
     const categoryProducts = branchProducts
+      .filter((product: IProduct) => {
+        if (category.toLowerCase() === 'promo') {
+          return Boolean(product.category?.toLowerCase().includes('promo'));
+        }
+        return Boolean(
+          product.category?.toLowerCase() === category.toLowerCase()
+        );
+      })
       .filter((product: IProduct) =>
-        category.toLowerCase() === 'promo'
-          ? product.category?.toLowerCase().includes('promo') ?? false
-          : product.category?.toLowerCase() === category.toLowerCase()
-      )
-      .filter(
-        (product: IProduct) =>
-          product.name?.toLowerCase().includes(searchQuery.toLowerCase()) ??
-          false
+        Boolean(product.name?.toLowerCase().includes(searchQuery.toLowerCase()))
       );
 
     if (categoryProducts.length > 0) {
@@ -205,7 +215,7 @@ export default function BranchProductsPage() {
   }, {} as Record<string, IProduct[]>);
 
   // Add a function to handle clearing the cart
-  const handleClearCart = () => {
+  const handleClearCart = (): void => {
     clearCart();
   };
 
@@ -218,7 +228,7 @@ export default function BranchProductsPage() {
         searchValue={searchQuery}
         onSearchChange={handleSearchChange}
         isClosed={currentBranch ? !currentBranch.isOpen : false}
-        closedMessage="La sucursal se encuentra cerrada en este momento."
+        closedMessage={BRANCH_TEXTS.BRANCH_CLOSED}
       />
       <CategoryTabs
         categories={categories}
@@ -230,37 +240,62 @@ export default function BranchProductsPage() {
 
   return (
     <>
-      <BasePage headerSlot={Header} className={styles.productPageContainer}>
-        <Box className={styles.sectionsContainer}>
-          {Object.keys(productsByCategory).length > 0 ? (
-            Object.entries(productsByCategory).map(([category, products]) => (
-              <div
-                key={category}
-                ref={(el) => {
-                  sectionRefs.current[category.toLowerCase()] = el;
-                }}
-                style={{ margin: 0, padding: 0 }}
+      <BasePage
+        headerSlot={Header}
+        className={styles.productPageContainer}
+        style={{
+          backgroundColor: theme.colors.neutral[0],
+        }}
+      >
+        <Container
+          size="xl"
+          px={{ base: theme.spacing.md, md: theme.spacing.xl, lg: '80px' }}
+          py={theme.spacing.xs}
+          style={{ paddingBottom: 0 }}
+        >
+          <Box
+            className={styles.sectionsContainer}
+            bg={theme.colors.neutral[0]}
+            style={{ borderRadius: theme.radius.md }}
+          >
+            {Object.keys(productsByCategory).length > 0 ? (
+              Object.entries(productsByCategory).map(([category, products]) => (
+                <Box
+                  key={category}
+                  ref={(el) => {
+                    sectionRefs.current[category.toLowerCase()] = el;
+                  }}
+                  m={0}
+                  p={0}
+                  style={{ marginBottom: '8px' }}
+                >
+                  <CategorySection
+                    title={category}
+                    products={products}
+                    onAddToCart={addToCart}
+                    isInitiallyExpanded={
+                      expandedSections[category.toLowerCase()] || false
+                    }
+                    onToggleExpand={(isExpanded) =>
+                      handleSectionToggle(category, isExpanded)
+                    }
+                    isDisabled={currentBranch ? !currentBranch.isOpen : false}
+                  />
+                </Box>
+              ))
+            ) : (
+              <Text
+                ta="center"
+                fz="lg"
+                c={theme.colors.neutral[5]}
+                py={theme.spacing.xl}
+                data-variant="body"
               >
-                <CategorySection
-                  title={category}
-                  products={products}
-                  onAddToCart={addToCart}
-                  isInitiallyExpanded={
-                    expandedSections[category.toLowerCase()] || false
-                  }
-                  onToggleExpand={(isExpanded) =>
-                    handleSectionToggle(category, isExpanded)
-                  }
-                  isDisabled={currentBranch ? !currentBranch.isOpen : false}
-                />
-              </div>
-            ))
-          ) : (
-            <Text ta="center" fz="lg" c="dimmed" style={{ padding: '40px 0' }}>
-              {COMMON_TEXTS.NO_PRODUCTS_AVAILABLE}
-            </Text>
-          )}
-        </Box>
+                {COMMON_TEXTS.NO_PRODUCTS_AVAILABLE}
+              </Text>
+            )}
+          </Box>
+        </Container>
       </BasePage>
 
       {/* Cart drawer */}
