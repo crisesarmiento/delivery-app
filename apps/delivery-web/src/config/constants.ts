@@ -48,6 +48,12 @@ export const COMMON_TEXTS = {
   ORDER_CONFIRMED: '¡Pedido confirmado! Gracias por tu compra.',
 };
 
+export const BRANCH_TEXTS = {
+  BRANCH_CLOSED: 'La sucursal se encuentra cerrada en este momento.',
+  BRANCH_CLOSED_ALERT:
+    'Lo sentimos, esta sucursal está cerrada en este momento.',
+};
+
 export const ERROR_TEXTS = {
   GENERAL_ERROR_TITLE: 'Ha ocurrido un error',
   GENERAL_ERROR_MESSAGE:
@@ -71,6 +77,13 @@ export const PRODUCT_TEXTS = {
   INGREDIENTS: 'Ingredientes',
   CUSTOMIZATION: 'Personalización',
   QUANTITY: 'Cantidad',
+};
+
+export const MENU_TEXTS = {
+  TITLE: 'Menú',
+  BRANCHES: 'Sucursales',
+  ABOUT_US: 'Acerca de Nosotros',
+  CONTACT: 'Contacto',
 };
 
 export const CATEGORY_TEXTS = {

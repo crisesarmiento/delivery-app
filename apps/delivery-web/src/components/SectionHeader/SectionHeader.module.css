@@ -7,6 +7,8 @@
   border: 1px solid #eef2f6;
   cursor: pointer;
   border-radius: 8px;
+  margin-bottom: 8px;
+  margin-top: 8px;
 }
 
 .sectionTitle {
