@@ -8,8 +8,8 @@ export const branchesMock: IBranch[] = [
     address: 'Av. Principal 123, Alta Córdoba',
     openingHours: '8:00 - 22:00',
     openingHoursStructured: {
-      weekdays: { open: '08:00', close: '15:00' },
-      weekend: { open: '10:00', close: '23:00' },
+      weekdays: { open: '08:00', close: '23:59' },
+      weekend: { open: '00:00', close: '23:00' },
     },
     phoneNumber: '555-1234',
     imageUrl: `/images/branches/1.jpg`,

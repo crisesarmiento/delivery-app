@@ -1,10 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { MantineProvider } from '@mantine/core';
-import { CartProvider } from '../context/CartContext';
+import ClientLayout from './ClientLayout';
 import './global.css';
-import Footer from '@/components/Footer';
-import ClientErrorBoundary from '@/components/ClientErrorBoundary/ClientErrorBoundary';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -21,12 +18,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={inter.className}>
-        <MantineProvider>
-          <CartProvider>
-            <ClientErrorBoundary>{children}</ClientErrorBoundary>
-          </CartProvider>
-          <Footer />
-        </MantineProvider>
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );

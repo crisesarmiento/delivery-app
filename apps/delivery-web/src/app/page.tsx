@@ -1,6 +1,6 @@
 'use client';
 
-import { Box } from '@mantine/core';
+import { Box, Container, Text, useMantineTheme } from '@mantine/core';
 import BranchCard from '../components/BranchCard/BranchCard';
 import { branchesMock } from '../mocks/branches.mock';
 import Header from '../components/Header/Header';
@@ -12,6 +12,7 @@ export default function HomePage() {
   const router = useRouter();
   const [branches, setBranches] = useState(branchesMock);
   const [searchValue, setSearchValue] = useState('');
+  const theme = useMantineTheme();
 
   // Update branch open/closed status based on current time
   useEffect(() => {
@@ -47,41 +48,59 @@ export default function HomePage() {
         showSearchBar={true}
         searchValue={searchValue}
         onSearchChange={setSearchValue}
-        showClosedNotification={false}
+        showClosedNotification={hasClosedBranches}
         closedMessage="Una o más sucursales se encuentran cerradas en este momento."
       />
 
-      <Box style={{ backgroundColor: '#fff', padding: '0 80px' }}>
-        <Box py="xl">
-          <Box
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
-              gap: '16px',
-              marginBottom: '23px',
-            }}
-          >
-            {filteredBranches.map((branch, index) => (
-              <Box
-                key={branch.id}
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  marginTop: '24px',
-                }}
-              >
-                <BranchCard
-                  branch={branch}
-                  onClick={() => {
-                    router.push(`/branches/${branch.id}`);
+      <Container
+        fluid
+        px={0}
+        style={{
+          backgroundColor: theme.colors.neutral[0],
+        }}
+      >
+        <Container
+          size="xl"
+          py="xl"
+          px={{ base: theme.spacing.md, md: theme.spacing.xl, lg: '80px' }}
+        >
+          {filteredBranches.length > 0 ? (
+            <Box
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+                gap: theme.spacing.xs,
+                marginBottom: theme.spacing.lg,
+              }}
+            >
+              {filteredBranches.map((branch) => (
+                <Box
+                  key={branch.id}
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginTop: theme.spacing.xl,
                   }}
-                />
-              </Box>
-            ))}
-          </Box>
-        </Box>
-      </Box>
+                >
+                  <BranchCard
+                    branch={branch}
+                    onClick={() => {
+                      router.push(`/branches/${branch.id}`);
+                    }}
+                  />
+                </Box>
+              ))}
+            </Box>
+          ) : (
+            <Box style={{ textAlign: 'center', padding: theme.spacing.xl }}>
+              <Text variant="body">
+                No se encontraron sucursales que coincidan con su búsqueda.
+              </Text>
+            </Box>
+          )}
+        </Container>
+      </Container>
     </>
   );
 }

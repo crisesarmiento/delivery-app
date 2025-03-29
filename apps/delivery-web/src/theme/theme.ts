@@ -86,11 +86,31 @@ export const theme = createTheme({
       '#111111',
       '#000000',
     ],
+    action: [
+      '#F7FFDC',
+      '#EEFFB8',
+      '#D8FF80',
+      '#C3FF33',
+      '#B3FF00',
+      '#8EC600',
+      '#689400',
+      '#547300',
+      '#273500',
+      '#131A00',
+    ],
   },
   primaryColor: 'primary',
-  fontFamily: 'Roboto, sans-serif',
+  fontFamily: 'Inter, Roboto, sans-serif',
   headings: {
-    fontFamily: 'Roboto, sans-serif',
+    fontFamily: 'Inter, Roboto, sans-serif',
+    sizes: {
+      h1: { fontSize: '2rem', lineHeight: '1.3', fontWeight: '700' },
+      h2: { fontSize: '1.75rem', lineHeight: '1.35', fontWeight: '700' },
+      h3: { fontSize: '1.5rem', lineHeight: '1.4', fontWeight: '600' },
+      h4: { fontSize: '1.25rem', lineHeight: '1.4', fontWeight: '600' },
+      h5: { fontSize: '1.125rem', lineHeight: '1.45', fontWeight: '600' },
+      h6: { fontSize: '1rem', lineHeight: '1.5', fontWeight: '600' },
+    },
   },
   spacing: {
     xs: '0.25rem',
@@ -106,18 +126,36 @@ export const theme = createTheme({
     lg: '1.125rem',
     xl: '1.25rem',
   },
+  radius: {
+    xs: '0.125rem',
+    sm: '0.25rem',
+    md: '0.5rem',
+    lg: '1rem',
+    xl: '1.5rem',
+  },
+  shadows: {
+    xs: '0 1px 2px rgba(0, 0, 0, 0.05)',
+    sm: '0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06)',
+    md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+    lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+    xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+  },
   components: {
     Button: {
       styles: (theme: MantineTheme) => ({
         root: {
           '&[dataVariant="primary"]': {
             backgroundColor: theme.colors.primary[5],
+            color: theme.colors.neutral[0],
+            fontWeight: 600,
             '&:hover': {
               backgroundColor: theme.colors.primary[6],
             },
           },
           '&[dataVariant="secondary"]': {
             backgroundColor: theme.colors.secondary[5],
+            color: theme.colors.neutral[0],
+            fontWeight: 600,
             '&:hover': {
               backgroundColor: theme.colors.secondary[6],
             },
@@ -125,14 +163,24 @@ export const theme = createTheme({
           '&[dataVariant="outline"]': {
             borderColor: theme.colors.primary[5],
             color: theme.colors.primary[5],
+            fontWeight: 600,
             '&:hover': {
               backgroundColor: theme.colors.primary[0],
             },
           },
           '&[dataVariant="ghost"]': {
             color: theme.colors.primary[5],
+            fontWeight: 600,
             '&:hover': {
               backgroundColor: theme.colors.primary[0],
+            },
+          },
+          '&[dataVariant="action"]': {
+            backgroundColor: theme.colors.action?.[4] || '#B3FF00',
+            color: theme.colors.neutral[9],
+            fontWeight: 600,
+            '&:hover': {
+              backgroundColor: theme.colors.action?.[5] || '#8EC600',
             },
           },
         },
@@ -148,7 +196,7 @@ export const theme = createTheme({
             borderColor: theme.colors.neutral[2],
           },
           '&[dataVariant="elevated"]': {
-            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+            boxShadow: theme.shadows.sm,
           },
         },
       }),
@@ -158,20 +206,69 @@ export const theme = createTheme({
         root: {
           '&[dataVariant="heading"]': {
             fontWeight: 700,
+            color: theme.colors.neutral[9],
           },
           '&[dataVariant="body"]': {
             fontSize: theme.fontSizes.md,
+            color: theme.colors.neutral[7],
           },
           '&[dataVariant="caption"]': {
             fontSize: theme.fontSizes.xs,
-            color: theme.colors.neutral[4],
+            color: theme.colors.neutral[5],
           },
           '&[dataVariant="highlight"]': {
             color: theme.colors.primary[5],
             fontWeight: 500,
           },
+          '&[dataVariant="quantity"]': {
+            fontFamily: 'Inter, sans-serif',
+            fontWeight: 600,
+            fontSize: '14px',
+            lineHeight: '18px',
+            minWidth: '20px',
+            textAlign: 'center',
+            color: theme.colors.neutral[9],
+          },
+          '&[dataProductName]': {
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '12px',
+            lineHeight: '18px',
+            fontWeight: 400,
+            color: '#667085',
+            marginBottom: '0px',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            letterSpacing: '0%',
+            textAlign: 'center',
+          },
+          '&[dataOriginalPrice]': {
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '10px',
+            lineHeight: '18px',
+            fontWeight: 500,
+            textAlign: 'center',
+            textDecoration: 'line-through',
+            color: '#667085',
+            marginBottom: '2px',
+            zIndex: 15,
+          },
+          '&[dataPrice]': {
+            fontFamily: 'Inter, sans-serif',
+            fontWeight: 600,
+            fontSize: '12px',
+            lineHeight: '18px',
+            textAlign: 'center',
+            color: '#101828',
+            zIndex: 15,
+          },
         },
       }),
+    },
+    Container: {
+      defaultProps: {
+        px: 'md',
+      },
     },
   },
 });

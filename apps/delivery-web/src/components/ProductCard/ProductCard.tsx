@@ -2,7 +2,15 @@
 
 import { useState, useMemo } from 'react';
 import { IProduct } from '../../types';
-import { Card, Text, Badge, Image, Overlay, Flex, Box } from '@mantine/core';
+import {
+  Card,
+  Text,
+  Badge,
+  Image,
+  Overlay,
+  Box,
+  useMantineTheme,
+} from '@mantine/core';
 import {
   IconShoppingCart,
   IconTrash,
@@ -23,6 +31,7 @@ const ProductCard = ({ product, isDisabled = false }: ProductCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [showQuantityControl, setShowQuantityControl] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const theme = useMantineTheme();
 
   const { updateCartItem, addToCart, getCartItemsByProductId } = useCart();
 
@@ -96,19 +105,23 @@ const ProductCard = ({ product, isDisabled = false }: ProductCardProps) => {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         style={{
-          boxShadow: isHovered
-            ? '0px 4px 8px rgba(0, 0, 0, 0.1)'
-            : '0px 1px 3px rgba(0, 0, 0, 0.1)',
-          backgroundColor: isHovered ? 'rgba(227, 232, 239, 1)' : 'white',
+          boxShadow: isHovered ? theme.shadows.md : theme.shadows.xs,
+          backgroundColor: isHovered
+            ? theme.colors.neutral[1]
+            : theme.colors.neutral[0],
           border: isHovered
-            ? '1px solid rgba(201, 205, 212, 1)'
-            : 'rgba(238, 242, 246, 1)',
+            ? `1px solid ${theme.colors.neutral[3]}`
+            : `1px solid ${theme.colors.neutral[2]}`,
           opacity: isDisabled ? 0.7 : 1,
           cursor: isDisabled ? 'default' : 'pointer',
+          borderRadius: theme.radius.md,
         }}
       >
         {/* Image container */}
-        <div className={styles.imageContainer}>
+        <div
+          className={styles.imageContainer}
+          style={{ background: theme.colors.neutral[9] }}
+        >
           {product.imageUrl && (
             <Image
               src={product.imageUrl}
@@ -118,10 +131,14 @@ const ProductCard = ({ product, isDisabled = false }: ProductCardProps) => {
           )}
 
           {(!product.isAvailable || isDisabled) && (
-            <Overlay color="#000" backgroundOpacity={0.6} blur={1}>
+            <Overlay
+              color={theme.colors.neutral[9]}
+              backgroundOpacity={0.6}
+              blur={1}
+            >
               <Badge
                 size="xl"
-                color={isDisabled ? 'gray' : 'red'}
+                color={isDisabled ? 'gray' : 'error'}
                 variant="filled"
                 className={styles.unavailableBadge}
               >
@@ -169,8 +186,22 @@ const ProductCard = ({ product, isDisabled = false }: ProductCardProps) => {
                       setShowQuantityControl(false);
                     }
                   }}
+                  style={{
+                    background: theme.colors.neutral[0],
+                    borderRadius: theme.radius.sm,
+                    boxShadow: theme.shadows.xs,
+                  }}
                 >
-                  <Text className={styles.quantityBadgeText}>{quantity}</Text>
+                  <Text
+                    className={styles.quantityBadgeText}
+                    style={{
+                      fontFamily: theme.fontFamily,
+                      fontWeight: 600,
+                      color: theme.colors.neutral[9],
+                    }}
+                  >
+                    {quantity}
+                  </Text>
                 </Box>
               )}
 
@@ -178,11 +209,16 @@ const ProductCard = ({ product, isDisabled = false }: ProductCardProps) => {
                 <Box
                   className={styles.cartIconContainer}
                   onClick={handleCartIconClick}
+                  style={{
+                    backgroundColor: theme.colors.action[4],
+                    boxShadow: theme.shadows.md,
+                  }}
                 >
                   <IconShoppingCart
                     size={24}
                     className={styles.cartIcon}
                     stroke={1.5}
+                    style={{ color: theme.colors.neutral[9] }}
                   />
                 </Box>
               )}
@@ -192,7 +228,15 @@ const ProductCard = ({ product, isDisabled = false }: ProductCardProps) => {
                   className={styles.quantityControlContainer}
                   onMouseLeave={() => setShowQuantityControl(false)}
                 >
-                  <Box className={styles.controlButtons}>
+                  <Box
+                    className={styles.controlButtons}
+                    style={{
+                      background: theme.colors.neutral[0],
+                      borderRadius: theme.radius.sm,
+                      padding: `${theme.spacing.xs} ${theme.spacing.sm}`,
+                      boxShadow: theme.shadows.xs,
+                    }}
+                  >
                     {quantity <= 1 ? (
                       <IconTrash
                         size={20}
@@ -254,18 +298,24 @@ const ProductCard = ({ product, isDisabled = false }: ProductCardProps) => {
                       />
                     )}
 
-                    <Text style={{ margin: '0 8px', fontWeight: 600 }}>
+                    <Text
+                      mx={theme.spacing.sm}
+                      style={{
+                        fontFamily: theme.fontFamily,
+                        fontWeight: 600,
+                        fontSize: '14px',
+                        lineHeight: '18px',
+                        textAlign: 'center',
+                        color: theme.colors.neutral[9],
+                      }}
+                    >
                       {quantity}
                     </Text>
 
                     <IconCirclePlus
                       size={20}
                       stroke={1.5}
-                      style={{
-                        cursor: 'pointer',
-                        background: '#B3FF00',
-                        borderRadius: '50%',
-                      }}
+                      style={{ cursor: 'pointer' }}
                       onClick={() => {
                         if (cartItems.length === 1) {
                           // Increase single item
@@ -274,16 +324,10 @@ const ProductCard = ({ product, isDisabled = false }: ProductCardProps) => {
                             { quantity: cartItems[0].quantity + 1 },
                             cartItems[0].uniqueId
                           );
-                        } else if (cartItems.length > 1) {
-                          // For multiple variations, open the modal when adding more
-                          setShowQuantityControl(false);
-                          setShowModal(true);
                         } else {
-                          // No items in cart, add basic product
-                          addToCart({
-                            product,
-                            quantity: 1,
-                          });
+                          // Open the modal to select which item to modify
+                          setShowModal(true);
+                          setShowQuantityControl(false);
                         }
                       }}
                     />
@@ -294,32 +338,72 @@ const ProductCard = ({ product, isDisabled = false }: ProductCardProps) => {
           )}
         </div>
 
-        {/* Content container */}
+        {/* Content */}
         <div className={styles.contentContainer}>
-          <Text className={styles.productName} title={product.name}>
+          <Text
+            ta="center"
+            style={{
+              fontFamily: theme.fontFamily,
+              fontSize: '12px',
+              lineHeight: '18px',
+              fontWeight: 400,
+              color: theme.colors.neutral[6],
+              marginBottom: '0px',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          >
             {product.name}
           </Text>
-
-          <Flex
+          <Box
             className={styles.priceContainer}
-            direction="column"
-            align="center"
+            style={{
+              marginBottom: theme.spacing.xs,
+            }}
           >
             {hasDiscount && originalPrice && (
-              <Text className={styles.originalPrice}>${originalPrice}</Text>
+              <Text
+                style={{
+                  fontFamily: theme.fontFamily,
+                  fontSize: '10px',
+                  lineHeight: '18px',
+                  fontWeight: 500,
+                  textAlign: 'center',
+                  textDecoration: 'line-through',
+                  color: theme.colors.neutral[5],
+                  marginBottom: '2px',
+                }}
+              >
+                ${originalPrice}
+              </Text>
             )}
-            <Text className={styles.price}>${product.price.toFixed(2)}</Text>
-          </Flex>
+            <Text
+              style={{
+                fontFamily: theme.fontFamily,
+                fontWeight: 600,
+                fontSize: theme.fontSizes.xs,
+                lineHeight: '18px',
+                textAlign: 'center',
+                color: theme.colors.neutral[9],
+              }}
+            >
+              ${product.price.toFixed(2)}
+            </Text>
+          </Box>
         </div>
       </Card>
 
-      <AddToCartModal
-        product={product}
-        opened={showModal}
-        onClose={() => setShowModal(false)}
-        onAddToCart={handleAddToCart}
-        initialQuantity={1}
-      />
+      {/* Modal for adding to cart with customizations */}
+      {showModal && (
+        <AddToCartModal
+          product={product}
+          opened={showModal}
+          onClose={() => setShowModal(false)}
+          onAddToCart={handleAddToCart}
+          initialQuantity={1}
+        />
+      )}
     </>
   );
 };

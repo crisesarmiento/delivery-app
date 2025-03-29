@@ -1,20 +1,20 @@
 'use client';
 
-import { Drawer, Box, Text, UnstyledButton } from '@mantine/core';
+import {
+  Drawer,
+  Box,
+  Text,
+  UnstyledButton,
+  useMantineTheme,
+} from '@mantine/core';
 import {
   IconBuildingStore,
   IconUsers,
   IconPhoneCall,
   IconX,
 } from '@tabler/icons-react';
-
-// Constants for text
-const MENU_TEXTS = {
-  TITLE: 'Menú',
-  BRANCHES: 'Sucursales',
-  ABOUT_US: 'Acerca de Nosotros',
-  CONTACT: 'Contacto',
-};
+import { useEffect } from 'react';
+import { MENU_TEXTS } from '../../config/constants';
 
 interface MenuDrawerProps {
   opened: boolean;
@@ -23,10 +23,27 @@ interface MenuDrawerProps {
 }
 
 export function MenuDrawer({ opened, onClose, onNavigate }: MenuDrawerProps) {
+  const theme = useMantineTheme();
   const handleNavigation = (route: string) => {
     onNavigate(route);
     onClose();
   };
+
+  // Add a class to the body when the drawer is opened to prevent scrolling
+  useEffect(() => {
+    if (opened) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.userSelect = 'none';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.userSelect = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.userSelect = '';
+    };
+  }, [opened]);
 
   return (
     <Drawer
@@ -38,8 +55,26 @@ export function MenuDrawer({ opened, onClose, onNavigate }: MenuDrawerProps) {
       zIndex={2000}
       styles={{
         overlay: {
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          backgroundColor: 'rgba(66, 61, 61, 0.8)',
           zIndex: 1999,
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          width: '100vw',
+          height: '100vh',
+          userSelect: 'none',
+          pointerEvents: 'auto',
+        },
+        root: {
+          position: 'relative',
+          '&[dataOpened]': {
+            '& + *': {
+              pointerEvents: 'none',
+              userSelect: 'none',
+            },
+          },
         },
         inner: {
           position: 'fixed',
@@ -48,13 +83,12 @@ export function MenuDrawer({ opened, onClose, onNavigate }: MenuDrawerProps) {
           zIndex: 2000,
         },
         content: {
-          backgroundColor: '#000000',
-          boxShadow:
-            '0px 10px 10px -5px rgba(0, 0, 0, 0.04), 0px 20px 25px -5px rgba(0, 0, 0, 0.05), 0px 1px 3px rgba(0, 0, 0, 0.05)',
+          backgroundColor: theme.colors.neutral[9],
+          boxShadow: theme.shadows.md,
           height: '100vh',
           padding: 0,
           width: '301px',
-          border: '1px solid #303030',
+          border: `1px solid ${theme.colors.neutral[7]}`,
           overflow: 'hidden',
           position: 'absolute',
           top: 0,
@@ -137,7 +171,7 @@ export function MenuDrawer({ opened, onClose, onNavigate }: MenuDrawerProps) {
               gap: '8px',
               width: '263px',
               height: '46px',
-              background: '#B3FF00',
+              background: theme.colors.action[4],
               borderRadius: '4px',
               flex: 'none',
               order: 0,
@@ -154,7 +188,7 @@ export function MenuDrawer({ opened, onClose, onNavigate }: MenuDrawerProps) {
                 padding: 0,
                 width: '26px',
                 height: '26px',
-                background: '#000000',
+                background: theme.colors.neutral[9],
                 borderRadius: '4px',
                 flex: 'none',
                 order: 0,
@@ -164,7 +198,7 @@ export function MenuDrawer({ opened, onClose, onNavigate }: MenuDrawerProps) {
               <IconBuildingStore
                 size={18}
                 style={{
-                  color: '#B3FF00',
+                  color: theme.colors.action[4],
                   width: '18px',
                   height: '18px',
                   flex: 'none',
@@ -182,7 +216,7 @@ export function MenuDrawer({ opened, onClose, onNavigate }: MenuDrawerProps) {
                 fontWeight: 400,
                 fontSize: '14px',
                 lineHeight: '20px',
-                color: '#000000',
+                color: theme.colors.neutral[9],
                 flex: 'none',
                 order: 1,
                 flexGrow: 0,
