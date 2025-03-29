@@ -175,7 +175,17 @@ export default function BranchProductsPage() {
       // Scroll to the selected category section
       const sectionElement = sectionRefs.current[value.toLowerCase()];
       if (sectionElement) {
-        sectionElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // Get the element's position relative to the viewport
+        const rect = sectionElement.getBoundingClientRect();
+
+        // Calculate the scroll position needed to place the element at the top
+        const scrollTop = window.pageYOffset + rect.top;
+
+        // Scroll to the exact position with a slight offset to ensure the header is visible
+        window.scrollTo({
+          top: scrollTop - 120, // Increased offset to ensure the header is visible and products aren't covered
+          behavior: 'smooth',
+        });
       }
     }
   };

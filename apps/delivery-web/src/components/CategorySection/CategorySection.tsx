@@ -60,12 +60,7 @@ const CategorySection = ({
       </Box>
 
       {isExpanded && (
-        <Box
-          mt={theme.spacing.xs}
-          mb={theme.spacing.xs}
-          px={theme.spacing.xs}
-          pb={theme.spacing.xs}
-        >
+        <Box mt="22px" px={theme.spacing.xs} pb={theme.spacing.xs}>
           <ProductGrid products={products} isDisabled={isDisabled} />
         </Box>
       )}
