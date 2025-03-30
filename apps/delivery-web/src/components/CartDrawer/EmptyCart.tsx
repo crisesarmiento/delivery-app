@@ -6,9 +6,10 @@ import { CART_TEXTS } from '../../config/constants';
 
 interface EmptyCartProps {
   isVisible: boolean;
+  isMobile?: boolean;
 }
 
-const EmptyCart = ({ isVisible }: EmptyCartProps) => {
+const EmptyCart = ({ isVisible, isMobile = false }: EmptyCartProps) => {
   return (
     <Box
       style={{

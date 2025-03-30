@@ -41,6 +41,7 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      data-testid={`branch-card-${branch.id}`}
     >
       {/* Main card image section */}
       <Box
@@ -55,6 +56,7 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
           backgroundPosition: 'center',
           borderRadius: '4px',
         }}
+        data-testid="branch-card-image"
       >
         <BranchBadge isOpen={branch.isOpen ?? false} />
       </Box>
@@ -65,6 +67,7 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
           padding: '10px',
           position: 'relative',
         }}
+        data-testid="branch-card-info"
       >
         <Box
           style={{
@@ -84,6 +87,7 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
               color: '#000000',
               letterSpacing: '0%',
             }}
+            data-testid="branch-card-description"
           >
             {branch.description}
           </Text>
@@ -111,6 +115,7 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
                   // Prevent card click when clicking the icon
                   e.stopPropagation();
                 }}
+                data-testid="branch-card-hours-trigger"
               >
                 <IconClock
                   size={18}

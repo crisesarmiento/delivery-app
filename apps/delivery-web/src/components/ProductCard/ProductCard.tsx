@@ -116,17 +116,20 @@ const ProductCard = ({ product, isDisabled = false }: ProductCardProps) => {
           cursor: isDisabled ? 'default' : 'pointer',
           borderRadius: theme.radius.md,
         }}
+        data-testid={`product-card-${product.id}`}
       >
         {/* Image container */}
         <div
           className={styles.imageContainer}
           style={{ background: theme.colors.neutral[9] }}
+          data-testid="product-card-image-container"
         >
           {product.imageUrl && (
             <Image
               src={product.imageUrl}
               alt={product.name}
               className={styles.image}
+              data-testid="product-card-image"
             />
           )}
 
@@ -135,12 +138,14 @@ const ProductCard = ({ product, isDisabled = false }: ProductCardProps) => {
               color={theme.colors.neutral[9]}
               backgroundOpacity={0.6}
               blur={1}
+              data-testid="product-card-overlay"
             >
               <Badge
                 size="xl"
                 color={isDisabled ? 'gray' : 'error'}
                 variant="filled"
                 className={styles.unavailableBadge}
+                data-testid="product-card-unavailable-badge"
               >
                 {isDisabled ? 'Sucursal Cerrada' : 'No Disponible'}
               </Badge>
@@ -152,6 +157,7 @@ const ProductCard = ({ product, isDisabled = false }: ProductCardProps) => {
             <DiscountBadge
               discountPercentage={discountPercentage}
               className={styles.discountBadge}
+              data-testid="product-card-discount-badge"
             />
           )}
 
@@ -191,6 +197,7 @@ const ProductCard = ({ product, isDisabled = false }: ProductCardProps) => {
                     borderRadius: theme.radius.sm,
                     boxShadow: theme.shadows.xs,
                   }}
+                  data-testid="product-card-quantity-badge"
                 >
                   <Text
                     className={styles.quantityBadgeText}
@@ -199,6 +206,7 @@ const ProductCard = ({ product, isDisabled = false }: ProductCardProps) => {
                       fontWeight: 600,
                       color: theme.colors.neutral[9],
                     }}
+                    data-testid="product-card-quantity-text"
                   >
                     {quantity}
                   </Text>
@@ -213,6 +221,7 @@ const ProductCard = ({ product, isDisabled = false }: ProductCardProps) => {
                     backgroundColor: theme.colors.action[4],
                     boxShadow: theme.shadows.md,
                   }}
+                  data-testid="product-card-cart-icon-container"
                 >
                   <IconShoppingCart
                     size={24}

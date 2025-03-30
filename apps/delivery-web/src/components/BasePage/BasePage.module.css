@@ -1,11 +1,12 @@
 .pageContainer {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  min-height: 100%;
   width: 100%;
   max-width: 100%;
   margin: 0 auto;
   background-color: #ffffff;
+  overflow-x: hidden;
 }
 
 .headerContainer {
@@ -50,9 +51,11 @@
   flex: 1;
   padding: 0;
   width: 100%;
+  max-width: 100%;
   margin-left: auto;
   background-color: #f8f9fa;
-  min-height: 100%; /* Remove min-height to prevent extra space */
+  min-height: 100%;
+  overflow-x: hidden;
 }
 
 .footerContainer {

@@ -18,6 +18,11 @@ export interface CartItem {
   comments?: string;
   totalPrice?: number;
   uniqueId?: string; // Unique identifier for this specific item
+  customizations?: {
+    ingredients?: { name: string; quantity: number; price?: number }[];
+    condiments?: string[];
+    comments?: string;
+  };
 }
 
 // Define cart context interface

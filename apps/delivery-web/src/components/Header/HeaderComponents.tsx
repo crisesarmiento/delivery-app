@@ -2,6 +2,7 @@
 
 import { Text, TextInput, ActionIcon } from '@mantine/core';
 import { IconSearch, IconMenu2 } from '@tabler/icons-react';
+import { MENU_TEXTS, SEARCH_TEXTS } from '../../config/constants';
 
 /**
  * Logo component used across different header styles
@@ -53,7 +54,7 @@ export const MenuButton = ({ onClick }: { onClick: () => void }) => (
 export const SearchBar = ({
   value,
   onChange,
-  placeholder = 'Buscar...',
+  placeholder = SEARCH_TEXTS.DEFAULT_SEARCH_PLACEHOLDER,
   styles = {},
 }: {
   value: string;

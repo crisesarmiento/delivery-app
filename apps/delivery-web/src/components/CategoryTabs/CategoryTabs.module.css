@@ -1,9 +1,29 @@
+.stickyContainer {
+  background-color: #ffffff;
+  padding: 24px 16px 0 16px;
+  margin-bottom: 20px;
+  width: 100%;
+  border-radius: 0;
+  /* Removed position: sticky and top properties to allow scrolling */
+}
+
 .categoriesContainer {
   background-color: #ffffff;
-  overflow-x: auto;
   padding: 0;
   margin-bottom: 16px;
   width: 100%;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.categoriesContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.tabsContainer {
+  background-color: #ffffff;
+  padding: 12px 0;
 }
 
 .tabsList {
@@ -63,6 +83,11 @@
 }
 
 @media (max-width: 768px) {
+  .stickyContainer {
+    padding: 12px 8px 0 8px;
+    margin-bottom: 16px;
+  }
+
   .categoryTitle {
     width: auto;
   }

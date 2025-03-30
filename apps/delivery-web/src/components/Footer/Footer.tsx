@@ -7,28 +7,59 @@ import styles from './Footer.module.css';
 
 const Footer = () => {
   return (
-    <Box component="footer" className={styles.footer}>
-      <Box className={styles.container}>
-        <Box className={styles.gridContainer}>
+    <Box component="footer" className={styles.footer} data-testid="footer">
+      <Box className={styles.container} data-testid="footer-container">
+        <Box className={styles.gridContainer} data-testid="footer-grid">
           {/* Left: Powered by */}
-          <Box className={styles.poweredByContainer}>
-            <Text className={styles.poweredByText}>Powered by</Text>
-            <Text className={styles.smartyText}>SMARTY</Text>
+          <Box
+            className={styles.poweredByContainer}
+            data-testid="footer-powered-by"
+          >
+            <Text
+              className={styles.poweredByText}
+              data-testid="footer-powered-by-text"
+            >
+              Powered by
+            </Text>
+            <Text
+              className={styles.smartyText}
+              data-testid="footer-smarty-text"
+            >
+              SMARTY
+            </Text>
           </Box>
 
           {/* Center: Links */}
-          <Box className={styles.linksContainer}>
-            <Link href="#" className={styles.link}>
+          <Box
+            className={styles.linksContainer}
+            data-testid="footer-links-container"
+          >
+            <Link
+              href="#"
+              className={styles.link}
+              data-testid="footer-link-about"
+            >
               <Text>Acerca de Smarty</Text>
             </Link>
-            <Link href="#" className={styles.link}>
+            <Link
+              href="#"
+              className={styles.link}
+              data-testid="footer-link-contact"
+            >
               <Text>Contacto</Text>
             </Link>
           </Box>
         </Box>
-        <Divider className={styles.divider} />
-        <Box className={styles.socialContainer}>
-          <Link href="#" style={{ textDecoration: 'none' }}>
+        <Divider className={styles.divider} data-testid="footer-divider" />
+        <Box
+          className={styles.socialContainer}
+          data-testid="footer-social-container"
+        >
+          <Link
+            href="#"
+            style={{ textDecoration: 'none' }}
+            data-testid="footer-social-facebook"
+          >
             <Image
               src="/images/social/facebook.svg"
               alt="Facebook"
@@ -36,7 +67,11 @@ const Footer = () => {
               height={16}
             />
           </Link>
-          <Link href="#" style={{ textDecoration: 'none' }}>
+          <Link
+            href="#"
+            style={{ textDecoration: 'none' }}
+            data-testid="footer-social-twitter"
+          >
             <Image
               src="/images/social/twitter.svg"
               alt="Twitter"
@@ -44,7 +79,11 @@ const Footer = () => {
               height={16}
             />
           </Link>
-          <Link href="#" style={{ textDecoration: 'none' }}>
+          <Link
+            href="#"
+            style={{ textDecoration: 'none' }}
+            data-testid="footer-social-instagram"
+          >
             <Image
               src="/images/social/instagram.svg"
               alt="Instagram"
@@ -53,7 +92,7 @@ const Footer = () => {
             />
           </Link>
         </Box>
-        <Text className={styles.copyright}>
+        <Text className={styles.copyright} data-testid="footer-copyright">
           Copyright 2023 smarty.com | Todos los derechos reservados | Política
           de privacidad | Términos y Condiciones de Uso
         </Text>
