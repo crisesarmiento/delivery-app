@@ -1,9 +1,15 @@
 .categoriesContainer {
   background-color: #ffffff;
-  overflow-x: auto;
   padding: 0;
   margin-bottom: 16px;
   width: 100%;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.categoriesContainer::-webkit-scrollbar {
+  display: none;
 }
 
 .tabsList {

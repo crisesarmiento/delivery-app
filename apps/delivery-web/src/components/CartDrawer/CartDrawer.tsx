@@ -35,7 +35,31 @@ const CartDrawer = ({
   branchId,
 }: CartDrawerProps) => {
   const [isVisible, setIsVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
+
+  // Check if viewport is mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      const isMobileView = window.innerWidth <= 768;
+      console.log(
+        'Window width:',
+        window.innerWidth,
+        'Mobile view:',
+        isMobileView
+      );
+      setIsMobile(isMobileView);
+    };
+
+    // Check on mount
+    checkMobile();
+
+    // Add resize listener
+    window.addEventListener('resize', checkMobile);
+
+    // Clean up
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     setIsVisible(opened);
@@ -66,10 +90,17 @@ const CartDrawer = ({
 
   // For empty cart - compact floating card with specified dimensions
   if (cartItems.length === 0) {
-    return <EmptyCart isVisible={isVisible} />;
+    return isMobile ? null : (
+      <EmptyCart isVisible={isVisible} isMobile={isMobile} />
+    );
   }
 
   // For non-empty cart - show items and checkout option
+  // Don't render at all in mobile view
+  if (isMobile) {
+    return null;
+  }
+
   return (
     <Box
       style={{

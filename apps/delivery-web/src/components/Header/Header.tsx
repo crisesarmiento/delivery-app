@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useRouter } from 'next/navigation';
@@ -25,7 +25,23 @@ const Header = ({
 }: HeaderProps) => {
   const [opened, { toggle, close }] = useDisclosure(false);
   const [internalSearchValue, setInternalSearchValue] = useState(searchValue);
+  const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    // Check on initial load
+    checkIfMobile();
+
+    // Add event listener for window resize
+    window.addEventListener('resize', checkIfMobile);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', checkIfMobile);
+  }, []);
 
   const handleNavigate = (route: string) => {
     router.push(route);
@@ -153,16 +169,20 @@ const Header = ({
               className="search-container"
               style={{
                 position: 'absolute',
-                left: '80px',
+                left: isMobile ? '16px' : '80px',
                 top: '176.91px',
-                width: '512px',
+                width: isMobile ? 'calc(100% - 32px)' : '512px',
                 filter: 'drop-shadow(0px 4px 16px rgba(0, 0, 0, 0.1))',
               }}
             >
               <SearchBar
                 value={onSearchChange ? searchValue : internalSearchValue}
                 onChange={handleSearchChange}
-                placeholder="Busca una sucursal..."
+                placeholder={
+                  isMobile
+                    ? '¿Qué te gustaría comer hoy?'
+                    : 'Busca una sucursal...'
+                }
                 styles={{
                   root: {
                     width: '100%',
