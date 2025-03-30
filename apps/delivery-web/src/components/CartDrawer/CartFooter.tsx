@@ -20,9 +20,10 @@ const CartFooter = ({ cartTotal, onCheckout }: CartFooterProps) => {
           borderStyle: 'solid',
           borderColor: '#EEF2F6',
         }}
+        data-testid="cart-footer-divider"
       />
 
-      <Box style={{ padding: '8px 16px 0' }}>
+      <Box style={{ padding: '8px 16px 0' }} data-testid="cart-footer">
         <Box
           style={{
             display: 'flex',
@@ -30,6 +31,7 @@ const CartFooter = ({ cartTotal, onCheckout }: CartFooterProps) => {
             alignItems: 'center',
             marginBottom: '16px',
           }}
+          data-testid="cart-footer-total-row"
         >
           <Text
             style={{
@@ -38,6 +40,7 @@ const CartFooter = ({ cartTotal, onCheckout }: CartFooterProps) => {
               lineHeight: '18px',
               fontWeight: 500,
             }}
+            data-testid="cart-footer-total-label"
           >
             {CART_TEXTS.TOTAL}
           </Text>
@@ -49,6 +52,7 @@ const CartFooter = ({ cartTotal, onCheckout }: CartFooterProps) => {
               fontWeight: 500,
               textAlign: 'right',
             }}
+            data-testid="cart-footer-total-value"
           >
             ${cartTotal.toLocaleString()}
           </Text>
@@ -68,6 +72,7 @@ const CartFooter = ({ cartTotal, onCheckout }: CartFooterProps) => {
             },
           }}
           onClick={onCheckout}
+          data-testid="cart-footer-checkout-button"
         >
           <Box
             style={{
@@ -77,10 +82,12 @@ const CartFooter = ({ cartTotal, onCheckout }: CartFooterProps) => {
               gap: '8px',
               width: '100%',
             }}
+            data-testid="cart-footer-button-content"
           >
             <IconShoppingCart size={20} color="#B3FF00" stroke={2} />
             <Text
               style={{ color: '#B3FF00', fontSize: '16px', fontWeight: 600 }}
+              data-testid="cart-footer-button-text"
             >
               {CART_TEXTS.VIEW_CART}
             </Text>

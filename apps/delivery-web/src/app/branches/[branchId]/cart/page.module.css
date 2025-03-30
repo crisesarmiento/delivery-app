@@ -4,6 +4,7 @@
   width: 100%;
   min-height: 100vh;
   background: #ffffff;
+  justify-content: space-between;
 }
 
 .contentContainer {
@@ -432,10 +433,35 @@
 @media (max-width: 768px) {
   .contentContainer {
     padding: 0 16px;
+    margin-top: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
   }
 
   .leftSection,
   .rightSection {
     width: 100%;
+  }
+
+  .rightSection {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .summaryBox {
+    margin-bottom: 20px;
+    flex-shrink: 0;
+  }
+
+  .scrollableProductsContainer {
+    max-height: 280px;
+  }
+
+  .orderBox {
+    height: auto;
+    max-height: 400px;
+    flex-shrink: 0;
   }
 }

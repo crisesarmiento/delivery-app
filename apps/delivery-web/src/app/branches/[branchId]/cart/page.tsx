@@ -224,7 +224,7 @@ export default function CheckoutPage() {
 
       <Box className={styles.contentContainer}>
         {/* Left Section - Delivery Details */}
-        <Box className={styles.leftSection} style={{ paddingBottom: '50px' }}>
+        <Box className={styles.leftSection} style={{ paddingBottom: '20px' }}>
           <Text className={styles.sectionTitle}>Detalle de entrega</Text>
 
           {/* Delivery Method Toggle */}
@@ -473,7 +473,7 @@ export default function CheckoutPage() {
           </Box>
         </Box>
 
-        {/* Right Section */}
+        {/* Right Section - Order Summary */}
         <Box className={styles.rightSection}>
           {/* Order Box */}
           <Box className={styles.orderBox}>

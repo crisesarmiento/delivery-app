@@ -7,6 +7,7 @@ import Header from '../components/Header/Header';
 import { useRouter } from 'next/navigation';
 import { useState, useMemo, useEffect } from 'react';
 import { updateBranchesStatus } from '../utils/branch';
+import { BRANCH_TEXTS } from '../config/constants';
 
 export default function HomePage() {
   const router = useRouter();
@@ -49,7 +50,7 @@ export default function HomePage() {
         searchValue={searchValue}
         onSearchChange={setSearchValue}
         showClosedNotification={hasClosedBranches}
-        closedMessage="Una o más sucursales se encuentran cerradas en este momento."
+        closedMessage={BRANCH_TEXTS.SOME_BRANCHES_CLOSED}
       />
 
       <Container
@@ -57,12 +58,19 @@ export default function HomePage() {
         px={0}
         style={{
           backgroundColor: theme.colors.neutral[0],
+          width: '100%',
+          maxWidth: '100%',
+          overflowX: 'hidden',
         }}
       >
         <Container
           size="xl"
           py="xl"
           px={{ base: theme.spacing.md, md: theme.spacing.xl, lg: '80px' }}
+          style={{
+            maxWidth: '100%',
+            overflowX: 'hidden',
+          }}
         >
           {filteredBranches.length > 0 ? (
             <Box
@@ -71,6 +79,8 @@ export default function HomePage() {
                 gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
                 gap: theme.spacing.xs,
                 marginBottom: theme.spacing.lg,
+                maxWidth: '100%',
+                overflowX: 'hidden',
               }}
             >
               {filteredBranches.map((branch) => (
@@ -94,9 +104,7 @@ export default function HomePage() {
             </Box>
           ) : (
             <Box style={{ textAlign: 'center', padding: theme.spacing.xl }}>
-              <Text variant="body">
-                No se encontraron sucursales que coincidan con su búsqueda.
-              </Text>
+              <Text variant="body">{BRANCH_TEXTS.NO_BRANCHES_FOUND}</Text>
             </Box>
           )}
         </Container>

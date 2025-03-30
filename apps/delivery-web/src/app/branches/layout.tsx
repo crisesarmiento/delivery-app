@@ -11,7 +11,7 @@ export default function BranchesLayout({ children }: BranchesLayoutProps) {
   return (
     <Box
       style={{
-        backgroundColor: '#111',
+        backgroundColor: '#ffffff',
         minHeight: '100vh',
         paddingTop: '60px', // Leave space for header if needed
       }}

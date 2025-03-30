@@ -9,6 +9,7 @@ import {
   Button,
   Group,
 } from '@mantine/core';
+import { HERO_BANNER_TEXTS } from '../../config/constants';
 
 interface HeroBannerProps {
   imageUrl: string;
@@ -21,9 +22,9 @@ interface HeroBannerProps {
 
 export function HeroBanner({
   imageUrl,
-  title = 'Smarty Delivery',
-  subtitle = 'Disfruta de tu comida favorita a domicilio',
-  buttonText = 'Ordenar Ahora',
+  title = HERO_BANNER_TEXTS.DEFAULT_TITLE,
+  subtitle = HERO_BANNER_TEXTS.DEFAULT_SUBTITLE,
+  buttonText = HERO_BANNER_TEXTS.DEFAULT_BUTTON_TEXT,
   height = 500,
   onButtonClick,
 }: HeroBannerProps) {

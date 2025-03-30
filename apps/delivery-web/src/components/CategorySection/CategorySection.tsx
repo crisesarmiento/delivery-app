@@ -4,6 +4,7 @@ import { IProduct } from '../../types';
 import ProductGrid from '../ProductGrid';
 import SectionHeader from '../SectionHeader';
 import styles from './CategorySection.module.css';
+import { STYLE_CONSTANTS } from '../../config/constants';
 
 interface CategorySectionProps {
   title: string;
@@ -38,16 +39,17 @@ const CategorySection = ({
   };
 
   return (
-    <Box className={styles.categorySection} mb="8px">
+    <Box className={styles.categorySection} mb="16px">
       <Box
         py={theme.spacing.xs}
         bg={theme.colors.neutral[1]}
         w="100%"
         h="100%"
+        data-testid="category-section-container"
         style={{
           borderRadius: theme.radius.md,
           border: `1px solid ${theme.colors.neutral[2]}`,
-          transition: 'all 0.2s ease',
+          transition: STYLE_CONSTANTS.TRANSITION_EASE,
           boxShadow: isExpanded ? theme.shadows.xs : 'none',
           marginBottom: '8px',
         }}
@@ -60,7 +62,7 @@ const CategorySection = ({
       </Box>
 
       {isExpanded && (
-        <Box mt="22px" px={theme.spacing.xs} pb={theme.spacing.xs}>
+        <Box className={styles.scrollableContainer}>
           <ProductGrid products={products} isDisabled={isDisabled} />
         </Box>
       )}
