@@ -1,6 +1,7 @@
 .productCard {
   box-sizing: border-box;
-  width: 100%;
+  width: 200px;
+  flex: 0 0 auto;
   height: auto;
   min-height: 253px;
   background: #ffffff;
@@ -13,7 +14,7 @@
   overflow: hidden;
   transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s,
     border 0.2s;
-  margin: 0 0 16px 0;
+  margin: 0;
 }
 
 .imageContainer {
@@ -187,7 +188,7 @@
 /* Add responsive adjustments */
 @media (max-width: 768px) {
   .productCard {
-    margin: 0 0 12px 0;
+    width: 180px;
   }
 
   .imageContainer {
@@ -197,10 +198,20 @@
 
 @media (max-width: 480px) {
   .productCard {
-    margin: 0 0 8px 0;
+    width: 160px;
   }
 
   .imageContainer {
     height: 140px;
+  }
+}
+
+@media (max-width: 375px) {
+  .productCard {
+    width: 140px;
+  }
+
+  .imageContainer {
+    height: 130px;
   }
 }

@@ -2,6 +2,7 @@ import { ActionIcon } from '@mantine/core';
 import { IconShoppingCart } from '@tabler/icons-react';
 import { IProduct } from '../../types';
 import styles from './AddToCartButton.module.css';
+import { PRODUCT_TEXTS } from '../../config/constants';
 
 interface AddToCartButtonProps {
   product: IProduct;
@@ -25,7 +26,7 @@ const AddToCartButton = ({
     <ActionIcon
       className={`${styles.addToCartButton} ${className || ''}`}
       onClick={handleClick}
-      aria-label="Add to cart"
+      aria-label={PRODUCT_TEXTS.ADD_TO_CART_ARIA}
     >
       <IconShoppingCart size={20} />
     </ActionIcon>

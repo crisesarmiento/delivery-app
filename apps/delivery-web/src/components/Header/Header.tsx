@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { MenuDrawer } from '../MenuDrawer/MenuDrawer';
 import { Logo, MenuButton, SearchBar } from './HeaderComponents';
 import ClosedNotification from '../ClosedNotification';
+import { SEARCH_TEXTS } from '../../config/constants';
 
 interface HeaderProps {
   showSearchBar?: boolean;
@@ -56,6 +57,11 @@ const Header = ({
     }
   };
 
+  // Update for the search bar placeholder
+  const placeholder = isMobile
+    ? SEARCH_TEXTS.FOOD_SEARCH_PLACEHOLDER
+    : SEARCH_TEXTS.BRANCH_SEARCH_PLACEHOLDER;
+
   // Home page header
   return (
     <>
@@ -68,10 +74,12 @@ const Header = ({
         style={{
           position: 'fixed',
           width: '100%',
+          maxWidth: '100vw',
           height: '283px',
-          left: '0px',
-          top: showClosedNotification ? '34px' : '0px',
+          left: '0',
+          top: showClosedNotification ? '34px' : '0',
           zIndex: 100,
+          overflow: 'hidden',
         }}
       >
         {/* Background image */}
@@ -94,7 +102,6 @@ const Header = ({
           className="left-black-rectangle"
           style={{
             position: 'absolute',
-            width: '50%',
             height: '283px',
             left: 0,
             top: 0,
@@ -120,13 +127,15 @@ const Header = ({
             position: 'relative',
             zIndex: 5,
             height: '100%',
+            width: '100%',
+            padding: '0 20px',
           }}
         >
           {/* Logo */}
           <Box
             style={{
               position: 'absolute',
-              left: '71px',
+              left: isMobile ? '71px' : '5%',
               top: '29px',
             }}
           >
@@ -137,7 +146,7 @@ const Header = ({
           <Box
             style={{
               position: 'absolute',
-              left: '23px',
+              left: isMobile ? '23px' : '2%',
               top: '23px',
               cursor: 'pointer',
             }}
@@ -149,13 +158,13 @@ const Header = ({
           <Text
             style={{
               position: 'absolute',
-              left: '80px',
+              left: isMobile ? '80px' : '5%',
               top: '114px',
               fontFamily: 'Inter, sans-serif',
               fontStyle: 'normal',
               fontWeight: 600,
-              fontSize: '36px',
-              lineHeight: '38px',
+              fontSize: isMobile ? '28px' : '36px',
+              lineHeight: isMobile ? '32px' : '38px',
               display: 'flex',
               alignItems: 'center',
               color: '#FFFFFF',
@@ -169,20 +178,14 @@ const Header = ({
               className="search-container"
               style={{
                 position: 'absolute',
-                left: isMobile ? '16px' : '80px',
                 top: '176.91px',
-                width: isMobile ? 'calc(100% - 32px)' : '512px',
                 filter: 'drop-shadow(0px 4px 16px rgba(0, 0, 0, 0.1))',
               }}
             >
               <SearchBar
                 value={onSearchChange ? searchValue : internalSearchValue}
                 onChange={handleSearchChange}
-                placeholder={
-                  isMobile
-                    ? '¿Qué te gustaría comer hoy?'
-                    : 'Busca una sucursal...'
-                }
+                placeholder={placeholder}
                 styles={{
                   root: {
                     width: '100%',

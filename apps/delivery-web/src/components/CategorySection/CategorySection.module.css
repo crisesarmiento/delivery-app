@@ -3,6 +3,26 @@
   margin-bottom: 8px;
 }
 
+.scrollableContainer {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0;
+  margin: 0;
+  position: relative;
+  scroll-padding: 0 16px;
+}
+
+/* Hide scrollbar but keep functionality */
+.scrollableContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollableContainer {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
 .sectionHeader {
   display: flex;
   justify-content: space-between;

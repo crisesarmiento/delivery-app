@@ -14,7 +14,7 @@
 .modalWrapper {
   position: relative;
   max-width: 750px;
-  width: 100%;
+  width: 95%;
   margin: 1.75rem auto;
 }
 
@@ -115,14 +115,21 @@
 }
 
 .imageContainer {
-  width: 256px;
+  width: 100%;
+  max-width: 256px;
   height: 288px;
   border-radius: 6px;
   overflow: hidden;
   flex-shrink: 0;
-  position: absolute;
-  right: 32px;
-  top: 24px;
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .imageContainer {
+    position: absolute;
+    right: 32px;
+    top: 24px;
+  }
 }
 
 .basicInfoContainer {
@@ -137,6 +144,7 @@
 }
 
 .contentContainer {
+  width: 100%;
   max-width: 410px;
   flex: 1;
   display: flex;
@@ -201,27 +209,55 @@
 }
 
 .quantityControlWrapper {
-  position: absolute;
-  left: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 8px;
   gap: 41px;
-  width: 197px;
+  max-width: 197px;
+  width: 100%;
   height: 40px;
   border: 1px solid #eef2f6;
   border-radius: 4px;
 }
 
+@media (min-width: 768px) {
+  .quantityControlWrapper {
+    position: absolute;
+    left: 0;
+  }
+}
+
 .addToCartButton {
   margin-left: auto;
-  width: 465px;
+  max-width: 465px;
+  width: 100%;
   height: 40px;
   background: #000000;
   border-radius: 4px;
   padding: 0;
   box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.03);
+}
+
+@media (max-width: 767px) {
+  .footerActions {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .quantityControlWrapper {
+    position: static;
+    margin-bottom: 16px;
+  }
+
+  .addToCartButton {
+    margin-left: 0;
+  }
+
+  .footerContainer {
+    height: auto;
+    padding: 16px;
+  }
 }
 
 .addToCartContent {

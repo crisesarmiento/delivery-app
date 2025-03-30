@@ -4,7 +4,8 @@ import { Box } from '@mantine/core';
 import { IProduct } from '../../types';
 import ProductCard from '../ProductCard/ProductCard';
 import styles from './ProductGrid.module.css';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
+import { PRODUCT_GRID_LOGS } from '../../config/constants';
 
 interface ProductGridProps {
   products: IProduct[];
@@ -17,25 +18,37 @@ const ProductGrid = ({
   className = '',
   isDisabled = false,
 }: ProductGridProps) => {
+  const gridRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    const handleResize = () => {
+    // Log grid dimensions for debugging
+    const logGridDetails = () => {
+      if (!gridRef.current) return;
+
+      const width = gridRef.current.offsetWidth;
+      const scrollWidth = gridRef.current.scrollWidth;
+
       console.log(
-        `ProductGrid rendering with window width: ${window.innerWidth}px`
+        PRODUCT_GRID_LOGS.GRID_DIMENSIONS.replace('{0}', width.toString())
+          .replace('{1}', scrollWidth.toString())
+          .replace('{2}', (scrollWidth > width).toString())
       );
     };
 
-    // Log on initial render
-    handleResize();
+    // Initial log
+    logGridDetails();
 
-    // Add resize listener
+    // Log on resize
+    const handleResize = () => {
+      logGridDetails();
+    };
+
     window.addEventListener('resize', handleResize);
-
-    // Clean up
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [products]);
 
   return (
-    <Box className={`${styles.productsGrid} ${className}`}>
+    <Box className={`${styles.productsGrid} ${className}`} ref={gridRef}>
       {products.map((product) => (
         <ProductCard
           key={product.id}

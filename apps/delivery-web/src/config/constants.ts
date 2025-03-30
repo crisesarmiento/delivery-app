@@ -52,6 +52,8 @@ export const BRANCH_TEXTS = {
   BRANCH_CLOSED: 'La sucursal se encuentra cerrada en este momento.',
   BRANCH_CLOSED_ALERT:
     'Lo sentimos, esta sucursal está cerrada en este momento.',
+  BRANCH_CLOSED_MESSAGE: 'Sucursal Cerrada',
+  UNAVAILABLE_MESSAGE: 'No Disponible',
 };
 
 export const ERROR_TEXTS = {
@@ -77,6 +79,7 @@ export const PRODUCT_TEXTS = {
   INGREDIENTS: 'Ingredientes',
   CUSTOMIZATION: 'Personalización',
   QUANTITY: 'Cantidad',
+  ADD_TO_CART_ARIA: 'Agregar al carrito',
 };
 
 export const MENU_TEXTS = {
@@ -88,4 +91,41 @@ export const MENU_TEXTS = {
 
 export const CATEGORY_TEXTS = {
   PROMO: 'Promociones',
+};
+
+// New constants for ProductGrid, CategorySection, etc.
+export const PRODUCT_GRID_LOGS = {
+  GRID_DIMENSIONS:
+    'ProductGrid: visible width={0}px, total width={1}px, scrollable={2}',
+};
+
+export const SECTION_TEXTS = {
+  SECTION_HEADER: 'Sección',
+};
+
+export const STYLE_CONSTANTS = {
+  TRANSITION_EASE: 'all 0.2s ease',
+};
+
+export const HERO_BANNER_TEXTS = {
+  DEFAULT_TITLE: 'Smarty Delivery',
+  DEFAULT_SUBTITLE: 'Disfruta de tu comida favorita a domicilio',
+  DEFAULT_BUTTON_TEXT: 'Ordenar Ahora',
+};
+
+export const SEARCH_TEXTS = {
+  BRANCH_SEARCH_PLACEHOLDER: 'Busca una sucursal...',
+  FOOD_SEARCH_PLACEHOLDER: '¿Qué te gustaría comer hoy?',
+  DEFAULT_SEARCH_PLACEHOLDER: 'Buscar...',
+};
+
+// New constants for UI components
+export const UI_CONSTANTS = {
+  BUTTON_VARIANTS: {
+    SUBTLE: 'subtle',
+    PRIMARY: 'primary',
+    OUTLINE: 'outline',
+    FILLED: 'filled',
+    DEFAULT: 'default',
+  },
 };

@@ -19,9 +19,9 @@ export default function CategoryTabs({
       </Text>
       <ScrollArea
         className={styles.categoriesContainer}
-        type="scroll"
-        scrollHideDelay={500}
+        type="auto"
         offsetScrollbars
+        styles={{ scrollbar: { display: 'none' } }}
       >
         <div className={styles.tabsContainer}>
           <Tabs
