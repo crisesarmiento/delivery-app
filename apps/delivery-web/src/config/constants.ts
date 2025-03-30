@@ -12,8 +12,10 @@ export const CART_TEXTS = {
   VIEW_CART: 'Ver Carrito',
   CART_EMPTY_CONFIRM: '¿Estás seguro que deseas vaciar el carrito?',
   TOTAL: 'Total',
+  SUBTOTAL: 'Subtotal',
   NO_BRANCH_SELECTED:
     'No se puede acceder al carrito sin una sucursal seleccionada',
+  ADD_TO_CART: 'Agregar al carrito',
 };
 
 export const CHECKOUT_TEXTS = {
@@ -54,6 +56,11 @@ export const BRANCH_TEXTS = {
     'Lo sentimos, esta sucursal está cerrada en este momento.',
   BRANCH_CLOSED_MESSAGE: 'Sucursal Cerrada',
   UNAVAILABLE_MESSAGE: 'No Disponible',
+  SOME_BRANCHES_CLOSED:
+    'Una o más sucursales se encuentran cerradas en este momento.',
+  NO_BRANCHES_FOUND:
+    'No se encontraron sucursales que coincidan con su búsqueda.',
+  BRANCHES_TITLE: 'SUCURSALES',
 };
 
 export const ERROR_TEXTS = {

@@ -10,10 +10,12 @@ import { ReactNode } from 'react';
 export default function ClientLayout({ children }: { children: ReactNode }) {
   return (
     <MantineProvider theme={theme}>
-      <CartProvider>
-        <ClientErrorBoundary>{children}</ClientErrorBoundary>
-      </CartProvider>
-      <Footer />
+      <div style={{ width: '100%', maxWidth: '100%', overflowX: 'hidden' }}>
+        <CartProvider>
+          <ClientErrorBoundary>{children}</ClientErrorBoundary>
+        </CartProvider>
+        <Footer />
+      </div>
     </MantineProvider>
   );
 }

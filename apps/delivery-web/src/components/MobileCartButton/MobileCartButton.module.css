@@ -1,0 +1,109 @@
+.mobileCartButtonContainer {
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px auto;
+}
+
+.mobileCartButton {
+  width: calc(100% - 32px);
+  max-width: 337.2px;
+  height: 48px;
+  padding: 0;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  transition: background-color 0.2s ease;
+  position: relative;
+}
+
+.mobileCartButton:hover {
+  background-color: #ffffff;
+}
+
+.mobileCartButtonContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 16px;
+}
+
+.leftContainer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.rightContainer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.cartIconContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cartCountBadge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cartCountText {
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.lightningIcon {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  bottom: 76px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.cartButtonText {
+  font-weight: 600;
+}
+
+.cartTotalText {
+  font-weight: 600;
+}
+
+.mobileCartFixed {
+  width: 100%;
+  background-color: var(--mantine-color-dark-9, #000000);
+  padding: 10px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.03);
+  min-height: 40px;
+  max-width: calc(100% - 32px);
+  margin: 20px auto;
+  border-radius: 4px;
+  gap: 12px;
+}
+
+/* Remove the global styles from the CSS module */

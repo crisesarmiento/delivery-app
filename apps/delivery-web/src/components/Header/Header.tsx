@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { MenuDrawer } from '../MenuDrawer/MenuDrawer';
 import { Logo, MenuButton, SearchBar } from './HeaderComponents';
 import ClosedNotification from '../ClosedNotification';
-import { SEARCH_TEXTS } from '../../config/constants';
+import { SEARCH_TEXTS, BRANCH_TEXTS } from '../../config/constants';
 
 interface HeaderProps {
   showSearchBar?: boolean;
@@ -74,7 +74,7 @@ const Header = ({
         style={{
           position: 'fixed',
           width: '100%',
-          maxWidth: '100vw',
+          maxWidth: '100%',
           height: '283px',
           left: '0',
           top: showClosedNotification ? '34px' : '0',
@@ -95,6 +95,8 @@ const Header = ({
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
+            maxWidth: '100%',
+            overflowX: 'hidden',
           }}
           data-testid="header-background"
         />
@@ -178,7 +180,7 @@ const Header = ({
             }}
             data-testid="header-title"
           >
-            SUCURSALES
+            {BRANCH_TEXTS.BRANCHES_TITLE}
           </Text>
 
           {showSearchBar && (

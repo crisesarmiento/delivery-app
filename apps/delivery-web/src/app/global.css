@@ -1,6 +1,31 @@
 /* Import Inter font */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
+/* Prevent horizontal scrolling - strengthened */
+html,
+body {
+  width: 100% !important;
+  max-width: 100vw !important;
+  overflow-x: hidden !important;
+  position: relative;
+  margin: 0;
+  padding: 0;
+}
+
+/* Comprehensive solution for all containers */
+body * {
+  max-width: 100vw;
+  box-sizing: border-box;
+}
+
+.mantine-Container-root,
+.mantine-AppShell-root,
+.mantine-Grid-root,
+.mantine-Box-root {
+  max-width: 100vw !important;
+  overflow-x: hidden !important;
+}
+
 /* Header responsive styles */
 .left-black-rectangle {
   width: 50%;
@@ -442,3 +467,37 @@ summary svg {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* Mobile cart button spacing */
+/* body {
+  padding-bottom: 72px;
+}
+
+@media (min-width: 769px) {
+  body {
+    padding-bottom: 0;
+  }
+} */
+
+@media (min-width: 769px) {
+  #hero {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  #hero .logo-container {
+    display: flex;
+  }
+  #middle-content {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Mobile cart button spacing - no longer needed for non-fixed button */
+/* body {
+  padding-bottom: 72px;
+}
+
+@media (min-width: 769px) {
+  body {
+    padding-bottom: 0;
+  }
+} */

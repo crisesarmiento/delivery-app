@@ -10,12 +10,14 @@ import styles from './page.module.css';
 import ProductsHeader from '@/components/Header/ProductsHeader';
 import CategoryTabs from '@/components/CategoryTabs/CategoryTabs';
 import CartDrawer from '@/components/CartDrawer/CartDrawer';
+import MobileCartButton from '@/components/MobileCartButton';
 import CategorySection from '@/components/CategorySection';
 import BasePage from '@/components/BasePage';
 import {
   COMMON_TEXTS,
   ERROR_TEXTS,
   BRANCH_TEXTS,
+  CART_TEXTS,
 } from '../../../config/constants';
 import {
   useCart,
@@ -291,7 +293,7 @@ export default function BranchProductsPage() {
                   }}
                   m={0}
                   p={0}
-                  style={{ marginBottom: '8px' }}
+                  style={{ width: '100%' }}
                 >
                   <CategorySection
                     title={category}
@@ -318,11 +320,24 @@ export default function BranchProductsPage() {
                 {COMMON_TEXTS.NO_PRODUCTS_AVAILABLE}
               </Text>
             )}
+            {/* Mobile cart button - only shown on mobile */}
+            <MobileCartButton
+              cartItemsCount={cartItems.length}
+              cartTotal={cartTotal}
+              onClick={() => {
+                if (branchId) {
+                  router.push(`/branches/${branchId}/cart`);
+                } else {
+                  console.error('Branch ID not provided to MobileCartButton');
+                  alert(CART_TEXTS.NO_BRANCH_SELECTED);
+                }
+              }}
+            />
           </Box>
         </Container>
       </BasePage>
 
-      {/* Cart drawer */}
+      {/* Cart drawer - only shown on desktop */}
       <CartDrawer
         opened={cartDrawerOpened}
         onClose={() => setCartDrawerOpened(false)}
