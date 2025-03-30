@@ -119,6 +119,7 @@ const CartDrawer = ({
         boxSizing: 'border-box',
         padding: '12px 0',
       }}
+      data-testid="cart-drawer"
     >
       <CartHeader onClearCart={handleClearCart} />
 
@@ -128,12 +129,19 @@ const CartDrawer = ({
           overflowY: 'auto',
           padding: '4px 16px 8px',
         }}
+        data-testid="cart-drawer-items-container"
       >
         {cartItems.map((item, index) => {
           // Create a stable unique key for each cart item
           const itemKey =
             item.uniqueId || `cart-item-${item.productId}-${index}`;
-          return <CartItem key={itemKey} item={item} />;
+          return (
+            <CartItem
+              key={itemKey}
+              item={item}
+              data-testid={`cart-item-${index}`}
+            />
+          );
         })}
       </Box>
 

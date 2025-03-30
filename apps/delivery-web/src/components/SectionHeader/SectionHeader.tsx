@@ -26,18 +26,30 @@ const SectionHeader = ({
       className={`${styles.sectionHeader}`}
       onClick={toggleable ? onToggle : undefined}
       mr={theme.spacing.xs}
+      data-testid="section-header"
     >
-      <Text className={styles.sectionTitle}>{title}</Text>
+      <Text className={styles.sectionTitle} data-testid="section-header-title">
+        {title}
+      </Text>
       {toggleable && (
         <Button
           variant={UI_CONSTANTS.BUTTON_VARIANTS.SUBTLE}
           p={0}
           className={styles.toggleButton}
+          data-testid="section-header-toggle-button"
         >
           {isExpanded ? (
-            <IconChevronUp size={20} stroke={1.5} />
+            <IconChevronUp
+              size={20}
+              stroke={1.5}
+              data-testid="section-header-icon-up"
+            />
           ) : (
-            <IconChevronDown size={20} stroke={1.5} />
+            <IconChevronDown
+              size={20}
+              stroke={1.5}
+              data-testid="section-header-icon-down"
+            />
           )}
         </Button>
       )}

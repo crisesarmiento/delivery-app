@@ -48,12 +48,17 @@ const ProductGrid = ({
   }, [products]);
 
   return (
-    <Box className={`${styles.productsGrid} ${className}`} ref={gridRef}>
+    <Box
+      className={`${styles.productsGrid} ${className}`}
+      ref={gridRef}
+      data-testid="product-grid"
+    >
       {products.map((product) => (
         <ProductCard
           key={product.id}
           product={product}
           isDisabled={isDisabled}
+          data-testid={`product-grid-item-${product.id}`}
         />
       ))}
     </Box>

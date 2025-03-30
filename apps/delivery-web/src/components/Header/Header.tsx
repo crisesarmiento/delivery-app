@@ -81,6 +81,7 @@ const Header = ({
           zIndex: 100,
           overflow: 'hidden',
         }}
+        data-testid="header"
       >
         {/* Background image */}
         <Box
@@ -95,6 +96,7 @@ const Header = ({
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
           }}
+          data-testid="header-background"
         />
 
         {/* Solid black rectangle on the left */}
@@ -107,6 +109,7 @@ const Header = ({
             top: 0,
             backgroundColor: '#000000',
           }}
+          data-testid="header-left-rectangle"
         />
 
         {/* Overlay covering the entire header */}
@@ -119,6 +122,7 @@ const Header = ({
             top: 0,
             backgroundColor: 'rgba(0, 0, 0, 0.7)',
           }}
+          data-testid="header-overlay"
         />
 
         {/* Content container - positioned above the backgrounds */}
@@ -130,6 +134,7 @@ const Header = ({
             width: '100%',
             padding: '0 20px',
           }}
+          data-testid="header-content"
         >
           {/* Logo */}
           <Box
@@ -138,6 +143,7 @@ const Header = ({
               left: isMobile ? '71px' : '5%',
               top: '29px',
             }}
+            data-testid="header-logo-container"
           >
             <Logo />
           </Box>
@@ -150,6 +156,7 @@ const Header = ({
               top: '23px',
               cursor: 'pointer',
             }}
+            data-testid="header-menu-button-container"
           >
             <MenuButton onClick={toggle} />
           </Box>
@@ -169,6 +176,7 @@ const Header = ({
               alignItems: 'center',
               color: '#FFFFFF',
             }}
+            data-testid="header-title"
           >
             SUCURSALES
           </Text>
@@ -181,6 +189,7 @@ const Header = ({
                 top: '176.91px',
                 filter: 'drop-shadow(0px 4px 16px rgba(0, 0, 0, 0.1))',
               }}
+              data-testid="header-search-container"
             >
               <SearchBar
                 value={onSearchChange ? searchValue : internalSearchValue}
@@ -224,6 +233,7 @@ const Header = ({
                     paddingRight: 0,
                   },
                 }}
+                data-testid="header-search-bar"
               />
             </Box>
           )}
@@ -231,7 +241,7 @@ const Header = ({
       </Box>
 
       {/* Empty space to push content below fixed header */}
-      <Box style={{ height: '283px' }} />
+      <Box style={{ height: '283px' }} data-testid="header-spacer" />
 
       {/* Mobile Navigation Drawer */}
       <MenuDrawer opened={opened} onClose={close} onNavigate={handleNavigate} />
