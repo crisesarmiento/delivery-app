@@ -11,11 +11,13 @@ import {
   IconChevronUp,
   IconCircleMinus,
   IconCheck,
+  IconArrowLeft,
 } from '@tabler/icons-react';
 import { IProduct } from '../../types';
 import styles from './AddToCartModal.module.css';
 import { getProductById } from '../../mocks/products.mock';
 import { CartItem } from '../../context/CartContext';
+import { PRODUCT_TEXTS, COMMON_TEXTS } from '../../config/constants';
 
 interface IngredientItem {
   name: string;
@@ -49,6 +51,19 @@ const AddToCartModal = ({
   const [showIngredients, setShowIngredients] = useState(true);
   const [showCondiments, setShowCondiments] = useState(true);
   const [comments, setComments] = useState(initialComments || '');
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect if on mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Get product with customization options from mock
   const productWithCustomization = getProductById(product.id);
@@ -303,301 +318,143 @@ const AddToCartModal = ({
     productWithCustomization?.customization?.condimentOptions || [];
 
   return (
-    <Box
-      className={styles.modalOverlay}
-      data-testid="add-to-cart-modal-overlay"
-    >
-      <Box
-        ref={modalRef}
-        className={styles.modalContent}
-        data-testid="add-to-cart-modal"
-      >
-        {/* Modal header */}
-        <Flex
-          className={styles.modalHeader}
-          data-testid="add-to-cart-modal-header"
-        >
-          <Text
-            className={styles.modalTitle}
-            data-testid="add-to-cart-modal-title"
-          >
-            {product.name}
-          </Text>
-          <Button
-            onClick={onClose}
+    <div className={styles.modalOverlay} onClick={onClose}>
+      <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+        <div className={styles.modalHeader}>
+          {isMobile && (
+            <button
+              className={styles.backButton}
+              onClick={onClose}
+              aria-label="Back"
+            >
+              <IconArrowLeft size={20} />
+            </button>
+          )}
+          <h2 className={styles.modalTitle}>{product.name}</h2>
+          <button
             className={styles.closeButton}
-            variant="subtle"
-            p={0}
-            data-testid="add-to-cart-modal-close-button"
+            onClick={onClose}
+            aria-label="Close"
           >
-            <IconX size={20} stroke={1.5} />
-          </Button>
-        </Flex>
+            <IconX size={20} />
+          </button>
+        </div>
 
-        {/* Product preview and info */}
-        <Flex
-          className={styles.productPreview}
-          data-testid="add-to-cart-modal-product-preview"
-        >
-          <Image
-            src={product.imageUrl || '/images/product-placeholder.png'}
-            alt={product.name}
-            className={styles.productImage}
-            data-testid="add-to-cart-modal-product-image"
-          />
-          <Box
-            className={styles.productInfo}
-            data-testid="add-to-cart-modal-product-info"
-          >
-            <Text
-              className={styles.productDescription}
-              data-testid="add-to-cart-modal-product-description"
-            >
-              {product.description || 'Sin descripción'}
-            </Text>
-            <Flex
-              className={styles.priceContainer}
-              data-testid="add-to-cart-modal-price-container"
-            >
-              {hasDiscount && originalPrice && (
-                <Text
-                  className={styles.originalPrice}
-                  data-testid="add-to-cart-modal-original-price"
+        <div className={styles.modalBody}>
+          <div className={styles.productPreview}>
+            <img
+              src={product.imageUrl}
+              alt={product.name}
+              className={styles.productImage}
+            />
+            <div className={styles.productInfo}>
+              <div>
+                <h3 className={styles.productName}>{product.name}</h3>
+                <p className={styles.productDescription}>
+                  {product.description}
+                </p>
+              </div>
+              <div className={styles.quantityControls}>
+                <button
+                  className={styles.quantityButton}
+                  onClick={() => quantity > 1 && setQuantity(quantity - 1)}
+                  disabled={quantity <= 1}
                 >
-                  ${originalPrice}
-                </Text>
-              )}
-              <Text
-                className={styles.currentPrice}
-                data-testid="add-to-cart-modal-current-price"
-              >
-                ${product.price.toFixed(2)}
-              </Text>
-            </Flex>
-          </Box>
-        </Flex>
+                  -
+                </button>
+                <span className={styles.quantityValue}>{quantity}</span>
+                <button
+                  className={styles.quantityButton}
+                  onClick={() => setQuantity(quantity + 1)}
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          </div>
 
-        {/* Quantity controls */}
-        <Flex
-          className={styles.quantityControls}
-          data-testid="add-to-cart-modal-quantity-controls"
-        >
-          <Text
-            className={styles.sectionLabel}
-            data-testid="add-to-cart-modal-quantity-label"
-          >
-            Cantidad
-          </Text>
-          <Flex
-            className={styles.quantityButtonGroup}
-            data-testid="add-to-cart-modal-quantity-buttons"
-          >
-            <Button
-              variant="outline"
-              onClick={() => quantity > 1 && setQuantity(quantity - 1)}
-              className={styles.quantityButton}
-              disabled={quantity <= 1}
-              data-testid="add-to-cart-modal-quantity-decrement"
-            >
-              <IconCircleMinus size={20} stroke={1.5} />
-            </Button>
-            <Text
-              className={styles.quantityDisplay}
-              data-testid="add-to-cart-modal-quantity-value"
-            >
-              {quantity}
-            </Text>
-            <Button
-              variant="outline"
-              onClick={() => setQuantity(quantity + 1)}
-              className={styles.quantityButton}
-              data-testid="add-to-cart-modal-quantity-increment"
-            >
-              <IconCirclePlus size={20} stroke={1.5} />
-            </Button>
-          </Flex>
-        </Flex>
-
-        {/* Ingredients section */}
-        {ingredientOptions.length > 0 && (
-          <Box
-            className={styles.customizationSection}
-            data-testid="add-to-cart-modal-ingredients-section"
-          >
-            <Flex
-              className={styles.sectionHeader}
-              onClick={() => setShowIngredients(!showIngredients)}
-              data-testid="add-to-cart-modal-ingredients-header"
-            >
-              <Text className={styles.sectionLabel}>Ingredientes</Text>
-              <Button
-                variant="subtle"
-                p={0}
-                className={styles.toggleButton}
-                data-testid="add-to-cart-modal-ingredients-toggle"
-              >
-                {showIngredients ? (
-                  <IconChevronUp size={20} stroke={1.5} />
-                ) : (
-                  <IconChevronDown size={20} stroke={1.5} />
-                )}
-              </Button>
-            </Flex>
-
-            {showIngredients && (
-              <Box
-                className={styles.ingredientsList}
-                data-testid="add-to-cart-modal-ingredients-list"
-              >
+          {/* Ingredients Section */}
+          {ingredientOptions.length > 0 && (
+            <div className={styles.customizationSection}>
+              <h3 className={styles.sectionTitle}>
+                {PRODUCT_TEXTS.INGREDIENTS}
+              </h3>
+              <div className={styles.ingredientsList}>
                 {ingredients.map((ingredient, index) => (
-                  <Flex
-                    key={ingredient.name}
-                    className={styles.ingredientItem}
-                    data-testid={`add-to-cart-modal-ingredient-${index}`}
-                  >
-                    <Text
+                  <div key={ingredient.name} className={styles.ingredientItem}>
+                    <input
+                      type="checkbox"
+                      id={`ingredient-${index}`}
+                      className={styles.checkbox}
+                      checked={ingredient.quantity > 0}
+                      onChange={() =>
+                        handleUpdateIngredient(
+                          index,
+                          ingredient.quantity > 0 ? -1 : 1
+                        )
+                      }
+                    />
+                    <label
+                      htmlFor={`ingredient-${index}`}
                       className={styles.ingredientName}
-                      data-testid={`add-to-cart-modal-ingredient-name-${index}`}
                     >
                       {ingredient.name}
                       {ingredient.price ? ` (+$${ingredient.price})` : ''}
-                    </Text>
-                    <Flex
-                      className={styles.ingredientControls}
-                      data-testid={`add-to-cart-modal-ingredient-controls-${index}`}
-                    >
-                      <Button
-                        variant="subtle"
-                        p={0}
-                        onClick={() => handleUpdateIngredient(index, -1)}
-                        disabled={ingredient.quantity <= 0}
-                        className={styles.ingredientButton}
-                        data-testid={`add-to-cart-modal-ingredient-decrement-${index}`}
-                      >
-                        {ingredient.quantity <= 0 ? (
-                          <IconCircleMinus
-                            size={20}
-                            stroke={1.5}
-                            opacity={0.5}
-                          />
-                        ) : (
-                          <IconCircleMinus size={20} stroke={1.5} />
-                        )}
-                      </Button>
-                      <Text
-                        className={styles.ingredientQuantity}
-                        data-testid={`add-to-cart-modal-ingredient-quantity-${index}`}
-                      >
-                        {ingredient.quantity}
-                      </Text>
-                      <Button
-                        variant="subtle"
-                        p={0}
-                        onClick={() => handleUpdateIngredient(index, 1)}
-                        className={styles.ingredientButton}
-                        data-testid={`add-to-cart-modal-ingredient-increment-${index}`}
-                      >
-                        <IconCirclePlus size={20} stroke={1.5} />
-                      </Button>
-                    </Flex>
-                  </Flex>
+                    </label>
+                  </div>
                 ))}
-              </Box>
-            )}
-          </Box>
-        )}
+              </div>
+            </div>
+          )}
 
-        {/* Condiments section */}
-        {condimentOptions.length > 0 && (
-          <Box
-            className={styles.customizationSection}
-            data-testid="add-to-cart-modal-condiments-section"
-          >
-            <Flex
-              className={styles.sectionHeader}
-              onClick={() => setShowCondiments(!showCondiments)}
-              data-testid="add-to-cart-modal-condiments-header"
-            >
-              <Text className={styles.sectionLabel}>Condimentos</Text>
-              <Button
-                variant="subtle"
-                p={0}
-                className={styles.toggleButton}
-                data-testid="add-to-cart-modal-condiments-toggle"
-              >
-                {showCondiments ? (
-                  <IconChevronUp size={20} stroke={1.5} />
-                ) : (
-                  <IconChevronDown size={20} stroke={1.5} />
-                )}
-              </Button>
-            </Flex>
-
-            {showCondiments && (
-              <Box
-                className={styles.condimentsList}
-                data-testid="add-to-cart-modal-condiments-list"
-              >
+          {/* Condiments Section */}
+          {condimentOptions.length > 0 && (
+            <div className={styles.customizationSection}>
+              <h3 className={styles.sectionTitle}>Condimentos</h3>
+              <div className={styles.condimentsList}>
                 {condimentOptions.map((condiment, index) => (
-                  <Flex
+                  <div
                     key={condiment.name}
                     className={`${styles.condimentItem} ${
                       condiments.includes(condiment.name)
                         ? styles.condimentSelected
                         : ''
                     }`}
-                    onClick={() => handleToggleCondiment(condiment.name)}
-                    data-testid={`add-to-cart-modal-condiment-${index}`}
                   >
-                    <Text
+                    <input
+                      type="checkbox"
+                      id={`condiment-${index}`}
+                      className={styles.checkbox}
+                      checked={condiments.includes(condiment.name)}
+                      onChange={() => handleToggleCondiment(condiment.name)}
+                    />
+                    <label
+                      htmlFor={`condiment-${index}`}
                       className={styles.condimentName}
-                      data-testid={`add-to-cart-modal-condiment-name-${index}`}
                     >
                       {condiment.name}
-                    </Text>
-                    <Box
-                      className={styles.checkBox}
-                      data-testid={`add-to-cart-modal-condiment-checkbox-${index}`}
-                    >
-                      {condiments.includes(condiment.name) && (
-                        <IconCheck size={16} stroke={2} />
-                      )}
-                    </Box>
-                  </Flex>
+                    </label>
+                  </div>
                 ))}
-              </Box>
-            )}
-          </Box>
-        )}
+              </div>
+            </div>
+          )}
 
-        {/* Comments section */}
-        <Box
-          className={styles.commentsSection}
-          data-testid="add-to-cart-modal-comments-section"
-        >
-          <Text
-            className={styles.sectionLabel}
-            data-testid="add-to-cart-modal-comments-label"
-          >
-            Comentarios adicionales
-          </Text>
-          <Textarea
-            placeholder="Instrucciones especiales, alergias, etc."
-            value={comments}
-            onChange={handleCommentsChange}
-            className={styles.commentsInput}
-            minRows={2}
-            maxRows={4}
-            data-testid="add-to-cart-modal-comments-input"
-          />
-        </Box>
+          {/* Comments Section */}
+          <div className={styles.commentsSection}>
+            <h3 className={styles.sectionTitle}>Comentarios adicionales</h3>
+            <textarea
+              className={styles.comments}
+              placeholder={'Instrucciones especiales, alergias, etc.'}
+              value={comments}
+              onChange={handleCommentsChange}
+              maxLength={100}
+            />
+          </div>
+        </div>
 
-        {/* Total price and add to cart button */}
-        <Flex className={styles.footer} data-testid="add-to-cart-modal-footer">
-          <Box
-            className={styles.totalPrice}
-            data-testid="add-to-cart-modal-total-price"
-          >
+        <div className={styles.footer}>
+          <div className={styles.totalPrice}>
             <Text
               className={styles.totalLabel}
               data-testid="add-to-cart-modal-total-label"
@@ -610,17 +467,13 @@ const AddToCartModal = ({
             >
               ${finalPrice.toFixed(2)}
             </Text>
-          </Box>
-          <Button
-            onClick={handleAddToCart}
-            className={styles.addButton}
-            data-testid="add-to-cart-modal-add-button"
-          >
-            Agregar <IconShoppingCart size={20} style={{ marginLeft: 8 }} />
-          </Button>
-        </Flex>
-      </Box>
-    </Box>
+          </div>
+          <button className={styles.addButton} onClick={handleAddToCart}>
+            {PRODUCT_TEXTS.ADD_TO_CART}
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };
 
