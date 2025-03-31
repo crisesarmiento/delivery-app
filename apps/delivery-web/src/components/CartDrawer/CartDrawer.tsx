@@ -4,6 +4,13 @@ import { Box, Text, Flex, Button, Divider } from '@mantine/core';
 import { IProduct } from '../../types';
 import { useEffect, useState } from 'react';
 import { IconShoppingCart, IconTrash } from '@tabler/icons-react';
+import {
+  CART_EMPTY_MESSAGE,
+  CART_TITLE,
+  CART_TOTAL,
+  CART_VIEW_BUTTON,
+} from '@/constants/text';
+import { useMediaQuery } from '@mantine/hooks';
 
 interface CartItem {
   productId: string;
@@ -16,6 +23,7 @@ interface CartDrawerProps {
   onClose: () => void;
   cartItems: CartItem[];
   cartTotal: number;
+  isMobile?: boolean;
 }
 
 const CartDrawer = ({
@@ -23,18 +31,20 @@ const CartDrawer = ({
   onClose,
   cartItems,
   cartTotal,
+  isMobile,
 }: CartDrawerProps) => {
   const [isVisible, setIsVisible] = useState(false);
+  const isMobileView = useMediaQuery('(max-width: 768px)');
+  const isOnMobile = isMobile !== undefined ? isMobile : isMobileView;
 
   useEffect(() => {
     setIsVisible(opened);
   }, [opened]);
 
-  // Debug log to check if cartItems data is being received
-  useEffect(() => {
-    console.log('CartDrawer received cartItems:', cartItems);
-    console.log('CartDrawer is visible:', isVisible);
-  }, [cartItems, isVisible]);
+  // Hide the cart drawer on mobile
+  if (isOnMobile) {
+    return null;
+  }
 
   // For empty cart - compact floating card with specified dimensions
   if (cartItems.length === 0) {
@@ -70,7 +80,7 @@ const CartDrawer = ({
               height: '18px',
             }}
           >
-            Mi pedido
+            {CART_TITLE}
           </Text>
         </Flex>
 
@@ -116,7 +126,7 @@ const CartDrawer = ({
               margin: '0 auto',
             }}
           >
-            Tu carrito está vacío. Agregá productos para comenzar tu pedido.
+            {CART_EMPTY_MESSAGE}
           </Text>
         </Flex>
       </Box>
@@ -153,7 +163,7 @@ const CartDrawer = ({
             color: '#000000',
           }}
         >
-          Mi pedido
+          {CART_TITLE}
         </Text>
         <Box style={{ position: 'absolute', top: 0, right: 16 }}>
           <IconTrash
@@ -260,7 +270,7 @@ const CartDrawer = ({
               fontWeight: 500,
             }}
           >
-            Total
+            {CART_TOTAL}
           </Text>
           <Text
             style={{
@@ -304,7 +314,7 @@ const CartDrawer = ({
             <Text
               style={{ color: '#B3FF00', fontSize: '16px', fontWeight: 600 }}
             >
-              Ver Carrito
+              {CART_VIEW_BUTTON}
             </Text>
           </Box>
         </Button>

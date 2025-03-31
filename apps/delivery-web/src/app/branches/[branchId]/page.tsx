@@ -11,10 +11,12 @@ import ProductsHeader from '@/components/Header/ProductsHeader';
 import CategoryTabs from '@/components/CategoryTabs/CategoryTabs';
 import CartDrawer from '@/components/CartDrawer/CartDrawer';
 import CategorySection from '@/components/CategorySection';
+import { NO_PRODUCTS_AVAILABLE } from '@/constants/text';
 import {
   useCart,
   CartItem as CartContextItem,
 } from '../../../context/CartContext';
+import { useMediaQuery } from '@mantine/hooks';
 
 export default function BranchProductsPage() {
   const params = useParams();
@@ -26,6 +28,8 @@ export default function BranchProductsPage() {
     addToCart: addToCartContext,
     getTotalPrice,
   } = useCart();
+
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   useEffect(() => {
     console.log('Dynamic route params:', params);
@@ -191,14 +195,12 @@ export default function BranchProductsPage() {
         searchValue={searchQuery}
         onSearchChange={handleSearchChange}
       />
-
       {/* Categories tabs */}
       <CategoryTabs
         categories={categories}
         activeTab={activeTab}
         onTabChange={handleTabChange}
       />
-
       {/* Category sections */}
       <Box className={styles.sectionsContainer}>
         {Object.keys(productsByCategory).length > 0 ? (
@@ -225,18 +227,19 @@ export default function BranchProductsPage() {
           ))
         ) : (
           <Text ta="center" fz="lg" c="dimmed" style={{ padding: '40px 0' }}>
-            No hay productos disponibles
+            {NO_PRODUCTS_AVAILABLE}
           </Text>
         )}
       </Box>
-
       {/* Cart drawer */}
-      <CartDrawer
-        opened={cartDrawerOpened}
-        onClose={() => setCartDrawerOpened(false)}
-        cartItems={cartItems}
-        cartTotal={cartTotal}
-      />
+      {isMobile && (
+        <CartDrawer
+          opened={cartDrawerOpened}
+          onClose={() => setCartDrawerOpened(false)}
+          cartItems={cartItems}
+          cartTotal={cartTotal}
+        />
+      )}
     </Box>
   );
 }

@@ -1,0 +1,44 @@
+.mobileCartButton {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px 16px;
+  background: #ffffff;
+  box-shadow: 0px -4px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.button {
+  background-color: #000000;
+  color: #b3ff00;
+  height: 48px;
+  font-size: 16px;
+  line-height: 20px;
+  border-radius: 4px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+}
+
+.buttonContent {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.buttonText {
+  color: #b3ff00;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.totalAmount {
+  color: #b3ff00;
+  font-size: 16px;
+  font-weight: 600;
+}

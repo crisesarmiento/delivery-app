@@ -4,6 +4,7 @@ import { MantineProvider } from '@mantine/core';
 import { CartProvider } from '../context/CartContext';
 import './global.css';
 import Footer from '@/components/Footer';
+import { CartContent } from './components/CartContent';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -21,7 +22,10 @@ export default function RootLayout({
     <html lang="es">
       <body className={inter.className}>
         <MantineProvider>
-          <CartProvider>{children}</CartProvider>
+          <CartProvider>
+            {children}
+            <CartContent />
+          </CartProvider>
           <Footer />
         </MantineProvider>
       </body>
