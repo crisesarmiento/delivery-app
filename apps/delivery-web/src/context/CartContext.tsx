@@ -25,6 +25,8 @@ interface CartContextType {
   getTotalItems: () => number;
   getTotalPrice: () => number;
   clearCart: () => void;
+  cartItems: CartItem[];
+  cartTotal: number;
 }
 
 // Create the context with a default empty value
@@ -41,6 +43,8 @@ const CartContext = createContext<CartContextType>({
   getTotalPrice: () => 0,
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   clearCart: () => {},
+  cartItems: [],
+  cartTotal: 0,
 });
 
 // Custom hook to use the cart context
@@ -147,6 +151,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         getTotalItems,
         getTotalPrice,
         clearCart,
+        cartItems: items,
+        cartTotal: getTotalPrice(),
       }}
     >
       {children}

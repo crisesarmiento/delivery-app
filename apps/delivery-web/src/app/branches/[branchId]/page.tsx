@@ -9,7 +9,7 @@ import { IBranch, IProduct } from '../../../types';
 import styles from './page.module.css';
 import ProductsHeader from '@/components/Header/ProductsHeader';
 import CategoryTabs from '@/components/CategoryTabs/CategoryTabs';
-import CartDrawer from '@/components/CartDrawer/CartDrawer';
+import MobileCartButton from '@/components/MobileCartButton/MobileCartButton';
 import CategorySection from '@/components/CategorySection';
 import { NO_PRODUCTS_AVAILABLE } from '@/constants/text';
 import {
@@ -17,6 +17,7 @@ import {
   CartItem as CartContextItem,
 } from '../../../context/CartContext';
 import { useMediaQuery } from '@mantine/hooks';
+import CartDrawer from '@/components/CartDrawer/CartDrawer';
 
 export default function BranchProductsPage() {
   const params = useParams();
@@ -186,6 +187,11 @@ export default function BranchProductsPage() {
     return acc;
   }, {} as Record<string, IProduct[]>);
 
+  // Open cart drawer
+  const openCartDrawer = () => {
+    setCartDrawerOpened(true);
+  };
+
   return (
     <Box className={styles.productPageContainer}>
       {/* Use the reusable Header component with product page configuration */}
@@ -232,12 +238,19 @@ export default function BranchProductsPage() {
         )}
       </Box>
       {/* Cart drawer */}
-      {isMobile && (
+      {isMobile ? (
+        <MobileCartButton
+          onClick={openCartDrawer}
+          cartItems={cartItems}
+          cartTotal={cartTotal}
+        />
+      ) : (
         <CartDrawer
           opened={cartDrawerOpened}
           onClose={() => setCartDrawerOpened(false)}
           cartItems={cartItems}
           cartTotal={cartTotal}
+          isMobile={false}
         />
       )}
     </Box>

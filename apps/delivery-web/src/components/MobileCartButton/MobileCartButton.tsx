@@ -1,13 +1,12 @@
 'use client';
 
-import { Button, Text, Box } from '@mantine/core';
-import { useMediaQuery } from '@mantine/hooks';
+import { Box, Button, Text } from '@mantine/core';
 import { IconShoppingCart } from '@tabler/icons-react';
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { IProduct } from '../../types';
 import styles from './MobileCartButton.module.css';
-import { CART_VIEW_BUTTON } from '@/constants/text';
+import { CART_TITLE } from '@/constants/text';
+import { usePathname } from 'next/navigation';
+import { useCart } from '@/context/CartContext';
 
 interface CartItem {
   productId: string;
@@ -18,40 +17,35 @@ interface CartItem {
 interface MobileCartButtonProps {
   cartItems: CartItem[];
   cartTotal: number;
+  onClick?: () => void;
 }
 
-const MobileCartButton = ({ cartItems, cartTotal }: MobileCartButtonProps) => {
-  const isMobile = useMediaQuery('(max-width: 768px)');
-  const [isVisible, setIsVisible] = useState(false);
+const MobileCartButton = ({ onClick }: MobileCartButtonProps) => {
+  const { cartTotal } = useCart();
+  const pathname = usePathname();
+  if (pathname === '/branches') return null;
 
-  useEffect(() => {
-    // Only show on mobile and when there are items in the cart
-    const shouldBeVisible = !!isMobile && cartItems.length > 0;
-    setIsVisible(shouldBeVisible);
-
-    console.log('MobileCartButton', {
-      isMobile,
-      cartItemsCount: cartItems.length,
-      shouldBeVisible,
-    });
-  }, [isMobile, cartItems]);
-
-  if (!isVisible) return null;
+  const handleClick = (e: React.MouseEvent) => {
+    if (onClick) {
+      e.preventDefault();
+      onClick();
+    }
+  };
 
   return (
-    <Box className={styles.mobileCartButton}>
-      <Link href="/checkout" style={{ textDecoration: 'none' }}>
-        <Button fullWidth className={styles.button}>
-          <Box className={styles.buttonContent}>
-            <IconShoppingCart size={20} color="#B3FF00" stroke={2} />
-            <Text className={styles.buttonText}>{CART_VIEW_BUTTON}</Text>
-          </Box>
+    <div className={styles.mobileCartButton}>
+      <Button className={styles.button} onClick={handleClick}>
+        <Box className={styles.addToCartLeft}>
+          <IconShoppingCart className={styles.iconShoppingCart} />
+          <Text className={styles.buttonText}>{CART_TITLE}</Text>
+        </Box>
+        <Box className={styles.addToCartRight}>
           <Text className={styles.totalAmount}>
-            ${cartTotal.toLocaleString()}
+            Subtotal: ${cartTotal.toLocaleString()}
           </Text>
-        </Button>
-      </Link>
-    </Box>
+        </Box>
+      </Button>
+    </div>
   );
 };
 
