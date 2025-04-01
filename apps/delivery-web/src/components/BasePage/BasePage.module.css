@@ -1,0 +1,75 @@
+.pageContainer {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  background-color: #ffffff;
+  overflow-x: hidden;
+}
+
+.headerContainer {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: white;
+  border-bottom: 1px solid #eef2f6;
+}
+
+/* Adjust position when notification is present */
+.hasNotification .headerContainer {
+  top: 34px; /* Height of the notification */
+}
+
+.contentWrapper {
+  display: flex;
+  flex: 1;
+  position: relative;
+  padding-top: 34px; /* Space for the fixed notification */
+}
+
+/* Remove extra padding when no notification */
+.pageContainer:not(.hasNotification) .contentWrapper {
+  padding-top: 0;
+}
+
+.sidebarContainer {
+  position: fixed;
+  top: 64px;
+  left: 0;
+  width: 280px;
+  height: calc(100vh - 64px);
+  overflow-y: auto;
+  padding: 16px;
+  border-right: 1px solid #eef2f6;
+  background-color: white;
+  z-index: 5;
+}
+
+.mainContent {
+  flex: 1;
+  padding: 0;
+  width: 100%;
+  max-width: 100%;
+  margin-left: auto;
+  background-color: #f8f9fa;
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
+.footerContainer {
+  background-color: white;
+  border-top: 1px solid #eef2f6;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .sidebarContainer {
+    display: none;
+  }
+
+  .mainContent {
+    margin-left: 0;
+  }
+}

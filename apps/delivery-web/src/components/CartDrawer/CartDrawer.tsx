@@ -1,6 +1,7 @@
 'use client';
 
-import { Box, Text, Flex, Button, Divider } from '@mantine/core';
+import { Box, Flex, Text, Divider, Button } from '@mantine/core';
+
 import { IProduct } from '../../types';
 import { useEffect, useState } from 'react';
 import { IconShoppingCart, IconTrash } from '@tabler/icons-react';
@@ -16,6 +17,7 @@ interface CartItem {
   productId: string;
   quantity: number;
   product: IProduct;
+  uniqueId?: string;
 }
 
 interface CartDrawerProps {
@@ -134,10 +136,15 @@ const CartDrawer = ({
   }
 
   // For non-empty cart - show items and checkout option
+  // Don't render at all in mobile view
+  if (isMobile) {
+    return null;
+  }
+
   return (
     <Box
       style={{
-        position: 'absolute',
+        position: 'fixed',
         top: '406px',
         right: isVisible ? '40px' : '-240px',
         width: '200px',
@@ -152,6 +159,7 @@ const CartDrawer = ({
         boxSizing: 'border-box',
         padding: '12px 0',
       }}
+      data-testid="cart-drawer"
     >
       <Box style={{ position: 'relative', padding: '0 16px 8px' }}>
         <Text
@@ -191,56 +199,20 @@ const CartDrawer = ({
           overflowY: 'auto',
           padding: '4px 16px 8px',
         }}
+        data-testid="cart-drawer-items-container"
       >
-        {cartItems.map((item, index) => (
-          <Box key={item.productId} mb={12}>
-            <Box
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <Box style={{ display: 'flex', alignItems: 'center' }}>
-                <Text
-                  style={{
-                    color: '#939393',
-                    fontFamily: 'Inter',
-                    fontSize: '10px',
-                    lineHeight: '18px',
-                    fontWeight: 400,
-                    marginRight: '4px',
-                  }}
-                >
-                  {item.quantity}x
-                </Text>
-                <Text
-                  style={{
-                    fontFamily: 'Inter',
-                    fontSize: '10px',
-                    lineHeight: '18px',
-                    fontWeight: 400,
-                    color: '#000000',
-                  }}
-                >
-                  {item.product.name}
-                </Text>
-              </Box>
-              <Text
-                style={{
-                  fontFamily: 'Inter',
-                  fontSize: '10px',
-                  lineHeight: '18px',
-                  fontWeight: 400,
-                  color: '#000000',
-                  textAlign: 'right',
-                }}
-              >
-                ${(item.product.price * item.quantity).toLocaleString()}
-              </Text>
-            </Box>
-          </Box>
-        ))}
+        {cartItems.map((item, index) => {
+          // Create a stable unique key for each cart item
+          const itemKey =
+            item.uniqueId || `cart-item-${item.productId}-${index}`;
+          return (
+            <CartItem
+              key={itemKey}
+              item={item}
+              data-testid={`cart-item-${index}`}
+            />
+          );
+        })}
       </Box>
 
       <Divider

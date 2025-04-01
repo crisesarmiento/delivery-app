@@ -1,26 +1,48 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useRouter } from 'next/navigation';
 import { MenuDrawer } from '../MenuDrawer/MenuDrawer';
 import { Logo, MenuButton, SearchBar } from './HeaderComponents';
+import ClosedNotification from '../ClosedNotification';
+import { SEARCH_TEXTS, BRANCH_TEXTS } from '../../config/constants';
 
 interface HeaderProps {
   showSearchBar?: boolean;
   searchValue?: string;
   onSearchChange?: (value: string) => void;
+  showClosedNotification?: boolean;
+  closedMessage?: string;
 }
 
 const Header = ({
   showSearchBar = true,
   searchValue = '',
   onSearchChange,
+  showClosedNotification = false,
+  closedMessage,
 }: HeaderProps) => {
   const [opened, { toggle, close }] = useDisclosure(false);
   const [internalSearchValue, setInternalSearchValue] = useState(searchValue);
+  const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    // Check on initial load
+    checkIfMobile();
+
+    // Add event listener for window resize
+    window.addEventListener('resize', checkIfMobile);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', checkIfMobile);
+  }, []);
 
   const handleNavigate = (route: string) => {
     router.push(route);
@@ -35,20 +57,31 @@ const Header = ({
     }
   };
 
+  // Update for the search bar placeholder
+  const placeholder = isMobile
+    ? SEARCH_TEXTS.FOOD_SEARCH_PLACEHOLDER
+    : SEARCH_TEXTS.BRANCH_SEARCH_PLACEHOLDER;
+
   // Home page header
   return (
     <>
+      {/* Closed notification banner */}
+      {showClosedNotification && <ClosedNotification message={closedMessage} />}
+
       {/* Fixed hero header */}
       <Box
         component="header"
         style={{
           position: 'fixed',
           width: '100%',
+          maxWidth: '100%',
           height: '283px',
-          left: '0px',
-          top: '0px',
+          left: '0',
+          top: showClosedNotification ? '34px' : '0',
           zIndex: 100,
+          overflow: 'hidden',
         }}
+        data-testid="header"
       >
         {/* Background image */}
         <Box
@@ -62,7 +95,10 @@ const Header = ({
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
+            maxWidth: '100%',
+            overflowX: 'hidden',
           }}
+          data-testid="header-background"
         />
 
         {/* Solid black rectangle on the left */}
@@ -70,12 +106,12 @@ const Header = ({
           className="left-black-rectangle"
           style={{
             position: 'absolute',
-            width: '50%',
             height: '283px',
             left: 0,
             top: 0,
             backgroundColor: '#000000',
           }}
+          data-testid="header-left-rectangle"
         />
 
         {/* Overlay covering the entire header */}
@@ -88,6 +124,7 @@ const Header = ({
             top: 0,
             backgroundColor: 'rgba(0, 0, 0, 0.7)',
           }}
+          data-testid="header-overlay"
         />
 
         {/* Content container - positioned above the backgrounds */}
@@ -96,15 +133,19 @@ const Header = ({
             position: 'relative',
             zIndex: 5,
             height: '100%',
+            width: '100%',
+            padding: '0 20px',
           }}
+          data-testid="header-content"
         >
           {/* Logo */}
           <Box
             style={{
               position: 'absolute',
-              left: '71px',
+              left: isMobile ? '71px' : '5%',
               top: '29px',
             }}
+            data-testid="header-logo-container"
           >
             <Logo />
           </Box>
@@ -113,10 +154,11 @@ const Header = ({
           <Box
             style={{
               position: 'absolute',
-              left: '23px',
+              left: isMobile ? '23px' : '2%',
               top: '23px',
               cursor: 'pointer',
             }}
+            data-testid="header-menu-button-container"
           >
             <MenuButton onClick={toggle} />
           </Box>
@@ -125,19 +167,20 @@ const Header = ({
           <Text
             style={{
               position: 'absolute',
-              left: '80px',
+              left: isMobile ? '80px' : '5%',
               top: '114px',
               fontFamily: 'Inter, sans-serif',
               fontStyle: 'normal',
               fontWeight: 600,
-              fontSize: '36px',
-              lineHeight: '38px',
+              fontSize: isMobile ? '28px' : '36px',
+              lineHeight: isMobile ? '32px' : '38px',
               display: 'flex',
               alignItems: 'center',
               color: '#FFFFFF',
             }}
+            data-testid="header-title"
           >
-            SUCURSALES
+            {BRANCH_TEXTS.BRANCHES_TITLE}
           </Text>
 
           {showSearchBar && (
@@ -145,16 +188,15 @@ const Header = ({
               className="search-container"
               style={{
                 position: 'absolute',
-                left: '80px',
                 top: '176.91px',
-                width: '512px',
                 filter: 'drop-shadow(0px 4px 16px rgba(0, 0, 0, 0.1))',
               }}
+              data-testid="header-search-container"
             >
               <SearchBar
                 value={onSearchChange ? searchValue : internalSearchValue}
                 onChange={handleSearchChange}
-                placeholder="Busca una sucursal..."
+                placeholder={placeholder}
                 styles={{
                   root: {
                     width: '100%',
@@ -193,6 +235,7 @@ const Header = ({
                     paddingRight: 0,
                   },
                 }}
+                data-testid="header-search-bar"
               />
             </Box>
           )}
@@ -200,7 +243,7 @@ const Header = ({
       </Box>
 
       {/* Empty space to push content below fixed header */}
-      <Box style={{ height: '283px' }} />
+      <Box style={{ height: '283px' }} data-testid="header-spacer" />
 
       {/* Mobile Navigation Drawer */}
       <MenuDrawer opened={opened} onClose={close} onNavigate={handleNavigate} />

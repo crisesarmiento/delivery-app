@@ -8,7 +8,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999;
+  z-index: 1000;
+}
+
+@media (max-width: 767px) {
+  .modalOverlay {
+    align-items: flex-start;
+  }
 }
 
 .modalWrapper {
@@ -19,143 +25,90 @@
 }
 
 .modalContent {
-  position: relative;
-  background-color: #fff;
-  border-radius: 16px;
-  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
-  padding: 0;
-  overflow: hidden;
+  background: white;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 600px;
   max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
   display: flex;
   flex-direction: column;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 768px) {
+  .modalContent {
+    max-width: 100%;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+    margin: 0;
+  }
 }
 
 .modalHeader {
   display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  padding: 24px 32px;
-  background-color: #000000;
-  height: 190px;
-  position: relative;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 10;
+}
+
+.backButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  margin-right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .modalTitle {
-  font-family: 'Inter', sans-serif;
-  font-style: normal;
+  font-size: 18px;
   font-weight: 600;
-  font-size: 30px;
-  line-height: 38px;
-  color: #ffffff;
-  margin-top: 43px;
-}
-
-.modalPrice {
-  font-family: 'Inter', sans-serif;
-  font-style: normal;
-  font-weight: 600;
-  font-size: 36px;
-  line-height: 45px;
-  color: #ffffff;
-  margin-top: 7px;
-}
-
-.modalOriginalPrice {
-  font-family: 'Inter', sans-serif;
-  font-style: normal;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 18px;
-  text-decoration-line: line-through;
-  color: #939393;
-  margin-left: 15px;
-}
-
-.discountBadge {
-  position: absolute;
-  top: 24px;
-  left: 32px;
-  background-color: #b3ff00;
-  border-radius: 16px;
-  padding: 8px;
-  font-family: 'Inter', sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 10px;
-  line-height: 18px;
-  color: #000000;
+  flex-grow: 1;
+  text-align: center;
 }
 
 .closeButton {
-  position: absolute;
-  top: 24px;
-  right: 24px;
-  color: #ffffff;
-  width: 18px;
-  height: 18px;
-  background-color: #000000;
-}
-
-.container {
-  padding: 24px 32px;
-  gap: 16px;
-  position: relative;
-  flex: 1;
-  overflow: hidden;
-  padding-bottom: 80px;
-}
-
-.topSection {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
   display: flex;
-  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.productPreview {
+  display: flex;
+  padding: 16px;
   gap: 16px;
-  width: 100%;
-  margin-bottom: 16px;
-}
-
-.imageContainer {
-  width: 256px;
-  height: 288px;
-  border-radius: 6px;
-  overflow: hidden;
-  flex-shrink: 0;
-  position: absolute;
-  right: 32px;
-  top: 24px;
-}
-
-.basicInfoContainer {
-  flex: 1;
-  padding-right: 8px;
 }
 
 .productImage {
-  width: 100%;
-  height: 100%;
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
   object-fit: cover;
 }
 
-.contentContainer {
-  max-width: 410px;
-  flex: 1;
+.productInfo {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
 }
 
 .productName {
-  font-family: 'Inter', sans-serif;
-  font-style: normal;
   font-weight: 600;
-  font-size: 24px;
-  line-height: 32px;
-  color: #000000;
-}
-
-.productIngredients {
-  font-family: 'Inter', sans-serif;
-  font-style: normal;
-  font-weight: 400;
   font-size: 18px;
   line-height: 28px;
   color: #000000;
@@ -328,11 +281,11 @@
   font-style: normal;
   font-weight: 600;
   font-size: 16px;
-  line-height: 24px;
-  color: #000000;
+  margin-bottom: 12px;
+  padding-top: 16px;
 }
 
-.ingredientRow {
+.ingredientsList {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -422,18 +375,29 @@
   padding-right: 8px;
 }
 
-.scrollableContent::-webkit-scrollbar {
-  width: 6px;
+/* Adjust main content area to create flex space */
+.modalBody {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 16px;
 }
 
-.scrollableContent::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 3px;
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-top: 1px solid #f0f0f0;
+  position: sticky;
+  bottom: 0;
+  background: white;
+  z-index: 10;
+  margin-top: auto;
 }
 
-.scrollableContent::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 3px;
+.totalPrice {
+  font-weight: 600;
+  font-size: 18px;
 }
 
 .scrollableContent::-webkit-scrollbar-thumb:hover {

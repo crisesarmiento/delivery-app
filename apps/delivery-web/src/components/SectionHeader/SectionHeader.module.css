@@ -1,0 +1,35 @@
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: #f8fafc;
+  border: 1px solid #f8fafc;
+  cursor: pointer;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  margin-top: 8px;
+}
+
+.sectionTitle {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: #000000;
+  margin: 0;
+}
+
+.toggleButton {
+  color: #000000;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggleButton:hover {
+  background-color: transparent;
+}

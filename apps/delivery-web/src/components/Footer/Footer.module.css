@@ -84,8 +84,13 @@
 
   .gridContainer {
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 8px;
     justify-items: center;
+    padding: 16px 0;
+  }
+
+  .footer {
+    margin-top: 0;
   }
 
   .poweredByContainer {

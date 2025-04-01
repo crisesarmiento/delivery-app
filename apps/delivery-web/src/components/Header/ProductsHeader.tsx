@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Text, Flex, Title, ActionIcon } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconChevronLeft } from '@tabler/icons-react';
@@ -8,12 +8,15 @@ import { useRouter } from 'next/navigation';
 import { MenuDrawer } from '../MenuDrawer/MenuDrawer';
 import { Logo, MenuButton, SearchBar } from './HeaderComponents';
 import { IBranch } from '@/types';
+import ClosedNotification from '../ClosedNotification';
 
 interface ProductsHeaderProps {
   branch: IBranch;
   onBackClick?: () => void;
   searchValue?: string;
   onSearchChange?: (value: string) => void;
+  isClosed?: boolean;
+  closedMessage?: string;
 }
 
 export function ProductsHeader({
@@ -21,11 +24,29 @@ export function ProductsHeader({
   onBackClick,
   searchValue = '',
   onSearchChange,
+  isClosed = false,
+  closedMessage,
 }: ProductsHeaderProps) {
   const { name, address, phoneNumber } = branch;
   const [opened, { toggle, close }] = useDisclosure(false);
   const [internalSearchValue, setInternalSearchValue] = useState(searchValue);
+  const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    // Check on initial load
+    checkIfMobile();
+
+    // Add event listener for window resize
+    window.addEventListener('resize', checkIfMobile);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', checkIfMobile);
+  }, []);
 
   const handleNavigate = (route: string) => {
     router.push(route);
@@ -42,6 +63,9 @@ export function ProductsHeader({
 
   return (
     <>
+      {/* Closed notification banner */}
+      {isClosed && <ClosedNotification message={closedMessage} />}
+
       {/* Fixed hero header */}
       <Box
         component="header"
@@ -50,7 +74,7 @@ export function ProductsHeader({
           width: '100%',
           height: '283px',
           left: '0px',
-          top: '0px',
+          top: isClosed ? '34px' : '0px',
           zIndex: 100,
         }}
       >
@@ -132,7 +156,7 @@ export function ProductsHeader({
               flexDirection: 'row',
               alignItems: 'center',
               position: 'absolute',
-              left: '80px',
+              left: isMobile ? '16px' : '80px',
               top: '93px',
             }}
           >
@@ -186,9 +210,9 @@ export function ProductsHeader({
             gap={8}
             style={{
               position: 'absolute',
-              width: '100%',
+              width: isMobile ? 'calc(100% - 32px)' : 'auto',
               height: '74px',
-              left: '80px',
+              left: isMobile ? '16px' : '80px',
               top: '140px',
             }}
           >
@@ -198,8 +222,8 @@ export function ProductsHeader({
                 fontFamily: 'Inter, sans-serif',
                 fontStyle: 'normal',
                 fontWeight: 600,
-                fontSize: '30px',
-                lineHeight: '38px',
+                fontSize: isMobile ? '24px' : '30px',
+                lineHeight: isMobile ? '30px' : '38px',
                 display: 'flex',
                 alignItems: 'center',
                 color: '#FFFFFF',
@@ -214,8 +238,8 @@ export function ProductsHeader({
                 fontFamily: 'Inter, sans-serif',
                 fontStyle: 'normal',
                 fontWeight: 500,
-                fontSize: '16px',
-                lineHeight: '24px',
+                fontSize: isMobile ? '14px' : '16px',
+                lineHeight: isMobile ? '20px' : '24px',
                 display: 'flex',
                 alignItems: 'center',
                 color: '#FFFFFF',
@@ -229,9 +253,9 @@ export function ProductsHeader({
           <Box
             style={{
               position: 'absolute',
-              left: '80px',
+              left: isMobile ? '16px' : '80px',
               top: '231.91px',
-              width: '512px',
+              width: isMobile ? 'calc(100% - 32px)' : '512px',
               height: '39.54px',
               filter: 'drop-shadow(0px 4px 16px rgba(0, 0, 0, 0.1))',
             }}
@@ -239,7 +263,11 @@ export function ProductsHeader({
             <SearchBar
               value={onSearchChange ? searchValue : internalSearchValue}
               onChange={handleSearchChange}
-              placeholder="Buscar un Producto..."
+              placeholder={
+                isMobile
+                  ? '¿Qué te gustaría comer hoy?'
+                  : 'Buscar un Producto...'
+              }
               styles={{
                 root: {
                   width: '512px',

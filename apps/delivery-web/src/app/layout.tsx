@@ -1,15 +1,14 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { MantineProvider } from '@mantine/core';
-import { CartProvider } from '../context/CartContext';
+import ClientLayout from './ClientLayout';
 import './global.css';
-import Footer from '@/components/Footer';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Smarty Delivery',
   description: 'Plataforma de pedidos de comida online',
+  viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
 };
 
 export default function RootLayout({
@@ -20,10 +19,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={inter.className}>
-        <MantineProvider>
-          <CartProvider>{children}</CartProvider>
-          <Footer />
-        </MantineProvider>
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );

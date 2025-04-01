@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Box, Button, Text, Flex } from '@mantine/core';
-import { IconChevronDown, IconChevronUp } from '@tabler/icons-react';
+import { Box, useMantineTheme } from '@mantine/core';
 import { IProduct } from '../../types';
-import ProductCard from '../ProductCard/ProductCard';
+import ProductGrid from '../ProductGrid';
+import SectionHeader from '../SectionHeader';
 import styles from './CategorySection.module.css';
+import { STYLE_CONSTANTS } from '../../config/constants';
 
 interface CategorySectionProps {
   title: string;
@@ -11,6 +12,7 @@ interface CategorySectionProps {
   onAddToCart: (product: IProduct, quantity: number) => void;
   isInitiallyExpanded?: boolean;
   onToggleExpand?: (isExpanded: boolean) => void;
+  isDisabled?: boolean;
 }
 
 const CategorySection = ({
@@ -19,8 +21,10 @@ const CategorySection = ({
   onAddToCart,
   isInitiallyExpanded = false,
   onToggleExpand,
+  isDisabled = false,
 }: CategorySectionProps) => {
   const [isExpanded, setIsExpanded] = useState(isInitiallyExpanded);
+  const theme = useMantineTheme();
 
   useEffect(() => {
     setIsExpanded(isInitiallyExpanded);
@@ -35,23 +39,31 @@ const CategorySection = ({
   };
 
   return (
-    <Box className={styles.categorySection}>
-      <Flex className={styles.sectionHeader} onClick={toggleExpand}>
-        <Text className={styles.sectionTitle}>{title}</Text>
-        <Button variant="subtle" p={0} className={styles.toggleButton}>
-          {isExpanded ? (
-            <IconChevronUp size={20} stroke={1.5} />
-          ) : (
-            <IconChevronDown size={20} stroke={1.5} />
-          )}
-        </Button>
-      </Flex>
+    <Box className={styles.categorySection} mb="16px">
+      <Box
+        py={theme.spacing.xs}
+        bg={theme.colors.neutral[1]}
+        w="100%"
+        h="100%"
+        data-testid="category-section-container"
+        style={{
+          borderRadius: theme.radius.md,
+          border: `1px solid ${theme.colors.neutral[2]}`,
+          transition: STYLE_CONSTANTS.TRANSITION_EASE,
+          boxShadow: isExpanded ? theme.shadows.xs : 'none',
+          marginBottom: '8px',
+        }}
+      >
+        <SectionHeader
+          title={title}
+          isExpanded={isExpanded}
+          onToggle={toggleExpand}
+        />
+      </Box>
 
       {isExpanded && (
-        <Box className={styles.productsGrid}>
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+        <Box className={styles.scrollableContainer}>
+          <ProductGrid products={products} isDisabled={isDisabled} />
         </Box>
       )}
     </Box>

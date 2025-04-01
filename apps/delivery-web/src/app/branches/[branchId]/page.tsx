@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Text, Box, Flex } from '@mantine/core';
 import { products } from '../../../mocks/products.mock';
@@ -22,12 +22,14 @@ import CartDrawer from '@/components/CartDrawer/CartDrawer';
 export default function BranchProductsPage() {
   const params = useParams();
   const router = useRouter();
+  const theme = useMantineTheme();
   const branchId = (params?.branchId as string) || '';
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const {
     items: cartContextItems,
     addToCart: addToCartContext,
     getTotalPrice,
+    clearCart,
   } = useCart();
 
   const isMobile = useMediaQuery('(max-width: 768px)');
@@ -46,42 +48,68 @@ export default function BranchProductsPage() {
   >({});
 
   // Find the current branch
-  const currentBranch = branchesMock.find((branch) => branch.id === branchId);
+  const [currentBranch, setCurrentBranch] = useState<IBranch | undefined>(
+    branchesMock.find((branch) => branch.id === branchId)
+  );
+
+  // Check if branch is open on component mount and every minute
+  useEffect(() => {
+    const branch = branchesMock.find((b) => b.id === branchId);
+    if (branch) {
+      setCurrentBranch({
+        ...branch,
+        isOpen: isBranchOpen(branch),
+      });
+
+      // Update status every minute
+      const intervalId = setInterval(() => {
+        setCurrentBranch((prev) =>
+          prev ? { ...prev, isOpen: isBranchOpen(prev) } : undefined
+        );
+      }, 60000);
+
+      return () => clearInterval(intervalId);
+    }
+    return undefined; // Explicit return for the path when branch is not found
+  }, [branchId]);
 
   // Handle case when branch is not found
   useEffect(() => {
     if (!currentBranch && branchId) {
-      console.log('Branch not found:', branchId);
-      alert('Branch not found. Redirecting to branches page.');
+      alert(COMMON_TEXTS.BRANCH_NOT_FOUND);
       router.push('/branches');
     }
   }, [currentBranch, branchId, router]);
 
   // Get products for this branch
-  const branchProducts = products || [];
+  const branchProducts = useMemo(() => products || [], []);
 
   // Handle back navigation
-  const handleBack = () => {
+  const handleBack = (): void => {
     router.push('/');
   };
 
   // Handle search
-  const handleSearchChange = (value: string) => {
+  const handleSearchChange = (value: string): void => {
     setSearchQuery(value);
   };
 
   // Add product to cart
-  const addToCart = (product: IProduct, quantity: number) => {
-    console.log('Adding product to cart:', { product, quantity });
+  const addToCart = (product: IProduct, quantity: number): void => {
+    // Check if branch is closed
+    if (currentBranch && !currentBranch.isOpen) {
+      alert(BRANCH_TEXTS.BRANCH_CLOSED_ALERT);
+      return;
+    }
 
     // Validate product data before adding to cart
     if (!product || !product.id) {
-      console.error('Invalid product data:', product);
+      console.error(ERROR_TEXTS.INVALID_PRODUCT, product);
       return;
     }
 
     if (quantity <= 0) {
-      console.error('Invalid quantity:', quantity);
+      console.error(ERROR_TEXTS.INVALID_QUANTITY, quantity);
       return;
     }
 
@@ -94,12 +122,10 @@ export default function BranchProductsPage() {
       quantity,
     };
 
-    console.log('Adding to cart context:', cartItem);
     addToCartContext(cartItem);
 
     // Open cart drawer
     setCartDrawerOpened(true);
-    console.log('Cart drawer opened:', true);
   };
 
   // Convert cart context items to format expected by CartDrawer
@@ -107,19 +133,23 @@ export default function BranchProductsPage() {
     productId: String(item.product.id),
     quantity: item.quantity,
     product: item.product,
+    totalPrice: item.totalPrice,
   }));
 
   // Get cart total from context
   const cartTotal = getTotalPrice();
 
   // Create categories for tabs from products
-  const categories = ['Promo'];
-  branchProducts.forEach((product: IProduct) => {
-    const category = product.category;
-    if (category && !categories.includes(category)) {
-      categories.push(category);
-    }
-  });
+  const categories = useMemo(() => {
+    const categoryList = ['Promo'];
+    branchProducts.forEach((product: IProduct) => {
+      const category = product.category;
+      if (category && !categoryList.includes(category)) {
+        categoryList.push(category);
+      }
+    });
+    return categoryList;
+  }, [branchProducts]);
 
   // Initialize expanded sections state
   useEffect(() => {
@@ -130,10 +160,10 @@ export default function BranchProductsPage() {
     }, {} as Record<string, boolean>);
 
     setExpandedSections(initialExpandedState);
-  }, []);
+  }, [activeTab, categories]);
 
   // Handle tab change
-  const handleTabChange = (value: string | null) => {
+  const handleTabChange = (value: string | null): void => {
     if (value) {
       setActiveTab(value);
 
@@ -149,19 +179,43 @@ export default function BranchProductsPage() {
       // Scroll to the selected category section
       const sectionElement = sectionRefs.current[value.toLowerCase()];
       if (sectionElement) {
-        sectionElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // Find the header element inside the section
+        const headerElement = sectionElement.querySelector(
+          'div[style*="border-radius"]'
+        );
+
+        if (headerElement) {
+          // Get the position of the header element
+          const rect = headerElement.getBoundingClientRect();
+          const scrollTop = window.pageYOffset + rect.top;
+
+          // Scroll to position the header at the top with a small buffer
+          window.scrollTo({
+            top: scrollTop - 16,
+            behavior: 'smooth',
+          });
+        } else {
+          // Fallback to the previous method if header can't be found
+          const rect = sectionElement.getBoundingClientRect();
+          const scrollTop = window.pageYOffset + rect.top;
+
+          window.scrollTo({
+            top: scrollTop - 120,
+            behavior: 'smooth',
+          });
+        }
       }
     }
   };
 
   // Handle section toggle
-  const handleSectionToggle = (category: string, isExpanded: boolean) => {
+  const handleSectionToggle = (category: string, isExpanded: boolean): void => {
     setExpandedSections((prev) => ({
       ...prev,
       [category.toLowerCase()]: isExpanded,
     }));
 
-    if (isExpanded) {
+    if (isExpanded && activeTab !== category.toLowerCase()) {
       setActiveTab(category.toLowerCase());
     }
   };
@@ -169,15 +223,16 @@ export default function BranchProductsPage() {
   // Group products by category
   const productsByCategory = categories.reduce((acc, category) => {
     const categoryProducts = branchProducts
+      .filter((product: IProduct) => {
+        if (category.toLowerCase() === 'promo') {
+          return Boolean(product.category?.toLowerCase().includes('promo'));
+        }
+        return Boolean(
+          product.category?.toLowerCase() === category.toLowerCase()
+        );
+      })
       .filter((product: IProduct) =>
-        category.toLowerCase() === 'promo'
-          ? product.category?.toLowerCase().includes('promo') ?? false
-          : product.category?.toLowerCase() === category.toLowerCase()
-      )
-      .filter(
-        (product: IProduct) =>
-          product.name?.toLowerCase().includes(searchQuery.toLowerCase()) ??
-          false
+        Boolean(product.name?.toLowerCase().includes(searchQuery.toLowerCase()))
       );
 
     if (categoryProducts.length > 0) {
@@ -204,6 +259,8 @@ export default function BranchProductsPage() {
         onBackClick={handleBack}
         searchValue={searchQuery}
         onSearchChange={handleSearchChange}
+        isClosed={currentBranch ? !currentBranch.isOpen : false}
+        closedMessage={BRANCH_TEXTS.BRANCH_CLOSED}
       />
       {/* Categories tabs */}
       <CategoryTabs
