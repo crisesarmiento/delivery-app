@@ -265,13 +265,16 @@ export default function BranchProductsPage() {
         </Box>
       )}
 
-      <CartDrawer
-        opened={cartDrawerOpened}
-        onClose={() => setCartDrawerOpened(false)}
-        cartItems={cartItems}
-        cartTotal={cartTotal}
-        isMobile={false}
-      />
+      {/* Only show CartDrawer in desktop view */}
+      {!isMobile && (
+        <CartDrawer
+          opened={cartDrawerOpened}
+          onClose={() => setCartDrawerOpened(false)}
+          cartItems={cartItems}
+          cartTotal={cartTotal}
+          isMobile={false}
+        />
+      )}
     </Flex>
   );
 }

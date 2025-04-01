@@ -3,6 +3,8 @@
   width: 100%;
   max-width: 367px;
   display: flex;
+  position: fixed;
+  bottom: 0;
   justify-content: center;
 }
 
