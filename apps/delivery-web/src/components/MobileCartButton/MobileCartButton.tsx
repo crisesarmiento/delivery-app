@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Button, Text } from '@mantine/core';
+import { Box, Button, Flex, Text } from '@mantine/core';
 import { IconShoppingCart } from '@tabler/icons-react';
 import { IProduct } from '../../types';
 import styles from './MobileCartButton.module.css';
@@ -33,7 +33,7 @@ const MobileCartButton = ({ onClick }: MobileCartButtonProps) => {
   };
 
   return (
-    <div className={styles.mobileCartButton}>
+    <Flex className={styles.mobileCartButton}>
       <Button className={styles.button} onClick={handleClick}>
         <Box className={styles.addToCartLeft}>
           <IconShoppingCart className={styles.iconShoppingCart} />
@@ -45,7 +45,7 @@ const MobileCartButton = ({ onClick }: MobileCartButtonProps) => {
           </Text>
         </Box>
       </Button>
-    </div>
+    </Flex>
   );
 };
 

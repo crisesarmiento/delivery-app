@@ -50,9 +50,17 @@
 
 .sectionsContainer {
   flex: 1;
-  padding: 0px;
   overflow-y: auto;
   background-color: #ffffff;
+}
+
+/* Cart button container - positioned at bottom but above global footer */
+.fixedCartContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px; /* Space for the global footer */
+  z-index: 10;
 }
 
 @media (max-width: 768px) {

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Text, Box } from '@mantine/core';
+import { Text, Box, Flex } from '@mantine/core';
 import { products } from '../../../mocks/products.mock';
 import { branchesMock } from '../../../mocks/branches.mock';
 import { IBranch, IProduct } from '../../../types';
@@ -193,7 +193,11 @@ export default function BranchProductsPage() {
   };
 
   return (
-    <Box className={styles.productPageContainer}>
+    <Flex
+      direction="column"
+      className={styles.productPageContainer}
+      style={{ minHeight: '100vh' }}
+    >
       {/* Use the reusable Header component with product page configuration */}
       <ProductsHeader
         branch={currentBranch as IBranch}
@@ -207,16 +211,28 @@ export default function BranchProductsPage() {
         activeTab={activeTab}
         onTabChange={handleTabChange}
       />
-      {/* Category sections */}
-      <Box className={styles.sectionsContainer}>
+      {/* Category sections - scrollable area */}
+      <Box
+        className={styles.sectionsContainer}
+        style={{
+          flex: 1,
+          overflowY: 'auto',
+          paddingBottom: isMobile ? '60px' : '0',
+        }}
+      >
         {Object.keys(productsByCategory).length > 0 ? (
           Object.entries(productsByCategory).map(([category, products]) => (
-            <div
+            <Flex
               key={category}
               ref={(el) => {
                 sectionRefs.current[category.toLowerCase()] = el;
               }}
-              style={{ margin: 0, padding: 0 }}
+              style={{
+                margin: 0,
+                padding: 0,
+                width: '100%',
+                marginBottom: '11px',
+              }}
             >
               <CategorySection
                 title={category}
@@ -229,7 +245,7 @@ export default function BranchProductsPage() {
                   handleSectionToggle(category, isExpanded)
                 }
               />
-            </div>
+            </Flex>
           ))
         ) : (
           <Text ta="center" fz="lg" c="dimmed" style={{ padding: '40px 0' }}>
@@ -237,22 +253,25 @@ export default function BranchProductsPage() {
           </Text>
         )}
       </Box>
-      {/* Cart drawer */}
-      {isMobile ? (
-        <MobileCartButton
-          onClick={openCartDrawer}
-          cartItems={cartItems}
-          cartTotal={cartTotal}
-        />
-      ) : (
-        <CartDrawer
-          opened={cartDrawerOpened}
-          onClose={() => setCartDrawerOpened(false)}
-          cartItems={cartItems}
-          cartTotal={cartTotal}
-          isMobile={false}
-        />
+
+      {/* Cart button */}
+      {isMobile && (
+        <Box className={styles.fixedCartContainer}>
+          <MobileCartButton
+            onClick={openCartDrawer}
+            cartItems={cartItems}
+            cartTotal={cartTotal}
+          />
+        </Box>
       )}
-    </Box>
+
+      <CartDrawer
+        opened={cartDrawerOpened}
+        onClose={() => setCartDrawerOpened(false)}
+        cartItems={cartItems}
+        cartTotal={cartTotal}
+        isMobile={false}
+      />
+    </Flex>
   );
 }
