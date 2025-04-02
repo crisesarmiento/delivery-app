@@ -27,8 +27,7 @@
 .modalContent {
   background: #ffffff;
   border-radius: 16px;
-  width: 100%;
-  max-width: 750px;
+  width: 750px;
   max-height: 90vh;
   overflow-y: auto;
   position: relative;
@@ -39,7 +38,7 @@
 
 @media (max-width: 768px) {
   .modalContent {
-    max-width: 100%;
+    width: 100%;
     height: 100vh;
     max-height: 100vh;
     border-radius: 0;
@@ -47,17 +46,31 @@
   }
 }
 
+.closeButton {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  z-index: 20;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .modalHeader {
   display: flex;
   flex-direction: column;
   padding: 24px 32px;
-  position: sticky;
-  top: 0;
   background: #000000;
   z-index: 10;
   border-radius: 16px 16px 0 0;
   box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
   height: 190px;
+  position: relative;
 }
 
 .modalTitle {
@@ -67,9 +80,13 @@
   line-height: 38px;
   color: #ffffff;
   margin-top: 43px;
+  width: 316px;
 }
 
 .discountBadge {
+  position: absolute;
+  top: 24px;
+  left: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -77,21 +94,17 @@
   color: #000;
   padding: 8px;
   border-radius: 16px;
+  font-family: 'Inter', sans-serif;
   font-size: 10px;
   font-weight: 400;
+  line-height: 18px;
   width: 64px;
   height: 20px;
 }
 
-.discountClose {
-  margin-left: 8px;
-  cursor: pointer;
-}
-
 .priceContainer {
   display: flex;
-  align-items: baseline;
-  gap: 8px;
+  align-items: center;
   margin-top: 7px;
 }
 
@@ -110,18 +123,17 @@
   line-height: 18px;
   text-decoration: line-through;
   color: #939393;
+  margin-left: 8px;
 }
 
 .modalBody {
-  flex: 1;
-  overflow-y: auto;
   padding: 24px 32px;
+  position: relative;
 }
 
 .productInfo {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 30px;
+  width: 410px;
+  margin-bottom: 24px;
 }
 
 .productDescription {
@@ -131,6 +143,7 @@
   line-height: 28px;
   color: #000000;
   margin-bottom: 16px;
+  margin-top: 24px;
 }
 
 .helperText {
@@ -139,14 +152,14 @@
   font-weight: 500;
   line-height: 24px;
   color: #000000;
-  margin-bottom: 24px;
 }
 
 .productImageContainer {
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
-  margin-top: -180px;
+  position: absolute;
+  top: 24px;
+  right: 32px;
+  width: 256px;
+  height: 288px;
 }
 
 .productImage {
@@ -156,8 +169,15 @@
   object-fit: cover;
 }
 
-.section {
+.commentsContainer {
+  width: 402px;
   margin-bottom: 30px;
+  margin-top: 30px;
+}
+
+.section {
+  margin-bottom: 24px;
+  width: 686px;
 }
 
 .sectionLabel {
@@ -177,6 +197,7 @@
   padding: 10px 12px;
   font-size: 14px;
   resize: vertical;
+  font-family: 'Inter', sans-serif;
 }
 
 .charCount {
@@ -198,7 +219,7 @@
   background-color: #f8fafc;
   border: 1px solid #eef2f6;
   border-radius: 6px;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   height: 37px;
 }
 
@@ -221,11 +242,7 @@
   align-items: center;
   padding: 10px 0;
   border-bottom: 0.7px solid #eef2f6;
-}
-
-.ingredientInfo {
-  display: flex;
-  flex-direction: column;
+  position: relative;
 }
 
 .ingredientName {
@@ -237,6 +254,8 @@
 }
 
 .priceTag {
+  position: absolute;
+  right: 110px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -249,17 +268,20 @@
   line-height: 18px;
   color: #000000;
   width: fit-content;
+  height: 20px;
 }
 
 .quantityControl {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
+  width: 105px;
   height: 32px;
   background: #ffffff;
   border: 1px solid #eef2f6;
   border-radius: 4px;
   padding: 8px;
+  justify-content: space-between;
 }
 
 .iconButton {
@@ -293,15 +315,39 @@
   width: 17px;
 }
 
-.footer {
+.condimentsList {
+  display: flex;
+  flex-direction: column;
+}
+
+.condimentItem {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 10px 0;
+  border-bottom: 0.7px solid #eef2f6;
+}
+
+.condimentName {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 18px;
+  color: #000000;
+}
+
+.condimentCheckbox {
+  width: 16px;
+  height: 16px;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
   padding: 0 32px 32px;
-  position: sticky;
-  bottom: 0;
-  background: white;
-  z-index: 10;
+  gap: 16px;
+  margin-top: 16px;
 }
 
 .addToCartButton {
@@ -316,7 +362,9 @@
   font-size: 14px;
   line-height: 20px;
   box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.03);
-  min-width: 300px;
+  width: 465px;
+  display: flex;
+  justify-content: center;
 }
 
 .addToCartButton span {
@@ -331,6 +379,8 @@
   font-weight: 600;
   line-height: 20px;
   color: #b3ff00;
+  width: 121px;
+  text-align: center;
 }
 
 .quantityControls {
@@ -345,7 +395,7 @@
   background: #ffffff;
   border: 1px solid #eef2f6;
   border-radius: 4px;
-  margin-right: 40px;
+  margin: 48px 0 0 0;
 }
 
 .trashIcon {
@@ -354,7 +404,6 @@
 
 .quantityControlValue {
   font-family: 'Inter', sans-serif;
-  font-style: normal;
   font-weight: 600;
   font-size: 14px;
   line-height: 20px;

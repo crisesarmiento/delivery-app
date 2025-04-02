@@ -1,7 +1,15 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import { Text, Image, Flex, Box, Button, Textarea } from '@mantine/core';
+import {
+  Text,
+  Image,
+  Flex,
+  Box,
+  Button,
+  Textarea,
+  Checkbox,
+} from '@mantine/core';
 import {
   IconShoppingCart,
   IconX,
@@ -23,6 +31,11 @@ interface IngredientItem {
   price?: number;
 }
 
+interface CondimentItem {
+  name: string;
+  selected: boolean;
+}
+
 interface AddToCartModalProps {
   product: IProduct;
   opened: boolean;
@@ -30,6 +43,7 @@ interface AddToCartModalProps {
   onAddToCart: (quantity: number, cartItem?: CartItem) => void;
   initialQuantity?: number;
   initialIngredients?: IngredientItem[];
+  initialCondiments?: string[];
   initialComments?: string;
 }
 
@@ -40,11 +54,13 @@ const AddToCartModal = ({
   onAddToCart,
   initialQuantity = 1,
   initialIngredients,
+  initialCondiments = [],
   initialComments,
 }: AddToCartModalProps) => {
   const [quantity, setQuantity] = useState(initialQuantity);
   const modalRef = useRef<HTMLDivElement>(null);
   const [showIngredients, setShowIngredients] = useState(true);
+  const [showCondiments, setShowCondiments] = useState(true);
   const [comments, setComments] = useState(initialComments || '');
   const [commentChars, setCommentChars] = useState(0);
 
@@ -56,6 +72,9 @@ const AddToCartModal = ({
     initialIngredients || []
   );
 
+  // Initialize condiments
+  const [condiments, setCondiments] = useState<CondimentItem[]>([]);
+
   // Calculate if product has discount (for demo purposes)
   const hasDiscount =
     product.name.toLowerCase().includes('promo') ||
@@ -63,12 +82,10 @@ const AddToCartModal = ({
       ? product.id % 3 === 0
       : String(product.id).length % 3 === 0);
   const discountPercentage = hasDiscount ? 20 : 0;
-  const originalPrice = hasDiscount ? product.price : null;
-  const discountedPrice = hasDiscount
-    ? product.price * (1 - discountPercentage / 100)
-    : product.price;
+  const originalPrice = hasDiscount ? product.price * 1.2 : null;
+  const discountedPrice = hasDiscount ? product.price : product.price;
 
-  // Set up initial ingredients from product data
+  // Set up initial ingredients and condiments from product data
   useEffect(() => {
     if (productWithCustomization && opened) {
       // Check if we're editing an existing item with customizations
@@ -107,8 +124,20 @@ const AddToCartModal = ({
         );
 
       setIngredients(defaultIngredients);
+
+      // Initialize condiments
+      if (productWithCustomization.customization.condimentOptions) {
+        const defaultCondiments =
+          productWithCustomization.customization.condimentOptions.map(
+            (condiment) => ({
+              name: condiment.name,
+              selected: initialCondiments.includes(condiment.name),
+            })
+          );
+        setCondiments(defaultCondiments);
+      }
     }
-  }, [productWithCustomization, opened, initialIngredients]);
+  }, [productWithCustomization, opened, initialIngredients, initialCondiments]);
 
   useEffect(() => {
     // Handle click outside to close
@@ -172,13 +201,34 @@ const AddToCartModal = ({
         productWithCustomization?.customization?.ingredientOptions.find(
           (opt) => opt.name === newIngredients[index].name
         );
-      const maxQuantity = ingredientOption?.maxQuantity || 1;
+      const maxQuantity = ingredientOption?.maxQuantity || 2;
 
       if (newQuantity <= maxQuantity) {
         newIngredients[index].quantity = newQuantity;
         setIngredients(newIngredients);
       }
     }
+  };
+
+  const handleToggleCondiment = (index: number) => {
+    const newCondiments = [...condiments];
+
+    // Toggle the selected state
+    newCondiments[index].selected = !newCondiments[index].selected;
+
+    // Check if we've hit the max allowed condiments
+    const selectedCount = newCondiments.filter((c) => c.selected).length;
+    const maxCondiments =
+      productWithCustomization?.customization?.maxCondimentSelections || 2;
+
+    // If too many selected, revert the change
+    if (selectedCount > maxCondiments) {
+      newCondiments[index].selected = !newCondiments[index].selected;
+      alert(`Solo puedes elegir ${maxCondiments} aderezos`);
+      return;
+    }
+
+    setCondiments(newCondiments);
   };
 
   const handleAddToCart = () => {
@@ -189,6 +239,7 @@ const AddToCartModal = ({
       uniqueId: Date.now().toString(), // Generate a unique ID for this customization
       customizations: {
         ingredients: ingredients.filter((ing) => ing.quantity > 0),
+        condiments: condiments.filter((c) => c.selected).map((c) => c.name),
         comments,
       },
     };
@@ -226,6 +277,8 @@ const AddToCartModal = ({
   // Convert customization options to arrays for UI rendering
   const ingredientOptions =
     productWithCustomization?.customization?.ingredientOptions || [];
+  const condimentOptions =
+    productWithCustomization?.customization?.condimentOptions || [];
 
   return (
     <div className={styles.modalOverlay}>
@@ -234,6 +287,11 @@ const AddToCartModal = ({
         onClick={(e) => e.stopPropagation()}
         ref={modalRef}
       >
+        {/* Close button */}
+        <button className={styles.closeButton} onClick={onClose}>
+          <IconX size={20} />
+        </button>
+
         {/* Header section with black background */}
         <div className={styles.modalHeader}>
           {hasDiscount && <div className={styles.discountBadge}>20% OFF</div>}
@@ -274,7 +332,7 @@ const AddToCartModal = ({
           </Box>
 
           {/* Comments Section */}
-          <div className={styles.section}>
+          <div className={styles.commentsContainer}>
             <Text className={styles.sectionLabel}>Comentarios</Text>
             <Textarea
               placeholder="Instrucciones especiales, alergias, etc."
@@ -315,16 +373,15 @@ const AddToCartModal = ({
                       key={ingredient.name}
                       className={styles.ingredientItem}
                     >
-                      <div className={styles.ingredientInfo}>
-                        <Text className={styles.ingredientName}>
-                          {ingredient.name}
+                      <Text className={styles.ingredientName}>
+                        {ingredient.name}
+                      </Text>
+
+                      {ingredient.price && (
+                        <Text className={styles.priceTag}>
+                          +${ingredient.price}
                         </Text>
-                        {ingredient.price && (
-                          <Text className={styles.priceTag}>
-                            +${ingredient.price}
-                          </Text>
-                        )}
-                      </div>
+                      )}
 
                       <div className={styles.quantityControl}>
                         <IconCircleMinus
@@ -343,6 +400,56 @@ const AddToCartModal = ({
                           onClick={() => handleUpdateIngredient(index, 1)}
                         />
                       </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Condiments Section */}
+          {condimentOptions.length > 0 && (
+            <div className={styles.section}>
+              <div
+                className={styles.sectionHeader}
+                onClick={() => setShowCondiments(!showCondiments)}
+              >
+                <Text className={styles.sectionHeaderText}>
+                  Elige{' '}
+                  {productWithCustomization?.customization
+                    ?.maxCondimentSelections || 2}{' '}
+                  Aderezos
+                </Text>
+                {showCondiments ? (
+                  <IconChevronUp size={24} />
+                ) : (
+                  <IconChevronDown size={24} />
+                )}
+              </div>
+
+              {showCondiments && (
+                <div className={styles.condimentsList}>
+                  {condiments.map((condiment, index) => (
+                    <div key={condiment.name} className={styles.condimentItem}>
+                      <Text className={styles.condimentName}>
+                        {condiment.name}
+                      </Text>
+
+                      <Checkbox
+                        checked={condiment.selected}
+                        onChange={() => handleToggleCondiment(index)}
+                        className={styles.condimentCheckbox}
+                        styles={{
+                          input: {
+                            backgroundColor: condiment.selected
+                              ? '#B3FF00'
+                              : 'transparent',
+                            borderColor: condiment.selected
+                              ? '#B3FF00'
+                              : '#939393',
+                          },
+                        }}
+                      />
                     </div>
                   ))}
                 </div>
