@@ -25,15 +25,14 @@
 }
 
 .modalContent {
+  position: absolute;
+  width: 750px;
+  height: 1068px;
+  left: 352px;
+  top: 385px;
   background: #ffffff;
   border-radius: 16px;
-  width: 750px;
-  max-height: 90vh;
-  overflow-y: auto;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: none;
 }
 
 @media (max-width: 768px) {
@@ -48,39 +47,40 @@
 
 .closeButton {
   position: absolute;
-  top: 24px;
-  right: 24px;
-  background: none;
+  left: 92.89%;
+  right: 3.28%;
+  top: 3.28%;
+  bottom: 93.73%;
+  background: #ffffff;
   border: none;
-  color: white;
   cursor: pointer;
-  z-index: 20;
-  padding: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 4px;
 }
 
 .modalHeader {
-  display: flex;
-  flex-direction: column;
-  padding: 24px 32px;
-  background: #000000;
-  z-index: 10;
-  border-radius: 16px 16px 0 0;
-  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+  position: absolute;
+  width: 750px;
   height: 190px;
-  position: relative;
+  left: 0;
+  top: 0;
+  background: #000000;
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 .modalTitle {
+  position: absolute;
+  width: 316px;
+  height: 38px;
+  left: 32px;
+  top: 67px;
   font-family: 'Inter', sans-serif;
   font-weight: 600;
   font-size: 30px;
   line-height: 38px;
   color: #ffffff;
-  margin-top: 43px;
-  width: 316px;
 }
 
 .discountBadge {
@@ -103,9 +103,13 @@
 }
 
 .priceContainer {
+  position: absolute;
+  width: 145px;
+  height: 45px;
+  left: 32px;
+  top: 112px;
   display: flex;
   align-items: center;
-  margin-top: 7px;
 }
 
 .currentPrice {
@@ -132,8 +136,11 @@
 }
 
 .productInfo {
+  position: absolute;
   width: 410px;
-  margin-bottom: 24px;
+  height: 84px;
+  left: 32px;
+  top: 214px;
 }
 
 .productDescription {
@@ -142,11 +149,14 @@
   font-weight: 400;
   line-height: 28px;
   color: #000000;
-  margin-bottom: 16px;
-  margin-top: 24px;
 }
 
 .helperText {
+  position: absolute;
+  width: 410px;
+  height: 48px;
+  left: 32px;
+  top: 314px;
   font-family: 'Inter', sans-serif;
   font-size: 16px;
   font-weight: 500;
@@ -156,10 +166,10 @@
 
 .productImageContainer {
   position: absolute;
-  top: 24px;
-  right: 32px;
   width: 256px;
   height: 288px;
+  left: 462px;
+  top: 214px;
 }
 
 .productImage {
@@ -170,14 +180,25 @@
 }
 
 .commentsContainer {
+  position: absolute;
   width: 402px;
-  margin-bottom: 30px;
-  margin-top: 30px;
+  height: 124px;
+  left: 32px;
+  top: 378px;
 }
 
 .section {
-  margin-bottom: 24px;
+  position: absolute;
   width: 686px;
+  height: 37px;
+  left: 32px;
+  background: #f8fafc;
+  border: 1px solid #eef2f6;
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
 }
 
 .sectionLabel {
@@ -190,8 +211,8 @@
 }
 
 .commentTextarea {
-  width: 100%;
-  min-height: 102px;
+  width: 402px;
+  height: 102px;
   border: 1px solid #eef2f6;
   border-radius: 8px;
   padding: 10px 12px;
@@ -231,12 +252,15 @@
   color: #000000;
 }
 
-.ingredientsList {
+.ingredientsList,
+.condimentsList {
+  margin-top: 45px;
   display: flex;
   flex-direction: column;
 }
 
-.ingredientItem {
+.ingredientItem,
+.condimentItem {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -245,7 +269,8 @@
   position: relative;
 }
 
-.ingredientName {
+.ingredientName,
+.condimentName {
   font-family: 'Inter', sans-serif;
   font-size: 10px;
   font-weight: 400;
@@ -328,26 +353,20 @@
   border-bottom: 0.7px solid #eef2f6;
 }
 
-.condimentName {
-  font-family: 'Inter', sans-serif;
-  font-size: 10px;
-  font-weight: 400;
-  line-height: 18px;
-  color: #000000;
-}
-
 .condimentCheckbox {
   width: 16px;
   height: 16px;
 }
 
 .footer {
+  position: absolute;
+  width: 465px;
+  height: 40px;
+  left: calc(50% - 465px / 2 + 110.5px);
+  top: 1020px;
   display: flex;
-  justify-content: flex-end;
   align-items: center;
-  padding: 0 32px 32px;
   gap: 16px;
-  margin-top: 16px;
 }
 
 .addToCartButton {
@@ -384,18 +403,19 @@
 }
 
 .quantityControls {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  padding: 8px;
-  gap: 41px;
+  position: absolute;
   width: 197px;
   height: 40px;
+  left: 32px;
+  top: 980px;
   background: #ffffff;
   border: 1px solid #eef2f6;
   border-radius: 4px;
-  margin: 48px 0 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  gap: 41px;
 }
 
 .trashIcon {
