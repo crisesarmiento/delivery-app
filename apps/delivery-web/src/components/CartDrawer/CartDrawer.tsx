@@ -42,12 +42,6 @@ const CartDrawer = ({
   useEffect(() => {
     const checkMobile = () => {
       const isMobileView = window.innerWidth <= 768;
-      console.log(
-        'Window width:',
-        window.innerWidth,
-        'Mobile view:',
-        isMobileView
-      );
       setIsMobile(isMobileView);
     };
 
@@ -61,9 +55,15 @@ const CartDrawer = ({
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // Handle visibility based on opened prop and mobile status
   useEffect(() => {
-    setIsVisible(opened);
-  }, [opened]);
+    // Only update visibility if not in mobile view
+    if (!isMobile) {
+      setIsVisible(opened);
+    } else {
+      setIsVisible(false);
+    }
+  }, [opened, isMobile]);
 
   const handleClearCart = () => {
     // Add confirmation dialog before clearing cart
@@ -88,17 +88,14 @@ const CartDrawer = ({
     }
   };
 
-  // For empty cart - compact floating card with specified dimensions
-  if (cartItems.length === 0) {
-    return isMobile ? null : (
-      <EmptyCart isVisible={isVisible} isMobile={isMobile} />
-    );
-  }
-
-  // For non-empty cart - show items and checkout option
-  // Don't render at all in mobile view
+  // Don't render anything in mobile view
   if (isMobile) {
     return null;
+  }
+
+  // For empty cart - compact floating card with specified dimensions
+  if (cartItems.length === 0) {
+    return <EmptyCart isVisible={isVisible} isMobile={isMobile} />;
   }
 
   return (
