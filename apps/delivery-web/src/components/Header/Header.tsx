@@ -110,6 +110,7 @@ const Header = ({
             left: 0,
             top: 0,
             backgroundColor: '#000000',
+            width: '50%',
           }}
           data-testid="header-left-rectangle"
         />

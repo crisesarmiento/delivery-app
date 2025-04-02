@@ -58,9 +58,10 @@ export default function HomePage() {
         px={0}
         style={{
           backgroundColor: theme.colors.neutral[0],
-          width: '100%',
           maxWidth: '100%',
           overflowX: 'hidden',
+          marginLeft: '80px',
+          marginRight: '80px',
         }}
       >
         <Container

@@ -12,6 +12,8 @@ import {
   IconCircleMinus,
   IconCheck,
   IconArrowLeft,
+  IconMinus,
+  IconPlus,
 } from '@tabler/icons-react';
 import { IProduct } from '../../types';
 import styles from './AddToCartModal.module.css';
@@ -52,6 +54,7 @@ const AddToCartModal = ({
   const [showCondiments, setShowCondiments] = useState(true);
   const [comments, setComments] = useState(initialComments || '');
   const [isMobile, setIsMobile] = useState(false);
+  const [commentChars, setCommentChars] = useState(0);
 
   // Detect if on mobile
   useEffect(() => {
@@ -78,32 +81,14 @@ const AddToCartModal = ({
     initialCondiments || []
   );
 
-  // For debugging - log what we're getting
-  useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('AddToCartModal - Product:', product.id, product.name);
-      console.log('AddToCartModal - Initial ingredients:', initialIngredients);
-      console.log('AddToCartModal - Initial condiments:', initialCondiments);
-      console.log(
-        'AddToCartModal - Product with customization:',
-        productWithCustomization
-      );
-    }
-  }, [
-    product,
-    initialIngredients,
-    initialCondiments,
-    productWithCustomization,
-  ]);
-
   // Calculate if product has discount (for demo purposes)
   const hasDiscount =
     product.name.toLowerCase().includes('promo') ||
     (typeof product.id === 'number'
       ? product.id % 3 === 0
       : String(product.id).length % 3 === 0);
-  const discountPercentage = hasDiscount ? 10 : 0;
-  const originalPrice = hasDiscount ? (product.price * 1.1).toFixed(2) : null;
+  const discountPercentage = hasDiscount ? 20 : 0;
+  const originalPrice = hasDiscount ? (product.price * 1.2).toFixed(2) : null;
 
   // Set up initial ingredients and condiments from product data
   useEffect(() => {
@@ -111,9 +96,6 @@ const AddToCartModal = ({
       // Check if we're editing an existing item with customizations
       const isEditingExistingItem =
         initialIngredients && initialIngredients.length > 0;
-
-      console.log('Is editing existing item:', isEditingExistingItem);
-      console.log('Initial ingredients provided:', initialIngredients);
 
       // Initialize with all available options from the product
       const defaultIngredients =
@@ -146,7 +128,6 @@ const AddToCartModal = ({
           }
         );
 
-      console.log('Setting ingredients to:', defaultIngredients);
       setIngredients(defaultIngredients);
 
       // For condiments, similar approach
@@ -171,14 +152,11 @@ const AddToCartModal = ({
             .map((option) => option.name);
       }
 
-      console.log('Setting condiments to:', selectedCondiments);
       setCondiments(selectedCondiments);
     }
   }, [productWithCustomization, opened, initialIngredients, initialCondiments]);
 
   useEffect(() => {
-    console.log('AddToCartModal rendered, opened:', opened);
-
     // Handle click outside to close
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -230,7 +208,6 @@ const AddToCartModal = ({
       currentSelections >= maxSelections &&
       newIngredients[index].quantity === 0
     ) {
-      console.log('Reached max ingredient selections');
       return;
     }
 
@@ -282,7 +259,9 @@ const AddToCartModal = ({
   const handleCommentsChange = (
     event: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
-    setComments(event.target.value);
+    const newValue = event.target.value;
+    setComments(newValue);
+    setCommentChars(newValue.length);
   };
 
   // Calculate total price including customizations
@@ -318,159 +297,223 @@ const AddToCartModal = ({
     productWithCustomization?.customization?.condimentOptions || [];
 
   return (
-    <div className={styles.modalOverlay} onClick={onClose}>
-      <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+    <div className={styles.modalOverlay}>
+      <div
+        className={styles.modalContent}
+        onClick={(e) => e.stopPropagation()}
+        ref={modalRef}
+      >
+        {/* Header with black background */}
         <div className={styles.modalHeader}>
-          {isMobile && (
-            <button
-              className={styles.backButton}
-              onClick={onClose}
-              aria-label="Back"
-            >
-              <IconArrowLeft size={20} />
-            </button>
+          {hasDiscount && (
+            <span className={styles.discountBadge}>
+              {discountPercentage}% OFF
+            </span>
           )}
+
+          <div className={styles.headerTopRow}>
+            <div className={styles.headerControls}>
+              {isMobile && (
+                <button
+                  className={styles.backButton}
+                  onClick={onClose}
+                  aria-label="Back"
+                >
+                  <IconArrowLeft size={20} />
+                </button>
+              )}
+            </div>
+            <button
+              className={styles.closeButton}
+              onClick={onClose}
+              aria-label="Close"
+            >
+              <IconX size={20} />
+            </button>
+          </div>
+
           <h2 className={styles.modalTitle}>{product.name}</h2>
-          <button
-            className={styles.closeButton}
-            onClick={onClose}
-            aria-label="Close"
-          >
-            <IconX size={20} />
-          </button>
+
+          <div className={styles.headerPrice}>
+            <span className={styles.currentPrice}>
+              ${finalPrice.toFixed(2)}
+            </span>
+            {hasDiscount && originalPrice && (
+              <span className={styles.originalPrice}>${originalPrice}</span>
+            )}
+          </div>
         </div>
 
         <div className={styles.modalBody}>
+          {/* Product Description & Image */}
           <div className={styles.productPreview}>
+            <div className={styles.productInfo}>
+              <p className={styles.productDescription}>{product.description}</p>
+              <p className={styles.productNote}>
+                En comentarios, aclaranos si lo preferis sin chimi. Gracias!
+              </p>
+            </div>
             <img
               src={product.imageUrl}
               alt={product.name}
               className={styles.productImage}
             />
-            <div className={styles.productInfo}>
-              <div>
-                <h3 className={styles.productName}>{product.name}</h3>
-                <p className={styles.productDescription}>
-                  {product.description}
-                </p>
-              </div>
-              <div className={styles.quantityControls}>
-                <button
-                  className={styles.quantityButton}
-                  onClick={() => quantity > 1 && setQuantity(quantity - 1)}
-                  disabled={quantity <= 1}
-                >
-                  -
-                </button>
-                <span className={styles.quantityValue}>{quantity}</span>
-                <button
-                  className={styles.quantityButton}
-                  onClick={() => setQuantity(quantity + 1)}
-                >
-                  +
-                </button>
-              </div>
-            </div>
           </div>
-
-          {/* Ingredients Section */}
-          {ingredientOptions.length > 0 && (
-            <div className={styles.customizationSection}>
-              <h3 className={styles.sectionTitle}>
-                {PRODUCT_TEXTS.INGREDIENTS}
-              </h3>
-              <div className={styles.ingredientsList}>
-                {ingredients.map((ingredient, index) => (
-                  <div key={ingredient.name} className={styles.ingredientItem}>
-                    <input
-                      type="checkbox"
-                      id={`ingredient-${index}`}
-                      className={styles.checkbox}
-                      checked={ingredient.quantity > 0}
-                      onChange={() =>
-                        handleUpdateIngredient(
-                          index,
-                          ingredient.quantity > 0 ? -1 : 1
-                        )
-                      }
-                    />
-                    <label
-                      htmlFor={`ingredient-${index}`}
-                      className={styles.ingredientName}
-                    >
-                      {ingredient.name}
-                      {ingredient.price ? ` (+$${ingredient.price})` : ''}
-                    </label>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Condiments Section */}
-          {condimentOptions.length > 0 && (
-            <div className={styles.customizationSection}>
-              <h3 className={styles.sectionTitle}>Condimentos</h3>
-              <div className={styles.condimentsList}>
-                {condimentOptions.map((condiment, index) => (
-                  <div
-                    key={condiment.name}
-                    className={`${styles.condimentItem} ${
-                      condiments.includes(condiment.name)
-                        ? styles.condimentSelected
-                        : ''
-                    }`}
-                  >
-                    <input
-                      type="checkbox"
-                      id={`condiment-${index}`}
-                      className={styles.checkbox}
-                      checked={condiments.includes(condiment.name)}
-                      onChange={() => handleToggleCondiment(condiment.name)}
-                    />
-                    <label
-                      htmlFor={`condiment-${index}`}
-                      className={styles.condimentName}
-                    >
-                      {condiment.name}
-                    </label>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
 
           {/* Comments Section */}
           <div className={styles.commentsSection}>
-            <h3 className={styles.sectionTitle}>Comentarios adicionales</h3>
+            <div className={styles.commentsLabel}>Comentarios</div>
             <textarea
               className={styles.comments}
-              placeholder={'Instrucciones especiales, alergias, etc.'}
+              placeholder="Instrucciones especiales, alergias, etc."
               value={comments}
               onChange={handleCommentsChange}
               maxLength={100}
             />
+            <div className={styles.commentCount}>{commentChars}/100</div>
+          </div>
+
+          {/* Ingredients Section - Collapsible */}
+          {ingredientOptions.length > 0 && (
+            <div className={styles.customizationSection}>
+              <div className={styles.sectionHeader}>
+                <div
+                  className={styles.sectionTitleWithIcon}
+                  onClick={() => setShowIngredients(!showIngredients)}
+                >
+                  <h3 className={styles.sectionTitle}>
+                    Elige hasta 2 Ingredientes
+                  </h3>
+                  {showIngredients ? (
+                    <IconChevronUp size={20} />
+                  ) : (
+                    <IconChevronDown size={20} />
+                  )}
+                </div>
+              </div>
+
+              {showIngredients && (
+                <div className={styles.ingredientsList}>
+                  {ingredients.map((ingredient, index) => (
+                    <div
+                      key={ingredient.name}
+                      className={styles.ingredientItem}
+                    >
+                      <div>
+                        {ingredient.name}
+                        {ingredient.price && (
+                          <span className={styles.priceTag}>
+                            +${ingredient.price}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className={styles.ingredientQuantity}>
+                        <IconCircleMinus
+                          size={18}
+                          onClick={() => handleUpdateIngredient(index, -1)}
+                          style={{
+                            cursor: 'pointer',
+                            opacity: ingredient.quantity <= 0 ? 0.5 : 1,
+                          }}
+                        />
+                        <span>{ingredient.quantity}</span>
+                        <IconCirclePlus
+                          size={18}
+                          onClick={() => handleUpdateIngredient(index, 1)}
+                          style={{
+                            cursor: 'pointer',
+                            color: '#000',
+                            background: '#B3FF00',
+                            borderRadius: '50%',
+                          }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Condiments Section - Collapsible */}
+          {condimentOptions.length > 0 && (
+            <div className={styles.customizationSection}>
+              <div className={styles.sectionHeader}>
+                <div
+                  className={styles.sectionTitleWithIcon}
+                  onClick={() => setShowCondiments(!showCondiments)}
+                >
+                  <h3 className={styles.sectionTitle}>Elige 2 Aderezos</h3>
+                  {showCondiments ? (
+                    <IconChevronUp size={20} />
+                  ) : (
+                    <IconChevronDown size={20} />
+                  )}
+                </div>
+              </div>
+
+              {showCondiments && (
+                <div className={styles.condimentsList}>
+                  {condimentOptions.map((condiment, index) => (
+                    <div
+                      key={condiment.name}
+                      className={`${styles.condimentItem} ${
+                        condiments.includes(condiment.name)
+                          ? styles.condimentSelected
+                          : ''
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        id={`condiment-${index}`}
+                        className={styles.checkbox}
+                        checked={condiments.includes(condiment.name)}
+                        onChange={() => handleToggleCondiment(condiment.name)}
+                      />
+                      <label
+                        htmlFor={`condiment-${index}`}
+                        className={styles.condimentName}
+                      >
+                        {condiment.name}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Quantity controls */}
+          <div className={styles.quantityControls}>
+            <IconTrash
+              size={26}
+              onClick={() => quantity > 1 && setQuantity(quantity - 1)}
+              style={{ cursor: 'pointer' }}
+            />
+            <span className={styles.quantityValue}>{quantity}</span>
+            <IconCirclePlus
+              size={26}
+              onClick={() => setQuantity(quantity + 1)}
+              style={{
+                cursor: 'pointer',
+                color: '#000',
+                background: '#B3FF00',
+                borderRadius: '50%',
+              }}
+            />
           </div>
         </div>
 
+        {/* Footer with Add to Cart button */}
         <div className={styles.footer}>
-          <div className={styles.totalPrice}>
-            <Text
-              className={styles.totalLabel}
-              data-testid="add-to-cart-modal-total-label"
-            >
-              Total:
-            </Text>
-            <Text
-              className={styles.totalValue}
-              data-testid="add-to-cart-modal-total-value"
-            >
-              ${finalPrice.toFixed(2)}
-            </Text>
-          </div>
           <button className={styles.addButton} onClick={handleAddToCart}>
+            <IconShoppingCart size={20} />
             {PRODUCT_TEXTS.ADD_TO_CART}
           </button>
+          <span className={styles.subtotalText}>
+            Subtotal: ${finalPrice.toFixed(2)}
+          </span>
         </div>
       </div>
     </div>
