@@ -89,6 +89,16 @@ export const PRODUCT_TEXTS = {
   ADD_TO_CART_ARIA: 'Agregar al carrito',
 };
 
+export const MODAL_TEXTS = {
+  CUSTOMIZE_HELPER_TEXT:
+    'En comentarios, aclaranos si lo preferis sin chimi. Gracias!',
+  COMMENTS_LABEL: 'Comentarios',
+  INGREDIENTS_SECTION_TITLE: 'Elige hasta',
+  INGREDIENTS_SUFFIX: 'Ingredientes',
+  COMMENTS_PLACEHOLDER: 'Instrucciones especiales, alergias, etc.',
+  CHAR_COUNT: 'caracteres',
+};
+
 export const MENU_TEXTS = {
   TITLE: 'Menú',
   BRANCHES: 'Sucursales',

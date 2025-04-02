@@ -4,22 +4,18 @@ import { useEffect, useState, useRef } from 'react';
 import { Text, Image, Flex, Box, Button, Textarea } from '@mantine/core';
 import {
   IconShoppingCart,
-  IconTrash,
-  IconCirclePlus,
   IconX,
   IconChevronDown,
   IconChevronUp,
   IconCircleMinus,
-  IconCheck,
-  IconArrowLeft,
-  IconMinus,
-  IconPlus,
+  IconCirclePlus,
+  IconTrash,
 } from '@tabler/icons-react';
 import { IProduct } from '../../types';
 import styles from './AddToCartModal.module.css';
 import { getProductById } from '../../mocks/products.mock';
 import { CartItem } from '../../context/CartContext';
-import { PRODUCT_TEXTS, COMMON_TEXTS } from '../../config/constants';
+import { PRODUCT_TEXTS, MODAL_TEXTS } from '../../config/constants';
 
 interface IngredientItem {
   name: string;
@@ -34,7 +30,6 @@ interface AddToCartModalProps {
   onAddToCart: (quantity: number, cartItem?: CartItem) => void;
   initialQuantity?: number;
   initialIngredients?: IngredientItem[];
-  initialCondiments?: string[];
   initialComments?: string;
 }
 
@@ -45,28 +40,13 @@ const AddToCartModal = ({
   onAddToCart,
   initialQuantity = 1,
   initialIngredients,
-  initialCondiments,
   initialComments,
 }: AddToCartModalProps) => {
   const [quantity, setQuantity] = useState(initialQuantity);
   const modalRef = useRef<HTMLDivElement>(null);
   const [showIngredients, setShowIngredients] = useState(true);
-  const [showCondiments, setShowCondiments] = useState(true);
   const [comments, setComments] = useState(initialComments || '');
-  const [isMobile, setIsMobile] = useState(false);
   const [commentChars, setCommentChars] = useState(0);
-
-  // Detect if on mobile
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   // Get product with customization options from mock
   const productWithCustomization = getProductById(product.id);
@@ -76,11 +56,6 @@ const AddToCartModal = ({
     initialIngredients || []
   );
 
-  // Initialize condiments
-  const [condiments, setCondiments] = useState<string[]>(
-    initialCondiments || []
-  );
-
   // Calculate if product has discount (for demo purposes)
   const hasDiscount =
     product.name.toLowerCase().includes('promo') ||
@@ -88,9 +63,12 @@ const AddToCartModal = ({
       ? product.id % 3 === 0
       : String(product.id).length % 3 === 0);
   const discountPercentage = hasDiscount ? 20 : 0;
-  const originalPrice = hasDiscount ? (product.price * 1.2).toFixed(2) : null;
+  const originalPrice = hasDiscount ? product.price : null;
+  const discountedPrice = hasDiscount
+    ? product.price * (1 - discountPercentage / 100)
+    : product.price;
 
-  // Set up initial ingredients and condiments from product data
+  // Set up initial ingredients from product data
   useEffect(() => {
     if (productWithCustomization && opened) {
       // Check if we're editing an existing item with customizations
@@ -129,32 +107,8 @@ const AddToCartModal = ({
         );
 
       setIngredients(defaultIngredients);
-
-      // For condiments, similar approach
-      const allCondiments =
-        productWithCustomization.customization.condimentOptions.map(
-          (option) => option.name
-        );
-
-      // Initialize condiments based on whether we're editing or creating new
-      let selectedCondiments;
-
-      if (isEditingExistingItem && initialCondiments) {
-        // For existing items, use what's already selected
-        selectedCondiments = allCondiments.filter((condimentName) =>
-          initialCondiments.includes(condimentName)
-        );
-      } else {
-        // For new items, use default selections
-        selectedCondiments =
-          productWithCustomization.customization.condimentOptions
-            .filter((option) => option.default)
-            .map((option) => option.name);
-      }
-
-      setCondiments(selectedCondiments);
     }
-  }, [productWithCustomization, opened, initialIngredients, initialCondiments]);
+  }, [productWithCustomization, opened, initialIngredients]);
 
   useEffect(() => {
     // Handle click outside to close
@@ -199,7 +153,7 @@ const AddToCartModal = ({
       (ing) => ing.quantity > 0
     ).length;
     const maxSelections =
-      productWithCustomization?.customization?.maxIngredientSelections || 5;
+      productWithCustomization?.customization?.maxIngredientSelections || 2;
 
     // Only allow adding if we haven't reached the max
     if (
@@ -218,24 +172,11 @@ const AddToCartModal = ({
         productWithCustomization?.customization?.ingredientOptions.find(
           (opt) => opt.name === newIngredients[index].name
         );
-      const maxQuantity = ingredientOption?.maxQuantity || 2;
+      const maxQuantity = ingredientOption?.maxQuantity || 1;
 
       if (newQuantity <= maxQuantity) {
         newIngredients[index].quantity = newQuantity;
         setIngredients(newIngredients);
-      }
-    }
-  };
-
-  const handleToggleCondiment = (condiment: string) => {
-    if (condiments.includes(condiment)) {
-      setCondiments(condiments.filter((c) => c !== condiment));
-    } else {
-      // Check if we've reached the max condiment selections
-      const maxCondiments =
-        productWithCustomization?.customization?.maxCondimentSelections || 3;
-      if (condiments.length < maxCondiments) {
-        setCondiments([...condiments, condiment]);
       }
     }
   };
@@ -248,7 +189,6 @@ const AddToCartModal = ({
       uniqueId: Date.now().toString(), // Generate a unique ID for this customization
       customizations: {
         ingredients: ingredients.filter((ing) => ing.quantity > 0),
-        condiments,
         comments,
       },
     };
@@ -266,18 +206,13 @@ const AddToCartModal = ({
 
   // Calculate total price including customizations
   const calculateTotalPrice = () => {
-    let total = product.price;
+    let total = hasDiscount ? discountedPrice : product.price;
 
-    // Add cost of extra ingredients
+    // Add cost of extra ingredients with price
     if (ingredients.length > 0) {
       ingredients.forEach((ing) => {
         if (ing.quantity > 0 && ing.price) {
-          // First ingredient is often included in base price
-          // Extra quantities of the same ingredient are charged
-          const extraQuantity = ing.quantity - 1;
-          if (extraQuantity > 0) {
-            total += extraQuantity * ing.price;
-          }
+          total += ing.price;
         }
       });
     }
@@ -285,16 +220,12 @@ const AddToCartModal = ({
     return total * quantity;
   };
 
-  // Calculate final price with any discounts applied
-  const finalPrice = hasDiscount
-    ? calculateTotalPrice() * (1 - discountPercentage / 100)
-    : calculateTotalPrice();
+  // Get the final price
+  const finalPrice = calculateTotalPrice();
 
   // Convert customization options to arrays for UI rendering
   const ingredientOptions =
     productWithCustomization?.customization?.ingredientOptions || [];
-  const condimentOptions =
-    productWithCustomization?.customization?.condimentOptions || [];
 
   return (
     <div className={styles.modalOverlay}>
@@ -303,93 +234,78 @@ const AddToCartModal = ({
         onClick={(e) => e.stopPropagation()}
         ref={modalRef}
       >
-        {/* Header with black background */}
+        {/* Header section with black background */}
         <div className={styles.modalHeader}>
-          {hasDiscount && (
-            <span className={styles.discountBadge}>
-              {discountPercentage}% OFF
-            </span>
-          )}
+          {hasDiscount && <div className={styles.discountBadge}>20% OFF</div>}
 
-          <div className={styles.headerTopRow}>
-            <div className={styles.headerControls}>
-              {isMobile && (
-                <button
-                  className={styles.backButton}
-                  onClick={onClose}
-                  aria-label="Back"
-                >
-                  <IconArrowLeft size={20} />
-                </button>
-              )}
-            </div>
-            <button
-              className={styles.closeButton}
-              onClick={onClose}
-              aria-label="Close"
-            >
-              <IconX size={20} />
-            </button>
-          </div>
+          <Text className={styles.modalTitle}>{product.name}</Text>
 
-          <h2 className={styles.modalTitle}>{product.name}</h2>
-
-          <div className={styles.headerPrice}>
-            <span className={styles.currentPrice}>
-              ${finalPrice.toFixed(2)}
-            </span>
+          <div className={styles.priceContainer}>
+            <Text className={styles.currentPrice}>
+              ${discountedPrice.toFixed(2)}
+            </Text>
             {hasDiscount && originalPrice && (
-              <span className={styles.originalPrice}>${originalPrice}</span>
+              <Text className={styles.originalPrice}>
+                ${originalPrice.toFixed(2)}
+              </Text>
             )}
           </div>
         </div>
 
         <div className={styles.modalBody}>
           {/* Product Description & Image */}
-          <div className={styles.productPreview}>
-            <div className={styles.productInfo}>
-              <p className={styles.productDescription}>{product.description}</p>
-              <p className={styles.productNote}>
-                En comentarios, aclaranos si lo preferis sin chimi. Gracias!
-              </p>
-            </div>
-            <img
+          <div className={styles.productInfo}>
+            <Text className={styles.productDescription}>
+              {product.description}
+            </Text>
+            <Text className={styles.helperText}>
+              {MODAL_TEXTS.CUSTOMIZE_HELPER_TEXT}
+            </Text>
+          </div>
+
+          <Box className={styles.productImageContainer}>
+            <Image
               src={product.imageUrl}
               alt={product.name}
               className={styles.productImage}
+              width={256}
+              height={288}
             />
-          </div>
+          </Box>
 
           {/* Comments Section */}
-          <div className={styles.commentsSection}>
-            <div className={styles.commentsLabel}>Comentarios</div>
-            <textarea
-              className={styles.comments}
+          <div className={styles.section}>
+            <Text className={styles.sectionLabel}>Comentarios</Text>
+            <Textarea
               placeholder="Instrucciones especiales, alergias, etc."
               value={comments}
               onChange={handleCommentsChange}
               maxLength={100}
+              className={styles.commentTextarea}
             />
-            <div className={styles.commentCount}>{commentChars}/100</div>
+            <Text size="xs" className={styles.charCount}>
+              {commentChars}/100
+            </Text>
           </div>
 
-          {/* Ingredients Section - Collapsible */}
+          {/* Ingredients Section */}
           {ingredientOptions.length > 0 && (
-            <div className={styles.customizationSection}>
-              <div className={styles.sectionHeader}>
-                <div
-                  className={styles.sectionTitleWithIcon}
-                  onClick={() => setShowIngredients(!showIngredients)}
-                >
-                  <h3 className={styles.sectionTitle}>
-                    Elige hasta 2 Ingredientes
-                  </h3>
-                  {showIngredients ? (
-                    <IconChevronUp size={20} />
-                  ) : (
-                    <IconChevronDown size={20} />
-                  )}
-                </div>
+            <div className={styles.section}>
+              <div
+                className={styles.sectionHeader}
+                onClick={() => setShowIngredients(!showIngredients)}
+              >
+                <Text className={styles.sectionHeaderText}>
+                  Elige hasta{' '}
+                  {productWithCustomization?.customization
+                    ?.maxIngredientSelections || 2}{' '}
+                  Ingredientes
+                </Text>
+                {showIngredients ? (
+                  <IconChevronUp size={24} />
+                ) : (
+                  <IconChevronDown size={24} />
+                )}
               </div>
 
               {showIngredients && (
@@ -399,34 +315,32 @@ const AddToCartModal = ({
                       key={ingredient.name}
                       className={styles.ingredientItem}
                     >
-                      <div>
-                        {ingredient.name}
+                      <div className={styles.ingredientInfo}>
+                        <Text className={styles.ingredientName}>
+                          {ingredient.name}
+                        </Text>
                         {ingredient.price && (
-                          <span className={styles.priceTag}>
+                          <Text className={styles.priceTag}>
                             +${ingredient.price}
-                          </span>
+                          </Text>
                         )}
                       </div>
 
-                      <div className={styles.ingredientQuantity}>
+                      <div className={styles.quantityControl}>
                         <IconCircleMinus
                           size={18}
+                          className={`${styles.iconButton} ${
+                            ingredient.quantity <= 0 ? styles.iconDisabled : ''
+                          }`}
                           onClick={() => handleUpdateIngredient(index, -1)}
-                          style={{
-                            cursor: 'pointer',
-                            opacity: ingredient.quantity <= 0 ? 0.5 : 1,
-                          }}
                         />
-                        <span>{ingredient.quantity}</span>
+                        <Text className={styles.quantityValue}>
+                          {ingredient.quantity}
+                        </Text>
                         <IconCirclePlus
                           size={18}
+                          className={styles.iconButtonAdd}
                           onClick={() => handleUpdateIngredient(index, 1)}
-                          style={{
-                            cursor: 'pointer',
-                            color: '#000',
-                            background: '#B3FF00',
-                            borderRadius: '50%',
-                          }}
                         />
                       </div>
                     </div>
@@ -436,84 +350,34 @@ const AddToCartModal = ({
             </div>
           )}
 
-          {/* Condiments Section - Collapsible */}
-          {condimentOptions.length > 0 && (
-            <div className={styles.customizationSection}>
-              <div className={styles.sectionHeader}>
-                <div
-                  className={styles.sectionTitleWithIcon}
-                  onClick={() => setShowCondiments(!showCondiments)}
-                >
-                  <h3 className={styles.sectionTitle}>Elige 2 Aderezos</h3>
-                  {showCondiments ? (
-                    <IconChevronUp size={20} />
-                  ) : (
-                    <IconChevronDown size={20} />
-                  )}
-                </div>
-              </div>
-
-              {showCondiments && (
-                <div className={styles.condimentsList}>
-                  {condimentOptions.map((condiment, index) => (
-                    <div
-                      key={condiment.name}
-                      className={`${styles.condimentItem} ${
-                        condiments.includes(condiment.name)
-                          ? styles.condimentSelected
-                          : ''
-                      }`}
-                    >
-                      <input
-                        type="checkbox"
-                        id={`condiment-${index}`}
-                        className={styles.checkbox}
-                        checked={condiments.includes(condiment.name)}
-                        onChange={() => handleToggleCondiment(condiment.name)}
-                      />
-                      <label
-                        htmlFor={`condiment-${index}`}
-                        className={styles.condimentName}
-                      >
-                        {condiment.name}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Quantity controls */}
+          {/* Quantity Controls */}
           <div className={styles.quantityControls}>
             <IconTrash
               size={26}
+              className={styles.trashIcon}
               onClick={() => quantity > 1 && setQuantity(quantity - 1)}
-              style={{ cursor: 'pointer' }}
             />
-            <span className={styles.quantityValue}>{quantity}</span>
+            <Text className={styles.quantityControlValue}>{quantity}</Text>
             <IconCirclePlus
               size={26}
+              className={styles.iconButtonAdd}
               onClick={() => setQuantity(quantity + 1)}
-              style={{
-                cursor: 'pointer',
-                color: '#000',
-                background: '#B3FF00',
-                borderRadius: '50%',
-              }}
             />
           </div>
         </div>
 
         {/* Footer with Add to Cart button */}
         <div className={styles.footer}>
-          <button className={styles.addButton} onClick={handleAddToCart}>
-            <IconShoppingCart size={20} />
+          <Button
+            leftSection={<IconShoppingCart size={24} />}
+            className={styles.addToCartButton}
+            onClick={handleAddToCart}
+          >
             {PRODUCT_TEXTS.ADD_TO_CART}
-          </button>
-          <span className={styles.subtotalText}>
+          </Button>
+          <Text className={styles.subtotalText}>
             Subtotal: ${finalPrice.toFixed(2)}
-          </span>
+          </Text>
         </div>
       </div>
     </div>
