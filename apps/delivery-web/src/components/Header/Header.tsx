@@ -88,6 +88,7 @@ const Header = ({
           style={{
             position: 'absolute',
             width: '100%',
+            maxWidth: '100%',
             height: '283px',
             left: 0,
             top: 0,
@@ -95,7 +96,6 @@ const Header = ({
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
-            maxWidth: '100%',
             overflowX: 'hidden',
           }}
           data-testid="header-background"
@@ -111,6 +111,7 @@ const Header = ({
             top: 0,
             backgroundColor: '#000000',
             width: '50%',
+            maxWidth: '1440px',
           }}
           data-testid="header-left-rectangle"
         />
