@@ -69,6 +69,13 @@ const AddToCartModal = ({
     initialComments ? initialComments.length : 0
   );
 
+  // Log when dropdown sections are toggled
+  useEffect(() => {
+    if (modalRef.current) {
+      console.log('Ingredients section expanded:', showIngredients);
+    }
+  }, [showIngredients]);
+
   // Get product with customization options from mock using useMemo
   const productWithCustomization = useMemo(
     () => getProductById(product.id),
@@ -126,13 +133,33 @@ const AddToCartModal = ({
     if (productWithCustomization.customization?.ingredientOptions) {
       const defaultIngredients =
         productWithCustomization.customization.ingredientOptions.map(
-          (option) => ({
-            name: option.name,
-            quantity: option.default ? 1 : 0,
-            price: option.price,
-          })
+          (option) => {
+            // For existing items being edited, use their existing customizations
+            if (isEditingExistingItem) {
+              // Look for this ingredient in initialIngredients
+              const existingIngredient = initialIngredients.find(
+                (ing) => ing.name === option.name
+              );
+
+              // If found, use its quantity, otherwise default to 0 (not selected)
+              return {
+                name: option.name,
+                quantity:
+                  existingIngredient !== undefined
+                    ? existingIngredient.quantity
+                    : 0,
+                price: option.price,
+              };
+            } else {
+              // For new items or a new variant, use product defaults
+              return {
+                name: option.name,
+                quantity: option.default ? 1 : 0,
+                price: option.price,
+              };
+            }
+          }
         );
-      setIngredients(initialIngredients || defaultIngredients);
 
       setIngredients(defaultIngredients);
     }
@@ -148,7 +175,7 @@ const AddToCartModal = ({
         );
       setCondiments(defaultCondiments);
     }
-  }, [opened, productWithCustomization]); // Reduced dependencies
+  }, [opened, productWithCustomization, initialIngredients, initialCondiments]);
 
   // Reset the initialization when the modal closes
   useEffect(() => {
@@ -198,7 +225,7 @@ const AddToCartModal = ({
       (ing) => ing.quantity > 0
     ).length;
     const maxSelections =
-      productWithCustomization?.customization?.maxIngredientSelections || 2;
+      productWithCustomization?.customization?.maxIngredientSelections || 5;
 
     // Only allow adding if we haven't reached the max
     if (
@@ -213,9 +240,10 @@ const AddToCartModal = ({
     // Check limits
     if (newQuantity >= 0) {
       // Check if there's a max quantity for this ingredient
-      const ingredientOption = ingredientOptions.find(
-        (opt) => opt.name === newIngredients[index].name
-      );
+      const ingredientOption =
+        productWithCustomization?.customization?.ingredientOptions.find(
+          (opt) => opt.name === newIngredients[index].name
+        );
       const maxQuantity = ingredientOption?.maxQuantity || 2;
 
       if (newQuantity <= maxQuantity) {
@@ -234,7 +262,7 @@ const AddToCartModal = ({
     // Check if we've hit the max allowed condiments
     const selectedCount = newCondiments.filter((c) => c.selected).length;
     const maxCondiments =
-      productWithCustomization?.customization?.maxCondimentSelections || 2;
+      productWithCustomization?.customization?.maxCondimentSelections || 3;
 
     // If too many selected, revert the change
     if (selectedCount > maxCondiments) {
@@ -294,24 +322,24 @@ const AddToCartModal = ({
   const finalPrice = calculateTotalPrice();
 
   return (
-    <Flex className={styles.modalOverlay}>
-      <Flex
+    <div className={styles.modalOverlay}>
+      <div
         className={styles.modalContent}
         onClick={(e) => e.stopPropagation()}
         ref={modalRef}
       >
         {/* Close button */}
-        <Button className={styles.closeButton} onClick={onClose}>
+        <button className={styles.closeButton} onClick={onClose}>
           <IconX size={18} />
-        </Button>
+        </button>
 
         {/* Header section with black background */}
-        <Flex className={styles.modalHeader}>
-          {hasDiscount && <Text className={styles.discountBadge}>20% OFF</Text>}
+        <div className={styles.modalHeader}>
+          {hasDiscount && <div className={styles.discountBadge}>20% OFF</div>}
 
-          <Text className={styles.modalTitle}>Armala como quieras</Text>
+          <Text className={styles.modalTitle}>{product.name}</Text>
 
-          <Flex className={styles.priceContainer}>
+          <div className={styles.priceContainer}>
             <Text className={styles.currentPrice}>
               ${discountedPrice.toFixed(2)}
             </Text>
@@ -320,10 +348,10 @@ const AddToCartModal = ({
                 ${originalPrice.toFixed(2)}
               </Text>
             )}
-          </Flex>
-        </Flex>
+          </div>
+        </div>
 
-        <Flex className={styles.modalBody}>
+        <div className={styles.modalBody}>
           {/* Top section with content in two columns */}
           <Flex className={styles.contentTopSection}>
             {/* Left column with product description and comments */}
@@ -374,10 +402,7 @@ const AddToCartModal = ({
                 onClick={() => setShowIngredients(!showIngredients)}
               >
                 <Text className={styles.sectionHeaderText}>
-                  Elige hasta{' '}
-                  {productWithCustomization?.customization
-                    ?.maxIngredientSelections || 2}{' '}
-                  Ingredientes
+                  Elige hasta 5 Ingredientes
                 </Text>
                 {showIngredients ? (
                   <IconChevronUp size={24} />
@@ -435,10 +460,7 @@ const AddToCartModal = ({
                 onClick={() => setShowCondiments(!showCondiments)}
               >
                 <Text className={styles.sectionHeaderText}>
-                  Elige{' '}
-                  {productWithCustomization?.customization
-                    ?.maxCondimentSelections || 2}{' '}
-                  Aderezos
+                  Elige 3 Aderezos
                 </Text>
                 {showCondiments ? (
                   <IconChevronUp size={24} />
@@ -491,23 +513,23 @@ const AddToCartModal = ({
               onClick={() => setQuantity(quantity + 1)}
             />
           </Flex>
-        </Flex>
 
-        {/* Footer with Add to Cart button */}
-        <Flex className={styles.footer}>
-          <Button
-            leftSection={<IconShoppingCart size={24} />}
-            className={styles.addToCartButton}
-            onClick={handleAddToCart}
-          >
-            {PRODUCT_TEXTS.ADD_TO_CART}
-          </Button>
-          <Text className={styles.subtotalText}>
-            Subtotal: ${finalPrice.toFixed(2)}
-          </Text>
-        </Flex>
-      </Flex>
-    </Flex>
+          {/* Footer always at the bottom of the modal body */}
+          <div className={styles.footer}>
+            <Button
+              leftSection={<IconShoppingCart size={24} />}
+              className={styles.addToCartButton}
+              onClick={handleAddToCart}
+            >
+              {PRODUCT_TEXTS.ADD_TO_CART}
+            </Button>
+            <Text className={styles.subtotalText}>
+              Subtotal: ${finalPrice.toFixed(2)}
+            </Text>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

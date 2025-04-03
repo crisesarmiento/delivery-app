@@ -14,13 +14,13 @@
 .modalContent {
   position: relative;
   width: 750px;
-  max-height: 90vh;
-  overflow-y: auto;
+  height: 90vh;
   background: #ffffff;
   border-radius: 16px;
   box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 @media (max-width: 768px) {
@@ -29,6 +29,10 @@
     height: 100vh;
     max-height: 100vh;
     border-radius: 0;
+  }
+
+  .modalBody {
+    height: calc(100vh - 190px) !important;
   }
 }
 
@@ -51,9 +55,13 @@
   width: 100%;
   height: 190px;
   background: #000000;
-  position: relative;
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
   border-radius: 16px 16px 0 0;
   box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+  z-index: 10;
 }
 
 .modalTitle {
@@ -110,41 +118,42 @@
   line-height: 18px;
   text-decoration: line-through;
   color: #939393;
-  margin-left: 8px;
+  margin-left: 12px;
 }
 
 .modalBody {
-  padding: 32px;
+  padding: 24px 32px 0 32px;
   display: flex;
   flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
-/* Top section layout - matches Figma */
+/* Product info and image layout */
 .contentTopSection {
   display: flex;
-  justify-content: space-between;
-  gap: 30px;
-  margin-bottom: 40px;
+  margin-bottom: 30px;
   width: 100%;
+  position: relative;
 }
 
 .contentLeftColumn {
-  flex: 1;
-  max-width: 402px;
-  display: flex;
-  flex-direction: column;
+  width: 410px;
+  margin-right: 20px;
 }
 
 .contentRightColumn {
   width: 256px;
   height: 288px;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 
 .productInfo {
   width: 100%;
-  margin-bottom: 30px;
-  display: flex;
-  flex-direction: column;
+  margin-bottom: 24px;
 }
 
 .productDescription {
@@ -179,8 +188,9 @@
 
 /* Comments */
 .commentsContainer {
-  width: 100%;
-  margin-bottom: 20px;
+  width: 402px;
+  margin-bottom: 40px;
+  position: relative;
 }
 
 .sectionLabel {
@@ -194,7 +204,7 @@
 
 .commentTextarea {
   width: 100%;
-  height: 100px;
+  height: 102px;
   border: 1px solid #eef2f6;
   border-radius: 8px;
   padding: 10px 12px;
@@ -216,7 +226,7 @@
 
 /* Ingredients and condiments sections */
 .section {
-  width: 100%;
+  width: 686px;
   margin-bottom: 24px;
   display: flex;
   flex-direction: column;
@@ -234,6 +244,8 @@
   height: 37px;
   width: 100%;
   margin-bottom: 12px;
+  position: relative;
+  z-index: 2;
 }
 
 .sectionHeaderText {
@@ -249,6 +261,8 @@
   display: flex;
   flex-direction: column;
   width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
 }
 
 .ingredientItem,
@@ -264,7 +278,7 @@
 .ingredientName,
 .condimentName {
   font-family: 'Inter', sans-serif;
-  font-size: 14px;
+  font-size: 10px;
   font-weight: 400;
   line-height: 18px;
   color: #000000;
@@ -361,13 +375,21 @@
   width: 31px;
 }
 
+/* Ensure footer stays at bottom */
 .footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 32px 32px;
+  padding: 16px 32px;
   gap: 16px;
-  margin-top: 16px;
+  margin-top: auto;
+  position: sticky;
+  bottom: 0;
+  background: #ffffff;
+  z-index: 6;
+  border-top: 1px solid #eef2f6;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .addToCartButton {
@@ -382,10 +404,10 @@
   font-size: 14px;
   line-height: 20px;
   box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.03);
-  flex: 1;
-  max-width: 465px;
+  width: 465px;
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 .subtotalText {
