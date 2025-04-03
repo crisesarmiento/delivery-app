@@ -225,7 +225,7 @@ const AddToCartModal = ({
       (ing) => ing.quantity > 0
     ).length;
     const maxSelections =
-      productWithCustomization?.customization?.maxIngredientSelections || 5;
+      productWithCustomization?.customization?.maxIngredientSelections || 2;
 
     // Only allow adding if we haven't reached the max
     if (
@@ -490,6 +490,7 @@ const AddToCartModal = ({
                               ? '#B3FF00'
                               : '#939393',
                           },
+                          icon: { display: 'none' },
                         }}
                       />
                     </Flex>
@@ -499,33 +500,47 @@ const AddToCartModal = ({
             </Flex>
           )}
 
-          {/* Quantity Controls */}
-          <Flex className={styles.quantityControls}>
-            <IconTrash
-              size={26}
-              className={styles.trashIcon}
-              onClick={() => quantity > 1 && setQuantity(quantity - 1)}
-            />
-            <Text className={styles.quantityControlValue}>{quantity}</Text>
-            <IconCirclePlus
-              size={26}
-              className={styles.iconButtonAdd}
-              onClick={() => setQuantity(quantity + 1)}
-            />
-          </Flex>
-
           {/* Footer always at the bottom of the modal body */}
           <div className={styles.footer}>
+            <Flex className={styles.quantityControls}>
+              {quantity > 1 ? (
+                <IconCircleMinus
+                  size={26}
+                  className={styles.iconButton}
+                  onClick={() => setQuantity(quantity - 1)}
+                />
+              ) : (
+                <IconTrash
+                  size={26}
+                  className={styles.trashIcon}
+                  onClick={onClose}
+                />
+              )}
+              <Text className={styles.quantityControlValue}>{quantity}</Text>
+              <IconCirclePlus
+                size={26}
+                className={styles.iconButtonAdd}
+                onClick={() => setQuantity(quantity + 1)}
+              />
+            </Flex>
             <Button
-              leftSection={<IconShoppingCart size={24} />}
               className={styles.addToCartButton}
               onClick={handleAddToCart}
             >
-              {PRODUCT_TEXTS.ADD_TO_CART}
+              <Flex
+                justify="space-between"
+                align="center"
+                style={{ width: '100%' }}
+              >
+                <Flex align="center" gap="sm">
+                  <IconShoppingCart size={24} />
+                  <span>{PRODUCT_TEXTS.ADD_TO_CART}</span>
+                </Flex>
+                <span
+                  style={{ marginLeft: 'auto' }}
+                >{`Subtotal: $${finalPrice.toFixed(2)}`}</span>
+              </Flex>
             </Button>
-            <Text className={styles.subtotalText}>
-              Subtotal: ${finalPrice.toFixed(2)}
-            </Text>
           </div>
         </div>
       </div>
