@@ -40,7 +40,7 @@ interface AddToCartModalProps {
   product: IProduct;
   opened: boolean;
   onClose: () => void;
-  onAddToCart: (quantity: number, cartItem?: CartItem) => void;
+  onAddToCart: (quantity: number) => void;
   initialQuantity?: number;
   initialIngredients?: IngredientItem[];
   initialCondiments?: string[];
@@ -126,33 +126,13 @@ const AddToCartModal = ({
     if (productWithCustomization.customization?.ingredientOptions) {
       const defaultIngredients =
         productWithCustomization.customization.ingredientOptions.map(
-          (option) => {
-            // For existing items being edited, use their existing customizations
-            if (isEditingExistingItem) {
-              // Look for this ingredient in initialIngredients
-              const existingIngredient = initialIngredients.find(
-                (ing) => ing.name === option.name
-              );
-
-              // If found, use its quantity, otherwise default to 0 (not selected)
-              return {
-                name: option.name,
-                quantity:
-                  existingIngredient !== undefined
-                    ? existingIngredient.quantity
-                    : 0,
-                price: option.price,
-              };
-            } else {
-              // For new items or a new variant, use product defaults
-              return {
-                name: option.name,
-                quantity: option.default ? 1 : 0,
-                price: option.price,
-              };
-            }
-          }
+          (option) => ({
+            name: option.name,
+            quantity: option.default ? 1 : 0,
+            price: option.price,
+          })
         );
+      setIngredients(initialIngredients || defaultIngredients);
 
       setIngredients(defaultIngredients);
     }
@@ -202,12 +182,10 @@ const AddToCartModal = ({
     };
   }, [opened, onClose]);
 
-  // Only set initial quantity when component mounts or initialQuantity changes or when modal opens
+  // Only set initial quantity when component mounts or initialQuantity changes
   useEffect(() => {
-    if (opened) {
-      setQuantity(initialQuantity);
-    }
-  }, [initialQuantity, opened]);
+    setQuantity(initialQuantity);
+  }, [initialQuantity]);
 
   if (!opened) return null;
 
@@ -269,7 +247,10 @@ const AddToCartModal = ({
   };
 
   const handleAddToCart = () => {
-    // Create a new cart item with all customizations
+    // Get selected ingredients and condiments
+    const selectedIngredients = ingredients.filter((ing) => ing.quantity > 0);
+
+    // Create cart item with customizations
     const cartItem: CartItem = {
       product,
       quantity,
@@ -281,9 +262,10 @@ const AddToCartModal = ({
       },
     };
 
-    onAddToCart(quantity, cartItem);
+    onAddToCart(cartItem.quantity);
   };
 
+  // Comments handler
   const handleCommentsChange = (
     event: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
