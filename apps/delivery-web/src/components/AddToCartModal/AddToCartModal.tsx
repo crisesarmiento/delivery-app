@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import {
   Text,
   Image,
@@ -57,42 +57,73 @@ const AddToCartModal = ({
   initialCondiments = [],
   initialComments,
 }: AddToCartModalProps) => {
+  // Add a ref to track initialization
+  const isInitialized = useRef(false);
+
   const [quantity, setQuantity] = useState(initialQuantity);
   const modalRef = useRef<HTMLDivElement>(null);
   const [showIngredients, setShowIngredients] = useState(true);
   const [showCondiments, setShowCondiments] = useState(true);
   const [comments, setComments] = useState(initialComments || '');
-  const [commentChars, setCommentChars] = useState(0);
-
-  // Get product with customization options from mock
-  const productWithCustomization = getProductById(product.id);
-
-  // Initialize ingredients based on the product customization options
-  const [ingredients, setIngredients] = useState<IngredientItem[]>(
-    initialIngredients || []
+  const [commentChars, setCommentChars] = useState(
+    initialComments ? initialComments.length : 0
   );
 
-  // Initialize condiments
+  // Get product with customization options from mock using useMemo
+  const productWithCustomization = useMemo(
+    () => getProductById(product.id),
+    [product.id]
+  );
+
+  // Memoize discount calculations to prevent recalculations on every render
+  const { hasDiscount, discountPercentage, originalPrice, discountedPrice } =
+    useMemo(() => {
+      const hasDiscount =
+        product.name.toLowerCase().includes('promo') ||
+        (typeof product.id === 'number'
+          ? product.id % 3 === 0
+          : String(product.id).length % 3 === 0);
+      const discountPercentage = hasDiscount ? 20 : 0;
+      const originalPrice = hasDiscount ? product.price * 1.2 : null;
+      const discountedPrice = hasDiscount ? product.price : product.price;
+
+      return {
+        hasDiscount,
+        discountPercentage,
+        originalPrice,
+        discountedPrice,
+      };
+    }, [product.name, product.id, product.price]);
+
+  // Memoize ingredient and condiment options
+  const { ingredientOptions, condimentOptions } = useMemo(() => {
+    return {
+      ingredientOptions:
+        productWithCustomization?.customization?.ingredientOptions || [],
+      condimentOptions:
+        productWithCustomization?.customization?.condimentOptions || [],
+    };
+  }, [productWithCustomization]);
+
+  // Initialize ingredients based on the product customization options with default empty array
+  const [ingredients, setIngredients] = useState<IngredientItem[]>([]);
   const [condiments, setCondiments] = useState<CondimentItem[]>([]);
 
-  // Calculate if product has discount (for demo purposes)
-  const hasDiscount =
-    product.name.toLowerCase().includes('promo') ||
-    (typeof product.id === 'number'
-      ? product.id % 3 === 0
-      : String(product.id).length % 3 === 0);
-  const discountPercentage = hasDiscount ? 20 : 0;
-  const originalPrice = hasDiscount ? product.price * 1.2 : null;
-  const discountedPrice = hasDiscount ? product.price : product.price;
-
-  // Set up initial ingredients and condiments from product data
+  // Initialize only when modal is opened and not already initialized
   useEffect(() => {
-    if (productWithCustomization && opened) {
-      // Check if we're editing an existing item with customizations
-      const isEditingExistingItem =
-        initialIngredients && initialIngredients.length > 0;
+    if (!opened || !productWithCustomization || isInitialized.current) {
+      return;
+    }
 
-      // Initialize with all available options from the product
+    // Set initialized ref to true to prevent re-initialization
+    isInitialized.current = true;
+
+    // Check if we're editing an existing item with customizations
+    const isEditingExistingItem =
+      initialIngredients && initialIngredients.length > 0;
+
+    // Initialize with all available options from the product
+    if (productWithCustomization.customization?.ingredientOptions) {
       const defaultIngredients =
         productWithCustomization.customization.ingredientOptions.map(
           (option) => {
@@ -124,23 +155,30 @@ const AddToCartModal = ({
         );
 
       setIngredients(defaultIngredients);
-
-      // Initialize condiments
-      if (productWithCustomization.customization.condimentOptions) {
-        const defaultCondiments =
-          productWithCustomization.customization.condimentOptions.map(
-            (condiment) => ({
-              name: condiment.name,
-              selected: initialCondiments.includes(condiment.name),
-            })
-          );
-        setCondiments(defaultCondiments);
-      }
     }
-  }, [productWithCustomization, opened, initialIngredients, initialCondiments]);
 
+    // Initialize condiments
+    if (productWithCustomization.customization?.condimentOptions) {
+      const defaultCondiments =
+        productWithCustomization.customization.condimentOptions.map(
+          (condiment) => ({
+            name: condiment.name,
+            selected: initialCondiments.includes(condiment.name),
+          })
+        );
+      setCondiments(defaultCondiments);
+    }
+  }, [opened, productWithCustomization]); // Reduced dependencies
+
+  // Reset the initialization when the modal closes
   useEffect(() => {
-    // Handle click outside to close
+    if (!opened) {
+      isInitialized.current = false;
+    }
+  }, [opened]);
+
+  // Handle click outside to close
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
         modalRef.current &&
@@ -197,10 +235,9 @@ const AddToCartModal = ({
     // Check limits
     if (newQuantity >= 0) {
       // Check if there's a max quantity for this ingredient
-      const ingredientOption =
-        productWithCustomization?.customization?.ingredientOptions.find(
-          (opt) => opt.name === newIngredients[index].name
-        );
+      const ingredientOption = ingredientOptions.find(
+        (opt) => opt.name === newIngredients[index].name
+      );
       const maxQuantity = ingredientOption?.maxQuantity || 2;
 
       if (newQuantity <= maxQuantity) {
@@ -274,31 +311,25 @@ const AddToCartModal = ({
   // Get the final price
   const finalPrice = calculateTotalPrice();
 
-  // Convert customization options to arrays for UI rendering
-  const ingredientOptions =
-    productWithCustomization?.customization?.ingredientOptions || [];
-  const condimentOptions =
-    productWithCustomization?.customization?.condimentOptions || [];
-
   return (
-    <div className={styles.modalOverlay}>
-      <div
+    <Flex className={styles.modalOverlay}>
+      <Flex
         className={styles.modalContent}
         onClick={(e) => e.stopPropagation()}
         ref={modalRef}
       >
         {/* Close button */}
-        <button className={styles.closeButton} onClick={onClose}>
-          <IconX size={20} />
-        </button>
+        <Button className={styles.closeButton} onClick={onClose}>
+          <IconX size={18} />
+        </Button>
 
         {/* Header section with black background */}
-        <div className={styles.modalHeader}>
-          {hasDiscount && <div className={styles.discountBadge}>20% OFF</div>}
+        <Flex className={styles.modalHeader}>
+          {hasDiscount && <Text className={styles.discountBadge}>20% OFF</Text>}
 
-          <Text className={styles.modalTitle}>{product.name}</Text>
+          <Text className={styles.modalTitle}>Armala como quieras</Text>
 
-          <div className={styles.priceContainer}>
+          <Flex className={styles.priceContainer}>
             <Text className={styles.currentPrice}>
               ${discountedPrice.toFixed(2)}
             </Text>
@@ -307,49 +338,56 @@ const AddToCartModal = ({
                 ${originalPrice.toFixed(2)}
               </Text>
             )}
-          </div>
-        </div>
+          </Flex>
+        </Flex>
 
-        <div className={styles.modalBody}>
-          {/* Product Description & Image */}
-          <div className={styles.productInfo}>
-            <Text className={styles.productDescription}>
-              {product.description}
-            </Text>
-            <Text className={styles.helperText}>
-              {MODAL_TEXTS.CUSTOMIZE_HELPER_TEXT}
-            </Text>
-          </div>
+        <Flex className={styles.modalBody}>
+          {/* Top section with content in two columns */}
+          <Flex className={styles.contentTopSection}>
+            {/* Left column with product description and comments */}
+            <Flex className={styles.contentLeftColumn}>
+              {/* Product Description */}
+              <Flex className={styles.productInfo}>
+                <Box className={styles.productDescription}>
+                  {product.description}
+                </Box>
+                <Box className={styles.helperText}>
+                  {MODAL_TEXTS.CUSTOMIZE_HELPER_TEXT}
+                </Box>
+              </Flex>
 
-          <Box className={styles.productImageContainer}>
-            <Image
-              src={product.imageUrl}
-              alt={product.name}
-              className={styles.productImage}
-              width={256}
-              height={288}
-            />
-          </Box>
+              {/* Comments Section */}
+              <Box className={styles.commentsContainer}>
+                <Text className={styles.sectionLabel}>Comentarios</Text>
+                <Textarea
+                  placeholder="Instrucciones especiales, alergias, etc."
+                  value={comments}
+                  onChange={handleCommentsChange}
+                  maxLength={100}
+                  className={styles.commentTextarea}
+                />
+                <Text size="xs" className={styles.charCount}>
+                  {commentChars}/100
+                </Text>
+              </Box>
+            </Flex>
 
-          {/* Comments Section */}
-          <div className={styles.commentsContainer}>
-            <Text className={styles.sectionLabel}>Comentarios</Text>
-            <Textarea
-              placeholder="Instrucciones especiales, alergias, etc."
-              value={comments}
-              onChange={handleCommentsChange}
-              maxLength={100}
-              className={styles.commentTextarea}
-            />
-            <Text size="xs" className={styles.charCount}>
-              {commentChars}/100
-            </Text>
-          </div>
+            {/* Right column with product image */}
+            <Box className={styles.contentRightColumn}>
+              <Box className={styles.productImageContainer}>
+                <Image
+                  src={product.imageUrl}
+                  alt={product.name}
+                  className={styles.productImage}
+                />
+              </Box>
+            </Box>
+          </Flex>
 
-          {/* Ingredients Section */}
+          {/* Ingredients Section - Placed below the top section */}
           {ingredientOptions.length > 0 && (
-            <div className={styles.section}>
-              <div
+            <Flex className={styles.section}>
+              <Flex
                 className={styles.sectionHeader}
                 onClick={() => setShowIngredients(!showIngredients)}
               >
@@ -364,12 +402,12 @@ const AddToCartModal = ({
                 ) : (
                   <IconChevronDown size={24} />
                 )}
-              </div>
+              </Flex>
 
               {showIngredients && (
-                <div className={styles.ingredientsList}>
+                <Flex className={styles.ingredientsList}>
                   {ingredients.map((ingredient, index) => (
-                    <div
+                    <Flex
                       key={ingredient.name}
                       className={styles.ingredientItem}
                     >
@@ -383,7 +421,7 @@ const AddToCartModal = ({
                         </Text>
                       )}
 
-                      <div className={styles.quantityControl}>
+                      <Flex className={styles.quantityControl}>
                         <IconCircleMinus
                           size={18}
                           className={`${styles.iconButton} ${
@@ -399,18 +437,18 @@ const AddToCartModal = ({
                           className={styles.iconButtonAdd}
                           onClick={() => handleUpdateIngredient(index, 1)}
                         />
-                      </div>
-                    </div>
+                      </Flex>
+                    </Flex>
                   ))}
-                </div>
+                </Flex>
               )}
-            </div>
+            </Flex>
           )}
 
           {/* Condiments Section */}
           {condimentOptions.length > 0 && (
-            <div className={styles.section}>
-              <div
+            <Flex className={styles.section}>
+              <Flex
                 className={styles.sectionHeader}
                 onClick={() => setShowCondiments(!showCondiments)}
               >
@@ -425,12 +463,12 @@ const AddToCartModal = ({
                 ) : (
                   <IconChevronDown size={24} />
                 )}
-              </div>
+              </Flex>
 
               {showCondiments && (
-                <div className={styles.condimentsList}>
+                <Flex className={styles.condimentsList}>
                   {condiments.map((condiment, index) => (
-                    <div key={condiment.name} className={styles.condimentItem}>
+                    <Flex key={condiment.name} className={styles.condimentItem}>
                       <Text className={styles.condimentName}>
                         {condiment.name}
                       </Text>
@@ -450,15 +488,15 @@ const AddToCartModal = ({
                           },
                         }}
                       />
-                    </div>
+                    </Flex>
                   ))}
-                </div>
+                </Flex>
               )}
-            </div>
+            </Flex>
           )}
 
           {/* Quantity Controls */}
-          <div className={styles.quantityControls}>
+          <Flex className={styles.quantityControls}>
             <IconTrash
               size={26}
               className={styles.trashIcon}
@@ -470,11 +508,11 @@ const AddToCartModal = ({
               className={styles.iconButtonAdd}
               onClick={() => setQuantity(quantity + 1)}
             />
-          </div>
-        </div>
+          </Flex>
+        </Flex>
 
         {/* Footer with Add to Cart button */}
-        <div className={styles.footer}>
+        <Flex className={styles.footer}>
           <Button
             leftSection={<IconShoppingCart size={24} />}
             className={styles.addToCartButton}
@@ -485,9 +523,9 @@ const AddToCartModal = ({
           <Text className={styles.subtotalText}>
             Subtotal: ${finalPrice.toFixed(2)}
           </Text>
-        </div>
-      </div>
-    </div>
+        </Flex>
+      </Flex>
+    </Flex>
   );
 };
 

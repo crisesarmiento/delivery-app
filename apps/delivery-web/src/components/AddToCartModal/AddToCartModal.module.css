@@ -11,28 +11,16 @@
   z-index: 1000;
 }
 
-@media (max-width: 767px) {
-  .modalOverlay {
-    align-items: flex-start;
-  }
-}
-
-.modalWrapper {
-  position: relative;
-  max-width: 750px;
-  width: 95%;
-  margin: 1.75rem auto;
-}
-
 .modalContent {
-  position: absolute;
+  position: relative;
   width: 750px;
-  height: 1068px;
-  left: 352px;
-  top: 385px;
+  max-height: 90vh;
+  overflow-y: auto;
   background: #ffffff;
   border-radius: 16px;
-  box-shadow: none;
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
 }
 
 @media (max-width: 768px) {
@@ -41,39 +29,35 @@
     height: 100vh;
     max-height: 100vh;
     border-radius: 0;
-    margin: 0;
   }
 }
 
 .closeButton {
   position: absolute;
-  left: 92.89%;
-  right: 3.28%;
-  top: 3.28%;
-  bottom: 93.73%;
-  background: #ffffff;
+  right: 24px;
+  top: 24px;
+  background: transparent;
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 4px;
+  z-index: 10;
+  color: #ffffff;
 }
 
 .modalHeader {
-  position: absolute;
-  width: 750px;
+  width: 100%;
   height: 190px;
-  left: 0;
-  top: 0;
   background: #000000;
+  position: relative;
+  border-radius: 16px 16px 0 0;
   box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 .modalTitle {
   position: absolute;
-  width: 316px;
-  height: 38px;
   left: 32px;
   top: 67px;
   font-family: 'Inter', sans-serif;
@@ -81,6 +65,7 @@
   font-size: 30px;
   line-height: 38px;
   color: #ffffff;
+  width: 316px;
 }
 
 .discountBadge {
@@ -104,8 +89,6 @@
 
 .priceContainer {
   position: absolute;
-  width: 145px;
-  height: 45px;
   left: 32px;
   top: 112px;
   display: flex;
@@ -131,16 +114,37 @@
 }
 
 .modalBody {
-  padding: 24px 32px;
-  position: relative;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Top section layout - matches Figma */
+.contentTopSection {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  margin-bottom: 40px;
+  width: 100%;
+}
+
+.contentLeftColumn {
+  flex: 1;
+  max-width: 402px;
+  display: flex;
+  flex-direction: column;
+}
+
+.contentRightColumn {
+  width: 256px;
+  height: 288px;
 }
 
 .productInfo {
-  position: absolute;
-  width: 410px;
-  height: 84px;
-  left: 32px;
-  top: 214px;
+  width: 100%;
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
 }
 
 .productDescription {
@@ -149,14 +153,10 @@
   font-weight: 400;
   line-height: 28px;
   color: #000000;
+  margin-bottom: 16px;
 }
 
 .helperText {
-  position: absolute;
-  width: 410px;
-  height: 48px;
-  left: 32px;
-  top: 314px;
   font-family: 'Inter', sans-serif;
   font-size: 16px;
   font-weight: 500;
@@ -165,40 +165,22 @@
 }
 
 .productImageContainer {
-  position: absolute;
   width: 256px;
   height: 288px;
-  left: 462px;
-  top: 214px;
+  border-radius: 6px;
+  overflow: hidden;
 }
 
 .productImage {
-  width: 256px;
-  height: 288px;
-  border-radius: 6px;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
 }
 
+/* Comments */
 .commentsContainer {
-  position: absolute;
-  width: 402px;
-  height: 124px;
-  left: 32px;
-  top: 378px;
-}
-
-.section {
-  position: absolute;
-  width: 686px;
-  height: 37px;
-  left: 32px;
-  background: #f8fafc;
-  border: 1px solid #eef2f6;
-  border-radius: 6px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px;
+  width: 100%;
+  margin-bottom: 20px;
 }
 
 .sectionLabel {
@@ -207,18 +189,19 @@
   font-weight: 600;
   line-height: 18px;
   color: #000000;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 }
 
 .commentTextarea {
-  width: 402px;
-  height: 102px;
+  width: 100%;
+  height: 100px;
   border: 1px solid #eef2f6;
   border-radius: 8px;
   padding: 10px 12px;
   font-size: 14px;
-  resize: vertical;
+  resize: none;
   font-family: 'Inter', sans-serif;
+  box-sizing: border-box;
 }
 
 .charCount {
@@ -231,6 +214,14 @@
   margin-top: 4px;
 }
 
+/* Ingredients and condiments sections */
+.section {
+  width: 100%;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
 .sectionHeader {
   display: flex;
   justify-content: space-between;
@@ -240,8 +231,9 @@
   background-color: #f8fafc;
   border: 1px solid #eef2f6;
   border-radius: 6px;
-  margin-bottom: 12px;
   height: 37px;
+  width: 100%;
+  margin-bottom: 12px;
 }
 
 .sectionHeaderText {
@@ -254,9 +246,9 @@
 
 .ingredientsList,
 .condimentsList {
-  margin-top: 45px;
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 .ingredientItem,
@@ -272,7 +264,7 @@
 .ingredientName,
 .condimentName {
   font-family: 'Inter', sans-serif;
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 400;
   line-height: 18px;
   color: #000000;
@@ -340,82 +332,19 @@
   width: 17px;
 }
 
-.condimentsList {
-  display: flex;
-  flex-direction: column;
-}
-
-.condimentItem {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 0;
-  border-bottom: 0.7px solid #eef2f6;
-}
-
-.condimentCheckbox {
-  width: 16px;
-  height: 16px;
-}
-
-.footer {
-  position: absolute;
-  width: 465px;
-  height: 40px;
-  left: calc(50% - 465px / 2 + 110.5px);
-  top: 1020px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.addToCartButton {
-  background: #000000;
-  color: #b3ff00 !important;
-  border: none;
-  border-radius: 4px;
-  height: 40px;
-  padding: 0 12px;
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 20px;
-  box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.03);
-  width: 465px;
-  display: flex;
-  justify-content: center;
-}
-
-.addToCartButton span {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.subtotalText {
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 20px;
-  color: #b3ff00;
-  width: 121px;
-  text-align: center;
-}
-
 .quantityControls {
-  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 8px;
+  gap: 41px;
   width: 197px;
   height: 40px;
-  left: 32px;
-  top: 980px;
   background: #ffffff;
   border: 1px solid #eef2f6;
   border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-  gap: 41px;
+  margin: 32px 0 16px 0;
 }
 
 .trashIcon {
@@ -430,4 +359,41 @@
   text-align: center;
   color: #000000;
   width: 31px;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 32px 32px;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.addToCartButton {
+  background: #000000;
+  color: #b3ff00 !important;
+  border: none;
+  border-radius: 4px;
+  height: 40px;
+  padding: 0 12px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.03);
+  flex: 1;
+  max-width: 465px;
+  display: flex;
+  justify-content: center;
+}
+
+.subtotalText {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  color: #b3ff00;
+  width: fit-content;
+  text-align: right;
 }
