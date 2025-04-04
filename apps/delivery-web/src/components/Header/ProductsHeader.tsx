@@ -203,44 +203,10 @@ export function ProductsHeader({
           placeholder={
             isMobile ? '¿Qué te gustaría comer hoy?' : 'Buscar un Producto...'
           }
+          variant="light-gray"
           styles={{
             root: {
-              width: '512px',
-            },
-            wrapper: {
-              boxSizing: 'border-box',
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              padding: '0px 16px',
-              gap: '8px',
               width: '100%',
-              height: '44px',
-              background: '#F8FAFC',
-              border: '1px solid #F8FAFC',
-              boxShadow: '0px 1px 2px rgba(0, 0, 0, 0.02)',
-              borderRadius: '4px',
-            },
-            input: {
-              width: 'calc(100% - 40px)',
-              height: '24px',
-              fontFamily: 'Inter, sans-serif',
-              fontStyle: 'normal',
-              fontWeight: 400,
-              fontSize: '16px',
-              lineHeight: '24px',
-              color: '#6C7684',
-              background: 'transparent',
-              border: 'none',
-              '&::placeholder': {
-                color: '#6C7684',
-              },
-              '&:focus': {
-                border: 'none',
-              },
-            },
-            section: {
-              paddingRight: 0,
             },
           }}
         />

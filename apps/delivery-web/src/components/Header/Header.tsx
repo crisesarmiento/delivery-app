@@ -123,42 +123,10 @@ const Header = ({
             value={onSearchChange ? searchValue : internalSearchValue}
             onChange={handleSearchChange}
             placeholder={placeholder}
+            variant="white"
             styles={{
               root: {
                 width: '100%',
-              },
-              wrapper: {
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                padding: '0px 16px',
-                gap: '8px',
-                height: '44px',
-                background: '#FFFFFF',
-                border: '1px solid #FFFFFF',
-                boxShadow: '0px 1px 2px rgba(0, 0, 0, 0.02)',
-                borderRadius: '4px',
-              },
-              input: {
-                width: 'calc(100% - 40px)',
-                height: '24px',
-                fontFamily: 'Inter, sans-serif',
-                fontStyle: 'normal',
-                fontWeight: 400,
-                fontSize: '16px',
-                lineHeight: '24px',
-                color: '#6C7684',
-                background: 'transparent',
-                border: 'none',
-                '&::placeholder': {
-                  color: '#6C7684',
-                },
-                '&:focus': {
-                  border: 'none',
-                },
-              },
-              section: {
-                paddingRight: 0,
               },
             }}
             data-testid="header-search-bar"
