@@ -527,18 +527,12 @@ const AddToCartModal = ({
               className={styles.addToCartButton}
               onClick={handleAddToCart}
             >
-              <Flex
-                justify="space-between"
-                align="center"
-                style={{ width: '100%' }}
-              >
-                <Flex align="center" gap="sm">
-                  <IconShoppingCart size={24} />
-                  <span>{PRODUCT_TEXTS.ADD_TO_CART}</span>
-                </Flex>
-                <span
-                  style={{ marginLeft: 'auto' }}
-                >{`Subtotal: $${finalPrice.toFixed(2)}`}</span>
+              <Flex align="flex-start" gap={8}>
+                <IconShoppingCart size={24} />
+                <Text>{PRODUCT_TEXTS.ADD_TO_CART}</Text>
+              </Flex>
+              <Flex align="flex-end">
+                <Text>{`Subtotal: $${finalPrice.toFixed(2)}`}</Text>
               </Flex>
             </Button>
           </div>
