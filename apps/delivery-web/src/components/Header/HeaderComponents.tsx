@@ -96,7 +96,7 @@ export const SearchBar = ({
       border: currentVariant.border,
       boxShadow: '0px 1px 2px rgba(0, 0, 0, 0.02)',
       borderRadius: '4px',
-      '&:focus-within': {
+      '&:focusWithin': {
         border: `1px solid ${
           currentVariant.background.split(' ')[0]
         } !important`,

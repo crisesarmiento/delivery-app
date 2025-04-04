@@ -40,7 +40,7 @@ interface AddToCartModalProps {
   product: IProduct;
   opened: boolean;
   onClose: () => void;
-  onAddToCart: (quantity: number) => void;
+  onAddToCart: (quantity: number, cartItem?: any) => void;
   initialQuantity?: number;
   initialIngredients?: IngredientItem[];
   initialCondiments?: string[];
@@ -290,7 +290,7 @@ const AddToCartModal = ({
       },
     };
 
-    onAddToCart(cartItem.quantity);
+    onAddToCart(cartItem.quantity, cartItem);
   };
 
   // Comments handler
@@ -357,7 +357,7 @@ const AddToCartModal = ({
             {/* Left column with product description and comments */}
             <Flex className={styles.contentLeftColumn}>
               {/* Product Description */}
-              <Flex className={styles.productInfo}>
+              <Flex className={styles.productInfo} direction="column" gap={8}>
                 <Box className={styles.productDescription}>
                   {product.description}
                 </Box>
@@ -375,6 +375,11 @@ const AddToCartModal = ({
                   onChange={handleCommentsChange}
                   maxLength={100}
                   className={styles.commentTextarea}
+                  styles={{
+                    root: { width: '100%' },
+                    wrapper: { width: '100%' },
+                    input: { width: '100%' },
+                  }}
                 />
                 <Text size="xs" className={styles.charCount}>
                   {commentChars}/100
@@ -400,14 +405,20 @@ const AddToCartModal = ({
               <Flex
                 className={styles.sectionHeader}
                 onClick={() => setShowIngredients(!showIngredients)}
+                justify="space-between"
+                align="center"
+                w="100%"
               >
                 <Text className={styles.sectionHeaderText}>
-                  Elige hasta 5 Ingredientes
+                  Elige hasta{' '}
+                  {productWithCustomization?.customization
+                    ?.maxIngredientSelections || 5}{' '}
+                  Ingredientes
                 </Text>
                 {showIngredients ? (
-                  <IconChevronUp size={24} />
+                  <IconChevronUp size={24} stroke={1.5} />
                 ) : (
-                  <IconChevronDown size={24} />
+                  <IconChevronDown size={24} stroke={1.5} />
                 )}
               </Flex>
 
@@ -458,14 +469,20 @@ const AddToCartModal = ({
               <Flex
                 className={styles.sectionHeader}
                 onClick={() => setShowCondiments(!showCondiments)}
+                justify="space-between"
+                align="center"
+                w="100%"
               >
                 <Text className={styles.sectionHeaderText}>
-                  Elige 3 Aderezos
+                  Elige{' '}
+                  {productWithCustomization?.customization
+                    ?.maxCondimentSelections || 3}{' '}
+                  Aderezos
                 </Text>
                 {showCondiments ? (
-                  <IconChevronUp size={24} />
+                  <IconChevronUp size={24} stroke={1.5} />
                 ) : (
-                  <IconChevronDown size={24} />
+                  <IconChevronDown size={24} stroke={1.5} />
                 )}
               </Flex>
 
@@ -502,7 +519,7 @@ const AddToCartModal = ({
 
           {/* Footer always at the bottom of the modal body */}
           <div className={styles.footer}>
-            <Flex className={styles.quantityControls}>
+            <Flex className={styles.quantityControls} align="center" gap={8}>
               {quantity > 1 ? (
                 <IconCircleMinus
                   size={26}
@@ -531,89 +548,45 @@ const AddToCartModal = ({
                 style={{
                   display: 'flex',
                   flexDirection: 'row',
-                  gap: '171px',
                   width: '100%',
                   alignItems: 'center',
-                  justifyContent: 'center',
+                  justifyContent: 'space-between',
                 }}
               >
                 <div
                   style={{
                     display: 'flex',
-                    flexDirection: 'row',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    width: '157px',
                     height: '26px',
                   }}
                 >
-                  <div
+                  <IconShoppingCart size={24} style={{ marginRight: '8px' }} />
+                  <Text
                     style={{
-                      width: '24px',
-                      height: '24px',
-                      position: 'relative',
-                      flex: 'none',
-                      order: 0,
-                      flexGrow: 0,
-                    }}
-                  >
-                    <IconShoppingCart
-                      size={24}
-                      style={{
-                        position: 'absolute',
-                        left: '16.67%',
-                        right: '16.67%',
-                        top: '12.5%',
-                        bottom: '12.5%',
-                        // border: '2px solid #B3FF00',
-                      }}
-                    />
-                  </div>
-                  <div
-                    style={{
-                      width: '118px',
-                      height: '20px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
                       fontFamily: 'Inter',
                       fontWeight: 600,
                       fontSize: '14px',
                       lineHeight: '20px',
-                      textAlign: 'center',
                       color: '#B3FF00',
-                      flex: 'none',
-                      order: 1,
-                      flexGrow: 0,
-                      marginLeft: '15px',
                       whiteSpace: 'nowrap',
                     }}
                   >
                     {PRODUCT_TEXTS.ADD_TO_CART}
-                  </div>
+                  </Text>
                 </div>
-                <div
+                <Text
                   style={{
-                    width: '121px',
-                    height: '20px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
                     fontFamily: 'Inter',
                     fontWeight: 600,
                     fontSize: '14px',
                     lineHeight: '20px',
-                    textAlign: 'center',
                     color: '#B3FF00',
-                    flex: 'none',
-                    order: 1,
-                    flexGrow: 0,
                     whiteSpace: 'nowrap',
-                    marginRight: '8px',
                   }}
                 >
                   {`Subtotal: $${finalPrice.toFixed(2)}`}
-                </div>
+                </Text>
               </div>
             </Button>
           </div>

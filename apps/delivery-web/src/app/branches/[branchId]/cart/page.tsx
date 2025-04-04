@@ -723,7 +723,7 @@ export default function CheckoutPage() {
           product={currentProduct}
           opened={editModalOpen}
           onClose={handleCloseEditModal}
-          onAddToCart={(quantity, cartItem) => {
+          onAddToCart={(quantity: number, cartItem: any) => {
             if (cartItem) {
               // If we have a full cartItem with customizations, use it
               const { ingredients, condiments, comments, totalPrice } =
