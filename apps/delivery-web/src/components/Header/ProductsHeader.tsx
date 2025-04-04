@@ -103,6 +103,7 @@ export function ProductsHeader({
             left: 0,
             top: 0,
             backgroundColor: '#000000',
+            maxWidth: '1440px',
           }}
         />
 
