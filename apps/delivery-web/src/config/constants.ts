@@ -97,6 +97,8 @@ export const MODAL_TEXTS = {
   INGREDIENTS_SUFFIX: 'Ingredientes',
   COMMENTS_PLACEHOLDER: 'Instrucciones especiales, alergias, etc.',
   CHAR_COUNT: 'caracteres',
+  CONDIMENTS_SECTION_TITLE: 'Elige',
+  CONDIMENTS_SUFFIX: 'Aderezos',
 };
 
 export const MENU_TEXTS = {

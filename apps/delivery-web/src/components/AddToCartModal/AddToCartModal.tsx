@@ -368,9 +368,11 @@ const AddToCartModal = ({
 
               {/* Comments Section */}
               <Box className={styles.commentsContainer}>
-                <Text className={styles.sectionLabel}>Comentarios</Text>
+                <Text className={styles.sectionLabel}>
+                  {MODAL_TEXTS.COMMENTS_LABEL}
+                </Text>
                 <Textarea
-                  placeholder="Instrucciones especiales, alergias, etc."
+                  placeholder={MODAL_TEXTS.COMMENTS_PLACEHOLDER}
                   value={comments}
                   onChange={handleCommentsChange}
                   maxLength={100}
@@ -410,10 +412,10 @@ const AddToCartModal = ({
                 w="100%"
               >
                 <Text className={styles.sectionHeaderText}>
-                  Elige hasta{' '}
+                  {MODAL_TEXTS.INGREDIENTS_SECTION_TITLE}{' '}
                   {productWithCustomization?.customization
                     ?.maxIngredientSelections || 5}{' '}
-                  Ingredientes
+                  {MODAL_TEXTS.INGREDIENTS_SUFFIX}
                 </Text>
                 {showIngredients ? (
                   <IconChevronUp size={24} stroke={1.5} />
@@ -474,10 +476,10 @@ const AddToCartModal = ({
                 w="100%"
               >
                 <Text className={styles.sectionHeaderText}>
-                  Elige{' '}
+                  {MODAL_TEXTS.CONDIMENTS_SECTION_TITLE}{' '}
                   {productWithCustomization?.customization
                     ?.maxCondimentSelections || 3}{' '}
-                  Aderezos
+                  {MODAL_TEXTS.CONDIMENTS_SUFFIX}
                 </Text>
                 {showCondiments ? (
                   <IconChevronUp size={24} stroke={1.5} />
