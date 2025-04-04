@@ -527,13 +527,94 @@ const AddToCartModal = ({
               className={styles.addToCartButton}
               onClick={handleAddToCart}
             >
-              <Flex align="flex-start" gap={8}>
-                <IconShoppingCart size={24} />
-                <Text>{PRODUCT_TEXTS.ADD_TO_CART}</Text>
-              </Flex>
-              <Flex align="flex-end">
-                <Text>{`Subtotal: $${finalPrice.toFixed(2)}`}</Text>
-              </Flex>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  gap: '171px',
+                  width: '100%',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '157px',
+                    height: '26px',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '24px',
+                      height: '24px',
+                      position: 'relative',
+                      flex: 'none',
+                      order: 0,
+                      flexGrow: 0,
+                    }}
+                  >
+                    <IconShoppingCart
+                      size={24}
+                      style={{
+                        position: 'absolute',
+                        left: '16.67%',
+                        right: '16.67%',
+                        top: '12.5%',
+                        bottom: '12.5%',
+                        // border: '2px solid #B3FF00',
+                      }}
+                    />
+                  </div>
+                  <div
+                    style={{
+                      width: '118px',
+                      height: '20px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontFamily: 'Inter',
+                      fontWeight: 600,
+                      fontSize: '14px',
+                      lineHeight: '20px',
+                      textAlign: 'center',
+                      color: '#B3FF00',
+                      flex: 'none',
+                      order: 1,
+                      flexGrow: 0,
+                      marginLeft: '15px',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {PRODUCT_TEXTS.ADD_TO_CART}
+                  </div>
+                </div>
+                <div
+                  style={{
+                    width: '121px',
+                    height: '20px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontFamily: 'Inter',
+                    fontWeight: 600,
+                    fontSize: '14px',
+                    lineHeight: '20px',
+                    textAlign: 'center',
+                    color: '#B3FF00',
+                    flex: 'none',
+                    order: 1,
+                    flexGrow: 0,
+                    whiteSpace: 'nowrap',
+                    marginRight: '8px',
+                  }}
+                >
+                  {`Subtotal: $${finalPrice.toFixed(2)}`}
+                </div>
+              </div>
             </Button>
           </div>
         </div>
