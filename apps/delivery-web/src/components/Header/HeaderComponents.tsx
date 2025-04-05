@@ -2,7 +2,7 @@
 
 import { Text, TextInput, ActionIcon } from '@mantine/core';
 import { IconSearch, IconMenu2 } from '@tabler/icons-react';
-import { MENU_TEXTS, SEARCH_TEXTS } from '../../config/constants';
+import { SEARCH_TEXTS } from '../../config/constants';
 
 /**
  * Logo component used across different header styles
@@ -61,7 +61,7 @@ export const SearchBar = ({
   value: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
-  styles?: Record<string, any>;
+  styles?: Partial<Record<string, unknown>>;
   variant?: 'white' | 'light-gray';
 }) => {
   // Define variant-specific base styles
@@ -138,7 +138,7 @@ export const SearchBar = ({
       placeholder={placeholder}
       value={value}
       onChange={onChange}
-      styles={mergedStyles}
+      styles={mergedStyles as Partial<Record<string, unknown>>}
       rightSection={
         <ActionIcon
           style={{
