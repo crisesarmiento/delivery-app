@@ -34,6 +34,8 @@ export const CHECKOUT_TEXTS = {
   CREDIT_CARD: 'Tarjeta de crédito',
   PAYMENT_AMOUNT: 'Monto de pago',
   ORDER_SUMMARY: 'Resumen del pedido',
+  SUMMARY_TITLE: 'Resumen',
+  PRODUCTS_LABEL: 'Productos',
   SUBTOTAL: 'Subtotal',
   PRODUCT_DISCOUNT: 'Descuento productos',
   PAYMENT_DISCOUNT: 'Descuento de pago',
@@ -41,6 +43,10 @@ export const CHECKOUT_TEXTS = {
   TOTAL: 'Total',
   CONFIRM_ORDER: 'Confirmar pedido',
   VALIDATION_ERROR: 'Por favor completa los siguientes campos:',
+  PAYMENT_DISCOUNT_WITH_PERCENTAGE: 'Transferencia Bancaria (Descuento 10%)',
+  CASH_WITH_PERCENTAGE: 'Efectivo (Descuento 10%)',
+  PAYMENT_AMOUNT_QUESTION: 'Con cuánto vas a pagar?',
+  NOTE_FOR_RESTAURANT: 'Nota para el local',
 };
 
 export const COMMON_TEXTS = {

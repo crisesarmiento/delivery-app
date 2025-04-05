@@ -26,6 +26,16 @@ import { IBranch, IProduct } from '../../../../types';
 import { CHECKOUT_TEXTS, COMMON_TEXTS } from '../../../../config/constants';
 import AddToCartModal from '@/components/AddToCartModal/AddToCartModal';
 
+interface CartItemCustomization {
+  product: IProduct;
+  quantity: number;
+  uniqueId?: string;
+  ingredients?: Array<{ name: string; quantity: number; price?: number }>;
+  condiments?: string[];
+  comments?: string;
+  totalPrice?: number;
+}
+
 export default function CheckoutPage() {
   const params = useParams();
   const router = useRouter();
@@ -225,7 +235,9 @@ export default function CheckoutPage() {
       <Box className={styles.contentContainer}>
         {/* Left Section - Delivery Details */}
         <Box className={styles.leftSection} style={{ paddingBottom: '20px' }}>
-          <Text className={styles.sectionTitle}>Detalle de entrega</Text>
+          <Text className={styles.sectionTitle}>
+            {CHECKOUT_TEXTS.DELIVERY_DETAILS}
+          </Text>
 
           {/* Delivery Method Toggle */}
           <Flex className={styles.deliveryToggle}>
@@ -237,7 +249,7 @@ export default function CheckoutPage() {
               }`}
               onClick={() => setDeliveryMethod('delivery')}
             >
-              <Text>Delivery</Text>
+              <Text>{CHECKOUT_TEXTS.DELIVERY}</Text>
             </Box>
             <Box
               className={`${styles.toggleButton} ${
@@ -247,14 +259,15 @@ export default function CheckoutPage() {
               }`}
               onClick={() => setDeliveryMethod('pickup')}
             >
-              <Text>Retiro</Text>
+              <Text>{CHECKOUT_TEXTS.PICKUP}</Text>
             </Box>
           </Flex>
 
           {/* Customer Information Form */}
           <Box className={styles.formField}>
             <Text className={styles.formLabel}>
-              Nombre completo<span className={styles.requiredAsterisk}>*</span>
+              {CHECKOUT_TEXTS.FULL_NAME}
+              <span className={styles.requiredAsterisk}>*</span>
             </Text>
             <TextInput
               placeholder=""
@@ -271,7 +284,8 @@ export default function CheckoutPage() {
 
           <Box className={styles.formField}>
             <Text className={styles.formLabel}>
-              Teléfono<span className={styles.requiredAsterisk}>*</span>
+              {CHECKOUT_TEXTS.PHONE}
+              <span className={styles.requiredAsterisk}>*</span>
             </Text>
             <TextInput
               placeholder=""
@@ -290,7 +304,8 @@ export default function CheckoutPage() {
             <>
               <Box className={styles.formField}>
                 <Text className={styles.formLabel}>
-                  Domicilio<span className={styles.requiredAsterisk}>*</span>
+                  {CHECKOUT_TEXTS.ADDRESS}
+                  <span className={styles.requiredAsterisk}>*</span>
                 </Text>
                 <TextInput
                   placeholder=""
@@ -310,7 +325,8 @@ export default function CheckoutPage() {
                   className={`${styles.formField} ${styles.cityProvinceItem}`}
                 >
                   <Text className={styles.formLabel}>
-                    Ciudad<span className={styles.requiredAsterisk}>*</span>
+                    {CHECKOUT_TEXTS.CITY}
+                    <span className={styles.requiredAsterisk}>*</span>
                   </Text>
                   <TextInput
                     placeholder=""
@@ -329,7 +345,8 @@ export default function CheckoutPage() {
                   className={`${styles.formField} ${styles.cityProvinceItem}`}
                 >
                   <Text className={styles.formLabel}>
-                    Provincia<span className={styles.requiredAsterisk}>*</span>
+                    {CHECKOUT_TEXTS.PROVINCE}
+                    <span className={styles.requiredAsterisk}>*</span>
                   </Text>
                   <TextInput
                     placeholder=""
@@ -349,7 +366,9 @@ export default function CheckoutPage() {
 
           {/* Note for the restaurant */}
           <Box style={{ marginTop: 16 }}>
-            <Text className={styles.textAreaLabel}>Nota para el local</Text>
+            <Text className={styles.textAreaLabel}>
+              {CHECKOUT_TEXTS.NOTE_FOR_RESTAURANT}
+            </Text>
             <Textarea
               placeholder=""
               value={note}
@@ -368,7 +387,9 @@ export default function CheckoutPage() {
           <Divider className={styles.divider} />
 
           {/* Payment Method Section */}
-          <Text className={styles.sectionTitle}>Forma de pago</Text>
+          <Text className={styles.sectionTitle}>
+            {CHECKOUT_TEXTS.PAYMENT_METHOD}
+          </Text>
 
           <Box>
             <Box
@@ -395,7 +416,7 @@ export default function CheckoutPage() {
                     : styles.radioButtonInactive
                 }
               >
-                Transferencia Bancaria (Descuento 10%)
+                {CHECKOUT_TEXTS.PAYMENT_DISCOUNT_WITH_PERCENTAGE}
               </Text>
             </Box>
 
@@ -423,7 +444,7 @@ export default function CheckoutPage() {
                     : styles.radioButtonInactive
                 }
               >
-                Mercado Pago
+                {CHECKOUT_TEXTS.CREDIT_CARD}
               </Text>
             </Box>
 
@@ -451,14 +472,16 @@ export default function CheckoutPage() {
                     : styles.radioButtonInactive
                 }
               >
-                Efectivo (Descuento 10%)
+                {CHECKOUT_TEXTS.CASH_WITH_PERCENTAGE}
               </Text>
             </Box>
           </Box>
 
           {/* Payment Amount */}
           <Box className={styles.formField} style={{ marginBottom: '0' }}>
-            <Text className={styles.formLabel}>Con cuánto vas a pagar?</Text>
+            <Text className={styles.formLabel}>
+              {CHECKOUT_TEXTS.PAYMENT_AMOUNT_QUESTION}
+            </Text>
             <NumberInput
               placeholder=""
               value={paymentAmount}
@@ -647,7 +670,9 @@ export default function CheckoutPage() {
           {/* Summary Box */}
           <Box className={styles.summaryBox}>
             <Box>
-              <Text className={styles.sectionTitle}>Resumen</Text>
+              <Text className={styles.sectionTitle}>
+                {CHECKOUT_TEXTS.SUMMARY_TITLE}
+              </Text>
               <Divider
                 className={styles.summaryDivider}
                 style={{ marginTop: -4 }}
@@ -655,7 +680,9 @@ export default function CheckoutPage() {
 
               {/* Price Summary */}
               <Box className={styles.priceLine}>
-                <Text className={styles.priceLabel}>Productos</Text>
+                <Text className={styles.priceLabel}>
+                  {CHECKOUT_TEXTS.PRODUCTS_LABEL}
+                </Text>
                 <Text className={styles.priceValue}>
                   ${subtotal.toLocaleString()}
                 </Text>
@@ -663,7 +690,7 @@ export default function CheckoutPage() {
 
               <Box className={styles.priceLine}>
                 <Text className={styles.priceLabel}>
-                  Descuento de productos
+                  {CHECKOUT_TEXTS.PRODUCT_DISCOUNT}
                 </Text>
                 <Text className={styles.discountValue}>
                   -${productDiscount.toLocaleString()}
@@ -673,7 +700,9 @@ export default function CheckoutPage() {
               <Divider className={styles.summaryDivider} />
 
               <Box className={styles.priceLine}>
-                <Text className={styles.sectionSubtitle}>Subtotal</Text>
+                <Text className={styles.sectionSubtitle}>
+                  {CHECKOUT_TEXTS.SUBTOTAL}
+                </Text>
                 <Text className={styles.priceValue}>
                   ${(subtotal - productDiscount).toLocaleString()}
                 </Text>
@@ -681,7 +710,7 @@ export default function CheckoutPage() {
 
               <Box className={styles.priceLine}>
                 <Text className={styles.priceLabel}>
-                  Descuento forma de pago
+                  {CHECKOUT_TEXTS.PAYMENT_DISCOUNT}
                 </Text>
                 <Text className={styles.discountValue}>
                   -${paymentDiscount.toLocaleString()}
@@ -689,7 +718,9 @@ export default function CheckoutPage() {
               </Box>
 
               <Box className={styles.priceLine}>
-                <Text className={styles.priceLabel}>Envío</Text>
+                <Text className={styles.priceLabel}>
+                  {CHECKOUT_TEXTS.SHIPPING_COST}
+                </Text>
                 <Text className={styles.priceValue}>
                   ${shippingCost.toLocaleString()}
                 </Text>
@@ -698,7 +729,9 @@ export default function CheckoutPage() {
               <Divider className={styles.summaryDivider} />
 
               <Box className={styles.priceLine}>
-                <Text className={styles.totalLabel}>Total</Text>
+                <Text className={styles.totalLabel}>
+                  {CHECKOUT_TEXTS.TOTAL}
+                </Text>
                 <Text className={styles.totalValue}>
                   ${total.toLocaleString()}
                 </Text>
@@ -711,7 +744,7 @@ export default function CheckoutPage() {
               onClick={handleCheckout}
               fullWidth
             >
-              Confirmar pedido
+              {CHECKOUT_TEXTS.CONFIRM_ORDER}
             </Button>
           </Box>
         </Box>
@@ -723,7 +756,7 @@ export default function CheckoutPage() {
           product={currentProduct}
           opened={editModalOpen}
           onClose={handleCloseEditModal}
-          onAddToCart={(quantity: number, cartItem: any) => {
+          onAddToCart={(quantity: number, cartItem?: CartItemCustomization) => {
             if (cartItem) {
               // If we have a full cartItem with customizations, use it
               const { ingredients, condiments, comments, totalPrice } =

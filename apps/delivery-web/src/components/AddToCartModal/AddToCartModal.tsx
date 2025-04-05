@@ -36,11 +36,21 @@ interface CondimentItem {
   selected: boolean;
 }
 
+interface CartItemCustomization {
+  product: IProduct;
+  quantity: number;
+  uniqueId?: string;
+  ingredients?: Array<{ name: string; quantity: number; price?: number }>;
+  condiments?: string[];
+  comments?: string;
+  totalPrice?: number;
+}
+
 interface AddToCartModalProps {
   product: IProduct;
   opened: boolean;
   onClose: () => void;
-  onAddToCart: (quantity: number, cartItem?: any) => void;
+  onAddToCart: (quantity: number, cartItem?: CartItemCustomization) => void;
   initialQuantity?: number;
   initialIngredients?: IngredientItem[];
   initialCondiments?: string[];
@@ -279,15 +289,13 @@ const AddToCartModal = ({
     const selectedIngredients = ingredients.filter((ing) => ing.quantity > 0);
 
     // Create cart item with customizations
-    const cartItem: CartItem = {
+    const cartItem: CartItemCustomization = {
       product,
       quantity,
       uniqueId: Date.now().toString(), // Generate a unique ID for this customization
-      customizations: {
-        ingredients: ingredients.filter((ing) => ing.quantity > 0),
-        condiments: condiments.filter((c) => c.selected).map((c) => c.name),
-        comments,
-      },
+      ingredients: ingredients.filter((ing) => ing.quantity > 0),
+      condiments: condiments.filter((c) => c.selected).map((c) => c.name),
+      comments,
     };
 
     onAddToCart(cartItem.quantity, cartItem);
