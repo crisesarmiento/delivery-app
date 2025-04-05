@@ -22,7 +22,6 @@ import {
 import { IProduct } from '../../types';
 import styles from './AddToCartModal.module.css';
 import { getProductById } from '../../mocks/products.mock';
-import { CartItem } from '../../context/CartContext';
 import { PRODUCT_TEXTS, MODAL_TEXTS } from '../../config/constants';
 
 interface IngredientItem {
@@ -93,24 +92,21 @@ const AddToCartModal = ({
   );
 
   // Memoize discount calculations to prevent recalculations on every render
-  const { hasDiscount, discountPercentage, originalPrice, discountedPrice } =
-    useMemo(() => {
-      const hasDiscount =
-        product.name.toLowerCase().includes('promo') ||
-        (typeof product.id === 'number'
-          ? product.id % 3 === 0
-          : String(product.id).length % 3 === 0);
-      const discountPercentage = hasDiscount ? 20 : 0;
-      const originalPrice = hasDiscount ? product.price * 1.2 : null;
-      const discountedPrice = hasDiscount ? product.price : product.price;
+  const { hasDiscount, originalPrice, discountedPrice } = useMemo(() => {
+    const hasDiscount =
+      product.name.toLowerCase().includes('promo') ||
+      (typeof product.id === 'number'
+        ? product.id % 3 === 0
+        : String(product.id).length % 3 === 0);
+    const originalPrice = hasDiscount ? product.price * 1.2 : null;
+    const discountedPrice = hasDiscount ? product.price : product.price;
 
-      return {
-        hasDiscount,
-        discountPercentage,
-        originalPrice,
-        discountedPrice,
-      };
-    }, [product.name, product.id, product.price]);
+    return {
+      hasDiscount,
+      originalPrice,
+      discountedPrice,
+    };
+  }, [product.name, product.id, product.price]);
 
   // Memoize ingredient and condiment options
   const { ingredientOptions, condimentOptions } = useMemo(() => {
@@ -286,9 +282,6 @@ const AddToCartModal = ({
 
   const handleAddToCart = () => {
     // Get selected ingredients and condiments
-    const selectedIngredients = ingredients.filter((ing) => ing.quantity > 0);
-
-    // Create cart item with customizations
     const cartItem: CartItemCustomization = {
       product,
       quantity,
