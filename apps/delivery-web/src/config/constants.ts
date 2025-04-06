@@ -122,8 +122,7 @@ export const MENU_TEXTS = {
 };
 
 export const CATEGORY_TEXTS = {
-  PROMO: 'Promociones',
-  CATEGORY_TITLE: 'Categorías',
+  TITLE: 'Categorías',
 };
 
 // New constant group for branch hours texts
