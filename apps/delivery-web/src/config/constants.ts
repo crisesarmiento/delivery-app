@@ -95,6 +95,8 @@ export const PRODUCT_TEXTS = {
   CUSTOMIZATION: 'Personalización',
   QUANTITY: 'Cantidad',
   ADD_TO_CART_ARIA: 'Agregar al carrito',
+  OFF: 'OFF',
+  PROMO_KEYWORD: 'promo',
 };
 
 export const MODAL_TEXTS = {
@@ -186,4 +188,11 @@ export const FOOTER_TEXTS = {
   ALT_FACEBOOK: 'Facebook',
   ALT_TWITTER: 'Twitter',
   ALT_INSTAGRAM: 'Instagram',
+};
+
+// Append new accessibility texts
+export const ACCESSIBILITY_TEXTS = {
+  REMOVE_FROM_CART: 'Eliminar del carrito',
+  DECREASE_QUANTITY: 'Disminuir cantidad',
+  INCREASE_QUANTITY: 'Aumentar cantidad',
 };
