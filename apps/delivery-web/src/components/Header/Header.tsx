@@ -58,9 +58,7 @@ const Header = ({
   };
 
   // Update for the search bar placeholder
-  const placeholder = isMobile
-    ? SEARCH_TEXTS.FOOD_SEARCH_PLACEHOLDER
-    : SEARCH_TEXTS.BRANCH_SEARCH_PLACEHOLDER;
+  const placeholder = SEARCH_TEXTS.BRANCH_SEARCH_PLACEHOLDER;
 
   const headerContent = (
     <>
