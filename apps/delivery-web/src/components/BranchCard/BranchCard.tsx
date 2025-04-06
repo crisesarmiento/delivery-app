@@ -15,6 +15,7 @@ interface BranchCardProps {
 const BranchCard = ({ branch, onClick }: BranchCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [isClockHovered, setIsClockHovered] = useState(false);
 
   const handleClick = () => {
     if (onClick) {
@@ -30,8 +31,10 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
         width: '100%',
         maxWidth: '240px',
         height: '242px',
-        background: isHovered ? '#E3E8EF' : '#FFFFFF',
-        border: `1px solid ${isHovered ? '#C9CDD5' : '#EEF2F6'}`,
+        background: isHovered && !isClockHovered ? '#E3E8EF' : '#FFFFFF',
+        border: `1px solid ${
+          isHovered && !isClockHovered ? '#C9CDD5' : '#EEF2F6'
+        }`,
         boxShadow:
           '0px 1px 3px rgba(0, 0, 0, 0.05), 0px 20px 25px -5px rgba(0, 0, 0, 0.05), 0px 10px 10px -5px rgba(0, 0, 0, 0.04)',
         borderRadius: '8px',
@@ -107,8 +110,18 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
                   background: 'transparent',
                   borderRadius: '4px',
                 }}
-                onMouseEnter={() => setShowTooltip(true)}
-                onMouseLeave={() => setShowTooltip(false)}
+                onMouseEnter={(e) => {
+                  e.stopPropagation(); // Stop propagation to parent
+                  setShowTooltip(true);
+                  setIsClockHovered(true);
+                  setIsHovered(false); // Reset card hover state
+                }}
+                onMouseLeave={(e) => {
+                  e.stopPropagation(); // Stop propagation to parent
+                  setShowTooltip(false);
+                  setIsClockHovered(false);
+                }}
+                onMouseOver={(e) => e.stopPropagation()} // Prevent mouseOver event bubbling
                 onClick={(e) => {
                   // Prevent card click when clicking the icon
                   e.stopPropagation();
@@ -118,7 +131,7 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
                 <IconClock
                   size={18}
                   style={{
-                    color: isHovered ? '#000000' : '#939393',
+                    color: isHovered && !isClockHovered ? '#000000' : '#939393',
                     transition: 'color 0.2s',
                   }}
                 />
