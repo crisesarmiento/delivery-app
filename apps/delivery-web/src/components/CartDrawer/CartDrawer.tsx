@@ -1,15 +1,14 @@
 'use client';
 
-import { Box } from '@mantine/core';
-import { useRouter } from 'next/navigation';
+import { Box, Text, Divider, Button } from '@mantine/core';
+
 import { IProduct } from '../../types';
 import { useEffect, useState } from 'react';
-import { CART_TEXTS, ERROR_TEXTS } from '../../config/constants';
+import { IconShoppingCart, IconTrash } from '@tabler/icons-react';
+import { CART_TITLE, CART_TOTAL, CART_VIEW_BUTTON } from '@/constants/text';
+import { useMediaQuery } from '@mantine/hooks';
 import EmptyCart from './EmptyCart';
-import CartHeader from './CartHeader';
 import CartItem from './CartItem';
-import CartFooter from './CartFooter';
-
 interface CartItem {
   productId: string;
   quantity: number;
@@ -22,8 +21,7 @@ interface CartDrawerProps {
   onClose: () => void;
   cartItems: CartItem[];
   cartTotal: number;
-  onClearCart?: () => void;
-  branchId?: string;
+  isMobile?: boolean;
 }
 
 const CartDrawer = ({
@@ -31,12 +29,11 @@ const CartDrawer = ({
   onClose,
   cartItems,
   cartTotal,
-  onClearCart,
-  branchId,
 }: CartDrawerProps) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const router = useRouter();
+  const isMobileView = useMediaQuery('(max-width: 768px)');
+  const isOnMobile = isMobile !== undefined ? isMobile : isMobileView;
 
   // Check if viewport is mobile
   useEffect(() => {
@@ -65,28 +62,10 @@ const CartDrawer = ({
     }
   }, [opened, isMobile]);
 
-  const handleClearCart = () => {
-    // Add confirmation dialog before clearing cart
-    const confirmClear = window.confirm(CART_TEXTS.CART_EMPTY_CONFIRM);
-
-    if (confirmClear) {
-      if (onClearCart) {
-        onClearCart();
-      } else {
-        // Fallback implementation if onClearCart is not provided
-        alert(ERROR_TEXTS.MISSING_CALLBACK);
-      }
-    }
-  };
-
-  const handleGoToCheckout = () => {
-    if (branchId) {
-      router.push(`/branches/${branchId}/cart`);
-    } else {
-      console.error('Branch ID not provided to CartDrawer');
-      alert(CART_TEXTS.NO_BRANCH_SELECTED);
-    }
-  };
+  // Hide the cart drawer on mobile
+  if (isOnMobile) {
+    return null;
+  }
 
   // Don't render anything in mobile view
   if (isMobile) {
@@ -118,7 +97,37 @@ const CartDrawer = ({
       }}
       data-testid="cart-drawer"
     >
-      <CartHeader onClearCart={handleClearCart} />
+      <Box style={{ position: 'relative', padding: '0 16px 8px' }}>
+        <Text
+          style={{
+            fontFamily: 'Inter',
+            fontSize: '12px',
+            lineHeight: '18px',
+            fontWeight: 500,
+            color: '#000000',
+          }}
+        >
+          {CART_TITLE}
+        </Text>
+        <Box style={{ position: 'absolute', top: 0, right: 16 }}>
+          <IconTrash
+            size={18}
+            stroke={1.5}
+            style={{ cursor: 'pointer' }}
+            onClick={onClose}
+          />
+        </Box>
+      </Box>
+
+      <Divider
+        style={{
+          width: '90%',
+          margin: '0 auto 8px',
+          borderWidth: '0.7px',
+          borderStyle: 'solid',
+          borderColor: '#EEF2F6',
+        }}
+      />
 
       <Box
         style={{
@@ -142,7 +151,82 @@ const CartDrawer = ({
         })}
       </Box>
 
-      <CartFooter cartTotal={cartTotal} onCheckout={handleGoToCheckout} />
+      <Divider
+        style={{
+          width: '90%',
+          margin: '0 auto 8px',
+          borderWidth: '0.7px',
+          borderStyle: 'solid',
+          borderColor: '#EEF2F6',
+        }}
+      />
+
+      <Box style={{ padding: '8px 16px 0' }}>
+        <Box
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '16px',
+          }}
+        >
+          <Text
+            style={{
+              fontFamily: 'Inter',
+              fontSize: '12px',
+              lineHeight: '18px',
+              fontWeight: 500,
+            }}
+          >
+            {CART_TOTAL}
+          </Text>
+          <Text
+            style={{
+              fontFamily: 'Inter',
+              fontSize: '12px',
+              lineHeight: '18px',
+              fontWeight: 500,
+              textAlign: 'right',
+            }}
+          >
+            ${cartTotal.toLocaleString()}
+          </Text>
+        </Box>
+
+        <Button
+          fullWidth
+          style={{
+            backgroundColor: '#000000',
+            color: '#B3FF00',
+            height: '40px',
+            fontSize: '16px',
+            lineHeight: '20px',
+            borderRadius: '4px',
+            fontFamily: 'Inter',
+            fontWeight: 600,
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Box
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: '12px',
+            }}
+          >
+            <IconShoppingCart size={20} color="#B3FF00" stroke={2} />
+            <Text
+              style={{ color: '#B3FF00', fontSize: '16px', fontWeight: 600 }}
+            >
+              {CART_VIEW_BUTTON}
+            </Text>
+          </Box>
+        </Button>
+      </Box>
     </Box>
   );
 };

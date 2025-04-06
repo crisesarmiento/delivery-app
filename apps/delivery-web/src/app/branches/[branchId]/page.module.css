@@ -50,18 +50,27 @@
 
 .sectionsContainer {
   flex: 1;
-  padding: 0px;
   overflow-y: auto;
   background-color: #ffffff;
 }
 
-.closedBranchMessage {
-  background-color: rgba(255, 229, 229, 0.5);
-  border: 1px solid #ffcccc;
-  border-radius: 6px;
-  padding: 15px;
-  margin: 15px 0;
-  text-align: center;
+/* Cart button container - positioned at bottom but above global footer */
+.fixedCartContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px; /* Space for the global footer */
+  z-index: 10;
+}
+
+/* New cart button container that matches Figma design */
+.cartButtonContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px 0;
+  margin-bottom: 20px;
 }
 
 @media (max-width: 768px) {

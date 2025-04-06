@@ -1,5 +1,6 @@
 import { Text, Box, Tabs, ScrollArea } from '@mantine/core';
 import styles from './CategoryTabs.module.css';
+import { CATEGORY_TEXTS } from '../../config/constants';
 
 interface CategoryTabsProps {
   categories: string[];
@@ -20,7 +21,7 @@ export default function CategoryTabs({
         className={styles.categoryTitle}
         data-testid="category-tabs-title"
       >
-        Categorías
+        {CATEGORY_TEXTS.TITLE}
       </Text>
       <ScrollArea
         className={styles.categoriesContainer}
@@ -43,6 +44,7 @@ export default function CategoryTabs({
             variant="pills"
             radius="xl"
             data-testid="category-tabs-tabs"
+            style={{ width: '78px' }}
           >
             <Tabs.List
               style={{ display: 'flex', flexDirection: 'row' }}

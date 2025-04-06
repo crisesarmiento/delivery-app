@@ -22,8 +22,11 @@ import {
 import { IProduct } from '../../types';
 import styles from './AddToCartModal.module.css';
 import { getProductById } from '../../mocks/products.mock';
-import { CartItem } from '../../context/CartContext';
-import { PRODUCT_TEXTS, MODAL_TEXTS } from '../../config/constants';
+import {
+  PRODUCT_TEXTS,
+  MODAL_TEXTS,
+  TOOLTIP_TEXTS,
+} from '../../config/constants';
 
 interface IngredientItem {
   name: string;
@@ -36,11 +39,21 @@ interface CondimentItem {
   selected: boolean;
 }
 
+interface CartItemCustomization {
+  product: IProduct;
+  quantity: number;
+  uniqueId?: string;
+  ingredients?: Array<{ name: string; quantity: number; price?: number }>;
+  condiments?: string[];
+  comments?: string;
+  totalPrice?: number;
+}
+
 interface AddToCartModalProps {
   product: IProduct;
   opened: boolean;
   onClose: () => void;
-  onAddToCart: (quantity: number, cartItem?: any) => void;
+  onAddToCart: (quantity: number, cartItem?: CartItemCustomization) => void;
   initialQuantity?: number;
   initialIngredients?: IngredientItem[];
   initialCondiments?: string[];
@@ -83,24 +96,21 @@ const AddToCartModal = ({
   );
 
   // Memoize discount calculations to prevent recalculations on every render
-  const { hasDiscount, discountPercentage, originalPrice, discountedPrice } =
-    useMemo(() => {
-      const hasDiscount =
-        product.name.toLowerCase().includes('promo') ||
-        (typeof product.id === 'number'
-          ? product.id % 3 === 0
-          : String(product.id).length % 3 === 0);
-      const discountPercentage = hasDiscount ? 20 : 0;
-      const originalPrice = hasDiscount ? product.price * 1.2 : null;
-      const discountedPrice = hasDiscount ? product.price : product.price;
+  const { hasDiscount, originalPrice, discountedPrice } = useMemo(() => {
+    const hasDiscount =
+      product.name.toLowerCase().includes('promo') ||
+      (typeof product.id === 'number'
+        ? product.id % 3 === 0
+        : String(product.id).length % 3 === 0);
+    const originalPrice = hasDiscount ? product.price * 1.2 : null;
+    const discountedPrice = hasDiscount ? product.price : product.price;
 
-      return {
-        hasDiscount,
-        discountPercentage,
-        originalPrice,
-        discountedPrice,
-      };
-    }, [product.name, product.id, product.price]);
+    return {
+      hasDiscount,
+      originalPrice,
+      discountedPrice,
+    };
+  }, [product.name, product.id, product.price]);
 
   // Memoize ingredient and condiment options
   const { ingredientOptions, condimentOptions } = useMemo(() => {
@@ -267,7 +277,12 @@ const AddToCartModal = ({
     // If too many selected, revert the change
     if (selectedCount > maxCondiments) {
       newCondiments[index].selected = !newCondiments[index].selected;
-      alert(`Solo puedes elegir ${maxCondiments} aderezos`);
+      alert(
+        MODAL_TEXTS.MAX_CONDIMENTS_ALERT.replace(
+          '{0}',
+          maxCondiments.toString()
+        )
+      );
       return;
     }
 
@@ -276,18 +291,13 @@ const AddToCartModal = ({
 
   const handleAddToCart = () => {
     // Get selected ingredients and condiments
-    const selectedIngredients = ingredients.filter((ing) => ing.quantity > 0);
-
-    // Create cart item with customizations
-    const cartItem: CartItem = {
+    const cartItem: CartItemCustomization = {
       product,
       quantity,
       uniqueId: Date.now().toString(), // Generate a unique ID for this customization
-      customizations: {
-        ingredients: ingredients.filter((ing) => ing.quantity > 0),
-        condiments: condiments.filter((c) => c.selected).map((c) => c.name),
-        comments,
-      },
+      ingredients: ingredients.filter((ing) => ing.quantity > 0),
+      condiments: condiments.filter((c) => c.selected).map((c) => c.name),
+      comments,
     };
 
     onAddToCart(cartItem.quantity, cartItem);
@@ -329,7 +339,11 @@ const AddToCartModal = ({
         ref={modalRef}
       >
         {/* Close button */}
-        <button className={styles.closeButton} onClick={onClose}>
+        <button
+          className={styles.closeButton}
+          onClick={onClose}
+          aria-label={TOOLTIP_TEXTS.CLOSE_MODAL}
+        >
           <IconX size={18} />
         </button>
 
@@ -368,9 +382,11 @@ const AddToCartModal = ({
 
               {/* Comments Section */}
               <Box className={styles.commentsContainer}>
-                <Text className={styles.sectionLabel}>Comentarios</Text>
+                <Text className={styles.sectionLabel}>
+                  {MODAL_TEXTS.COMMENTS_LABEL}
+                </Text>
                 <Textarea
-                  placeholder="Instrucciones especiales, alergias, etc."
+                  placeholder={MODAL_TEXTS.COMMENTS_PLACEHOLDER}
                   value={comments}
                   onChange={handleCommentsChange}
                   maxLength={100}
@@ -410,10 +426,10 @@ const AddToCartModal = ({
                 w="100%"
               >
                 <Text className={styles.sectionHeaderText}>
-                  Elige hasta{' '}
+                  {MODAL_TEXTS.INGREDIENTS_SECTION_TITLE}{' '}
                   {productWithCustomization?.customization
                     ?.maxIngredientSelections || 5}{' '}
-                  Ingredientes
+                  {MODAL_TEXTS.INGREDIENTS_SUFFIX}
                 </Text>
                 {showIngredients ? (
                   <IconChevronUp size={24} stroke={1.5} />
@@ -474,10 +490,10 @@ const AddToCartModal = ({
                 w="100%"
               >
                 <Text className={styles.sectionHeaderText}>
-                  Elige{' '}
+                  {MODAL_TEXTS.CONDIMENTS_SECTION_TITLE}{' '}
                   {productWithCustomization?.customization
                     ?.maxCondimentSelections || 3}{' '}
-                  Aderezos
+                  {MODAL_TEXTS.CONDIMENTS_SUFFIX}
                 </Text>
                 {showCondiments ? (
                   <IconChevronUp size={24} stroke={1.5} />
@@ -585,7 +601,7 @@ const AddToCartModal = ({
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  {`Subtotal: $${finalPrice.toFixed(2)}`}
+                  {`${MODAL_TEXTS.SUBTOTAL_LABEL}${finalPrice.toFixed(2)}`}
                 </Text>
               </div>
             </Button>

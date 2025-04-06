@@ -21,6 +21,7 @@ import styles from './ProductCard.module.css';
 import DiscountBadge from '../DiscountBadge';
 import AddToCartModal from '../AddToCartModal/AddToCartModal';
 import { useCart, CartItem } from '../../context/CartContext';
+import { BRANCH_TEXTS } from '../../config/constants';
 
 interface ProductCardProps {
   product: IProduct;
@@ -147,7 +148,9 @@ const ProductCard = ({ product, isDisabled = false }: ProductCardProps) => {
                 className={styles.unavailableBadge}
                 data-testid="product-card-unavailable-badge"
               >
-                {isDisabled ? 'Sucursal Cerrada' : 'No Disponible'}
+                {isDisabled
+                  ? BRANCH_TEXTS.BRANCH_CLOSED_MESSAGE
+                  : BRANCH_TEXTS.UNAVAILABLE_MESSAGE}
               </Badge>
             </Overlay>
           )}

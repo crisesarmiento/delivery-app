@@ -9,7 +9,7 @@ export const branchesMock: IBranch[] = [
     openingHours: '8:00 - 22:00',
     openingHoursStructured: {
       weekdays: { open: '06:00', close: '23:59' },
-      weekend: { open: '06:00', close: '23:59' },
+      weekend: { open: '00:00', close: '23:59' }, // Change for testing
     },
     phoneNumber: '555-1234',
     imageUrl: `/images/branches/1.jpg`,

@@ -4,6 +4,7 @@ import { Box, Text, Divider } from '@mantine/core';
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from './Footer.module.css';
+import { FOOTER_TEXTS } from '../../config/constants';
 
 const Footer = () => {
   return (
@@ -19,13 +20,13 @@ const Footer = () => {
               className={styles.poweredByText}
               data-testid="footer-powered-by-text"
             >
-              Powered by
+              {FOOTER_TEXTS.POWERED_BY}
             </Text>
             <Text
               className={styles.smartyText}
               data-testid="footer-smarty-text"
             >
-              SMARTY
+              {FOOTER_TEXTS.SMARTY}
             </Text>
           </Box>
 
@@ -39,14 +40,14 @@ const Footer = () => {
               className={styles.link}
               data-testid="footer-link-about"
             >
-              <Text>Acerca de Smarty</Text>
+              <Text>{FOOTER_TEXTS.ABOUT_SMARTY}</Text>
             </Link>
             <Link
               href="#"
               className={styles.link}
               data-testid="footer-link-contact"
             >
-              <Text>Contacto</Text>
+              <Text>{FOOTER_TEXTS.CONTACT}</Text>
             </Link>
           </Box>
         </Box>
@@ -93,8 +94,7 @@ const Footer = () => {
           </Link>
         </Box>
         <Text className={styles.copyright} data-testid="footer-copyright">
-          Copyright 2023 smarty.com | Todos los derechos reservados | Política
-          de privacidad | Términos y Condiciones de Uso
+          {FOOTER_TEXTS.COPYRIGHT}
         </Text>
       </Box>
     </Box>
