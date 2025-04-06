@@ -1,99 +1,69 @@
 'use client';
 
-import { Box, Text, useMantineTheme, Flex } from '@mantine/core';
+import { Button, Flex, Text } from '@mantine/core';
 import { IconShoppingCart } from '@tabler/icons-react';
-import { useEffect, useState } from 'react';
-import { CART_TEXTS } from '../../config/constants';
+import { IProduct } from '../../types';
 import styles from './MobileCartButton.module.css';
+import { CART_TITLE } from '@/constants/text';
+import { usePathname } from 'next/navigation';
 
-interface MobileCartButtonProps {
-  cartItemsCount: number;
-  cartTotal: number;
-  onClick: () => void;
+interface CartItem {
+  productId: string;
+  quantity: number;
+  product: IProduct;
 }
 
-const MobileCartButton = ({
-  cartItemsCount,
-  cartTotal,
-  onClick,
-}: MobileCartButtonProps) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const theme = useMantineTheme();
+interface MobileCartButtonProps {
+  cartItems: CartItem[];
+  cartTotal: number;
+  onClick?: () => void;
+}
 
-  // Only show on mobile devices
-  useEffect(() => {
-    const handleResize = () => {
-      setIsVisible(window.innerWidth <= 768);
+const MobileCartButton = ({ cartTotal, onClick }: MobileCartButtonProps) => {
+  const pathname = usePathname();
+  if (pathname === '/branches') return null;
 
-      // Log viewport dimensions to help with positioning
-      if (window.innerWidth <= 768) {
-        console.log('Mobile viewport dimensions:', {
-          width: window.innerWidth,
-          height: window.innerHeight,
-          pageHeight: document.body.scrollHeight,
-        });
-      }
-    };
-
-    // Check on mount
-    handleResize();
-
-    // Add resize listener
-    window.addEventListener('resize', handleResize);
-
-    // Clean up
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  // Don't render anything on desktop
-  if (!isVisible) {
-    return null;
-  }
-
-  // Determine appropriate button text based on cart state
-  const buttonText =
-    cartItemsCount === 0 ? CART_TEXTS.ADD_TO_CART : CART_TEXTS.CART_TITLE;
+  const handleClick = (e: React.MouseEvent) => {
+    if (onClick) {
+      e.preventDefault();
+      onClick();
+    }
+  };
 
   return (
-    <Box
-      className={styles.mobileCartButtonContainer}
-      data-testid="mobile-cart-button-container"
-    >
-      <Box
-        className={styles.mobileCartFixed}
-        onClick={onClick}
-        style={{ cursor: 'pointer' }}
-      >
-        <Flex align="center" gap={8} style={{ width: '100%' }}>
-          <IconShoppingCart
-            size={18}
-            color={theme.colors.action?.[4] || '#B3FF00'}
-            stroke={2}
-          />
-          <Text
+    <Flex className={styles.mobileCartButton}>
+      <Button unstyled className={styles.button} onClick={handleClick}>
+        <div style={{ width: '100%', position: 'relative', height: '100%' }}>
+          <div
             style={{
-              color: theme.colors.action?.[4] || '#B3FF00',
-              fontWeight: 600,
-              fontSize: theme.fontSizes.sm,
-              lineHeight: '20px',
+              position: 'absolute',
+              left: 0,
+              display: 'flex',
+              alignItems: 'center',
+              top: '50%',
+              transform: 'translateY(-50%)',
             }}
           >
-            {buttonText}
-          </Text>
-        </Flex>
-
-        <Text
-          style={{
-            color: theme.colors.action?.[4] || '#B3FF00',
-            fontWeight: 600,
-            fontSize: theme.fontSizes.sm,
-            lineHeight: '20px',
-          }}
-        >
-          {CART_TEXTS.SUBTOTAL}: ${cartTotal.toLocaleString()}
-        </Text>
-      </Box>
-    </Box>
+            <IconShoppingCart className={styles.iconShoppingCart} />
+            <Text className={styles.buttonText} style={{ marginLeft: '8px' }}>
+              {CART_TITLE}
+            </Text>
+          </div>
+          <div
+            style={{
+              position: 'absolute',
+              right: 0,
+              top: '50%',
+              transform: 'translateY(-50%)',
+            }}
+          >
+            <Text className={styles.totalAmount}>
+              Subtotal: ${cartTotal.toLocaleString()}
+            </Text>
+          </div>
+        </div>
+      </Button>
+    </Flex>
   );
 };
 

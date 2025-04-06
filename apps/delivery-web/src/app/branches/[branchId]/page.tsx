@@ -2,27 +2,23 @@
 
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Text, Box, useMantineTheme, Container } from '@mantine/core';
+import { Text, Box, Flex, useMantineTheme } from '@mantine/core';
 import { products } from '../../../mocks/products.mock';
 import { branchesMock } from '../../../mocks/branches.mock';
 import { IBranch, IProduct } from '../../../types';
 import styles from './page.module.css';
 import ProductsHeader from '@/components/Header/ProductsHeader';
 import CategoryTabs from '@/components/CategoryTabs/CategoryTabs';
-import CartDrawer from '@/components/CartDrawer/CartDrawer';
-import MobileCartButton from '@/components/MobileCartButton';
+import MobileCartButton from '@/components/MobileCartButton/MobileCartButton';
 import CategorySection from '@/components/CategorySection';
-import BasePage from '@/components/BasePage';
-import {
-  COMMON_TEXTS,
-  ERROR_TEXTS,
-  BRANCH_TEXTS,
-  CART_TEXTS,
-} from '../../../config/constants';
+import { NO_PRODUCTS_AVAILABLE } from '@/constants/text';
 import {
   useCart,
   CartItem as CartContextItem,
 } from '../../../context/CartContext';
+import { useMediaQuery } from '@mantine/hooks';
+import CartDrawer from '@/components/CartDrawer/CartDrawer';
+import { BRANCH_TEXTS, COMMON_TEXTS, ERROR_TEXTS } from '@/config/constants';
 import { isBranchOpen } from '@/utils/branch';
 
 export default function BranchProductsPage() {
@@ -35,8 +31,15 @@ export default function BranchProductsPage() {
     items: cartContextItems,
     addToCart: addToCartContext,
     getTotalPrice,
-    clearCart,
   } = useCart();
+
+  const isMobile = useMediaQuery('(max-width: 768px)');
+
+  useEffect(() => {
+    console.log('Dynamic route params:', params);
+    console.log('Branch ID:', branchId);
+    console.log('Available products for this branch:', products || []);
+  }, [params, branchId]);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('promo');
@@ -240,14 +243,18 @@ export default function BranchProductsPage() {
     return acc;
   }, {} as Record<string, IProduct[]>);
 
-  // Add a function to handle clearing the cart
-  const handleClearCart = (): void => {
-    clearCart();
+  // Open cart drawer
+  const openCartDrawer = () => {
+    setCartDrawerOpened(true);
   };
 
-  // Header component for the BasePage
-  const Header = (
-    <>
+  return (
+    <Flex
+      direction="column"
+      className={styles.productPageContainer}
+      style={{ minHeight: '100vh' }}
+    >
+      {/* Use the reusable Header component with product page configuration */}
       <ProductsHeader
         branch={currentBranch as IBranch}
         onBackClick={handleBack}
@@ -256,96 +263,81 @@ export default function BranchProductsPage() {
         isClosed={currentBranch ? !currentBranch.isOpen : false}
         closedMessage={BRANCH_TEXTS.BRANCH_CLOSED}
       />
+      {/* Categories tabs */}
       <CategoryTabs
         categories={categories}
         activeTab={activeTab}
         onTabChange={handleTabChange}
       />
-    </>
-  );
-
-  return (
-    <>
-      <BasePage
-        headerSlot={Header}
-        className={styles.productPageContainer}
+      {/* Category sections - scrollable area */}
+      <Box
+        className={styles.sectionsContainer}
         style={{
-          backgroundColor: theme.colors.neutral[0],
+          flex: 1,
+          overflowY: 'auto',
+          paddingBottom: isMobile ? '60px' : '0',
         }}
       >
-        <Container
-          size="xl"
-          px={{ base: theme.spacing.md, md: theme.spacing.xl, lg: '80px' }}
-          py={theme.spacing.xs}
-          style={{ paddingBottom: 0 }}
-        >
-          <Box
-            className={styles.sectionsContainer}
-            bg={theme.colors.neutral[0]}
-            style={{ borderRadius: theme.radius.md }}
-          >
-            {Object.keys(productsByCategory).length > 0 ? (
-              Object.entries(productsByCategory).map(([category, products]) => (
-                <Box
-                  key={category}
-                  ref={(el) => {
-                    sectionRefs.current[category.toLowerCase()] = el;
-                  }}
-                  m={0}
-                  p={0}
-                  style={{ width: '100%' }}
-                >
-                  <CategorySection
-                    title={category}
-                    products={products}
-                    onAddToCart={addToCart}
-                    isInitiallyExpanded={
-                      expandedSections[category.toLowerCase()] || false
-                    }
-                    onToggleExpand={(isExpanded) =>
-                      handleSectionToggle(category, isExpanded)
-                    }
-                    isDisabled={currentBranch ? !currentBranch.isOpen : false}
-                  />
-                </Box>
-              ))
-            ) : (
-              <Text
-                ta="center"
-                fz="lg"
-                c={theme.colors.neutral[5]}
-                py={theme.spacing.xl}
-                data-variant="body"
-              >
-                {COMMON_TEXTS.NO_PRODUCTS_AVAILABLE}
-              </Text>
-            )}
-            {/* Mobile cart button - only shown on mobile */}
-            <MobileCartButton
-              cartItemsCount={cartItems.length}
-              cartTotal={cartTotal}
-              onClick={() => {
-                if (branchId) {
-                  router.push(`/branches/${branchId}/cart`);
-                } else {
-                  console.error('Branch ID not provided to MobileCartButton');
-                  alert(CART_TEXTS.NO_BRANCH_SELECTED);
-                }
+        {Object.keys(productsByCategory).length > 0 ? (
+          Object.entries(productsByCategory).map(([category, products]) => (
+            <Flex
+              key={category}
+              ref={(el) => {
+                sectionRefs.current[category.toLowerCase()] = el;
               }}
-            />
-          </Box>
-        </Container>
-      </BasePage>
+              style={{
+                margin: 0,
+                padding: 0,
+                width: '100%',
+                marginBottom: '11px',
+              }}
+            >
+              <CategorySection
+                title={category}
+                products={products}
+                onAddToCart={addToCart}
+                isInitiallyExpanded={
+                  expandedSections[category.toLowerCase()] || false
+                }
+                onToggleExpand={(isExpanded) =>
+                  handleSectionToggle(category, isExpanded)
+                }
+              />
+            </Flex>
+          ))
+        ) : (
+          <Text
+            ta="center"
+            fz={theme.fontSizes.lg}
+            c="dimmed"
+            style={{ padding: '40px 0' }}
+          >
+            {NO_PRODUCTS_AVAILABLE}
+          </Text>
+        )}
+      </Box>
 
-      {/* Cart drawer - only shown on desktop */}
-      <CartDrawer
-        opened={cartDrawerOpened}
-        onClose={() => setCartDrawerOpened(false)}
-        cartItems={cartItems}
-        cartTotal={cartTotal}
-        onClearCart={handleClearCart}
-        branchId={branchId}
-      />
-    </>
+      {/* Cart button - now placed between sections and footer */}
+      {isMobile && (
+        <Box className={styles.cartButtonContainer}>
+          <MobileCartButton
+            onClick={openCartDrawer}
+            cartItems={cartItems}
+            cartTotal={cartTotal}
+          />
+        </Box>
+      )}
+
+      {/* Only show CartDrawer in desktop view */}
+      {!isMobile && (
+        <CartDrawer
+          opened={cartDrawerOpened}
+          onClose={() => setCartDrawerOpened(false)}
+          cartItems={cartItems}
+          cartTotal={cartTotal}
+          isMobile={false}
+        />
+      )}
+    </Flex>
   );
 }

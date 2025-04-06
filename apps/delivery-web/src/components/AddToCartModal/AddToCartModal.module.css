@@ -589,7 +589,28 @@
   width: 17px;
 }
 
-.quantityControls {
+.quantityContainer {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-top: 24px;
+}
+
+.footerContainer {
+  padding: 16px 32px;
+  background-color: #ffffff;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  height: 72px;
+  border-top: 1px solid #eef2f6;
+}
+
+.footerActions {
   display: flex;
   align-items: center;
   justify-content: center;
