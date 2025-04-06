@@ -2,6 +2,7 @@
 
 import { Box, Text, Divider } from '@mantine/core';
 import React, { useRef, useEffect, useState } from 'react';
+import { BRANCH_HOURS_TEXTS } from '../../config/constants';
 
 interface BranchHoursTooltipProps {
   isVisible: boolean;
@@ -75,7 +76,7 @@ export default function BranchHoursTooltip({
                 paddingRight: '20px', // Leave space for the clock
               }}
             >
-              Horarios
+              {BRANCH_HOURS_TEXTS.TITLE}
             </Text>
 
             <Divider
@@ -103,7 +104,7 @@ export default function BranchHoursTooltip({
                     color: '#000000',
                   }}
                 >
-                  Lunes a Jueves
+                  {BRANCH_HOURS_TEXTS.MONDAY_TO_THURSDAY}
                 </Text>
                 <Text
                   style={{
@@ -137,7 +138,7 @@ export default function BranchHoursTooltip({
                     color: '#000000',
                   }}
                 >
-                  Viernes a Domingo
+                  {BRANCH_HOURS_TEXTS.FRIDAY_TO_SUNDAY}
                 </Text>
                 <div>
                   <Text

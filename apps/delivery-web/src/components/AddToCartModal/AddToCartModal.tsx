@@ -22,7 +22,11 @@ import {
 import { IProduct } from '../../types';
 import styles from './AddToCartModal.module.css';
 import { getProductById } from '../../mocks/products.mock';
-import { PRODUCT_TEXTS, MODAL_TEXTS } from '../../config/constants';
+import {
+  PRODUCT_TEXTS,
+  MODAL_TEXTS,
+  TOOLTIP_TEXTS,
+} from '../../config/constants';
 
 interface IngredientItem {
   name: string;
@@ -335,7 +339,11 @@ const AddToCartModal = ({
         ref={modalRef}
       >
         {/* Close button */}
-        <button className={styles.closeButton} onClick={onClose}>
+        <button
+          className={styles.closeButton}
+          onClick={onClose}
+          aria-label={TOOLTIP_TEXTS.CLOSE_MODAL}
+        >
           <IconX size={18} />
         </button>
 
@@ -593,7 +601,7 @@ const AddToCartModal = ({
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  {`Subtotal: $${finalPrice.toFixed(2)}`}
+                  {`${MODAL_TEXTS.SUBTOTAL_LABEL}${finalPrice.toFixed(2)}`}
                 </Text>
               </div>
             </Button>

@@ -112,6 +112,7 @@ export const MODAL_TEXTS = {
   DISCOUNT_BADGE: '20% OFF',
   CHAR_COUNT_SUFFIX: '/100',
   MAX_CONDIMENTS_ALERT: 'Solo puedes elegir {0} aderezos',
+  SUBTOTAL_LABEL: 'Subtotal: $',
 };
 
 export const MENU_TEXTS = {
@@ -127,11 +128,14 @@ export const CATEGORY_TEXTS = {
 
 // New constant group for branch hours texts
 export const BRANCH_HOURS_TEXTS = {
-  TITLE: 'Horario',
+  TITLE: 'Horarios',
   WEEKDAY: 'Lunes a Viernes',
   SATURDAY: 'Sábado',
   SUNDAY: 'Domingo',
   CLOSED: 'Cerrado',
+  MONDAY_TO_THURSDAY: 'Lunes a Jueves',
+  FRIDAY_TO_SUNDAY: 'Viernes a Domingo',
+  TIME_FORMAT: '{0} hs - {1} hs',
 };
 
 // New constants for ProductGrid, CategorySection, etc.
@@ -194,4 +198,11 @@ export const ACCESSIBILITY_TEXTS = {
   REMOVE_FROM_CART: 'Eliminar del carrito',
   DECREASE_QUANTITY: 'Disminuir cantidad',
   INCREASE_QUANTITY: 'Aumentar cantidad',
+};
+
+// Add TOOLTIP_TEXTS for additional accessibility
+export const TOOLTIP_TEXTS = {
+  CLOSE_MODAL: 'Cerrar modal',
+  EXPAND_SECTION: 'Expandir sección',
+  COLLAPSE_SECTION: 'Colapsar sección',
 };
