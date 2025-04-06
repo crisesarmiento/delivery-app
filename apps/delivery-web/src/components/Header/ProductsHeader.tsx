@@ -125,6 +125,7 @@ export function ProductsHeader({
           </ActionIcon>
         </Box>
         <Text
+          onClick={onBackClick}
           style={{
             fontFamily: 'Inter, sans-serif',
             fontStyle: 'normal',
