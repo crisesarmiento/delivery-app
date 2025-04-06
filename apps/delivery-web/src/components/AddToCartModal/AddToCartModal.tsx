@@ -273,7 +273,12 @@ const AddToCartModal = ({
     // If too many selected, revert the change
     if (selectedCount > maxCondiments) {
       newCondiments[index].selected = !newCondiments[index].selected;
-      alert(`Solo puedes elegir ${maxCondiments} aderezos`);
+      alert(
+        MODAL_TEXTS.MAX_CONDIMENTS_ALERT.replace(
+          '{0}',
+          maxCondiments.toString()
+        )
+      );
       return;
     }
 

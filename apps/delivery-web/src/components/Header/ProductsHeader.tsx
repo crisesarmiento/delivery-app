@@ -9,6 +9,7 @@ import { MenuDrawer } from '../MenuDrawer/MenuDrawer';
 import { Logo, MenuButton, SearchBar } from './HeaderComponents';
 import { IBranch } from '@/types';
 import BaseHeader from './BaseHeader';
+import { HEADER_TEXTS, SEARCH_TEXTS } from '../../config/constants';
 
 interface ProductsHeaderProps {
   branch: IBranch;
@@ -136,7 +137,7 @@ export function ProductsHeader({
             letterSpacing: '0px',
           }}
         >
-          Atrás
+          {HEADER_TEXTS.BACK_BUTTON}
         </Text>
       </Flex>
 
@@ -201,7 +202,9 @@ export function ProductsHeader({
           value={onSearchChange ? searchValue : internalSearchValue}
           onChange={handleSearchChange}
           placeholder={
-            isMobile ? '¿Qué te gustaría comer hoy?' : 'Buscar un Producto...'
+            isMobile
+              ? SEARCH_TEXTS.FOOD_SEARCH_PLACEHOLDER
+              : SEARCH_TEXTS.PRODUCT_SEARCH_PLACEHOLDER
           }
           variant="light-gray"
           styles={{

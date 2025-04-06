@@ -2,7 +2,7 @@
 
 import { Text, TextInput, ActionIcon } from '@mantine/core';
 import { IconSearch, IconMenu2 } from '@tabler/icons-react';
-import { SEARCH_TEXTS } from '../../config/constants';
+import { SEARCH_TEXTS, HEADER_TEXTS } from '../../config/constants';
 
 /**
  * Logo component used across different header styles
@@ -21,7 +21,7 @@ export const Logo = () => (
       color: '#FFFFFF',
     }}
   >
-    PUNTO 33
+    {HEADER_TEXTS.LOGO_TEXT}
   </Text>
 );
 

@@ -67,6 +67,8 @@ export const BRANCH_TEXTS = {
   NO_BRANCHES_FOUND:
     'No se encontraron sucursales que coincidan con su búsqueda.',
   BRANCHES_TITLE: 'SUCURSALES',
+  OPEN_STATUS: 'Abierto',
+  CLOSED_STATUS: 'Cerrado',
 };
 
 export const ERROR_TEXTS = {
@@ -105,6 +107,9 @@ export const MODAL_TEXTS = {
   CHAR_COUNT: 'caracteres',
   CONDIMENTS_SECTION_TITLE: 'Elige',
   CONDIMENTS_SUFFIX: 'Aderezos',
+  DISCOUNT_BADGE: '20% OFF',
+  CHAR_COUNT_SUFFIX: '/100',
+  MAX_CONDIMENTS_ALERT: 'Solo puedes elegir {0} aderezos',
 };
 
 export const MENU_TEXTS = {
@@ -116,6 +121,16 @@ export const MENU_TEXTS = {
 
 export const CATEGORY_TEXTS = {
   PROMO: 'Promociones',
+  CATEGORY_TITLE: 'Categorías',
+};
+
+// New constant group for branch hours texts
+export const BRANCH_HOURS_TEXTS = {
+  TITLE: 'Horario',
+  WEEKDAY: 'Lunes a Viernes',
+  SATURDAY: 'Sábado',
+  SUNDAY: 'Domingo',
+  CLOSED: 'Cerrado',
 };
 
 // New constants for ProductGrid, CategorySection, etc.
@@ -142,6 +157,12 @@ export const SEARCH_TEXTS = {
   BRANCH_SEARCH_PLACEHOLDER: 'Busca una sucursal...',
   FOOD_SEARCH_PLACEHOLDER: '¿Qué te gustaría comer hoy?',
   DEFAULT_SEARCH_PLACEHOLDER: 'Buscar...',
+  PRODUCT_SEARCH_PLACEHOLDER: 'Buscar un Producto...',
+};
+
+export const HEADER_TEXTS = {
+  BACK_BUTTON: 'Atrás',
+  LOGO_TEXT: 'PUNTO 33',
 };
 
 // New constants for UI components
@@ -153,4 +174,16 @@ export const UI_CONSTANTS = {
     FILLED: 'filled',
     DEFAULT: 'default',
   },
+};
+
+export const FOOTER_TEXTS = {
+  POWERED_BY: 'Powered by',
+  SMARTY: 'SMARTY',
+  ABOUT_SMARTY: 'Acerca de Smarty',
+  CONTACT: 'Contacto',
+  COPYRIGHT:
+    'Copyright 2023 smarty.com | Todos los derechos reservados | Política de privacidad | Términos y Condiciones de Uso',
+  ALT_FACEBOOK: 'Facebook',
+  ALT_TWITTER: 'Twitter',
+  ALT_INSTAGRAM: 'Instagram',
 };
