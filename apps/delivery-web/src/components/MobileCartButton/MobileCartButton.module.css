@@ -3,35 +3,36 @@
   width: 100%;
   max-width: 367px;
   display: flex;
-  position: fixed;
-  bottom: 0;
   justify-content: center;
+  bottom: 46px;
 }
 
 .button {
   /* Button styling based on Figma specs */
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
+  position: relative;
   padding: 0px 12px;
-  gap: 113px;
   width: 367px;
   height: 40px;
   background: #000000;
   box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.03);
   border-radius: 4px;
-  position: relative;
 }
 
 .addToCartLeft {
   /* Left side of button with icon and text */
   display: flex;
   flex-direction: row;
-  align-items: center;
-  padding: 0px;
+  align-items: flex-start;
   gap: 8px;
-  height: 30px;
+  white-space: nowrap;
+}
+
+.addToCartRight {
+  /* Right side with subtotal */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  white-space: nowrap;
 }
 
 .iconShoppingCart {
@@ -47,14 +48,8 @@
   font-weight: 600;
   font-size: 14px;
   line-height: 20px;
-  text-align: center;
+  text-align: flex-start;
   color: #b3ff00;
-}
-
-.addToCartRight {
-  /* Right side with subtotal */
-  display: flex;
-  align-items: center;
 }
 
 .totalAmount {
@@ -64,6 +59,6 @@
   font-weight: 600;
   font-size: 14px;
   line-height: 20px;
-  text-align: center;
+  text-align: flex-end;
   color: #b3ff00;
 }

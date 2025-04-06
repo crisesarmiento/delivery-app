@@ -1,12 +1,11 @@
 'use client';
 
-import { Box, Button, Flex, Text } from '@mantine/core';
+import { Button, Flex, Text } from '@mantine/core';
 import { IconShoppingCart } from '@tabler/icons-react';
 import { IProduct } from '../../types';
 import styles from './MobileCartButton.module.css';
 import { CART_TITLE } from '@/constants/text';
 import { usePathname } from 'next/navigation';
-import { useCart } from '@/context/CartContext';
 
 interface CartItem {
   productId: string;
@@ -20,8 +19,7 @@ interface MobileCartButtonProps {
   onClick?: () => void;
 }
 
-const MobileCartButton = ({ onClick }: MobileCartButtonProps) => {
-  const { cartTotal } = useCart();
+const MobileCartButton = ({ cartTotal, onClick }: MobileCartButtonProps) => {
   const pathname = usePathname();
   if (pathname === '/branches') return null;
 
@@ -34,16 +32,36 @@ const MobileCartButton = ({ onClick }: MobileCartButtonProps) => {
 
   return (
     <Flex className={styles.mobileCartButton}>
-      <Button className={styles.button} onClick={handleClick}>
-        <Box className={styles.addToCartLeft}>
-          <IconShoppingCart className={styles.iconShoppingCart} />
-          <Text className={styles.buttonText}>{CART_TITLE}</Text>
-        </Box>
-        <Box className={styles.addToCartRight}>
-          <Text className={styles.totalAmount}>
-            Subtotal: ${cartTotal.toLocaleString()}
-          </Text>
-        </Box>
+      <Button unstyled className={styles.button} onClick={handleClick}>
+        <div style={{ width: '100%', position: 'relative', height: '100%' }}>
+          <div
+            style={{
+              position: 'absolute',
+              left: 0,
+              display: 'flex',
+              alignItems: 'center',
+              top: '50%',
+              transform: 'translateY(-50%)',
+            }}
+          >
+            <IconShoppingCart className={styles.iconShoppingCart} />
+            <Text className={styles.buttonText} style={{ marginLeft: '8px' }}>
+              {CART_TITLE}
+            </Text>
+          </div>
+          <div
+            style={{
+              position: 'absolute',
+              right: 0,
+              top: '50%',
+              transform: 'translateY(-50%)',
+            }}
+          >
+            <Text className={styles.totalAmount}>
+              Subtotal: ${cartTotal.toLocaleString()}
+            </Text>
+          </div>
+        </div>
       </Button>
     </Flex>
   );

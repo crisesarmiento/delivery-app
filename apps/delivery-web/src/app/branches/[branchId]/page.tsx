@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Text, Box, Flex } from '@mantine/core';
+import { Text, Box, Flex, useMantineTheme } from '@mantine/core';
 import { products } from '../../../mocks/products.mock';
 import { branchesMock } from '../../../mocks/branches.mock';
 import { IBranch, IProduct } from '../../../types';
@@ -18,6 +18,8 @@ import {
 } from '../../../context/CartContext';
 import { useMediaQuery } from '@mantine/hooks';
 import CartDrawer from '@/components/CartDrawer/CartDrawer';
+import { BRANCH_TEXTS, COMMON_TEXTS, ERROR_TEXTS } from '@/config/constants';
+import { isBranchOpen } from '@/utils/branch';
 
 export default function BranchProductsPage() {
   const params = useParams();
@@ -29,7 +31,6 @@ export default function BranchProductsPage() {
     items: cartContextItems,
     addToCart: addToCartContext,
     getTotalPrice,
-    clearCart,
   } = useCart();
 
   const isMobile = useMediaQuery('(max-width: 768px)');
@@ -305,15 +306,20 @@ export default function BranchProductsPage() {
             </Flex>
           ))
         ) : (
-          <Text ta="center" fz="lg" c="dimmed" style={{ padding: '40px 0' }}>
+          <Text
+            ta="center"
+            fz={theme.fontSizes.lg}
+            c="dimmed"
+            style={{ padding: '40px 0' }}
+          >
             {NO_PRODUCTS_AVAILABLE}
           </Text>
         )}
       </Box>
 
-      {/* Cart button */}
+      {/* Cart button - now placed between sections and footer */}
       {isMobile && (
-        <Box className={styles.fixedCartContainer}>
+        <Box className={styles.cartButtonContainer}>
           <MobileCartButton
             onClick={openCartDrawer}
             cartItems={cartItems}
