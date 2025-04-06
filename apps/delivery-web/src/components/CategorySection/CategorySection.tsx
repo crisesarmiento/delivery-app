@@ -39,7 +39,7 @@ const CategorySection = ({
   };
 
   return (
-    <Box className={styles.categorySection} mb="16px">
+    <Box className={styles.categorySection} mb="32px">
       <Box
         py={theme.spacing.xs}
         bg={theme.colors.neutral[1]}

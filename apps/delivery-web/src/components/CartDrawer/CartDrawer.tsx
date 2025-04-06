@@ -1,18 +1,14 @@
 'use client';
 
-import { Box, Flex, Text, Divider, Button } from '@mantine/core';
+import { Box, Text, Divider, Button } from '@mantine/core';
 
 import { IProduct } from '../../types';
 import { useEffect, useState } from 'react';
 import { IconShoppingCart, IconTrash } from '@tabler/icons-react';
-import {
-  CART_EMPTY_MESSAGE,
-  CART_TITLE,
-  CART_TOTAL,
-  CART_VIEW_BUTTON,
-} from '@/constants/text';
+import { CART_TITLE, CART_TOTAL, CART_VIEW_BUTTON } from '@/constants/text';
 import { useMediaQuery } from '@mantine/hooks';
-
+import EmptyCart from './EmptyCart';
+import CartItem from './CartItem';
 interface CartItem {
   productId: string;
   quantity: number;
@@ -33,112 +29,52 @@ const CartDrawer = ({
   onClose,
   cartItems,
   cartTotal,
-  isMobile,
 }: CartDrawerProps) => {
   const [isVisible, setIsVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const isMobileView = useMediaQuery('(max-width: 768px)');
   const isOnMobile = isMobile !== undefined ? isMobile : isMobileView;
 
+  // Check if viewport is mobile
   useEffect(() => {
-    setIsVisible(opened);
-  }, [opened]);
+    const checkMobile = () => {
+      const isMobileView = window.innerWidth <= 768;
+      setIsMobile(isMobileView);
+    };
+
+    // Check on mount
+    checkMobile();
+
+    // Add resize listener
+    window.addEventListener('resize', checkMobile);
+
+    // Clean up
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Handle visibility based on opened prop and mobile status
+  useEffect(() => {
+    // Only update visibility if not in mobile view
+    if (!isMobile) {
+      setIsVisible(opened);
+    } else {
+      setIsVisible(false);
+    }
+  }, [opened, isMobile]);
 
   // Hide the cart drawer on mobile
   if (isOnMobile) {
     return null;
   }
 
-  // For empty cart - compact floating card with specified dimensions
-  if (cartItems.length === 0) {
-    return (
-      <Box
-        style={{
-          position: 'absolute',
-          top: '406px',
-          right: isVisible ? '40px' : '-240px',
-          width: '200px',
-          height: '242px',
-          backgroundColor: '#FFFFFF',
-          border: '1px solid #EEF2F6',
-          boxShadow: '0px 4px 16px rgba(0, 0, 0, 0.1)',
-          borderRadius: '12px',
-          transition: 'right 0.3s ease',
-          zIndex: 1000,
-          overflow: 'hidden',
-        }}
-      >
-        <Flex
-          justify="flex-start"
-          align="center"
-          style={{ height: '32px', padding: '10px 16px' }}
-        >
-          <Text
-            style={{
-              fontFamily: 'Inter',
-              fontSize: '12px',
-              lineHeight: '18px',
-              color: '#000000',
-              fontWeight: 500,
-              height: '18px',
-            }}
-          >
-            {CART_TITLE}
-          </Text>
-        </Flex>
-
-        <Divider
-          style={{
-            width: '175px',
-            borderWidth: '0.7px',
-            borderStyle: 'solid',
-            borderColor: '#EEF2F6',
-            margin: '0 auto',
-          }}
-        />
-
-        <Flex
-          direction="column"
-          align="center"
-          justify="center"
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '40px 16px',
-            gap: '16px',
-          }}
-        >
-          <IconShoppingCart
-            style={{
-              width: '34px',
-              height: '34px',
-              color: '#939393',
-            }}
-          />
-          <Text
-            style={{
-              fontFamily: 'Inter',
-              fontWeight: 500,
-              fontSize: '12px',
-              lineHeight: '18px',
-              color: '#939393',
-              textAlign: 'center',
-              maxWidth: '180px',
-              margin: '0 auto',
-            }}
-          >
-            {CART_EMPTY_MESSAGE}
-          </Text>
-        </Flex>
-      </Box>
-    );
-  }
-
-  // For non-empty cart - show items and checkout option
-  // Don't render at all in mobile view
+  // Don't render anything in mobile view
   if (isMobile) {
     return null;
+  }
+
+  // For empty cart - compact floating card with specified dimensions
+  if (cartItems.length === 0) {
+    return <EmptyCart isVisible={isVisible} isMobile={isMobile} />;
   }
 
   return (

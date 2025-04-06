@@ -191,7 +191,7 @@ export default function BranchProductsPage() {
 
           // Scroll to position the header at the top with a small buffer
           window.scrollTo({
-            top: scrollTop - 16,
+            top: scrollTop - 120,
             behavior: 'smooth',
           });
         } else {
@@ -200,7 +200,7 @@ export default function BranchProductsPage() {
           const scrollTop = window.pageYOffset + rect.top;
 
           window.scrollTo({
-            top: scrollTop - 120,
+            top: scrollTop - 200,
             behavior: 'smooth',
           });
         }

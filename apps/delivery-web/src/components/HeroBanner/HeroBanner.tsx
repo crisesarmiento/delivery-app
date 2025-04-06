@@ -62,6 +62,7 @@ export function HeroBanner({
           bottom: 0,
           backgroundColor: 'rgba(0,0,0,0.5)',
           zIndex: 2,
+          width: '100%',
         }}
       />
 

@@ -43,10 +43,10 @@
   align-items: center;
   padding: 8px 16px;
   gap: 6px;
-  height: 32px;
+  height: 32px; /* spacing-4xl - assuming 4x base unit of 8px */
   background: #f8fafc;
   border: 1px solid #eef2f6;
-  border-radius: 24px;
+  border-radius: 24px; /* spacing-3xl - 3x base unit of 8px */
   font-family: 'Inter';
   font-style: normal;
   font-weight: 500;
@@ -98,6 +98,6 @@
 
   .tab {
     padding: 6px 12px;
-    height: 28px;
+    height: 28px; /* Reduced height for mobile */
   }
 }

@@ -34,6 +34,8 @@ export const CHECKOUT_TEXTS = {
   CREDIT_CARD: 'Tarjeta de crédito',
   PAYMENT_AMOUNT: 'Monto de pago',
   ORDER_SUMMARY: 'Resumen del pedido',
+  SUMMARY_TITLE: 'Resumen',
+  PRODUCTS_LABEL: 'Productos',
   SUBTOTAL: 'Subtotal',
   PRODUCT_DISCOUNT: 'Descuento productos',
   PAYMENT_DISCOUNT: 'Descuento de pago',
@@ -41,6 +43,10 @@ export const CHECKOUT_TEXTS = {
   TOTAL: 'Total',
   CONFIRM_ORDER: 'Confirmar pedido',
   VALIDATION_ERROR: 'Por favor completa los siguientes campos:',
+  PAYMENT_DISCOUNT_WITH_PERCENTAGE: 'Transferencia Bancaria (Descuento 10%)',
+  CASH_WITH_PERCENTAGE: 'Efectivo (Descuento 10%)',
+  PAYMENT_AMOUNT_QUESTION: 'Con cuánto vas a pagar?',
+  NOTE_FOR_RESTAURANT: 'Nota para el local',
 };
 
 export const COMMON_TEXTS = {
@@ -61,6 +67,8 @@ export const BRANCH_TEXTS = {
   NO_BRANCHES_FOUND:
     'No se encontraron sucursales que coincidan con su búsqueda.',
   BRANCHES_TITLE: 'SUCURSALES',
+  OPEN_STATUS: 'Abierto',
+  CLOSED_STATUS: 'Cerrado',
 };
 
 export const ERROR_TEXTS = {
@@ -87,6 +95,24 @@ export const PRODUCT_TEXTS = {
   CUSTOMIZATION: 'Personalización',
   QUANTITY: 'Cantidad',
   ADD_TO_CART_ARIA: 'Agregar al carrito',
+  OFF: 'OFF',
+  PROMO_KEYWORD: 'promo',
+};
+
+export const MODAL_TEXTS = {
+  CUSTOMIZE_HELPER_TEXT:
+    'En comentarios, aclaranos si lo preferis sin chimi. Gracias!',
+  COMMENTS_LABEL: 'Comentarios',
+  INGREDIENTS_SECTION_TITLE: 'Elige hasta',
+  INGREDIENTS_SUFFIX: 'Ingredientes',
+  COMMENTS_PLACEHOLDER: 'Instrucciones especiales, alergias, etc.',
+  CHAR_COUNT: 'caracteres',
+  CONDIMENTS_SECTION_TITLE: 'Elige',
+  CONDIMENTS_SUFFIX: 'Aderezos',
+  DISCOUNT_BADGE: '20% OFF',
+  CHAR_COUNT_SUFFIX: '/100',
+  MAX_CONDIMENTS_ALERT: 'Solo puedes elegir {0} aderezos',
+  SUBTOTAL_LABEL: 'Subtotal: $',
 };
 
 export const MENU_TEXTS = {
@@ -97,7 +123,19 @@ export const MENU_TEXTS = {
 };
 
 export const CATEGORY_TEXTS = {
-  PROMO: 'Promociones',
+  TITLE: 'Categorías',
+};
+
+// New constant group for branch hours texts
+export const BRANCH_HOURS_TEXTS = {
+  TITLE: 'Horarios',
+  WEEKDAY: 'Lunes a Viernes',
+  SATURDAY: 'Sábado',
+  SUNDAY: 'Domingo',
+  CLOSED: 'Cerrado',
+  MONDAY_TO_THURSDAY: 'Lunes a Jueves',
+  FRIDAY_TO_SUNDAY: 'Viernes a Domingo',
+  TIME_FORMAT: '{0} hs - {1} hs',
 };
 
 // New constants for ProductGrid, CategorySection, etc.
@@ -124,6 +162,12 @@ export const SEARCH_TEXTS = {
   BRANCH_SEARCH_PLACEHOLDER: 'Busca una sucursal...',
   FOOD_SEARCH_PLACEHOLDER: '¿Qué te gustaría comer hoy?',
   DEFAULT_SEARCH_PLACEHOLDER: 'Buscar...',
+  PRODUCT_SEARCH_PLACEHOLDER: 'Buscar un Producto...',
+};
+
+export const HEADER_TEXTS = {
+  BACK_BUTTON: 'Atrás',
+  LOGO_TEXT: 'PUNTO 33',
 };
 
 // New constants for UI components
@@ -135,4 +179,30 @@ export const UI_CONSTANTS = {
     FILLED: 'filled',
     DEFAULT: 'default',
   },
+};
+
+export const FOOTER_TEXTS = {
+  POWERED_BY: 'Powered by',
+  SMARTY: 'SMARTY',
+  ABOUT_SMARTY: 'Acerca de Smarty',
+  CONTACT: 'Contacto',
+  COPYRIGHT:
+    'Copyright 2023 smarty.com | Todos los derechos reservados | Política de privacidad | Términos y Condiciones de Uso',
+  ALT_FACEBOOK: 'Facebook',
+  ALT_TWITTER: 'Twitter',
+  ALT_INSTAGRAM: 'Instagram',
+};
+
+// Append new accessibility texts
+export const ACCESSIBILITY_TEXTS = {
+  REMOVE_FROM_CART: 'Eliminar del carrito',
+  DECREASE_QUANTITY: 'Disminuir cantidad',
+  INCREASE_QUANTITY: 'Aumentar cantidad',
+};
+
+// Add TOOLTIP_TEXTS for additional accessibility
+export const TOOLTIP_TEXTS = {
+  CLOSE_MODAL: 'Cerrar modal',
+  EXPAND_SECTION: 'Expandir sección',
+  COLLAPSE_SECTION: 'Colapsar sección',
 };

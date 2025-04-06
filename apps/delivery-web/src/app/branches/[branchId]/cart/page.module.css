@@ -464,4 +464,95 @@
     max-height: 400px;
     flex-shrink: 0;
   }
+
+  .productRow {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+    padding: 8px 0;
+  }
+
+  .productImage {
+    width: 80px;
+    height: 80px;
+    min-width: 80px;
+    object-fit: cover;
+  }
+
+  .productDetails {
+    padding: 0 8px;
+    flex: 1;
+    width: auto;
+  }
+
+  .productName {
+    width: 100%;
+    white-space: normal;
+    word-wrap: break-word;
+    font-size: 14px;
+    line-height: 18px;
+    margin-bottom: 4px;
+  }
+
+  .editLink {
+    margin-top: 2px;
+  }
+
+  .noteTextarea {
+    width: 100% !important;
+  }
+
+  .noteTextarea textarea {
+    min-height: 120px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .formInput {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+}
+
+/* Additional small screen adjustments */
+@media (max-width: 480px) {
+  .scrollableProductsContainer {
+    max-height: 240px;
+  }
+
+  .quantityControls {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .sectionTitle {
+    font-size: 20px;
+    line-height: 24px;
+  }
+
+  .productName,
+  .priceLabel,
+  .priceValue {
+    font-size: 14px;
+    line-height: 18px;
+  }
+
+  .productPrice {
+    font-size: 14px;
+    line-height: 18px;
+  }
+
+  .cityProvinceRow {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .cityProvinceItem {
+    width: 100%;
+  }
 }

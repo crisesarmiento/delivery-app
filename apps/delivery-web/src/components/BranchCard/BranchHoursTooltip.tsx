@@ -1,7 +1,8 @@
 'use client';
 
-import { Box, Text } from '@mantine/core';
-import React from 'react';
+import { Box, Text, Divider } from '@mantine/core';
+import React, { useRef, useEffect, useState } from 'react';
+import { BRANCH_HOURS_TEXTS } from '../../config/constants';
 
 interface BranchHoursTooltipProps {
   isVisible: boolean;
@@ -12,88 +13,111 @@ export default function BranchHoursTooltip({
   isVisible,
   trigger,
 }: BranchHoursTooltipProps) {
+  const triggerRef = useRef<HTMLDivElement>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
+  const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
+
+  useEffect(() => {
+    if (isVisible && triggerRef.current) {
+      const rect = triggerRef.current.getBoundingClientRect();
+
+      // Position tooltip with exact 3px spacing from clock icon
+      setTooltipPosition({
+        top: rect.top + window.scrollY - 3, // Exactly 3px space from top
+        left: rect.right - 213 - 3, // Exactly 3px space from right edge
+      });
+    }
+  }, [isVisible]);
+
   return (
-    <div style={{ position: 'relative' }}>
-      {trigger}
+    <div
+      ref={triggerRef}
+      style={{
+        position: 'relative',
+        display: 'inline-block',
+        zIndex: 1600, // Higher z-index for the trigger container
+      }}
+    >
+      {/* Trigger with higher z-index to appear over tooltip */}
+      <div style={{ position: 'relative', zIndex: 1600 }}>{trigger}</div>
 
       {isVisible && (
         <div
+          ref={tooltipRef}
           style={{
-            position: 'absolute',
-            bottom: '130%',
-            right: '-100px',
-            marginBottom: '8px',
-            backgroundColor: 'white',
+            position: 'fixed',
+            top: `${tooltipPosition.top}px`,
+            left: `${tooltipPosition.left}px`,
+            backgroundColor: '#FFFFFF',
             border: '1px solid #EEF2F6',
             boxShadow:
-              '0px 4px 6px -1px rgba(0, 0, 0, 0.1), 0px 2px 4px -1px rgba(0, 0, 0, 0.06)',
-            borderRadius: '8px',
-            padding: '12px',
-            zIndex: 1000,
-            width: '240px',
+              '0px 10px 10px -5px rgba(0, 0, 0, 0.04), 0px 20px 25px -5px rgba(0, 0, 0, 0.05), 0px 1px 3px rgba(0, 0, 0, 0.05)',
+            borderRadius: '4px',
+            padding: '12px 8px 9px 11px',
+            zIndex: 1500, // Keep below the trigger
+            width: '213px',
+            height: '114px',
+            boxSizing: 'border-box',
+            opacity: 1,
+            pointerEvents: 'none',
+            userSelect: 'none',
           }}
         >
-          {/* Triangle pointer */}
-          <div
-            style={{
-              position: 'absolute',
-              bottom: '-6px',
-              right: '110px',
-              width: '12px',
-              height: '12px',
-              backgroundColor: 'white',
-              border: '1px solid #EEF2F6',
-              borderTop: 'none',
-              borderLeft: 'none',
-              transform: 'rotate(45deg)',
-              boxShadow: '2px 2px 2px rgba(0, 0, 0, 0.03)',
-              zIndex: 999,
-            }}
-          />
-
-          <Box>
+          <Box style={{ position: 'relative' }}>
             <Text
               style={{
                 fontFamily: 'Inter',
-                fontWeight: 600,
-                fontSize: '14px',
-                lineHeight: '20px',
-                color: '#101828',
-                marginBottom: '8px',
+                fontStyle: 'normal',
+                fontWeight: 500,
+                fontSize: '12px',
+                lineHeight: '18px',
+                color: '#000000',
+                marginBottom: '9px',
+                paddingRight: '20px', // Leave space for the clock
               }}
             >
-              Horario
+              {BRANCH_HOURS_TEXTS.TITLE}
             </Text>
+
+            <Divider
+              style={{
+                border: '0.7px solid #EEF2F6',
+                marginBottom: '6px',
+              }}
+            />
 
             <Box>
               <div
                 style={{
                   display: 'flex',
                   justifyContent: 'space-between',
-                  marginBottom: '4px',
+                  marginBottom: '11px',
                 }}
               >
                 <Text
                   style={{
                     fontFamily: 'Inter',
+                    fontStyle: 'normal',
                     fontWeight: 400,
-                    fontSize: '14px',
-                    lineHeight: '20px',
-                    color: '#667085',
+                    fontSize: '10px',
+                    lineHeight: '18px',
+                    color: '#000000',
                   }}
                 >
-                  Lunes a Viernes
+                  {BRANCH_HOURS_TEXTS.MONDAY_TO_THURSDAY}
                 </Text>
                 <Text
                   style={{
                     fontFamily: 'Inter',
-                    fontWeight: 500,
-                    fontSize: '14px',
-                    lineHeight: '20px',
-                    color: '#101828',
+                    fontStyle: 'normal',
+                    fontWeight: 400,
+                    fontSize: '10px',
+                    lineHeight: '18px',
+                    color: '#6C7684',
+                    whiteSpace: 'nowrap',
                   }}
                 >
-                  8:00 - 17:00
+                  19:00 hs - 00:00 hs
                 </Text>
               </div>
 
@@ -101,61 +125,52 @@ export default function BranchHoursTooltip({
                 style={{
                   display: 'flex',
                   justifyContent: 'space-between',
-                  marginBottom: '4px',
+                  alignItems: 'flex-start',
                 }}
               >
                 <Text
                   style={{
                     fontFamily: 'Inter',
+                    fontStyle: 'normal',
                     fontWeight: 400,
-                    fontSize: '14px',
-                    lineHeight: '20px',
-                    color: '#667085',
+                    fontSize: '10px',
+                    lineHeight: '18px',
+                    color: '#000000',
                   }}
                 >
-                  Sábado
+                  {BRANCH_HOURS_TEXTS.FRIDAY_TO_SUNDAY}
                 </Text>
-                <Text
-                  style={{
-                    fontFamily: 'Inter',
-                    fontWeight: 500,
-                    fontSize: '14px',
-                    lineHeight: '20px',
-                    color: '#101828',
-                  }}
-                >
-                  9:00 - 14:00
-                </Text>
-              </div>
-
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <Text
-                  style={{
-                    fontFamily: 'Inter',
-                    fontWeight: 400,
-                    fontSize: '14px',
-                    lineHeight: '20px',
-                    color: '#667085',
-                  }}
-                >
-                  Domingo
-                </Text>
-                <Text
-                  style={{
-                    fontFamily: 'Inter',
-                    fontWeight: 500,
-                    fontSize: '14px',
-                    lineHeight: '20px',
-                    color: '#101828',
-                  }}
-                >
-                  Cerrado
-                </Text>
+                <div>
+                  <Text
+                    style={{
+                      fontFamily: 'Inter',
+                      fontStyle: 'normal',
+                      fontWeight: 400,
+                      fontSize: '10px',
+                      lineHeight: '18px',
+                      color: '#6C7684',
+                      textAlign: 'right',
+                      whiteSpace: 'nowrap',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    11:00 hs - 15:00 hs
+                  </Text>
+                  <Text
+                    style={{
+                      fontFamily: 'Inter',
+                      fontStyle: 'normal',
+                      fontWeight: 400,
+                      fontSize: '10px',
+                      lineHeight: '18px',
+                      color: '#6C7684',
+                      textAlign: 'right',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    19:00 hs - 00:00 hs
+                  </Text>
+                </div>
               </div>
             </Box>
           </Box>

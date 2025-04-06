@@ -1,5 +1,6 @@
 import React from 'react';
 import { Badge, Text } from '@mantine/core';
+import { BRANCH_TEXTS } from '../../config/constants';
 
 interface BranchBadgeProps {
   isOpen: boolean;
@@ -41,7 +42,7 @@ const BranchBadge: React.FC<BranchBadgeProps> = ({ isOpen }) => {
           color: isOpen ? '#000000' : '#939393',
         }}
       >
-        {isOpen ? 'Abierto' : 'Cerrado'}
+        {isOpen ? BRANCH_TEXTS.OPEN_STATUS : BRANCH_TEXTS.CLOSED_STATUS}
       </Text>
     </Badge>
   );
