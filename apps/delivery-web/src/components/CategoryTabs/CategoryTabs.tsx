@@ -44,6 +44,7 @@ export default function CategoryTabs({
             variant="pills"
             radius="xl"
             data-testid="category-tabs-tabs"
+            style={{ width: '78px' }}
           >
             <Tabs.List
               style={{ display: 'flex', flexDirection: 'row' }}
