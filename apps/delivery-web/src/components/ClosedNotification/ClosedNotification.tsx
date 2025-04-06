@@ -3,13 +3,14 @@
 import { Box, Text } from '@mantine/core';
 import { useEffect } from 'react';
 import styles from './ClosedNotification.module.css';
+import { BRANCH_TEXTS } from '../../config/constants';
 
 interface ClosedNotificationProps {
   message?: string;
 }
 
 const ClosedNotification = ({
-  message = 'La sucursal se encuentra cerrada en este momento.',
+  message = BRANCH_TEXTS.BRANCH_CLOSED,
 }: ClosedNotificationProps) => {
   // Add a class to the body when the notification is displayed
   useEffect(() => {

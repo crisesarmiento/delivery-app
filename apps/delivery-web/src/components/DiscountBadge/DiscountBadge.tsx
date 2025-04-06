@@ -1,4 +1,5 @@
 import styles from './DiscountBadge.module.css';
+import { PRODUCT_TEXTS } from '../../config/constants';
 
 interface DiscountBadgeProps {
   discountPercentage?: number;
@@ -11,7 +12,7 @@ const DiscountBadge = ({
 }: DiscountBadgeProps) => {
   return (
     <div className={`${styles.discountBadge} ${className || ''}`}>
-      {discountPercentage}% OFF
+      {discountPercentage}% {PRODUCT_TEXTS.OFF}
     </div>
   );
 };

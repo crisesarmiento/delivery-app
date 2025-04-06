@@ -8,6 +8,7 @@ import {
 } from '@tabler/icons-react';
 import { useState, useEffect } from 'react';
 import styles from './QuantityControl.module.css';
+import { ACCESSIBILITY_TEXTS } from '../../config/constants';
 
 interface QuantityControlProps {
   initialQuantity?: number;
@@ -55,7 +56,11 @@ const QuantityControl = ({
         className={`${styles.button}`}
         onClick={decrement}
         disabled={quantity <= minQuantity}
-        aria-label={quantity <= 1 ? 'Remove from cart' : 'Decrease quantity'}
+        aria-label={
+          quantity <= 1
+            ? ACCESSIBILITY_TEXTS.REMOVE_FROM_CART
+            : ACCESSIBILITY_TEXTS.DECREASE_QUANTITY
+        }
       >
         {quantity <= 1 ? (
           <IconTrash style={{ color: '#000000' }} />
@@ -73,7 +78,7 @@ const QuantityControl = ({
         style={{ background: '#b3ff00', border: 'none' }}
         onClick={increment}
         disabled={quantity >= maxQuantity}
-        aria-label="Increase quantity"
+        aria-label={ACCESSIBILITY_TEXTS.INCREASE_QUANTITY}
       >
         <IconCirclePlus style={{ color: '#000000' }} />
       </Button>

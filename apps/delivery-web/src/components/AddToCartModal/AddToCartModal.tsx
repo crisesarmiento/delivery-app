@@ -22,8 +22,11 @@ import {
 import { IProduct } from '../../types';
 import styles from './AddToCartModal.module.css';
 import { getProductById } from '../../mocks/products.mock';
-import { CartItem } from '../../context/CartContext';
-import { PRODUCT_TEXTS, MODAL_TEXTS } from '../../config/constants';
+import {
+  PRODUCT_TEXTS,
+  MODAL_TEXTS,
+  TOOLTIP_TEXTS,
+} from '../../config/constants';
 
 interface IngredientItem {
   name: string;
@@ -36,11 +39,21 @@ interface CondimentItem {
   selected: boolean;
 }
 
+interface CartItemCustomization {
+  product: IProduct;
+  quantity: number;
+  uniqueId?: string;
+  ingredients?: Array<{ name: string; quantity: number; price?: number }>;
+  condiments?: string[];
+  comments?: string;
+  totalPrice?: number;
+}
+
 interface AddToCartModalProps {
   product: IProduct;
   opened: boolean;
   onClose: () => void;
-  onAddToCart: (quantity: number) => void;
+  onAddToCart: (quantity: number, cartItem?: CartItemCustomization) => void;
   initialQuantity?: number;
   initialIngredients?: IngredientItem[];
   initialCondiments?: string[];
@@ -83,24 +96,21 @@ const AddToCartModal = ({
   );
 
   // Memoize discount calculations to prevent recalculations on every render
-  const { hasDiscount, discountPercentage, originalPrice, discountedPrice } =
-    useMemo(() => {
-      const hasDiscount =
-        product.name.toLowerCase().includes('promo') ||
-        (typeof product.id === 'number'
-          ? product.id % 3 === 0
-          : String(product.id).length % 3 === 0);
-      const discountPercentage = hasDiscount ? 20 : 0;
-      const originalPrice = hasDiscount ? product.price * 1.2 : null;
-      const discountedPrice = hasDiscount ? product.price : product.price;
+  const { hasDiscount, originalPrice, discountedPrice } = useMemo(() => {
+    const hasDiscount =
+      product.name.toLowerCase().includes('promo') ||
+      (typeof product.id === 'number'
+        ? product.id % 3 === 0
+        : String(product.id).length % 3 === 0);
+    const originalPrice = hasDiscount ? product.price * 1.2 : null;
+    const discountedPrice = hasDiscount ? product.price : product.price;
 
-      return {
-        hasDiscount,
-        discountPercentage,
-        originalPrice,
-        discountedPrice,
-      };
-    }, [product.name, product.id, product.price]);
+    return {
+      hasDiscount,
+      originalPrice,
+      discountedPrice,
+    };
+  }, [product.name, product.id, product.price]);
 
   // Memoize ingredient and condiment options
   const { ingredientOptions, condimentOptions } = useMemo(() => {
@@ -267,7 +277,12 @@ const AddToCartModal = ({
     // If too many selected, revert the change
     if (selectedCount > maxCondiments) {
       newCondiments[index].selected = !newCondiments[index].selected;
-      alert(`Solo puedes elegir ${maxCondiments} aderezos`);
+      alert(
+        MODAL_TEXTS.MAX_CONDIMENTS_ALERT.replace(
+          '{0}',
+          maxCondiments.toString()
+        )
+      );
       return;
     }
 
@@ -276,21 +291,16 @@ const AddToCartModal = ({
 
   const handleAddToCart = () => {
     // Get selected ingredients and condiments
-    const selectedIngredients = ingredients.filter((ing) => ing.quantity > 0);
-
-    // Create cart item with customizations
-    const cartItem: CartItem = {
+    const cartItem: CartItemCustomization = {
       product,
       quantity,
       uniqueId: Date.now().toString(), // Generate a unique ID for this customization
-      customizations: {
-        ingredients: ingredients.filter((ing) => ing.quantity > 0),
-        condiments: condiments.filter((c) => c.selected).map((c) => c.name),
-        comments,
-      },
+      ingredients: ingredients.filter((ing) => ing.quantity > 0),
+      condiments: condiments.filter((c) => c.selected).map((c) => c.name),
+      comments,
     };
 
-    onAddToCart(cartItem.quantity);
+    onAddToCart(cartItem.quantity, cartItem);
   };
 
   // Comments handler
@@ -329,7 +339,11 @@ const AddToCartModal = ({
         ref={modalRef}
       >
         {/* Close button */}
-        <button className={styles.closeButton} onClick={onClose}>
+        <button
+          className={styles.closeButton}
+          onClick={onClose}
+          aria-label={TOOLTIP_TEXTS.CLOSE_MODAL}
+        >
           <IconX size={18} />
         </button>
 
@@ -357,7 +371,7 @@ const AddToCartModal = ({
             {/* Left column with product description and comments */}
             <Flex className={styles.contentLeftColumn}>
               {/* Product Description */}
-              <Flex className={styles.productInfo}>
+              <Flex className={styles.productInfo} direction="column" gap={8}>
                 <Box className={styles.productDescription}>
                   {product.description}
                 </Box>
@@ -368,13 +382,20 @@ const AddToCartModal = ({
 
               {/* Comments Section */}
               <Box className={styles.commentsContainer}>
-                <Text className={styles.sectionLabel}>Comentarios</Text>
+                <Text className={styles.sectionLabel}>
+                  {MODAL_TEXTS.COMMENTS_LABEL}
+                </Text>
                 <Textarea
-                  placeholder="Instrucciones especiales, alergias, etc."
+                  placeholder={MODAL_TEXTS.COMMENTS_PLACEHOLDER}
                   value={comments}
                   onChange={handleCommentsChange}
                   maxLength={100}
                   className={styles.commentTextarea}
+                  styles={{
+                    root: { width: '100%' },
+                    wrapper: { width: '100%' },
+                    input: { width: '100%' },
+                  }}
                 />
                 <Text size="xs" className={styles.charCount}>
                   {commentChars}/100
@@ -400,14 +421,20 @@ const AddToCartModal = ({
               <Flex
                 className={styles.sectionHeader}
                 onClick={() => setShowIngredients(!showIngredients)}
+                justify="space-between"
+                align="center"
+                w="100%"
               >
                 <Text className={styles.sectionHeaderText}>
-                  Elige hasta 5 Ingredientes
+                  {MODAL_TEXTS.INGREDIENTS_SECTION_TITLE}{' '}
+                  {productWithCustomization?.customization
+                    ?.maxIngredientSelections || 5}{' '}
+                  {MODAL_TEXTS.INGREDIENTS_SUFFIX}
                 </Text>
                 {showIngredients ? (
-                  <IconChevronUp size={24} />
+                  <IconChevronUp size={24} stroke={1.5} />
                 ) : (
-                  <IconChevronDown size={24} />
+                  <IconChevronDown size={24} stroke={1.5} />
                 )}
               </Flex>
 
@@ -458,14 +485,20 @@ const AddToCartModal = ({
               <Flex
                 className={styles.sectionHeader}
                 onClick={() => setShowCondiments(!showCondiments)}
+                justify="space-between"
+                align="center"
+                w="100%"
               >
                 <Text className={styles.sectionHeaderText}>
-                  Elige 3 Aderezos
+                  {MODAL_TEXTS.CONDIMENTS_SECTION_TITLE}{' '}
+                  {productWithCustomization?.customization
+                    ?.maxCondimentSelections || 3}{' '}
+                  {MODAL_TEXTS.CONDIMENTS_SUFFIX}
                 </Text>
                 {showCondiments ? (
-                  <IconChevronUp size={24} />
+                  <IconChevronUp size={24} stroke={1.5} />
                 ) : (
-                  <IconChevronDown size={24} />
+                  <IconChevronDown size={24} stroke={1.5} />
                 )}
               </Flex>
 
@@ -502,7 +535,7 @@ const AddToCartModal = ({
 
           {/* Footer always at the bottom of the modal body */}
           <div className={styles.footer}>
-            <Flex className={styles.quantityControls}>
+            <Flex className={styles.quantityControls} align="center" gap={8}>
               {quantity > 1 ? (
                 <IconCircleMinus
                   size={26}
@@ -527,13 +560,50 @@ const AddToCartModal = ({
               className={styles.addToCartButton}
               onClick={handleAddToCart}
             >
-              <Flex align="flex-start" gap={8}>
-                <IconShoppingCart size={24} />
-                <Text>{PRODUCT_TEXTS.ADD_TO_CART}</Text>
-              </Flex>
-              <Flex align="flex-end">
-                <Text>{`Subtotal: $${finalPrice.toFixed(2)}`}</Text>
-              </Flex>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  width: '100%',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '26px',
+                  }}
+                >
+                  <IconShoppingCart size={24} style={{ marginRight: '8px' }} />
+                  <Text
+                    style={{
+                      fontFamily: 'Inter',
+                      fontWeight: 600,
+                      fontSize: '14px',
+                      lineHeight: '20px',
+                      color: '#B3FF00',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {PRODUCT_TEXTS.ADD_TO_CART}
+                  </Text>
+                </div>
+                <Text
+                  style={{
+                    fontFamily: 'Inter',
+                    fontWeight: 600,
+                    fontSize: '14px',
+                    lineHeight: '20px',
+                    color: '#B3FF00',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {`${MODAL_TEXTS.SUBTOTAL_LABEL}${finalPrice.toFixed(2)}`}
+                </Text>
+              </div>
             </Button>
           </div>
         </div>

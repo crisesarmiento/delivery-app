@@ -2,7 +2,7 @@
 
 import { Text, TextInput, ActionIcon } from '@mantine/core';
 import { IconSearch, IconMenu2 } from '@tabler/icons-react';
-import { MENU_TEXTS, SEARCH_TEXTS } from '../../config/constants';
+import { SEARCH_TEXTS, HEADER_TEXTS } from '../../config/constants';
 
 /**
  * Logo component used across different header styles
@@ -21,7 +21,7 @@ export const Logo = () => (
       color: '#FFFFFF',
     }}
   >
-    PUNTO 33
+    {HEADER_TEXTS.LOGO_TEXT}
   </Text>
 );
 
@@ -56,32 +56,105 @@ export const SearchBar = ({
   onChange,
   placeholder = SEARCH_TEXTS.DEFAULT_SEARCH_PLACEHOLDER,
   styles = {},
+  variant = 'white',
 }: {
   value: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
-  styles?: Record<string, unknown>;
-}) => (
-  <TextInput
-    placeholder={placeholder}
-    value={value}
-    onChange={onChange}
-    styles={styles}
-    rightSection={
-      <ActionIcon
-        style={{
-          width: '32px',
-          height: '32px',
-          backgroundColor: '#B3FF00',
-          borderRadius: '7px',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <IconSearch size={16} stroke={2} color="#000000" />
-      </ActionIcon>
-    }
-    rightSectionWidth={42}
-  />
-);
+  styles?: Partial<Record<string, unknown>>;
+  variant?: 'white' | 'light-gray';
+}) => {
+  // Define variant-specific base styles
+  const variantBaseStyles = {
+    white: {
+      background: '#FFFFFF',
+      border: '1px solid #FFFFFF',
+    },
+    'light-gray': {
+      background: '#F8FAFC',
+      border: '1px solid #F8FAFC',
+    },
+  };
+
+  // Get current variant background/border
+  const currentVariant = variantBaseStyles[variant];
+
+  // Create merged styles object
+  const mergedStyles = {
+    root: {
+      width: '100%',
+      ...(styles.root || {}),
+    },
+    wrapper: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: '0px 16px',
+      gap: '8px',
+      height: '44px',
+      background: currentVariant.background,
+      border: currentVariant.border,
+      boxShadow: '0px 1px 2px rgba(0, 0, 0, 0.02)',
+      borderRadius: '4px',
+      '&:focusWithin': {
+        border: `1px solid ${
+          currentVariant.background.split(' ')[0]
+        } !important`,
+        outline: 'none !important',
+        boxShadow: '0px 1px 2px rgba(0, 0, 0, 0.02) !important',
+      },
+      ...(styles.wrapper || {}),
+    },
+    input: {
+      width: 'calc(100% - 40px)',
+      height: '24px',
+      fontFamily: 'Inter, sans-serif',
+      fontStyle: 'normal',
+      fontWeight: 400,
+      fontSize: '16px',
+      lineHeight: '24px',
+      color: '#6C7684',
+      background: 'transparent',
+      border: 'none',
+      outline: 'none',
+      '&::placeholder': {
+        color: '#6C7684',
+      },
+      '&:focus': {
+        border: 'none !important',
+        outline: 'none !important',
+        boxShadow: 'none !important',
+      },
+      ...(styles.input || {}),
+    },
+    section: {
+      paddingRight: 0,
+      ...(styles.section || {}),
+    },
+  };
+
+  return (
+    <TextInput
+      placeholder={placeholder}
+      value={value}
+      onChange={onChange}
+      styles={mergedStyles as Partial<Record<string, unknown>>}
+      rightSection={
+        <ActionIcon
+          style={{
+            width: '32px',
+            height: '32px',
+            backgroundColor: '#B3FF00',
+            borderRadius: '7px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <IconSearch size={16} stroke={2} color="#000000" />
+        </ActionIcon>
+      }
+      rightSectionWidth={42}
+    />
+  );
+};
