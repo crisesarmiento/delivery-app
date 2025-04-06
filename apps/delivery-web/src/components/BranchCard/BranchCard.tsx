@@ -104,9 +104,7 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  background: showTooltip
-                    ? 'rgba(240, 240, 240, 0.8)'
-                    : 'transparent',
+                  background: 'transparent',
                   borderRadius: '4px',
                 }}
                 onMouseEnter={() => setShowTooltip(true)}
@@ -120,11 +118,7 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
                 <IconClock
                   size={18}
                   style={{
-                    color: showTooltip
-                      ? '#101828'
-                      : isHovered
-                      ? '#667085'
-                      : '#939393',
+                    color: isHovered ? '#000000' : '#939393',
                     transition: 'color 0.2s',
                   }}
                 />
