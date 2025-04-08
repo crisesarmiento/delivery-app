@@ -8,7 +8,6 @@ import { useRouter } from 'next/navigation';
 import { useState, useMemo, useEffect } from 'react';
 import { updateBranchesStatus } from '../utils/branch';
 import { BRANCH_TEXTS } from '../config/constants';
-import Footer from '../components/Footer/Footer';
 
 export default function HomePage() {
   const router = useRouter();
@@ -136,7 +135,6 @@ export default function HomePage() {
           )}
         </Container>
       </Container>
-      <Footer />
     </>
   );
 }
