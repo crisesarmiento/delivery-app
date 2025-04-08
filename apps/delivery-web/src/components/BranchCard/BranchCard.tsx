@@ -5,7 +5,7 @@ import { Card, Text, Box } from '@mantine/core';
 import { IconClock } from '@tabler/icons-react';
 import BranchBadge from './Badge';
 import BranchHoursTooltip from './BranchHoursTooltip';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface BranchCardProps {
   branch: IBranch;
@@ -16,6 +16,22 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const [isClockHovered, setIsClockHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    // Check on initial load
+    checkIsMobile();
+
+    // Set up an event listener for window resize
+    window.addEventListener('resize', checkIsMobile);
+
+    // Clean up the event listener on component unmount
+    return () => window.removeEventListener('resize', checkIsMobile);
+  }, []);
 
   const handleClick = () => {
     if (onClick) {
@@ -29,7 +45,7 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
       style={{
         boxSizing: 'border-box',
         width: '100%',
-        maxWidth: '240px',
+        maxWidth: isMobile ? '230px' : '240px',
         height: '242px',
         background: isHovered && !isClockHovered ? '#E3E8EF' : '#FFFFFF',
         border: `1px solid ${
@@ -41,6 +57,7 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
         padding: '6px 6px 8px 8px',
         transition: 'background 0.2s, border 0.2s',
         cursor: 'pointer',
+        overflow: 'hidden', // Prevent content from overflowing
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -89,6 +106,11 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
               lineHeight: '24px',
               color: '#000000',
               letterSpacing: '0%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              maxWidth: isMobile ? '200px' : '210px',
+              margin: '0 auto',
             }}
             data-testid="branch-card-description"
           >
@@ -109,6 +131,7 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
                   justifyContent: 'center',
                   background: 'transparent',
                   borderRadius: '4px',
+                  zIndex: 10, // Ensure icon is above other elements
                 }}
                 onMouseEnter={(e) => {
                   e.stopPropagation(); // Stop propagation to parent

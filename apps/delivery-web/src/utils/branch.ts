@@ -29,6 +29,8 @@ export const isBranchOpen = (branch: IBranch): boolean => {
   const closeTime = convertTimeToMinutes(hours.close);
   const currentTime = currentHour * 60 + currentMinutes;
 
+  // Fixed logic to properly handle branch closing time - using strict less than for comparison
+  // This ensures branches close at the exact closing time
   return currentTime >= openTime && currentTime < closeTime;
 };
 

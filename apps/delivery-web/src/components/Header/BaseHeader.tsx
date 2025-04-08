@@ -28,7 +28,7 @@ const BaseHeader = ({
         style={{
           position: 'fixed',
           width: '100%',
-          height: '283px',
+          height: '70px',
           left: '0',
           top: showClosedNotification ? '34px' : topOffset,
           zIndex: 100,
@@ -57,7 +57,7 @@ const BaseHeader = ({
           className="left-black-rectangle"
           style={{
             position: 'absolute',
-            height: '283px',
+            height: '70px',
             left: 0,
             top: 0,
             backgroundColor: '#000000',
@@ -72,7 +72,7 @@ const BaseHeader = ({
           style={{
             position: 'absolute',
             width: '100%',
-            height: '283px',
+            height: '70px',
             left: 0,
             top: 0,
             backgroundColor: 'rgba(0, 0, 0, 0.7)',
@@ -95,7 +95,7 @@ const BaseHeader = ({
       </Box>
 
       {/* Empty space to push content below fixed header */}
-      <Box style={{ height: '283px' }} data-testid="header-spacer" />
+      <Box style={{ height: '70px' }} data-testid="header-spacer" />
     </>
   );
 };

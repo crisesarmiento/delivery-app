@@ -57,12 +57,14 @@ export const SearchBar = ({
   placeholder = SEARCH_TEXTS.DEFAULT_SEARCH_PLACEHOLDER,
   styles = {},
   variant = 'white',
+  ...props
 }: {
   value: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
   styles?: Partial<Record<string, unknown>>;
   variant?: 'white' | 'light-gray';
+  [key: string]: any;
 }) => {
   // Define variant-specific base styles
   const variantBaseStyles = {
@@ -83,6 +85,8 @@ export const SearchBar = ({
   const mergedStyles = {
     root: {
       width: '100%',
+      maxWidth: '100%',
+      margin: '0 auto',
       ...(styles.root || {}),
     },
     wrapper: {
@@ -133,6 +137,21 @@ export const SearchBar = ({
     },
   };
 
+  const handleSearch = () => {
+    // Fix for reported search bar functionality issue
+    const searchInput = document.querySelector(
+      'input[type="text"]'
+    ) as HTMLInputElement;
+    if (searchInput && searchInput.value !== value) {
+      const event = {
+        currentTarget: { value: searchInput.value },
+        target: searchInput,
+      } as unknown as React.ChangeEvent<HTMLInputElement>;
+
+      onChange(event);
+    }
+  };
+
   return (
     <TextInput
       placeholder={placeholder}
@@ -149,12 +168,15 @@ export const SearchBar = ({
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
+            cursor: 'pointer',
           }}
+          onClick={handleSearch}
         >
           <IconSearch size={16} stroke={2} color="#000000" />
         </ActionIcon>
       }
       rightSectionWidth={42}
+      {...props}
     />
   );
 };

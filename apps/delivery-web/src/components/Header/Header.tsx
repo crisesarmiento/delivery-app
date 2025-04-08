@@ -67,7 +67,7 @@ const Header = ({
         style={{
           position: 'absolute',
           left: isMobile ? '71px' : '5%',
-          top: '29px',
+          top: '22px',
         }}
         data-testid="header-logo-container"
       >
@@ -79,7 +79,7 @@ const Header = ({
         style={{
           position: 'absolute',
           left: isMobile ? '23px' : '2%',
-          top: '23px',
+          top: '22px',
           cursor: 'pointer',
         }}
         data-testid="header-menu-button-container"
@@ -92,7 +92,7 @@ const Header = ({
         style={{
           position: 'absolute',
           left: isMobile ? '80px' : '5%',
-          top: '114px',
+          top: '80px',
           fontFamily: 'Inter, sans-serif',
           fontStyle: 'normal',
           fontWeight: 600,
@@ -112,8 +112,15 @@ const Header = ({
           className="search-container"
           style={{
             position: 'absolute',
-            top: '176.91px',
+            top: '140px',
             filter: 'drop-shadow(0px 4px 16px rgba(0, 0, 0, 0.1))',
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            maxWidth: isMobile ? 'calc(100% - 32px)' : '480px',
+            margin: '0 auto',
+            left: isMobile ? '16px' : '50%',
+            transform: isMobile ? 'none' : 'translateX(-50%)',
           }}
           data-testid="header-search-container"
         >
