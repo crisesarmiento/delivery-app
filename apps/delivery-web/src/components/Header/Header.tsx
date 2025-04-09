@@ -6,11 +6,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { useRouter } from 'next/navigation';
 import { MenuDrawer } from '../MenuDrawer/MenuDrawer';
 import { Logo, MenuButton, SearchBar } from './HeaderComponents';
-import {
-  SEARCH_TEXTS,
-  BRANCH_TEXTS,
-  HEADER_TEXTS,
-} from '../../config/constants';
+import { SEARCH_TEXTS, HEADER_TEXTS } from '../../config/constants';
 import styles from './Header.module.css';
 
 interface HeaderProps {
@@ -82,27 +78,6 @@ const Header = ({
 
   return (
     <>
-      {/* Closed notification banner */}
-      {/* {showClosedNotification && (
-        <Box
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100%',
-            backgroundColor: '#FF385C',
-            color: 'white',
-            textAlign: 'center',
-            padding: '8px',
-            zIndex: 102,
-          }}
-        >
-          <Text size="sm">
-            {closedMessage || BRANCH_TEXTS.BRANCH_CLOSED_ALERT}
-          </Text>
-        </Box>
-      )} */}
-
       <Box className={headerContainerClass} data-testid="header">
         {/* Top black header section */}
         <Box className={styles.topHeader} data-testid="top-header">

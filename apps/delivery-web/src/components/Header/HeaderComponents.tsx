@@ -65,7 +65,7 @@ export const SearchBar = ({
   placeholder?: string;
   styles?: Partial<Record<string, unknown>>;
   variant?: 'white' | 'light-gray';
-  [key: string]: any;
+  [key: string]: unknown;
 }) => {
   // Define variant-specific base styles
   const variantBaseStyles = {

@@ -7,6 +7,7 @@ import Header from '../components/Header/Header';
 import { useRouter } from 'next/navigation';
 import { useState, useMemo, useEffect } from 'react';
 import { updateBranchesStatus } from '../utils/branch';
+import { normalizeText } from '../utils/string';
 import { BRANCH_TEXTS } from '../config/constants';
 
 export default function HomePage() {
@@ -51,15 +52,23 @@ export default function HomePage() {
     return branches.some((branch) => !branch.isOpen);
   }, [branches]);
 
-  // Filter branches based on search
+  // Filter branches based on search with accent-insensitive comparison
   const filteredBranches = useMemo(() => {
     if (!searchValue) return branches;
 
-    return branches.filter(
-      (branch) =>
-        branch.name.toLowerCase().includes(searchValue.toLowerCase()) ||
-        branch.address.toLowerCase().includes(searchValue.toLowerCase())
-    );
+    const normalizedSearch = normalizeText(searchValue);
+
+    return branches.filter((branch) => {
+      const normalizedName = normalizeText(branch.name);
+      const normalizedAddress = normalizeText(branch.address);
+      const normalizedDescription = normalizeText(branch.description);
+
+      return (
+        normalizedName.includes(normalizedSearch) ||
+        normalizedAddress.includes(normalizedSearch) ||
+        normalizedDescription.includes(normalizedSearch)
+      );
+    });
   }, [searchValue, branches]);
 
   return (
