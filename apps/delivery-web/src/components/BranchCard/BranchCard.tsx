@@ -140,7 +140,7 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
                 <IconClock
                   size={18}
                   style={{
-                    color: isClockHovered ? '#000000' : '#939393',
+                    color: isHovered ? '#000000' : '#939393',
                     transition: 'color 0.2s',
                     zIndex: 1000,
                   }}
