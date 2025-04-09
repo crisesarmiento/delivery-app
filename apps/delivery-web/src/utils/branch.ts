@@ -16,22 +16,55 @@ export const isBranchOpen = (branch: IBranch): boolean => {
   const currentMinutes = now.getMinutes();
   const dayOfWeek = now.getDay(); // 0 is Sunday, 6 is Saturday
 
-  // Determine if it's a weekend (0 Sunday or 6 Saturday)
-  const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-
-  // Get the relevant opening hours based on day type
-  const hours = isWeekend
-    ? branch.openingHoursStructured.weekend
-    : branch.openingHoursStructured.weekdays;
-
-  // Convert opening and closing hours to minutes for easier comparison
-  const openTime = convertTimeToMinutes(hours.open);
-  const closeTime = convertTimeToMinutes(hours.close);
+  // Determine if it's a weekend (0 Sunday or 6 Saturday) or Friday (5)
+  const isWeekendOrFriday =
+    dayOfWeek === 0 || dayOfWeek === 5 || dayOfWeek === 6;
   const currentTime = currentHour * 60 + currentMinutes;
 
-  // Fixed logic to properly handle branch closing time - using strict less than for comparison
-  // This ensures branches close at the exact closing time
-  return currentTime >= openTime && currentTime < closeTime;
+  // Check based on day type
+  if (isWeekendOrFriday && branch.openingHoursStructured.fridayToSunday) {
+    // Weekend or Friday - check both shifts
+    const { firstShift, secondShift } =
+      branch.openingHoursStructured.fridayToSunday;
+
+    // First shift check
+    if (firstShift) {
+      const openTimeFirstShift = convertTimeToMinutes(firstShift.open);
+      const closeTimeFirstShift = convertTimeToMinutes(firstShift.close);
+
+      if (
+        currentTime >= openTimeFirstShift &&
+        currentTime < closeTimeFirstShift
+      ) {
+        return true;
+      }
+    }
+
+    // Second shift check
+    if (secondShift) {
+      const openTimeSecondShift = convertTimeToMinutes(secondShift.open);
+      const closeTimeSecondShift = convertTimeToMinutes(secondShift.close);
+
+      if (
+        currentTime >= openTimeSecondShift &&
+        currentTime < closeTimeSecondShift
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  } else if (branch.openingHoursStructured.mondayToThursday) {
+    // Monday to Thursday - single shift
+    const { open, close } = branch.openingHoursStructured.mondayToThursday;
+    const openTime = convertTimeToMinutes(open);
+    const closeTime = convertTimeToMinutes(close);
+
+    return currentTime >= openTime && currentTime < closeTime;
+  }
+
+  // Default fallback
+  return false;
 };
 
 /**

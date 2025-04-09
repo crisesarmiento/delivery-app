@@ -2,13 +2,19 @@
 
 // Branch opening hours type
 export interface IOpeningHours {
-  weekdays: {
+  mondayToThursday: {
     open: string; // Format: "HH:MM" in 24h format
     close: string; // Format: "HH:MM" in 24h format
   };
-  weekend: {
-    open: string;
-    close: string;
+  fridayToSunday: {
+    firstShift: {
+      open: string;
+      close: string;
+    };
+    secondShift: {
+      open: string;
+      close: string;
+    };
   };
 }
 

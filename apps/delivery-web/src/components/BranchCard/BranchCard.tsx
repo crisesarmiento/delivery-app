@@ -14,7 +14,6 @@ interface BranchCardProps {
 
 const BranchCard = ({ branch, onClick }: BranchCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
-  const [showTooltip, setShowTooltip] = useState(false);
   const [isClockHovered, setIsClockHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -22,21 +21,13 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
     const checkIsMobile = () => {
       setIsMobile(window.innerWidth <= 768);
     };
-
-    // Check on initial load
     checkIsMobile();
-
-    // Set up an event listener for window resize
     window.addEventListener('resize', checkIsMobile);
-
-    // Clean up the event listener on component unmount
     return () => window.removeEventListener('resize', checkIsMobile);
   }, []);
 
   const handleClick = () => {
-    if (onClick) {
-      onClick();
-    }
+    if (onClick) onClick();
   };
 
   return (
@@ -57,13 +48,12 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
         padding: '6px 6px 8px 8px',
         transition: 'background 0.2s, border 0.2s',
         cursor: 'pointer',
-        overflow: 'hidden', // Prevent content from overflowing
+        overflow: 'visible',
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       data-testid={`branch-card-${branch.id}`}
     >
-      {/* Main card image section */}
       <Box
         style={{
           position: 'relative',
@@ -81,7 +71,6 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
         <BranchBadge isOpen={branch.isOpen ?? false} />
       </Box>
 
-      {/* White box with branch name */}
       <Box
         style={{
           padding: '10px',
@@ -120,7 +109,8 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
 
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <BranchHoursTooltip
-            isVisible={showTooltip}
+            isVisible={isClockHovered}
+            branch={branch}
             trigger={
               <Box
                 style={{
@@ -131,22 +121,18 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
                   justifyContent: 'center',
                   background: 'transparent',
                   borderRadius: '4px',
-                  zIndex: 10, // Ensure icon is above other elements
+                  position: 'relative',
+                  zIndex: 1500,
                 }}
                 onMouseEnter={(e) => {
-                  e.stopPropagation(); // Stop propagation to parent
-                  setShowTooltip(true);
+                  e.stopPropagation();
                   setIsClockHovered(true);
-                  setIsHovered(false); // Reset card hover state
                 }}
                 onMouseLeave={(e) => {
-                  e.stopPropagation(); // Stop propagation to parent
-                  setShowTooltip(false);
+                  e.stopPropagation();
                   setIsClockHovered(false);
                 }}
-                onMouseOver={(e) => e.stopPropagation()} // Prevent mouseOver event bubbling
                 onClick={(e) => {
-                  // Prevent card click when clicking the icon
                   e.stopPropagation();
                 }}
                 data-testid="branch-card-hours-trigger"
@@ -154,8 +140,9 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
                 <IconClock
                   size={18}
                   style={{
-                    color: isHovered && !isClockHovered ? '#000000' : '#939393',
+                    color: isClockHovered ? '#000000' : '#939393',
                     transition: 'color 0.2s',
+                    zIndex: 1000,
                   }}
                 />
               </Box>
