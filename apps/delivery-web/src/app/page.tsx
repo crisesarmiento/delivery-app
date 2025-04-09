@@ -77,10 +77,11 @@ export default function HomePage() {
         px={0}
         style={{
           backgroundColor: theme.colors.neutral[0],
+          width: '100%',
           maxWidth: '100%',
           overflowX: 'hidden',
-          marginLeft: isMobile ? '0' : '80px',
-          marginRight: isMobile ? '0' : '80px',
+          display: 'flex',
+          justifyContent: 'center',
         }}
       >
         <Container
@@ -88,7 +89,8 @@ export default function HomePage() {
           py="xl"
           px={{ base: theme.spacing.md, md: theme.spacing.xl, lg: '80px' }}
           style={{
-            maxWidth: '100%',
+            width: '100%',
+            maxWidth: '1440px',
             overflowX: 'hidden',
           }}
         >
@@ -97,12 +99,13 @@ export default function HomePage() {
               style={{
                 display: 'grid',
                 gridTemplateColumns: `repeat(auto-fill, minmax(${
-                  isMobile ? '230px' : '250px'
+                  isMobile ? '230px' : '240px'
                 }, 1fr))`,
                 gap: theme.spacing.md,
                 marginBottom: theme.spacing.lg,
+                width: '100%',
                 maxWidth: '100%',
-                overflowX: 'hidden',
+                justifyContent: 'center',
                 paddingLeft: isMobile ? '8px' : '0',
                 paddingRight: isMobile ? '8px' : '0',
               }}
@@ -115,7 +118,6 @@ export default function HomePage() {
                     justifyContent: 'center',
                     alignItems: 'center',
                     marginTop: theme.spacing.xl,
-                    // Ensure cards don't get cut off on smaller screens
                     maxWidth: '100%',
                   }}
                 >

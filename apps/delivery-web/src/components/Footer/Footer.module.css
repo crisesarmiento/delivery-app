@@ -3,10 +3,13 @@
   background: #f8fafc;
   border: 1px solid #f5fafe;
   box-shadow: 4px 0px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  justify-content: center;
 }
 
 .container {
-  max-width: 100%;
+  max-width: 1440px;
+  width: 100%;
   margin: 0 auto;
   padding: 0 80px;
 }

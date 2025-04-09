@@ -24,16 +24,24 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
         <div
           style={{
             width: '100%',
-            maxWidth: '1440px',
             position: 'relative',
             flex: 1,
             display: 'flex',
             flexDirection: 'column',
+            alignItems: 'center',
           }}
         >
           <CartProvider>
             <ClientErrorBoundary>
-              <div style={{ flex: 1 }}>{children}</div>
+              <div
+                style={{
+                  flex: 1,
+                  width: '100%',
+                  maxWidth: '1440px',
+                }}
+              >
+                {children}
+              </div>
             </ClientErrorBoundary>
           </CartProvider>
           <Footer />
