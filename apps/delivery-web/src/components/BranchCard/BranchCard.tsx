@@ -111,6 +111,9 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
           <BranchHoursTooltip
             isVisible={isClockHovered}
             branch={branch}
+            onVisibilityChange={(visible) => {
+              if (!visible) setIsClockHovered(false);
+            }}
             trigger={
               <Box
                 style={{

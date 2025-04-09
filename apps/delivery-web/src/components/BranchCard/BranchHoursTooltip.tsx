@@ -9,12 +9,14 @@ interface BranchHoursTooltipProps {
   isVisible: boolean;
   trigger: React.ReactNode;
   branch: IBranch;
+  onVisibilityChange?: (visible: boolean) => void;
 }
 
 export default function BranchHoursTooltip({
   isVisible,
   trigger,
   branch,
+  onVisibilityChange,
 }: BranchHoursTooltipProps) {
   const triggerRef = useRef<HTMLDivElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
@@ -28,16 +30,39 @@ export default function BranchHoursTooltip({
   const { open: secondShiftOpen, close: secondShiftClose } = secondShift ?? {};
 
   useEffect(() => {
-    if (isVisible && triggerRef.current) {
-      const rect = triggerRef.current.getBoundingClientRect();
+    const updateTooltipPosition = () => {
+      if (isVisible && triggerRef.current) {
+        const rect = triggerRef.current.getBoundingClientRect();
 
-      // Position tooltip with exact 3px spacing from clock icon
-      setTooltipPosition({
-        top: rect.top + window.scrollY - 3, // Exactly 3px space from top
-        left: rect.right - 213 - 3, // Exactly 3px space from right edge
-      });
+        // Position tooltip with exact 3px spacing from clock icon
+        setTooltipPosition({
+          top: rect.top - 3, // Exactly 3px space from top of the element, relative to viewport
+          left: rect.right - 213 - 3, // Exactly 3px space from right edge
+        });
+      }
+    };
+
+    // Hide tooltip on scroll
+    const handleScroll = () => {
+      if (isVisible && onVisibilityChange) {
+        onVisibilityChange(false);
+      }
+    };
+
+    // Update position when tooltip becomes visible
+    if (isVisible) {
+      // Run position update on next frame to ensure DOM is updated
+      requestAnimationFrame(updateTooltipPosition);
     }
-  }, [isVisible]);
+
+    // Add scroll event listener to hide tooltip
+    window.addEventListener('scroll', handleScroll);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [isVisible, onVisibilityChange]);
 
   const getHoursText = (day: string) => {
     if (day === 'mondayToThursday') {
