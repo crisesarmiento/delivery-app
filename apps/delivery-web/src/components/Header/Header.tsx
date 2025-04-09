@@ -106,86 +106,94 @@ const Header = ({
       <Box className={headerContainerClass} data-testid="header">
         {/* Top black header section */}
         <Box className={styles.topHeader} data-testid="top-header">
-          {/* Menu button */}
-          <Box
-            className={styles.menuButtonContainer}
-            data-testid="header-menu-button-container"
-          >
-            <MenuButton onClick={toggle} />
-          </Box>
-
-          {/* Logo */}
-          <Box
-            className={styles.logoContainer}
-            data-testid="header-logo-container"
-          >
-            <Logo />
-          </Box>
-
-          {/* Search bar in collapsed state */}
-          {showSearchBar && isHeaderCollapsed && (
+          {/* Content container for centered elements */}
+          <Box className={styles.contentContainer}>
+            {/* Menu button */}
             <Box
-              className={styles.searchContainer}
-              data-testid="header-search-container-collapsed"
+              className={styles.menuButtonContainer}
+              data-testid="header-menu-button-container"
             >
-              <SearchBar
-                value={onSearchChange ? searchValue : internalSearchValue}
-                onChange={handleSearchChange}
-                placeholder={placeholder}
-                variant="white"
-                styles={{
-                  root: {
-                    width: '100%',
-                  },
-                }}
-                data-testid="header-search-bar"
-              />
+              <MenuButton onClick={toggle} />
             </Box>
-          )}
+
+            {/* Logo */}
+            <Box
+              className={styles.logoContainer}
+              data-testid="header-logo-container"
+            >
+              <Logo />
+            </Box>
+
+            {/* Search bar in collapsed state */}
+            {showSearchBar && isHeaderCollapsed && (
+              <Box
+                className={styles.searchContainer}
+                data-testid="header-search-container-collapsed"
+              >
+                <SearchBar
+                  value={onSearchChange ? searchValue : internalSearchValue}
+                  onChange={handleSearchChange}
+                  placeholder={placeholder}
+                  variant="white"
+                  styles={{
+                    root: {
+                      width: '100%',
+                    },
+                  }}
+                  data-testid="header-search-bar"
+                />
+              </Box>
+            )}
+          </Box>
         </Box>
 
         {/* Bottom header section with background image */}
         <Box className={styles.bottomHeader} data-testid="bottom-header">
-          {/* Background image */}
-          <Box
-            className={styles.headerBackground}
-            data-testid="header-background"
-          />
-
-          {/* Black overlay on the left side */}
-          <Box
-            className={styles.leftBlackOverlay}
-            data-testid="header-left-overlay"
-          />
-
-          {/* Dark overlay */}
-          <Box className={styles.headerOverlay} data-testid="header-overlay" />
-
-          {/* SUCURSALES heading */}
-          <Text className={styles.branchesTitle} data-testid="header-title">
-            {HEADER_TEXTS.SUCURSALES}
-          </Text>
-
-          {/* Search bar in expanded state */}
-          {showSearchBar && !isHeaderCollapsed && (
+          <Box className={styles.bottomHeaderContent}>
+            {/* Background image */}
             <Box
-              className={styles.searchContainer}
-              data-testid="header-search-container"
-            >
-              <SearchBar
-                value={onSearchChange ? searchValue : internalSearchValue}
-                onChange={handleSearchChange}
-                placeholder={placeholder}
-                variant="white"
-                styles={{
-                  root: {
-                    width: '100%',
-                  },
-                }}
-                data-testid="header-search-bar"
-              />
-            </Box>
-          )}
+              className={styles.headerBackground}
+              data-testid="header-background"
+            />
+
+            {/* Black overlay on the left side */}
+            <Box
+              className={styles.leftBlackOverlay}
+              data-testid="header-left-overlay"
+            />
+
+            {/* Dark overlay */}
+            <Box
+              className={styles.headerOverlay}
+              data-testid="header-overlay"
+            />
+
+            {/* SUCURSALES heading */}
+            <Text className={styles.branchesTitle} data-testid="header-title">
+              {HEADER_TEXTS.SUCURSALES}
+            </Text>
+
+            {/* Search bar in expanded state */}
+            {showSearchBar && !isHeaderCollapsed && (
+              <Box
+                className={styles.searchContainer}
+                data-testid="header-search-container"
+              >
+                <SearchBar
+                  value={onSearchChange ? searchValue : internalSearchValue}
+                  onChange={handleSearchChange}
+                  placeholder={placeholder}
+                  variant="white"
+                  styles={{
+                    root: {
+                      width: '100%',
+                    },
+                  }}
+                  data-testid="header-search-bar"
+                />
+              </Box>
+            )}
+          </Box>
         </Box>
       </Box>
 

@@ -6,6 +6,8 @@
   left: 0;
   width: 100%;
   z-index: 100;
+  display: flex;
+  justify-content: center;
 }
 
 /* Top (black) header section */
@@ -19,6 +21,15 @@
   z-index: 101;
 }
 
+/* Content container for centered elements */
+.contentContainer {
+  position: relative;
+  width: 100%;
+  max-width: 1440px;
+  height: 100%;
+  margin: 0 auto;
+}
+
 /* Bottom header section with image background */
 .bottomHeader {
   position: fixed;
@@ -27,6 +38,16 @@
   left: 0;
   top: 70px;
   z-index: 100;
+  display: flex;
+  justify-content: center;
+}
+
+/* Bottom header background container */
+.bottomHeaderContent {
+  position: relative;
+  width: 100%;
+  max-width: 1440px;
+  height: 100%;
 }
 
 /* Bottom header background image */

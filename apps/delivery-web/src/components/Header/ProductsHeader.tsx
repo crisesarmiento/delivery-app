@@ -86,100 +86,108 @@ export function ProductsHeader({
       <Box className={styles.headerContainer} data-testid="header">
         {/* Top black header section */}
         <Box className={styles.topHeader} data-testid="top-header">
-          {/* Logo */}
-          <Box className={styles.logoContainer}>
-            <Logo />
-          </Box>
-
-          {/* Menu icon */}
-          <Box className={styles.menuButtonContainer}>
-            <MenuButton onClick={toggle} />
-          </Box>
-
-          {/* Back button - moved to top header */}
-          <Flex className={styles.backButtonContainer}>
-            <Box className={styles.backIconContainer}>
-              <ActionIcon
-                variant="transparent"
-                onClick={onBackClick}
-                className={styles.backIcon}
-              >
-                <IconChevronLeft
-                  width={12}
-                  height={12}
-                  color="#FFFFFF"
-                  stroke={2}
-                />
-              </ActionIcon>
+          {/* Content container for centered elements */}
+          <Box className={styles.contentContainer}>
+            {/* Logo */}
+            <Box className={styles.logoContainer}>
+              <Logo />
             </Box>
-            <Text onClick={onBackClick} className={styles.backText}>
-              {HEADER_TEXTS.BACK_BUTTON}
-            </Text>
-          </Flex>
+
+            {/* Menu icon */}
+            <Box className={styles.menuButtonContainer}>
+              <MenuButton onClick={toggle} />
+            </Box>
+
+            {/* Back button - moved to top header */}
+            <Flex className={styles.backButtonContainer}>
+              <Box className={styles.backIconContainer}>
+                <ActionIcon
+                  variant="transparent"
+                  onClick={onBackClick}
+                  className={styles.backIcon}
+                >
+                  <IconChevronLeft
+                    width={12}
+                    height={12}
+                    color="#FFFFFF"
+                    stroke={2}
+                  />
+                </ActionIcon>
+              </Box>
+              <Text onClick={onBackClick} className={styles.backText}>
+                {HEADER_TEXTS.BACK_BUTTON}
+              </Text>
+            </Flex>
+          </Box>
         </Box>
 
         {/* Bottom header section with image background */}
         <Box className={styles.bottomHeader} data-testid="bottom-header">
-          {/* Background image */}
-          <Box
-            className={styles.headerBackground}
-            data-testid="header-background"
-          />
-
-          {/* Black overlay on the left side */}
-          <Box
-            className={styles.leftBlackOverlay}
-            data-testid="header-left-overlay"
-          />
-
-          {/* Dark overlay */}
-          <Box className={styles.headerOverlay} data-testid="header-overlay" />
-
-          {/* Branch info */}
-          <Flex
-            direction="column"
-            align="flex-start"
-            gap={8}
-            className={styles.branchInfoContainer}
-          >
-            <Title
-              order={1}
-              className={styles.branchName}
-              style={{
-                fontSize: isMobile ? '24px' : '30px',
-                lineHeight: isMobile ? '30px' : '38px',
-              }}
-            >
-              {name}
-            </Title>
-            <Text
-              className={styles.branchDetails}
-              style={{
-                fontSize: isMobile ? '14px' : '16px',
-                lineHeight: isMobile ? '20px' : '24px',
-              }}
-            >
-              {address} | {phoneNumber}
-            </Text>
-          </Flex>
-
-          {/* Search bar */}
-          <Box className={styles.searchContainer}>
-            <SearchBar
-              value={onSearchChange ? searchValue : internalSearchValue}
-              onChange={handleSearchChange}
-              placeholder={
-                isMobile
-                  ? SEARCH_TEXTS.FOOD_SEARCH_PLACEHOLDER
-                  : SEARCH_TEXTS.PRODUCT_SEARCH_PLACEHOLDER
-              }
-              variant="light-gray"
-              styles={{
-                root: {
-                  width: '100%',
-                },
-              }}
+          <Box className={styles.bottomHeaderContent}>
+            {/* Background image */}
+            <Box
+              className={styles.headerBackground}
+              data-testid="header-background"
             />
+
+            {/* Black overlay on the left side */}
+            <Box
+              className={styles.leftBlackOverlay}
+              data-testid="header-left-overlay"
+            />
+
+            {/* Dark overlay */}
+            <Box
+              className={styles.headerOverlay}
+              data-testid="header-overlay"
+            />
+
+            {/* Branch info */}
+            <Flex
+              direction="column"
+              align="flex-start"
+              gap={8}
+              className={styles.branchInfoContainer}
+            >
+              <Title
+                order={1}
+                className={styles.branchName}
+                style={{
+                  fontSize: isMobile ? '24px' : '30px',
+                  lineHeight: isMobile ? '30px' : '38px',
+                }}
+              >
+                {name}
+              </Title>
+              <Text
+                className={styles.branchDetails}
+                style={{
+                  fontSize: isMobile ? '14px' : '16px',
+                  lineHeight: isMobile ? '20px' : '24px',
+                }}
+              >
+                {address} | {phoneNumber}
+              </Text>
+            </Flex>
+
+            {/* Search bar */}
+            <Box className={styles.searchContainer}>
+              <SearchBar
+                value={onSearchChange ? searchValue : internalSearchValue}
+                onChange={handleSearchChange}
+                placeholder={
+                  isMobile
+                    ? SEARCH_TEXTS.FOOD_SEARCH_PLACEHOLDER
+                    : SEARCH_TEXTS.PRODUCT_SEARCH_PLACEHOLDER
+                }
+                variant="light-gray"
+                styles={{
+                  root: {
+                    width: '100%',
+                  },
+                }}
+              />
+            </Box>
           </Box>
         </Box>
       </Box>
