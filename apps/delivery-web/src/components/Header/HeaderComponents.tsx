@@ -9,16 +9,17 @@ import { SEARCH_TEXTS, HEADER_TEXTS } from '../../config/constants';
  */
 export const Logo = () => (
   <Text
-    fw={700}
+    fw={800}
     size="md"
     color="white"
     style={{
       fontSize: '16px',
-      fontWeight: '800',
-      fontFamily: 'Inter, sans-serif',
+      fontWeight: 800,
+      fontFamily: 'Inter',
       lineHeight: '100%',
       letterSpacing: '0px',
       color: '#FFFFFF',
+      textAlign: 'center',
     }}
   >
     {HEADER_TEXTS.LOGO_TEXT}
@@ -33,18 +34,18 @@ export const MenuButton = ({ onClick }: { onClick: () => void }) => (
     onClick={onClick}
     style={{
       width: '32px',
-      height: '32px',
+      height: '37px',
       backgroundColor: 'transparent',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      left: '16.67%',
+      left: '13px',
       right: '16.67%',
-      top: '25%',
+      top: '14px',
       bottom: '25%',
     }}
   >
-    <IconMenu2 size={24} stroke={2.5} color="#FFFFFF" />
+    <IconMenu2 size={32} stroke={2} color="#FFFFFF" />
   </ActionIcon>
 );
 
@@ -112,7 +113,7 @@ export const SearchBar = ({
     input: {
       width: 'calc(100% - 40px)',
       height: '24px',
-      fontFamily: 'Inter, sans-serif',
+      fontFamily: 'Inter',
       fontStyle: 'normal',
       fontWeight: 400,
       fontSize: '16px',

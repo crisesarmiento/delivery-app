@@ -168,6 +168,7 @@ export const SEARCH_TEXTS = {
 export const HEADER_TEXTS = {
   BACK_BUTTON: 'Atrás',
   LOGO_TEXT: 'PUNTO 33',
+  SUCURSALES: 'SUCURSALES',
 };
 
 // New constants for UI components

@@ -6,8 +6,12 @@ import { useDisclosure } from '@mantine/hooks';
 import { useRouter } from 'next/navigation';
 import { MenuDrawer } from '../MenuDrawer/MenuDrawer';
 import { Logo, MenuButton, SearchBar } from './HeaderComponents';
-import BaseHeader from './BaseHeader';
-import { SEARCH_TEXTS, BRANCH_TEXTS } from '../../config/constants';
+import {
+  SEARCH_TEXTS,
+  BRANCH_TEXTS,
+  HEADER_TEXTS,
+} from '../../config/constants';
+import styles from './Header.module.css';
 
 interface HeaderProps {
   showSearchBar?: boolean;
@@ -27,6 +31,7 @@ const Header = ({
   const [opened, { toggle, close }] = useDisclosure(false);
   const [internalSearchValue, setInternalSearchValue] = useState(searchValue);
   const [isMobile, setIsMobile] = useState(false);
+  const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -40,8 +45,19 @@ const Header = ({
     // Add event listener for window resize
     window.addEventListener('resize', checkIfMobile);
 
+    // Handle scroll event to collapse/expand header
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      setIsHeaderCollapsed(scrollPosition > 50);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
     // Cleanup
-    return () => window.removeEventListener('resize', checkIfMobile);
+    return () => {
+      window.removeEventListener('resize', checkIfMobile);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   const handleNavigate = (route: string) => {
@@ -60,96 +76,133 @@ const Header = ({
   // Update for the search bar placeholder
   const placeholder = SEARCH_TEXTS.BRANCH_SEARCH_PLACEHOLDER;
 
-  const headerContent = (
+  const headerContainerClass = isHeaderCollapsed
+    ? `${styles.headerContainer} ${styles.collapsedHeader}`
+    : styles.headerContainer;
+
+  return (
     <>
-      {/* Logo */}
-      <Box
-        style={{
-          position: 'absolute',
-          left: isMobile ? '71px' : '5%',
-          top: '22px',
-        }}
-        data-testid="header-logo-container"
-      >
-        <Logo />
-      </Box>
-
-      {/* Menu icon */}
-      <Box
-        style={{
-          position: 'absolute',
-          left: isMobile ? '23px' : '2%',
-          top: '22px',
-          cursor: 'pointer',
-        }}
-        data-testid="header-menu-button-container"
-      >
-        <MenuButton onClick={toggle} />
-      </Box>
-
-      {/* SUCURSALES heading */}
-      <Text
-        style={{
-          position: 'absolute',
-          left: isMobile ? '80px' : '5%',
-          top: '80px',
-          fontFamily: 'Inter, sans-serif',
-          fontStyle: 'normal',
-          fontWeight: 600,
-          fontSize: isMobile ? '28px' : '36px',
-          lineHeight: isMobile ? '32px' : '38px',
-          display: 'flex',
-          alignItems: 'center',
-          color: '#FFFFFF',
-        }}
-        data-testid="header-title"
-      >
-        {BRANCH_TEXTS.BRANCHES_TITLE}
-      </Text>
-
-      {showSearchBar && (
+      {/* Closed notification banner */}
+      {/* {showClosedNotification && (
         <Box
-          className="search-container"
           style={{
-            position: 'absolute',
-            top: '140px',
-            filter: 'drop-shadow(0px 4px 16px rgba(0, 0, 0, 0.1))',
+            position: 'fixed',
+            top: 0,
+            left: 0,
             width: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-            maxWidth: isMobile ? 'calc(100% - 32px)' : '480px',
-            margin: '0 auto',
-            left: isMobile ? '16px' : '50%',
-            transform: isMobile ? 'none' : 'translateX(-50%)',
+            backgroundColor: '#FF385C',
+            color: 'white',
+            textAlign: 'center',
+            padding: '8px',
+            zIndex: 102,
           }}
-          data-testid="header-search-container"
         >
-          <SearchBar
-            value={onSearchChange ? searchValue : internalSearchValue}
-            onChange={handleSearchChange}
-            placeholder={placeholder}
-            variant="white"
-            styles={{
-              root: {
-                width: '100%',
-              },
-            }}
-            data-testid="header-search-bar"
-          />
+          <Text size="sm">
+            {closedMessage || BRANCH_TEXTS.BRANCH_CLOSED_ALERT}
+          </Text>
         </Box>
-      )}
+      )} */}
+
+      <Box className={headerContainerClass} data-testid="header">
+        {/* Top black header section */}
+        <Box className={styles.topHeader} data-testid="top-header">
+          {/* Menu button */}
+          <Box
+            className={styles.menuButtonContainer}
+            data-testid="header-menu-button-container"
+          >
+            <MenuButton onClick={toggle} />
+          </Box>
+
+          {/* Logo */}
+          <Box
+            className={styles.logoContainer}
+            data-testid="header-logo-container"
+          >
+            <Logo />
+          </Box>
+
+          {/* Search bar in collapsed state */}
+          {showSearchBar && isHeaderCollapsed && (
+            <Box
+              className={styles.searchContainer}
+              data-testid="header-search-container-collapsed"
+            >
+              <SearchBar
+                value={onSearchChange ? searchValue : internalSearchValue}
+                onChange={handleSearchChange}
+                placeholder={placeholder}
+                variant="white"
+                styles={{
+                  root: {
+                    width: '100%',
+                  },
+                }}
+                data-testid="header-search-bar"
+              />
+            </Box>
+          )}
+        </Box>
+
+        {/* Bottom header section with background image */}
+        <Box className={styles.bottomHeader} data-testid="bottom-header">
+          {/* Background image */}
+          <Box
+            className={styles.headerBackground}
+            data-testid="header-background"
+          />
+
+          {/* Black overlay on the left side */}
+          <Box
+            className={styles.leftBlackOverlay}
+            data-testid="header-left-overlay"
+          />
+
+          {/* Dark overlay */}
+          <Box className={styles.headerOverlay} data-testid="header-overlay" />
+
+          {/* SUCURSALES heading */}
+          <Text className={styles.branchesTitle} data-testid="header-title">
+            {HEADER_TEXTS.SUCURSALES}
+          </Text>
+
+          {/* Search bar in expanded state */}
+          {showSearchBar && !isHeaderCollapsed && (
+            <Box
+              className={styles.searchContainer}
+              data-testid="header-search-container"
+            >
+              <SearchBar
+                value={onSearchChange ? searchValue : internalSearchValue}
+                onChange={handleSearchChange}
+                placeholder={placeholder}
+                variant="white"
+                styles={{
+                  root: {
+                    width: '100%',
+                  },
+                }}
+                data-testid="header-search-bar"
+              />
+            </Box>
+          )}
+        </Box>
+      </Box>
+
+      {/* Empty space to push content below fixed header */}
+      <Box
+        style={{
+          height: showClosedNotification
+            ? '323px' // 70px top header + 210px bottom header + 43px notification
+            : '280px', // 70px top header + 210px bottom header
+          transition: 'height 0.3s ease',
+        }}
+        data-testid="header-spacer"
+      />
 
       {/* Mobile Navigation Drawer */}
       <MenuDrawer opened={opened} onClose={close} onNavigate={handleNavigate} />
     </>
-  );
-
-  return (
-    <BaseHeader
-      showClosedNotification={showClosedNotification}
-      closedMessage={closedMessage}
-      headerContent={headerContent}
-    />
   );
 };
 
