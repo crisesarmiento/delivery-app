@@ -5,7 +5,7 @@ import BranchCard from '../components/BranchCard/BranchCard';
 import { branchesMock } from '../mocks/branches.mock';
 import Header from '../components/Header/Header';
 import { useRouter } from 'next/navigation';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { updateBranchesStatus } from '../utils/branch';
 import { normalizeText } from '../utils/string';
 import { BRANCH_TEXTS } from '../config/constants';
@@ -16,6 +16,8 @@ export default function HomePage() {
   const [searchValue, setSearchValue] = useState('');
   const theme = useMantineTheme();
   const [isMobile, setIsMobile] = useState(false);
+  const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
+  const prevScrollPosition = useRef(0);
 
   // Add responsive check for mobile devices
   useEffect(() => {
@@ -31,6 +33,18 @@ export default function HomePage() {
 
     // Clean up the event listener on component unmount
     return () => window.removeEventListener('resize', checkIsMobile);
+  }, []);
+
+  // Track scroll position to detect header collapse state
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollPos = window.scrollY;
+      setIsHeaderCollapsed(currentScrollPos > 50);
+      prevScrollPosition.current = currentScrollPos;
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   // Update branch open/closed status based on current time
@@ -71,6 +85,11 @@ export default function HomePage() {
     });
   }, [searchValue, branches]);
 
+  // Calculate if filtering is active and has results
+  const isFiltering = useMemo(() => {
+    return searchValue.length > 0 && filteredBranches.length < branches.length;
+  }, [searchValue, filteredBranches.length, branches.length]);
+
   return (
     <>
       <Header
@@ -79,6 +98,7 @@ export default function HomePage() {
         onSearchChange={setSearchValue}
         showClosedNotification={hasClosedBranches}
         closedMessage={BRANCH_TEXTS.SOME_BRANCHES_CLOSED}
+        isFiltering={isFiltering}
       />
 
       <Container
@@ -91,6 +111,12 @@ export default function HomePage() {
           overflowX: 'hidden',
           display: 'flex',
           justifyContent: 'center',
+          // When filtering with collapsed header, reduce top margin
+          marginTop: isHeaderCollapsed && isFiltering ? '-40px' : 0,
+          // Add hardware acceleration to prevent flickering
+          transform: 'translateZ(0)',
+          backfaceVisibility: 'hidden',
+          willChange: 'transform',
         }}
       >
         <Container
@@ -117,6 +143,11 @@ export default function HomePage() {
                 justifyContent: 'center',
                 paddingLeft: isMobile ? '8px' : '0',
                 paddingRight: isMobile ? '8px' : '0',
+                // Adjust top padding when filtering with collapsed header
+                paddingTop:
+                  isHeaderCollapsed && isFiltering
+                    ? theme.spacing.xs
+                    : theme.spacing.md,
               }}
             >
               {filteredBranches.map((branch) => (
@@ -126,7 +157,11 @@ export default function HomePage() {
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    marginTop: theme.spacing.xl,
+                    // Adjust top margin based on filtering state
+                    marginTop:
+                      isHeaderCollapsed && isFiltering
+                        ? theme.spacing.xs
+                        : theme.spacing.xl,
                     maxWidth: '100%',
                   }}
                 >

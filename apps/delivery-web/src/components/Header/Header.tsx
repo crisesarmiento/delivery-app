@@ -15,6 +15,7 @@ interface HeaderProps {
   onSearchChange?: (value: string) => void;
   showClosedNotification?: boolean;
   closedMessage?: string;
+  isFiltering?: boolean;
 }
 
 const Header = ({
@@ -23,6 +24,7 @@ const Header = ({
   onSearchChange,
   showClosedNotification = false,
   closedMessage,
+  isFiltering = false,
 }: HeaderProps) => {
   const [opened, { toggle, close }] = useDisclosure(false);
   const [internalSearchValue, setInternalSearchValue] = useState(searchValue);
@@ -231,9 +233,12 @@ const Header = ({
       {/* Empty space to push content below fixed header */}
       <Box
         style={{
-          height: showClosedNotification
-            ? '323px' // 70px top header + 210px bottom header + 43px notification
-            : '280px', // 70px top header + 210px bottom header
+          height:
+            isHeaderCollapsed && isFiltering
+              ? '80px' // Reduced height when header is collapsed and filtering
+              : showClosedNotification
+              ? '323px' // 70px top header + 210px bottom header + 43px notification
+              : '280px', // 70px top header + 210px bottom header
           transition: 'height 0.3s ease',
         }}
         data-testid="header-spacer"
