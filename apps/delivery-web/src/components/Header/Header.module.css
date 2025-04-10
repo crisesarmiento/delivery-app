@@ -8,6 +8,7 @@
   z-index: 100;
   display: flex;
   justify-content: center;
+  will-change: transform;
 }
 
 /* Top (black) header section */
@@ -39,11 +40,12 @@
   height: 210px;
   left: 0;
   top: 70px;
-  transition: transform 0.3s ease;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 100;
   overflow: visible;
   display: flex;
   justify-content: center;
+  will-change: transform;
 }
 
 /* Bottom header background container */
@@ -88,6 +90,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  transform: translateY(-50%);
 }
 
 /* Menu button positioning */
@@ -127,6 +130,14 @@
   left: 80px;
   transform: none;
   z-index: 101;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 1;
+}
+
+/* Hide search bar but keep it in the DOM for smoother transitions */
+.hiddenSearch {
+  visibility: visible;
+  pointer-events: none;
 }
 
 /* Left black overlay for bottom header */
@@ -153,7 +164,7 @@
   transform: none;
   max-width: 512px;
   height: 24px;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Mobile adjustments */
@@ -162,7 +173,7 @@
     position: absolute;
     left: calc(13px + 46px);
     right: auto;
-    transform: translateY(25%);
+    transform: translateY(-50%);
   }
 
   .leftBlackOverlay {
@@ -171,8 +182,8 @@
 
   .menuButtonContainer {
     left: 13px;
-    top: 25px;
-    transform: none;
+    top: 50%;
+    transform: translateY(-50%);
   }
 
   .branchesTitle {

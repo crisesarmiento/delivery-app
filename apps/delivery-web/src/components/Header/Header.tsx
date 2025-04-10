@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Box, Text } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { useDisclosure, useHeadroom } from '@mantine/hooks';
 import { useRouter } from 'next/navigation';
 import { MenuDrawer } from '../MenuDrawer/MenuDrawer';
 import { Logo, MenuButton, SearchBar } from './HeaderComponents';
@@ -27,8 +27,26 @@ const Header = ({
   const [opened, { toggle, close }] = useDisclosure(false);
   const [internalSearchValue, setInternalSearchValue] = useState(searchValue);
   const [isMobile, setIsMobile] = useState(false);
-  const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
+
+  // Get headroom state from Mantine hook
+  const pinned = useHeadroom({ fixedAt: 120 });
+
+  // Add a search active state to lock header state during typing
+  const [isSearchActive, setIsSearchActive] = useState(false);
+  // Store the latest header state before search became active
+  const [lockedHeaderState, setLockedHeaderState] = useState(false);
+
+  // Determine if header should be collapsed based on pinned state and search activity
+  const isHeaderCollapsed = isSearchActive ? lockedHeaderState : !pinned;
+
   const router = useRouter();
+
+  // Refs for search bar components to manage focus during transitions
+  const expandedSearchRef = useRef<HTMLInputElement>(null);
+  const collapsedSearchRef = useRef<HTMLInputElement>(null);
+
+  // Track previous header state to detect changes
+  const prevCollapsedStateRef = useRef(isHeaderCollapsed);
 
   useEffect(() => {
     const checkIfMobile = () => {
@@ -41,20 +59,30 @@ const Header = ({
     // Add event listener for window resize
     window.addEventListener('resize', checkIfMobile);
 
-    // Handle scroll event to collapse/expand header
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY;
-      setIsHeaderCollapsed(scrollPosition > 50);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-
     // Cleanup
     return () => {
       window.removeEventListener('resize', checkIfMobile);
-      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
+
+  // Handle autofocus when header state changes
+  useEffect(() => {
+    // Only run when the collapsed state changes
+    if (prevCollapsedStateRef.current !== isHeaderCollapsed) {
+      prevCollapsedStateRef.current = isHeaderCollapsed;
+
+      // Small delay to let the animation complete
+      const focusTimeout = setTimeout(() => {
+        if (isHeaderCollapsed && collapsedSearchRef.current) {
+          collapsedSearchRef.current.focus();
+        } else if (!isHeaderCollapsed && expandedSearchRef.current) {
+          expandedSearchRef.current.focus();
+        }
+      }, 400); // Match transition duration
+
+      return () => clearTimeout(focusTimeout);
+    }
+  }, [isHeaderCollapsed]);
 
   const handleNavigate = (route: string) => {
     router.push(route);
@@ -63,6 +91,18 @@ const Header = ({
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = event.currentTarget.value;
+
+    // If this is the first keystroke, lock the current header state
+    if (!isSearchActive && newValue.length === 1) {
+      setIsSearchActive(true);
+      setLockedHeaderState(isHeaderCollapsed);
+    }
+
+    // If search is being cleared, unlock the header state
+    if (isSearchActive && newValue.length === 0) {
+      setIsSearchActive(false);
+    }
+
     setInternalSearchValue(newValue);
     if (onSearchChange) {
       onSearchChange(newValue);
@@ -100,22 +140,30 @@ const Header = ({
             </Box>
 
             {/* Search bar in collapsed state */}
-            {showSearchBar && isHeaderCollapsed && (
+            {showSearchBar && (
               <Box
-                className={styles.searchContainer}
+                className={`${styles.searchContainer} ${
+                  !isHeaderCollapsed ? styles.hiddenSearch : ''
+                }`}
                 data-testid="header-search-container-collapsed"
+                style={{
+                  opacity: isHeaderCollapsed ? 1 : 0,
+                  pointerEvents: isHeaderCollapsed ? 'all' : 'none',
+                }}
               >
                 <SearchBar
+                  ref={collapsedSearchRef}
                   value={onSearchChange ? searchValue : internalSearchValue}
                   onChange={handleSearchChange}
                   placeholder={placeholder}
                   variant="white"
+                  autoFocus={isHeaderCollapsed}
                   styles={{
                     root: {
                       width: '100%',
                     },
                   }}
-                  data-testid="header-search-bar"
+                  data-testid="header-search-bar-collapsed"
                 />
               </Box>
             )}
@@ -149,16 +197,24 @@ const Header = ({
             </Text>
 
             {/* Search bar in expanded state */}
-            {showSearchBar && !isHeaderCollapsed && (
+            {showSearchBar && (
               <Box
-                className={styles.searchContainer}
+                className={`${styles.searchContainer} ${
+                  isHeaderCollapsed ? styles.hiddenSearch : ''
+                }`}
                 data-testid="header-search-container"
+                style={{
+                  opacity: isHeaderCollapsed ? 0 : 1,
+                  pointerEvents: isHeaderCollapsed ? 'none' : 'all',
+                }}
               >
                 <SearchBar
+                  ref={expandedSearchRef}
                   value={onSearchChange ? searchValue : internalSearchValue}
                   onChange={handleSearchChange}
                   placeholder={placeholder}
                   variant="white"
+                  autoFocus={!isHeaderCollapsed}
                   styles={{
                     root: {
                       width: '100%',
