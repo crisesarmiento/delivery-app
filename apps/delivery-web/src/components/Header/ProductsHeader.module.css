@@ -8,12 +8,15 @@
   z-index: 100;
   display: flex;
   justify-content: center;
+  will-change: transform;
 }
 
 /* Top (black) header section */
 .topHeader {
   position: fixed;
   width: 100%;
+  max-width: 1440px;
+  position: relative;
   height: 70px;
   left: 0;
   top: 0;
@@ -37,9 +40,12 @@
   height: 210px;
   left: 0;
   top: 70px;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 100;
+  overflow: visible;
   display: flex;
   justify-content: center;
+  will-change: transform;
 }
 
 /* Bottom header background container */
@@ -52,14 +58,14 @@
 
 /* Bottom header background image */
 .headerBackground {
-  position: absolute;
-  width: 100%;
-  height: 100%;
+  position: relative;
+  width: 1440px;
+  height: 210px;
   left: 0;
   top: 0;
-  background-image: url('/images/hero-banner.jpg');
+  background-image: url('/images/hero-banner.jpeg');
   background-size: cover;
-  background-position: center bottom;
+  background-position: bottom;
   background-repeat: no-repeat;
 }
 
@@ -76,7 +82,7 @@
 /* Left black overlay for bottom header */
 .leftBlackOverlay {
   position: absolute;
-  width: 824px;
+  width: 50%;
   height: 210px;
   left: 0px;
   top: 0px;
@@ -87,20 +93,20 @@
 /* Logo positioning */
 .logoContainer {
   position: absolute;
-  left: 4.93%;
-  right: 88.4%;
-  top: 2.55%;
+  left: 80px;
+  top: 50%;
   bottom: 95.18%;
   z-index: 102;
   display: flex;
   align-items: center;
   justify-content: center;
+  transform: translateY(-50%);
 }
 
 /* Menu button positioning */
 .menuButtonContainer {
   position: absolute;
-  left: 2%;
+  left: 13px;
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
@@ -129,11 +135,11 @@
 .backIcon {
   width: 100%;
   height: 100%;
-  background: #000000;
+  background: transparent;
 }
 
 .backText {
-  font-family: 'Inter, sans-serif';
+  font-family: 'Inter', sans-serif;
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
@@ -151,12 +157,12 @@
   position: absolute;
   height: 74px;
   left: 80px;
-  top: 70px;
+  top: 25px;
   z-index: 101;
 }
 
 .branchName {
-  font-family: 'Inter, sans-serif';
+  font-family: 'Inter', sans-serif;
   font-style: normal;
   font-weight: 600;
   font-size: 30px;
@@ -169,7 +175,7 @@
 }
 
 .branchDetails {
-  font-family: 'Inter, sans-serif';
+  font-family: 'Inter', sans-serif;
   font-style: normal;
   font-weight: 500;
   font-size: 16px;
@@ -183,15 +189,58 @@
 .searchContainer {
   position: absolute;
   left: 80px;
-  top: 162px;
-  width: 512px;
-  height: 40px;
+  top: 95px;
   filter: drop-shadow(0px 4px 16px rgba(0, 0, 0, 0.1));
+  width: 512px;
+  max-width: 512px;
+  height: 24px;
+  transform: none;
   z-index: 101;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 1;
 }
 
-/* Mobile styles */
+/* Hide search bar but keep it in the DOM for smoother transitions */
+.hiddenSearch {
+  visibility: visible;
+  pointer-events: none;
+}
+
+/* Header with collapsed state */
+.collapsedHeader .bottomHeader {
+  transform: translateY(-210px);
+}
+
+.collapsedHeader .searchContainer {
+  position: absolute;
+  right: 5%;
+  top: 13px;
+  left: auto;
+  transform: none;
+  max-width: 512px;
+  height: 24px;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Mobile adjustments */
 @media (max-width: 768px) {
+  .logoContainer {
+    position: absolute;
+    left: calc(13px + 46px);
+    right: auto;
+    transform: translateY(-50%);
+  }
+
+  .leftBlackOverlay {
+    width: 100%;
+  }
+
+  .menuButtonContainer {
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
   .backButtonContainer {
     left: 16px;
   }
@@ -212,7 +261,14 @@
   }
 
   .searchContainer {
+    max-width: calc(100% - 32px);
     left: 16px;
     width: calc(100% - 32px);
+    transform: none;
+  }
+
+  .collapsedHeader .searchContainer {
+    right: 16px;
+    max-width: 180px;
   }
 }
