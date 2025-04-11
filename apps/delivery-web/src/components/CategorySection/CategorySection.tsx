@@ -40,26 +40,11 @@ const CategorySection = ({
 
   return (
     <Box className={styles.categorySection} mb="32px">
-      <Box
-        py={theme.spacing.xs}
-        bg={theme.colors.neutral[1]}
-        w="100%"
-        h="100%"
-        data-testid="category-section-container"
-        style={{
-          borderRadius: theme.radius.md,
-          border: `1px solid ${theme.colors.neutral[2]}`,
-          transition: STYLE_CONSTANTS.TRANSITION_EASE,
-          boxShadow: isExpanded ? theme.shadows.xs : 'none',
-          marginBottom: '8px',
-        }}
-      >
-        <SectionHeader
-          title={title}
-          isExpanded={isExpanded}
-          onToggle={toggleExpand}
-        />
-      </Box>
+      <SectionHeader
+        title={title}
+        isExpanded={isExpanded}
+        onToggle={toggleExpand}
+      />
 
       {isExpanded && (
         <Box className={styles.scrollableContainer}>

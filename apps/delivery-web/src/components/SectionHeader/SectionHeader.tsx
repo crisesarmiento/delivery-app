@@ -40,14 +40,14 @@ const SectionHeader = ({
         >
           {isExpanded ? (
             <IconChevronUp
-              size={20}
-              stroke={1.5}
+              size={24}
+              stroke={2}
               data-testid="section-header-icon-up"
             />
           ) : (
             <IconChevronDown
-              size={20}
-              stroke={1.5}
+              size={24}
+              stroke={2}
               data-testid="section-header-icon-down"
             />
           )}
