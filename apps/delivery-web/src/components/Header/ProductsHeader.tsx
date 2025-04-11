@@ -161,24 +161,6 @@ export function ProductsHeader({
               <Logo />
             </Box>
 
-            {/* Back button */}
-            <Flex className={styles.backButtonContainer}>
-              <Box className={styles.backIconContainer}>
-                <ActionIcon
-                  variant="transparent"
-                  onClick={onBackClick}
-                  className={styles.backIcon}
-                >
-                  <IconChevronLeft
-                    width={12}
-                    height={12}
-                    color="#FFFFFF"
-                    stroke={2}
-                  />
-                </ActionIcon>
-              </Box>
-            </Flex>
-
             {/* Search bar in collapsed state */}
             <Box
               className={`${styles.searchContainer} ${
