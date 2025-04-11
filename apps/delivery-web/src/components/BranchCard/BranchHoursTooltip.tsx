@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, Text, Divider } from '@mantine/core';
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { BRANCH_HOURS_TEXTS } from '../../config/constants';
 import { IBranch } from '@/types';
 
@@ -19,9 +19,6 @@ export default function BranchHoursTooltip({
   onVisibilityChange,
 }: BranchHoursTooltipProps) {
   const triggerRef = useRef<HTMLDivElement>(null);
-  const tooltipRef = useRef<HTMLDivElement>(null);
-  const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
-
   const { openingHoursStructured } = branch;
 
   const { mondayToThursday, fridayToSunday } = openingHoursStructured ?? {};
@@ -29,39 +26,16 @@ export default function BranchHoursTooltip({
   const { open: firstShiftOpen, close: firstShiftClose } = firstShift ?? {};
   const { open: secondShiftOpen, close: secondShiftClose } = secondShift ?? {};
 
+  // Handle scroll to close tooltip
   useEffect(() => {
-    const updateTooltipPosition = () => {
-      if (isVisible && triggerRef.current) {
-        const rect = triggerRef.current.getBoundingClientRect();
-
-        // Position tooltip with exact 3px spacing from clock icon
-        setTooltipPosition({
-          top: rect.top - 3, // Exactly 3px space from top of the element, relative to viewport
-          left: rect.right - 213 - 3, // Exactly 3px space from right edge
-        });
-      }
-    };
-
-    // Hide tooltip on scroll
     const handleScroll = () => {
       if (isVisible && onVisibilityChange) {
         onVisibilityChange(false);
       }
     };
 
-    // Update position when tooltip becomes visible
-    if (isVisible) {
-      // Run position update on next frame to ensure DOM is updated
-      requestAnimationFrame(updateTooltipPosition);
-    }
-
-    // Add scroll event listener to hide tooltip
     window.addEventListener('scroll', handleScroll);
-
-    // Cleanup
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [isVisible, onVisibilityChange]);
 
   const getHoursText = (day: string) => {
@@ -79,26 +53,25 @@ export default function BranchHoursTooltip({
       style={{
         position: 'relative',
         display: 'inline-block',
-        zIndex: 1600, // Higher z-index for the trigger container
+        zIndex: 1600,
       }}
     >
-      {/* Trigger with higher z-index to appear over tooltip */}
       <div style={{ position: 'relative', zIndex: 1600 }}>{trigger}</div>
 
       {isVisible && (
         <div
-          ref={tooltipRef}
           style={{
-            position: 'fixed',
-            top: `${tooltipPosition.top}px`,
-            left: `${tooltipPosition.left}px`,
+            position: 'absolute',
+            top: '0', // Aligns tooltip vertically with the clock icon
+            left: '0',
+            transform: 'translateX(-85%) translateX(-3px)', // Positions to the left with 3px offset
             backgroundColor: '#FFFFFF',
             border: '1px solid #EEF2F6',
             boxShadow:
               '0px 10px 10px -5px rgba(0, 0, 0, 0.04), 0px 20px 25px -5px rgba(0, 0, 0, 0.05), 0px 1px 3px rgba(0, 0, 0, 0.05)',
             borderRadius: '4px',
             padding: '12px 8px 9px 11px',
-            zIndex: 1500, // Keep below the trigger
+            zIndex: 1500,
             width: '213px',
             height: '114px',
             boxSizing: 'border-box',
@@ -117,7 +90,7 @@ export default function BranchHoursTooltip({
                 lineHeight: '18px',
                 color: '#000000',
                 marginBottom: '9px',
-                paddingRight: '20px', // Leave space for the clock
+                paddingRight: '20px',
               }}
             >
               {BRANCH_HOURS_TEXTS.TITLE}
