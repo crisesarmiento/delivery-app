@@ -177,9 +177,6 @@ export function ProductsHeader({
                   />
                 </ActionIcon>
               </Box>
-              <Text onClick={onBackClick} className={styles.backText}>
-                {HEADER_TEXTS.BACK_BUTTON}
-              </Text>
             </Flex>
 
             {/* Search bar in collapsed state */}
