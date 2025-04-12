@@ -353,7 +353,6 @@ export default function BranchProductsPage() {
             zIndex: 10,
             backgroundColor: '#ffffff',
             padding: '0 16px',
-            borderBottom: '1px solid #f0f0f0',
           }}
         >
           <CategoryTabs
