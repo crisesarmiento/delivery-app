@@ -4,7 +4,6 @@ import { IProduct } from '../../types';
 import ProductGrid from '../ProductGrid';
 import SectionHeader from '../SectionHeader';
 import styles from './CategorySection.module.css';
-import { STYLE_CONSTANTS } from '../../config/constants';
 
 interface CategorySectionProps {
   title: string;
