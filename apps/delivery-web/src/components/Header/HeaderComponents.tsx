@@ -1,12 +1,7 @@
 'use client';
 
 import { Text, TextInput, ActionIcon } from '@mantine/core';
-import {
-  IconSearch,
-  IconMenu2,
-  IconX,
-  IconArrowLeft,
-} from '@tabler/icons-react';
+import { IconSearch, IconMenu2, IconArrowLeft } from '@tabler/icons-react';
 import { SEARCH_TEXTS, HEADER_TEXTS } from '../../config/constants';
 import { forwardRef, useEffect } from 'react';
 

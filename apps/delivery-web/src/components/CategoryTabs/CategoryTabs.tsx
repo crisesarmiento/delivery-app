@@ -1,6 +1,7 @@
 import { Text, Box, Tabs, ScrollArea } from '@mantine/core';
 import styles from './CategoryTabs.module.css';
 import { CATEGORY_TEXTS } from '../../config/constants';
+import { useEffect, useRef } from 'react';
 
 interface CategoryTabsProps {
   categories: string[];
@@ -13,6 +14,34 @@ export default function CategoryTabs({
   activeTab,
   onTabChange,
 }: CategoryTabsProps) {
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const activeTabRef = useRef<HTMLButtonElement>(null);
+
+  // Scroll the active tab into view when it changes
+  useEffect(() => {
+    if (activeTabRef.current && scrollAreaRef.current) {
+      const tabElement = activeTabRef.current;
+      const scrollArea = scrollAreaRef.current;
+
+      // Calculate positions to check if tab is in view
+      const tabLeft = tabElement.offsetLeft;
+      const tabRight = tabLeft + tabElement.offsetWidth;
+      const scrollLeft = scrollArea.scrollLeft;
+      const scrollRight = scrollLeft + scrollArea.clientWidth;
+
+      // If tab is not fully visible, scroll to make it visible
+      if (tabLeft < scrollLeft || tabRight > scrollRight) {
+        // Center the tab if possible
+        const scrollPosition =
+          tabLeft - scrollArea.clientWidth / 2 + tabElement.offsetWidth / 2;
+        scrollArea.scrollTo({
+          left: Math.max(0, scrollPosition),
+          behavior: 'smooth',
+        });
+      }
+    }
+  }, [activeTab]);
+
   return (
     <Box data-testid="category-tabs">
       <Text
@@ -29,6 +58,7 @@ export default function CategoryTabs({
         offsetScrollbars
         styles={{ scrollbar: { display: 'none' } }}
         data-testid="category-tabs-scroll-area"
+        viewportRef={scrollAreaRef}
       >
         <div
           className={styles.tabsContainer}
@@ -44,22 +74,25 @@ export default function CategoryTabs({
             variant="pills"
             radius="xl"
             data-testid="category-tabs-tabs"
-            style={{ width: '78px' }}
           >
             <Tabs.List
               style={{ display: 'flex', flexDirection: 'row' }}
               data-testid="category-tabs-list"
             >
-              {categories.map((category) => (
-                <Tabs.Tab
-                  key={category.toLowerCase()}
-                  value={category.toLowerCase()}
-                  style={{ marginRight: '16px' }}
-                  data-testid={`category-tab-${category.toLowerCase()}`}
-                >
-                  {category}
-                </Tabs.Tab>
-              ))}
+              {categories.map((category) => {
+                const isActive = category.toLowerCase() === activeTab;
+                return (
+                  <Tabs.Tab
+                    key={category.toLowerCase()}
+                    value={category.toLowerCase()}
+                    style={{ marginRight: '16px' }}
+                    data-testid={`category-tab-${category.toLowerCase()}`}
+                    ref={isActive ? activeTabRef : undefined}
+                  >
+                    {category}
+                  </Tabs.Tab>
+                );
+              })}
             </Tabs.List>
           </Tabs>
         </div>
