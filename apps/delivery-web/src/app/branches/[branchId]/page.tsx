@@ -11,12 +11,12 @@ import ProductsHeader from '@/components/Header/ProductsHeader';
 import CategoryTabs from '@/components/CategoryTabs/CategoryTabs';
 import MobileCartButton from '@/components/MobileCartButton/MobileCartButton';
 import CategorySection from '@/components/CategorySection';
+import ContentWrapper from '@/components/ContentWrapper';
 import { NO_PRODUCTS_AVAILABLE } from '@/constants/text';
 import {
   useCart,
   CartItem as CartContextItem,
 } from '../../../context/CartContext';
-import { useMediaQuery } from '@mantine/hooks';
 import CartDrawer from '@/components/CartDrawer/CartDrawer';
 import { BRANCH_TEXTS, COMMON_TEXTS, ERROR_TEXTS } from '@/config/constants';
 import { isBranchOpen } from '@/utils/branch';
@@ -33,25 +33,76 @@ export default function BranchProductsPage() {
     getTotalPrice,
   } = useCart();
 
-  const isMobile = useMediaQuery('(max-width: 768px)');
-
-  useEffect(() => {
-    console.log('Dynamic route params:', params);
-    console.log('Branch ID:', branchId);
-    console.log('Available products for this branch:', products || []);
-  }, [params, branchId]);
-
+  const [isMobile, setIsMobile] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('promo');
   const [cartDrawerOpened, setCartDrawerOpened] = useState(true);
   const [expandedSections, setExpandedSections] = useState<
     Record<string, boolean>
   >({});
+  const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
 
   // Find the current branch
   const [currentBranch, setCurrentBranch] = useState<IBranch | undefined>(
     branchesMock.find((branch) => branch.id === branchId)
   );
+  const prevScrollPosition = useRef(0);
+
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    // Check on initial load
+    checkIsMobile();
+
+    // Set up an event listener for window resize
+    window.addEventListener('resize', checkIsMobile);
+
+    // Clean up the event listener on component unmount
+    return () => window.removeEventListener('resize', checkIsMobile);
+  }, []);
+
+  // Add event listener for header state change events
+  useEffect(() => {
+    const handleHeaderStateChange = (event: CustomEvent) => {
+      setIsHeaderCollapsed(event.detail.collapsed);
+    };
+
+    window.addEventListener(
+      'header-state-change',
+      handleHeaderStateChange as EventListener
+    );
+    return () => {
+      window.removeEventListener(
+        'header-state-change',
+        handleHeaderStateChange as EventListener
+      );
+    };
+  }, []);
+
+  // Track scroll position to detect header collapse state
+  useEffect(() => {
+    const handleScroll = debounce(() => {
+      const currentScrollPos = window.scrollY;
+      setIsHeaderCollapsed(currentScrollPos > 50);
+      prevScrollPosition.current = currentScrollPos;
+    }, 100);
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Add debounce utility at the bottom of the file
+  function debounce(func: (...args: any[]) => void, wait: number) {
+    let timeout: NodeJS.Timeout | null = null;
+    return function executedFunction(...args: any[]) {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+      timeout = setTimeout(() => func(...args), wait);
+    };
+  }
 
   // Check if branch is open on component mount and every minute
   useEffect(() => {
@@ -248,6 +299,27 @@ export default function BranchProductsPage() {
     setCartDrawerOpened(true);
   };
 
+  // Add effect to track header collapse state
+  useEffect(() => {
+    const handleHeaderStateChange = (event: CustomEvent) => {
+      setIsHeaderCollapsed(event.detail.collapsed);
+    };
+
+    // Add event listener for header state changes
+    window.addEventListener(
+      'header-state-change',
+      handleHeaderStateChange as EventListener
+    );
+
+    // Cleanup
+    return () => {
+      window.removeEventListener(
+        'header-state-change',
+        handleHeaderStateChange as EventListener
+      );
+    };
+  }, []);
+
   return (
     <Flex
       direction="column"
@@ -263,70 +335,93 @@ export default function BranchProductsPage() {
         isClosed={currentBranch ? !currentBranch.isOpen : false}
         closedMessage={BRANCH_TEXTS.BRANCH_CLOSED}
       />
-      {/* Categories tabs */}
-      <CategoryTabs
-        categories={categories}
-        activeTab={activeTab}
-        onTabChange={handleTabChange}
-      />
-      {/* Category sections - scrollable area */}
-      <Box
-        className={styles.sectionsContainer}
-        style={{
-          flex: 1,
-          overflowY: 'auto',
-          paddingBottom: isMobile ? '60px' : '0',
-        }}
-      >
-        {Object.keys(productsByCategory).length > 0 ? (
-          Object.entries(productsByCategory).map(([category, products]) => (
-            <Flex
-              key={category}
-              ref={(el) => {
-                sectionRefs.current[category.toLowerCase()] = el;
-              }}
-              style={{
-                margin: 0,
-                padding: 0,
-                width: '100%',
-                marginBottom: '11px',
-              }}
-            >
-              <CategorySection
-                title={category}
-                products={products}
-                onAddToCart={addToCart}
-                isInitiallyExpanded={
-                  expandedSections[category.toLowerCase()] || false
-                }
-                onToggleExpand={(isExpanded) =>
-                  handleSectionToggle(category, isExpanded)
-                }
-              />
-            </Flex>
-          ))
-        ) : (
-          <Text
-            ta="center"
-            fz={theme.fontSizes.lg}
-            c="dimmed"
-            style={{ padding: '40px 0' }}
-          >
-            {NO_PRODUCTS_AVAILABLE}
-          </Text>
-        )}
-      </Box>
 
-      {/* Cart button - now placed between sections and footer */}
-      {isMobile && (
-        <Box className={styles.cartButtonContainer}>
-          <MobileCartButton
-            onClick={openCartDrawer}
-            cartItems={cartItems}
-            cartTotal={cartTotal}
+      {/* Content wrapper for everything below the header */}
+      <ContentWrapper
+        isHeaderCollapsed={isHeaderCollapsed}
+        isMobile={isMobile}
+        headerHeight={0}
+        collapsedHeaderHeight={70}
+      >
+        <Box
+          className={styles.categoriesContainer}
+          style={{
+            position: isMobile && isHeaderCollapsed ? 'fixed' : 'relative',
+            top: isMobile && isHeaderCollapsed ? '110px' : '0', // Match collapsedHeaderHeight
+            left: isMobile && isHeaderCollapsed ? '16px' : '0',
+            right: isMobile && isHeaderCollapsed ? '16px' : '0',
+            zIndex: 10,
+            backgroundColor: '#ffffff',
+            padding: '0 16px',
+            borderBottom: '1px solid #f0f0f0',
+          }}
+        >
+          <CategoryTabs
+            categories={categories}
+            activeTab={activeTab}
+            onTabChange={handleTabChange}
           />
         </Box>
-      )}
+        <Box
+          className={styles.sectionsContainer}
+          style={{
+            flex: 1,
+            overflowY: 'auto',
+            top: isMobile && isHeaderCollapsed ? '110px' : '0',
+            paddingTop: isMobile && isHeaderCollapsed ? '120px' : '16px', // Adjust for tabs height
+            paddingBottom: isMobile ? '60px' : '0',
+          }}
+        >
+          {Object.keys(productsByCategory).length > 0 ? (
+            Object.entries(productsByCategory).map(([category, products]) => (
+              <Flex
+                key={category}
+                ref={(el) => {
+                  sectionRefs.current[category.toLowerCase()] = el;
+                }}
+                style={{
+                  margin: 0,
+                  padding: 0,
+                  width: '100%',
+                  marginBottom: '11px',
+                }}
+              >
+                <CategorySection
+                  title={category}
+                  products={products}
+                  onAddToCart={addToCart}
+                  isInitiallyExpanded={
+                    expandedSections[category.toLowerCase()] || false
+                  }
+                  onToggleExpand={(isExpanded) =>
+                    handleSectionToggle(category, isExpanded)
+                  }
+                />
+              </Flex>
+            ))
+          ) : (
+            <Text
+              ta="center"
+              fz={theme.fontSizes.lg}
+              c="dimmed"
+              style={{ padding: '40px 0' }}
+            >
+              {NO_PRODUCTS_AVAILABLE}
+            </Text>
+          )}
+        </Box>
+
+        {/* Cart button - now placed between sections and footer */}
+        {isMobile && (
+          <Box className={styles.cartButtonContainer}>
+            <MobileCartButton
+              onClick={openCartDrawer}
+              cartItems={cartItems}
+              cartTotal={cartTotal}
+            />
+          </Box>
+        )}
+      </ContentWrapper>
 
       {/* Only show CartDrawer in desktop view */}
       {!isMobile && (

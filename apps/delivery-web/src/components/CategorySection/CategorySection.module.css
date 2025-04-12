@@ -95,8 +95,12 @@
 
 .categoriesContainer {
   background-color: #ffffff;
-  padding: 8px 16px;
-  transition: all 0.3s ease;
+  overflow-x: auto;
+  padding: 0 16px;
+  border-bottom: 1px solid #f0f0f0;
+  position: relative;
+  z-index: 5;
+  transition: all 0.3s ease; /* Smooth transition for position changes */
 }
 
 .categoriesFixed {

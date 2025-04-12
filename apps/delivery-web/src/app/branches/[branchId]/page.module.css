@@ -12,6 +12,9 @@
   overflow-x: auto;
   padding: 0 16px;
   border-bottom: 1px solid #f0f0f0;
+  position: relative;
+  z-index: 5;
+  transition: all 0.3s ease;
 }
 
 .tabsList {
@@ -50,6 +53,8 @@
 
 .sectionsContainer {
   flex: 1;
+  top: 110px;
+  position: relative;
   overflow-y: auto;
   background-color: #ffffff;
 }
@@ -71,9 +76,15 @@
   align-items: center;
   padding: 16px 0;
   margin-bottom: 20px;
+  position: relative;
+  z-index: 10;
 }
 
 @media (max-width: 768px) {
+  .categoriesContainer {
+    padding: 0 16px;
+  }
+
   .productPageContainer {
     padding: 0 16px;
   }

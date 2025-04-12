@@ -7,5 +7,6 @@ export { default as ClosedNotification } from './ClosedNotification';
 export { default as Header } from './Header/Header';
 export { default as ProductsHeader } from './Header/ProductsHeader';
 
-// BasePage components
+// Layout components
 export { default as BasePage } from './BasePage/BasePage';
+export { default as ContentWrapper } from './ContentWrapper/ContentWrapper';

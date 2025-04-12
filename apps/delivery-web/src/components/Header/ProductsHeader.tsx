@@ -65,6 +65,16 @@ export function ProductsHeader({
     return result;
   }, [isSearchActive, lockedHeaderState, pinned]);
 
+  // Emit a custom event when the header state changes to notify ContentWrapper
+  useEffect(() => {
+    // Create and dispatch a custom event with the header state
+    const headerStateEvent = new CustomEvent('header-state-change', {
+      detail: { collapsed: isHeaderCollapsed },
+      bubbles: true,
+    });
+    window.dispatchEvent(headerStateEvent);
+  }, [isHeaderCollapsed]);
+
   // Refs for search bar components to manage focus during transitions
   const expandedSearchRef = useRef<HTMLInputElement>(null);
   const collapsedSearchRef = useRef<HTMLInputElement>(null);

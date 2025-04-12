@@ -106,7 +106,7 @@ const CartDrawer = ({
   }
 
   // Calculate top position based on header state
-  const topPosition = isHeaderCollapsed ? '97px' : '307px'; // 97px for collapsed, 200px for expanded
+  const topPosition = isHeaderCollapsed ? '155px' : '307px'; // 97px for collapsed, 200px for expanded
 
   return (
     <Box
