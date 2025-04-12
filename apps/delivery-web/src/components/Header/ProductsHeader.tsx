@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { Box, Text, Flex, Title } from '@mantine/core';
 import { useDisclosure, useHeadroom } from '@mantine/hooks';
 import { useRouter } from 'next/navigation';
 import { MenuDrawer } from '../MenuDrawer/MenuDrawer';
-import { Logo, MenuButton, SearchBar } from './HeaderComponents';
+import { Logo, MenuButton, SearchBar, BackButton } from './HeaderComponents';
 import { IBranch } from '@/types';
 import { SEARCH_TEXTS } from '../../config/constants';
 import styles from './ProductsHeader.module.css';
@@ -38,13 +38,32 @@ export function ProductsHeader({
   // Get headroom state from Mantine hook
   const pinned = useHeadroom({ fixedAt: 120 });
 
+  // Add console logging to debug headroom behavior
+  useEffect(() => {
+    console.log('[HeaderDebug] Pinned state:', pinned);
+  }, [pinned]);
+
   // Add a search active state to lock header state during typing
   const [isSearchActive, setIsSearchActive] = useState(false);
   // Store the latest header state before search became active
   const [lockedHeaderState, setLockedHeaderState] = useState(false);
 
-  // Determine if header should be collapsed based on pinned state and search activity
-  const isHeaderCollapsed = isSearchActive ? lockedHeaderState : !pinned;
+  // Determine if the header is collapsed
+  const isHeaderCollapsed = useMemo(() => {
+    const result = (isSearchActive && !lockedHeaderState) || !pinned;
+    console.log(
+      '[HeaderDebug] isHeaderCollapsed:',
+      result,
+      '{ isSearchActive:',
+      isSearchActive,
+      'lockedHeaderState:',
+      lockedHeaderState,
+      'pinned:',
+      pinned,
+      '}'
+    );
+    return result;
+  }, [isSearchActive, lockedHeaderState, pinned]);
 
   // Refs for search bar components to manage focus during transitions
   const expandedSearchRef = useRef<HTMLInputElement>(null);
@@ -92,6 +111,15 @@ export function ProductsHeader({
   const handleNavigate = (route: string) => {
     router.push(route);
     close();
+  };
+
+  const handleBackClick = () => {
+    if (onBackClick) {
+      onBackClick();
+    } else {
+      // Default behavior: go back in history
+      router.back();
+    }
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -144,6 +172,16 @@ export function ProductsHeader({
         <Box className={styles.topHeader} data-testid="top-header">
           {/* Content container for centered elements */}
           <Box className={styles.contentContainer}>
+            {/* Logo - always visible on mobile */}
+            {isMobile && (
+              <Box
+                className={styles.logoContainer}
+                data-testid="header-logo-container"
+              >
+                <Logo />
+              </Box>
+            )}
+
             {/* Menu button */}
             <Box
               className={styles.menuButtonContainer}
@@ -152,13 +190,15 @@ export function ProductsHeader({
               <MenuButton onClick={toggle} />
             </Box>
 
-            {/* Logo */}
-            <Box
-              className={styles.logoContainer}
-              data-testid="header-logo-container"
-            >
-              <Logo />
-            </Box>
+            {/* Logo - only visible on desktop */}
+            {!isMobile && (
+              <Box
+                className={styles.logoContainer}
+                data-testid="header-logo-container"
+              >
+                <Logo />
+              </Box>
+            )}
 
             {/* Search bar in collapsed state */}
             <Box
@@ -214,11 +254,21 @@ export function ProductsHeader({
               data-testid="header-overlay"
             />
 
+            {/* Back button for mobile */}
+            {isMobile && (
+              <Box
+                className={styles.backButtonWrapper}
+                data-testid="back-button-wrapper"
+              >
+                <BackButton onClick={handleBackClick} />
+              </Box>
+            )}
+
             {/* Branch info */}
             <Flex
               direction="column"
               align="flex-start"
-              gap={8}
+              gap={isMobile ? 4 : 8}
               className={styles.branchInfoContainer}
             >
               <Title
@@ -278,18 +328,16 @@ export function ProductsHeader({
 
       {/* Empty space to push content below fixed header */}
       <Box
+        className={styles.headerSpacer}
         style={{
           height:
             isHeaderCollapsed && isFiltering
               ? '80px' // Reduced height when header is collapsed and filtering
               : isClosed
-              ? '323px' // 70px top header + 210px bottom header + 43px notification
-              : '280px', // 70px top header + 210px bottom header
-          transition: 'height 0.3s ease',
-          // Add hardware acceleration to prevent flickering
-          transform: 'translateZ(0)',
-          backfaceVisibility: 'hidden',
-          willChange: 'transform',
+              ? isMobile
+                ? '198px'
+                : '323px' // Add notification height (43px) for closed state
+              : undefined, // Use default from CSS
         }}
         data-testid="header-spacer"
       />

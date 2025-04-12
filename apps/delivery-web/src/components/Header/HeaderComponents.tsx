@@ -1,7 +1,12 @@
 'use client';
 
 import { Text, TextInput, ActionIcon } from '@mantine/core';
-import { IconSearch, IconMenu2 } from '@tabler/icons-react';
+import {
+  IconSearch,
+  IconMenu2,
+  IconX,
+  IconArrowLeft,
+} from '@tabler/icons-react';
 import { SEARCH_TEXTS, HEADER_TEXTS } from '../../config/constants';
 import { forwardRef, useEffect } from 'react';
 
@@ -35,18 +40,36 @@ export const MenuButton = ({ onClick }: { onClick: () => void }) => (
     onClick={onClick}
     style={{
       width: '32px',
-      height: '37px',
+      height: '32px',
       backgroundColor: 'transparent',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      left: '13px',
-      right: '16.67%',
-      top: '14px',
-      bottom: '25%',
     }}
+    data-testid="menu-button"
   >
-    <IconMenu2 size={32} stroke={2} color="#FFFFFF" />
+    <IconMenu2 size={24} stroke={2} color="#FFFFFF" />
+  </ActionIcon>
+);
+
+/**
+ * Back button component styled as an X
+ */
+export const BackButton = ({ onClick }: { onClick: () => void }) => (
+  <ActionIcon
+    onClick={onClick}
+    style={{
+      width: '18px',
+      height: '18px',
+      backgroundColor: 'transparent',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 0,
+    }}
+    data-testid="back-button"
+  >
+    <IconArrowLeft size={18} stroke={2} color="#FFFFFF" />
   </ActionIcon>
 );
 

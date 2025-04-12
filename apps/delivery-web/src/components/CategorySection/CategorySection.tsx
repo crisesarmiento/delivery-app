@@ -12,6 +12,7 @@ interface CategorySectionProps {
   isInitiallyExpanded?: boolean;
   onToggleExpand?: (isExpanded: boolean) => void;
   isDisabled?: boolean;
+  isFixed?: boolean;
 }
 
 const CategorySection = ({
@@ -21,13 +22,32 @@ const CategorySection = ({
   isInitiallyExpanded = false,
   onToggleExpand,
   isDisabled = false,
+  isFixed = false,
 }: CategorySectionProps) => {
   const [isExpanded, setIsExpanded] = useState(isInitiallyExpanded);
   const theme = useMantineTheme();
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     setIsExpanded(isInitiallyExpanded);
   }, [isInitiallyExpanded]);
+
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    // Check on initial load
+    checkIfMobile();
+
+    // Add event listener for window resize
+    window.addEventListener('resize', checkIfMobile);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', checkIfMobile);
+    };
+  }, []);
 
   const toggleExpand = () => {
     const newExpandedState = !isExpanded;
@@ -37,13 +57,17 @@ const CategorySection = ({
     }
   };
 
+  const headerClasses = `${isFixed ? styles.categoriesFixed : ''}`;
+
   return (
-    <Box className={styles.categorySection} mb="32px">
-      <SectionHeader
-        title={title}
-        isExpanded={isExpanded}
-        onToggle={toggleExpand}
-      />
+    <Box className={styles.categorySection} mb={isMobile ? '16px' : '32px'}>
+      <Box className={`${styles.categoriesContainer} ${headerClasses}`}>
+        <SectionHeader
+          title={title}
+          isExpanded={isExpanded}
+          onToggle={toggleExpand}
+        />
+      </Box>
 
       {isExpanded && (
         <Box className={styles.scrollableContainer}>

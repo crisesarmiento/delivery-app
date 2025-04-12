@@ -9,7 +9,7 @@ export const branchesMock: IBranch[] = [
     openingHoursStructured: {
       mondayToThursday: { open: '06:00', close: '23:59' },
       fridayToSunday: {
-        firstShift: { open: '11:00', close: '14:59' },
+        firstShift: { open: '00:00', close: '14:59' },
         secondShift: { open: '16:00', close: '23:59' },
       },
     },

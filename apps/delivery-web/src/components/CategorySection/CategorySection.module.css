@@ -1,15 +1,15 @@
 .categorySection {
+  display: flex;
+  flex-direction: column;
   width: 100%;
+  margin-bottom: 8px;
 }
 
 .scrollableContainer {
   width: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  padding: 0;
-  margin: 0;
-  position: relative;
-  scroll-padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  margin-top: 8px;
 }
 
 /* Hide scrollbar but keep functionality */
@@ -74,6 +74,11 @@
 }
 
 @media (max-width: 768px) {
+  .categorySection {
+    padding: 0 16px;
+    margin-bottom: 0;
+  }
+
   .productsGrid {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 16px;
@@ -86,4 +91,35 @@
   padding: 8px;
   margin-bottom: 16px;
   margin-top: 8px;
+}
+
+.categoriesContainer {
+  background-color: #ffffff;
+  padding: 8px 16px;
+  transition: all 0.3s ease;
+}
+
+.categoriesFixed {
+  position: fixed;
+  top: 50px; /* Match the top header height */
+  left: 0;
+  right: 0;
+  z-index: 99;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .categoriesContainer {
+    padding: 8px 16px;
+    background-color: #ffffff;
+  }
+
+  .categoriesFixed {
+    position: fixed;
+    top: 50px; /* Match the top header height */
+    left: 0;
+    right: 0;
+    z-index: 99;
+    padding: 8px 16px;
+  }
 }
