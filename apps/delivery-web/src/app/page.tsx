@@ -124,7 +124,7 @@ export default function HomePage() {
         isHeaderCollapsed={isHeaderCollapsed}
         isMobile={isMobile}
         headerHeight={0}
-        collapsedHeaderHeight={50}
+        collapsedHeaderHeight={0}
       >
         <Container
           fluid

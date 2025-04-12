@@ -341,7 +341,7 @@ export default function BranchProductsPage() {
         isHeaderCollapsed={isHeaderCollapsed}
         isMobile={isMobile}
         headerHeight={0}
-        collapsedHeaderHeight={70}
+        collapsedHeaderHeight={0}
       >
         <Box
           className={styles.categoriesContainer}
