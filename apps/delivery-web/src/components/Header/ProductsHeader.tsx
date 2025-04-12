@@ -1,14 +1,13 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Box, Text, Flex, Title, ActionIcon } from '@mantine/core';
+import { Box, Text, Flex, Title } from '@mantine/core';
 import { useDisclosure, useHeadroom } from '@mantine/hooks';
-import { IconChevronLeft } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { MenuDrawer } from '../MenuDrawer/MenuDrawer';
 import { Logo, MenuButton, SearchBar } from './HeaderComponents';
 import { IBranch } from '@/types';
-import { HEADER_TEXTS, SEARCH_TEXTS } from '../../config/constants';
+import { SEARCH_TEXTS } from '../../config/constants';
 import styles from './ProductsHeader.module.css';
 
 interface ProductsHeaderProps {

@@ -183,6 +183,7 @@
   display: flex;
   align-items: center;
   color: #ffffff;
+  margin-bottom: 9px;
 }
 
 /* Search bar styling */
