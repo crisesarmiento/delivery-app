@@ -85,6 +85,7 @@ export function ProductsHeader({
 
   // Handle autofocus when header state changes
   useEffect(() => {
+    let cleanup: (() => void) | undefined;
     // Only run when the collapsed state changes
     if (prevCollapsedStateRef.current !== isHeaderCollapsed) {
       prevCollapsedStateRef.current = isHeaderCollapsed;
@@ -100,6 +101,7 @@ export function ProductsHeader({
 
       return () => clearTimeout(focusTimeout);
     }
+    return cleanup;
   }, [isHeaderCollapsed]);
 
   const handleNavigate = (route: string) => {

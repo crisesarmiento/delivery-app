@@ -82,13 +82,6 @@ const AddToCartModal = ({
     initialComments ? initialComments.length : 0
   );
 
-  // Log when dropdown sections are toggled
-  useEffect(() => {
-    if (modalRef.current) {
-      console.log('Ingredients section expanded:', showIngredients);
-    }
-  }, [showIngredients]);
-
   // Get product with customization options from mock using useMemo
   const productWithCustomization = useMemo(
     () => getProductById(product.id),
