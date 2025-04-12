@@ -38,11 +38,6 @@ export function ProductsHeader({
   // Get headroom state from Mantine hook
   const pinned = useHeadroom({ fixedAt: 120 });
 
-  // Add console logging to debug headroom behavior
-  useEffect(() => {
-    console.log('[HeaderDebug] Pinned state:', pinned);
-  }, [pinned]);
-
   // Add a search active state to lock header state during typing
   const [isSearchActive, setIsSearchActive] = useState(false);
   // Store the latest header state before search became active
@@ -51,17 +46,6 @@ export function ProductsHeader({
   // Determine if the header is collapsed
   const isHeaderCollapsed = useMemo(() => {
     const result = (isSearchActive && !lockedHeaderState) || !pinned;
-    console.log(
-      '[HeaderDebug] isHeaderCollapsed:',
-      result,
-      '{ isSearchActive:',
-      isSearchActive,
-      'lockedHeaderState:',
-      lockedHeaderState,
-      'pinned:',
-      pinned,
-      '}'
-    );
     return result;
   }, [isSearchActive, lockedHeaderState, pinned]);
 
