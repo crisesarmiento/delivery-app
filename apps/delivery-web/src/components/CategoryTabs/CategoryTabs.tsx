@@ -29,6 +29,13 @@ export default function CategoryTabs({
       const scrollLeft = scrollArea.scrollLeft;
       const scrollRight = scrollLeft + scrollArea.clientWidth;
 
+      // Log actual height to diagnose rendering issues
+      console.log('Tab height:', tabElement.offsetHeight);
+      console.log(
+        'Tab container height:',
+        tabElement.parentElement?.offsetHeight
+      );
+
       // If tab is not fully visible, scroll to make it visible
       if (tabLeft < scrollLeft || tabRight > scrollRight) {
         // Center the tab if possible
@@ -43,7 +50,7 @@ export default function CategoryTabs({
   }, [activeTab]);
 
   return (
-    <Box data-testid="category-tabs">
+    <Box data-testid="category-tabs" className={styles.stickyContainer}>
       <Text
         fw={500}
         size="md"
@@ -55,8 +62,12 @@ export default function CategoryTabs({
       <ScrollArea
         className={styles.categoriesContainer}
         type="auto"
-        offsetScrollbars
-        styles={{ scrollbar: { display: 'none' } }}
+        offsetScrollbars={false}
+        styles={{
+          scrollbar: { display: 'none' },
+          viewport: { paddingLeft: 0, overflow: 'visible' },
+          root: { width: '100%', height: 'auto', minHeight: '75px' },
+        }}
         data-testid="category-tabs-scroll-area"
         viewportRef={scrollAreaRef}
       >
@@ -76,7 +87,12 @@ export default function CategoryTabs({
             data-testid="category-tabs-tabs"
           >
             <Tabs.List
-              style={{ display: 'flex', flexDirection: 'row' }}
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                minHeight: '32px',
+              }}
               data-testid="category-tabs-list"
             >
               {categories.map((category) => {

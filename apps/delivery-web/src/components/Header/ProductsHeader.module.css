@@ -232,7 +232,7 @@
 
 /* Empty space to push content below fixed header */
 .headerSpacer {
-  height: 280px; /* 70px top header + 210px bottom header */
+  height: 250px; /* 70px top header + 210px bottom header */
   transition: height 0.3s ease;
   transform: translateZ(0);
 }
@@ -336,7 +336,7 @@
   }
 
   .headerSpacer {
-    height: 155px; /* 50px top header + 105px bottom header */
+    height: 150px;
   }
 
   .collapsedHeader .backButtonWrapper {

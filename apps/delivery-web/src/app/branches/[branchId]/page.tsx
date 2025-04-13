@@ -90,7 +90,15 @@ export default function BranchProductsPage() {
     }, 100);
 
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const headerStateEvent = 'headerStateChange';
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener(
+        headerStateEvent,
+        handleHeaderStateChange as EventListener
+      );
+    };
   }, []);
 
   // Add debounce utility at the bottom of the file
@@ -299,26 +307,27 @@ export default function BranchProductsPage() {
     setCartDrawerOpened(true);
   };
 
-  // Add effect to track header collapse state
-  useEffect(() => {
-    const handleHeaderStateChange = (event: CustomEvent) => {
-      setIsHeaderCollapsed(event.detail.collapsed);
-    };
+  // Define header state change handler
+  const handleHeaderStateChange = (event: CustomEvent) => {
+    const isCollapsed = event.detail.collapsed;
+    setIsHeaderCollapsed(isCollapsed);
+  };
 
-    // Add event listener for header state changes
+  // Register event listeners
+  useEffect(() => {
+    const headerStateEvent = 'headerStateChange';
     window.addEventListener(
-      'header-state-change',
+      headerStateEvent,
       handleHeaderStateChange as EventListener
     );
 
-    // Cleanup
     return () => {
       window.removeEventListener(
-        'header-state-change',
+        headerStateEvent,
         handleHeaderStateChange as EventListener
       );
     };
-  }, []);
+  }, [isMobile, isHeaderCollapsed]);
 
   return (
     <Flex
@@ -346,13 +355,15 @@ export default function BranchProductsPage() {
         <Box
           className={styles.categoriesContainer}
           style={{
-            position: isMobile && isHeaderCollapsed ? 'fixed' : 'relative',
-            top: isMobile && isHeaderCollapsed ? '110px' : '0', // Match collapsedHeaderHeight
-            left: isMobile && isHeaderCollapsed ? '16px' : '0',
-            right: isMobile && isHeaderCollapsed ? '16px' : '0',
-            zIndex: 10,
+            position: 'sticky',
+            top: isMobile && isHeaderCollapsed ? '70px' : '0', // Match the collapsed header height exactly
+            left: 0,
+            right: 0,
+            zIndex: 20, // Increased z-index to be higher than sections
             backgroundColor: '#ffffff',
-            padding: '0 16px',
+            overflowY: 'hidden',
+            height: '75px',
+            minHeight: '75px',
           }}
         >
           <CategoryTabs
@@ -366,9 +377,11 @@ export default function BranchProductsPage() {
           style={{
             flex: 1,
             overflowY: 'auto',
-            top: isMobile && isHeaderCollapsed ? '110px' : '0',
-            paddingTop: isMobile && isHeaderCollapsed ? '120px' : '16px', // Adjust for tabs height
-            paddingBottom: isMobile ? '60px' : '0',
+            position: 'relative', // Added explicit position
+            zIndex: 10, // Ensure proper stacking context
+            paddingTop: '16px', // Simplified padding logic
+            paddingBottom: '0',
+            marginTop: '0', // Ensure clear spacing from categories
           }}
         >
           {Object.keys(productsByCategory).length > 0 ? (

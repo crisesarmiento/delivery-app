@@ -1,10 +1,13 @@
 .stickyContainer {
   background-color: #ffffff;
-  padding: 24px 16px 0 16px;
+  padding: 0;
   margin-bottom: 20px;
   width: 100%;
   border-radius: 0;
-  /* Removed position: sticky and top properties to allow scrolling */
+  position: relative;
+  height: auto; /* Changed from fixed height to auto */
+  min-height: 61px; /* Keep min-height for consistency */
+  z-index: 20;
 }
 
 .categoriesContainer {
@@ -12,6 +15,8 @@
   padding: 0;
   margin-bottom: 16px;
   width: 100%;
+  height: auto; /* Changed from fixed height to auto */
+  min-height: 75px;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE and Edge */
 }
@@ -24,6 +29,8 @@
 .tabsContainer {
   background-color: #ffffff;
   padding: 12px 0;
+  height: auto; /* Changed from fixed height to auto */
+  min-height: 32px; /* Changed from max-height to min-height */
 }
 
 .tabsList {
@@ -33,6 +40,7 @@
   border-bottom: none;
   margin-bottom: 0;
   padding-right: 16px;
+  padding-left: 0; /* Ensure no left padding to align with title */
   width: max-content;
 }
 
@@ -71,7 +79,6 @@
   position: relative;
   width: 313px;
   height: 15px;
-  margin-bottom: 24px;
   font-family: 'Inter';
   font-style: normal;
   font-weight: 500;
@@ -84,20 +91,32 @@
 
 @media (max-width: 768px) {
   .stickyContainer {
-    padding: 12px 8px 0 8px;
+    padding: 12px 0px 0 0px;
     margin-bottom: 16px;
+    height: auto; /* Keep as auto */
+    min-height: 61px;
+    z-index: 10;
   }
 
   .categoryTitle {
     width: auto;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 500;
+    margin-bottom: 12px; /* Add space between title and tabs */
+  }
+
+  .tabsContainer {
+    height: auto; /* Allow natural height */
+    padding: 0 0 12px 0; /* Add padding at the bottom instead of fixed height */
   }
 
   .tabsList {
-    padding-left: 16px;
+    padding-left: 0; /* Removed the 16px padding to align with title */
   }
 
   .tab {
     padding: 6px 12px;
-    height: 28px; /* Reduced height for mobile */
+    height: 32px; /* Maintain height for tabs */
   }
 }

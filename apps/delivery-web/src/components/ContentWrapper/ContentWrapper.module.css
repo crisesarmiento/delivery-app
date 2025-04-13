@@ -12,6 +12,6 @@
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .contentWrapper {
-    padding: 0 8px;
+    padding: 0;
   }
 }

@@ -9,11 +9,12 @@
 
 .categoriesContainer {
   background-color: #ffffff;
-  overflow-x: auto;
-  padding: 0 16px;
-  position: relative;
-  z-index: 5;
+  position: sticky;
+  z-index: 20;
+  height: 75px;
+  min-height: 75px;
   transition: all 0.3s ease;
+  width: 100%;
 }
 
 .tabsList {
@@ -53,7 +54,6 @@
 .sectionsContainer {
   flex: 1;
   position: relative;
-  overflow-y: auto;
   background-color: #ffffff;
 }
 
@@ -80,15 +80,20 @@
 
 @media (max-width: 768px) {
   .categoriesContainer {
-    padding: 0 16px;
+    padding: 0 12px;
+    height: 75px;
+    min-height: 75px;
+    position: sticky;
+    z-index: 20;
   }
 
   .productPageContainer {
-    padding: 0 16px;
+    padding: 0 12px;
   }
 
   .productsContainer {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 16px;
+    padding: 0;
   }
 }

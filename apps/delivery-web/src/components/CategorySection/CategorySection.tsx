@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Box, useMantineTheme } from '@mantine/core';
+import { Box } from '@mantine/core';
 import { IProduct } from '../../types';
 import ProductGrid from '../ProductGrid';
 import SectionHeader from '../SectionHeader';
@@ -25,7 +25,6 @@ const CategorySection = ({
   isFixed = false,
 }: CategorySectionProps) => {
   const [isExpanded, setIsExpanded] = useState(isInitiallyExpanded);
-  const theme = useMantineTheme();
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
