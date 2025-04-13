@@ -236,6 +236,28 @@ const AddToCartModal = ({
     setQuantity(initialQuantity);
   }, [initialQuantity]);
 
+  // Handle section visibility with scroll adjustment when collapsed
+  useEffect(() => {
+    // Adjust scroll position when sections are collapsed/expanded
+    if (modalRef.current && opened) {
+      // Allow a brief moment for the DOM to update
+      setTimeout(() => {
+        if (modalRef.current) {
+          // Refresh scrollable area calculation by forcing a reflow
+          const modalBody = modalRef.current.querySelector(
+            `.${styles.modalBody}`
+          );
+          if (modalBody) {
+            // Using a small calculated adjustment to force reflow without changing position
+            const currentScroll = modalBody.scrollTop;
+            modalBody.scrollTop = currentScroll + 0.1;
+            modalBody.scrollTop = currentScroll;
+          }
+        }
+      }, 50);
+    }
+  }, [showIngredients, showCondiments, opened]);
+
   if (!opened) return null;
 
   const handleUpdateIngredient = (index: number, change: number) => {
@@ -405,9 +427,28 @@ const AddToCartModal = ({
                   className={styles.commentTextarea}
                   styles={{
                     root: { width: '100%' },
-                    wrapper: { width: '100%' },
-                    input: { width: '100%' },
+                    wrapper: { width: '100%', height: '100%' },
+                    input: {
+                      width: '100%',
+                      height: '100%',
+                      backgroundColor: '#f7f7f7',
+                      border: 'none',
+                      resize: 'none',
+                      '&:focus': {
+                        border: 'none',
+                        outline: 'none',
+                        boxShadow: 'none',
+                      },
+                      '&:focus-visible': {
+                        border: 'none',
+                        outline: 'none',
+                        boxShadow: 'none',
+                      },
+                    },
                   }}
+                  autosize={false}
+                  resize="none"
+                  unstyled
                 />
                 <Text size="xs" className={styles.charCount}>
                   {commentChars}/100
