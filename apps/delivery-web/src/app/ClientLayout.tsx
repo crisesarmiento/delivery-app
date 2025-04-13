@@ -15,6 +15,7 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
           width: '100%',
           maxWidth: '100%',
           overflowX: 'hidden',
+          overflowY: 'visible',
           display: 'flex',
           flexDirection: 'column',
           minHeight: '100vh',

@@ -65,7 +65,11 @@ export default function CategoryTabs({
         offsetScrollbars={false}
         styles={{
           scrollbar: { display: 'none' },
-          viewport: { paddingLeft: 0, overflow: 'visible' },
+          viewport: {
+            paddingLeft: 0,
+            overflowX: 'visible',
+            overflowY: 'visible',
+          },
           root: { width: '100%', height: 'auto', minHeight: '75px' },
         }}
         data-testid="category-tabs-scroll-area"

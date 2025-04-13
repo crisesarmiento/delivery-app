@@ -361,6 +361,7 @@ export default function BranchProductsPage() {
             right: 0,
             zIndex: 20, // Increased z-index to be higher than sections
             backgroundColor: '#ffffff',
+            overflowX: 'visible',
             overflowY: 'hidden',
             height: '75px',
             minHeight: '75px',
@@ -376,6 +377,7 @@ export default function BranchProductsPage() {
           className={styles.sectionsContainer}
           style={{
             flex: 1,
+            overflowX: 'hidden',
             overflowY: 'auto',
             position: 'relative', // Added explicit position
             zIndex: 10, // Ensure proper stacking context

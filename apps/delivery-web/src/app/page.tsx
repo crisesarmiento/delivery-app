@@ -134,6 +134,7 @@ export default function HomePage() {
             width: '100%',
             maxWidth: '100%',
             overflowX: 'hidden',
+            overflowY: 'visible',
             display: 'flex',
             justifyContent: 'center',
             transform: 'translateZ(0)',
@@ -149,6 +150,7 @@ export default function HomePage() {
               width: '100%',
               maxWidth: '1440px',
               overflowX: 'hidden',
+              overflowY: 'visible',
             }}
           >
             {filteredBranches.length > 0 ? (
