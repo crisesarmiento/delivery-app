@@ -27,6 +27,7 @@ import {
   MODAL_TEXTS,
   TOOLTIP_TEXTS,
 } from '../../config/constants';
+import { createPortal } from 'react-dom';
 
 interface IngredientItem {
   name: string;
@@ -187,7 +188,7 @@ const AddToCartModal = ({
     }
   }, [opened]);
 
-  // Handle click outside to close
+  // Handle click outside to close and manage body scroll
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -200,15 +201,33 @@ const AddToCartModal = ({
 
     if (opened) {
       document.addEventListener('mousedown', handleClickOutside);
-      // Prevent scrolling when modal is open
+
+      // Save current scroll position and prevent scrolling
+      const scrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
       document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = 'unset';
+      // Restore scrolling and position
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      document.body.style.overflow = '';
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || '0') * -1);
+      }
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
-      document.body.style.overflow = 'unset';
+
+      // Ensure we restore scrolling on unmount
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      document.body.style.overflow = '';
     };
   }, [opened, onClose]);
 
@@ -324,7 +343,7 @@ const AddToCartModal = ({
   // Get the final price
   const finalPrice = calculateTotalPrice();
 
-  return (
+  const modalContent = (
     <div className={styles.modalOverlay}>
       <div
         className={styles.modalContent}
@@ -337,7 +356,7 @@ const AddToCartModal = ({
           onClick={onClose}
           aria-label={TOOLTIP_TEXTS.CLOSE_MODAL}
         >
-          <IconX size={18} />
+          <IconX size={24} />
         </button>
 
         {/* Header section with black background */}
@@ -528,23 +547,23 @@ const AddToCartModal = ({
 
           {/* Footer always at the bottom of the modal body */}
           <div className={styles.footer}>
-            <Flex className={styles.quantityControls} align="center" gap={8}>
+            <Flex className={styles.quantityControls} align="center">
               {quantity > 1 ? (
                 <IconCircleMinus
-                  size={26}
+                  size={32}
                   className={styles.iconButton}
                   onClick={() => setQuantity(quantity - 1)}
                 />
               ) : (
                 <IconTrash
-                  size={26}
+                  size={32}
                   className={styles.trashIcon}
                   onClick={onClose}
                 />
               )}
               <Text className={styles.quantityControlValue}>{quantity}</Text>
               <IconCirclePlus
-                size={26}
+                size={32}
                 className={styles.iconButtonAdd}
                 onClick={() => setQuantity(quantity + 1)}
               />
@@ -556,29 +575,28 @@ const AddToCartModal = ({
               <div
                 style={{
                   display: 'flex',
-                  flexDirection: 'row',
-                  width: '100%',
                   alignItems: 'center',
                   justifyContent: 'space-between',
+                  width: '100%',
                 }}
               >
                 <div
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '26px',
                   }}
                 >
-                  <IconShoppingCart size={24} style={{ marginRight: '8px' }} />
+                  <IconShoppingCart
+                    size={24}
+                    style={{ marginRight: '12px', color: '#B3FF00' }}
+                  />
                   <Text
                     style={{
                       fontFamily: 'Inter',
                       fontWeight: 600,
-                      fontSize: '14px',
-                      lineHeight: '20px',
+                      fontSize: '16px',
+                      lineHeight: '24px',
                       color: '#B3FF00',
-                      whiteSpace: 'nowrap',
                     }}
                   >
                     {PRODUCT_TEXTS.ADD_TO_CART}
@@ -588,10 +606,9 @@ const AddToCartModal = ({
                   style={{
                     fontFamily: 'Inter',
                     fontWeight: 600,
-                    fontSize: '14px',
-                    lineHeight: '20px',
+                    fontSize: '16px',
+                    lineHeight: '24px',
                     color: '#B3FF00',
-                    whiteSpace: 'nowrap',
                   }}
                 >
                   {`${MODAL_TEXTS.SUBTOTAL_LABEL}${finalPrice.toFixed(2)}`}
@@ -603,6 +620,9 @@ const AddToCartModal = ({
       </div>
     </div>
   );
+
+  // Use React Portal to render the modal directly to the document body
+  return createPortal(modalContent, document.body);
 };
 
 export default AddToCartModal;
