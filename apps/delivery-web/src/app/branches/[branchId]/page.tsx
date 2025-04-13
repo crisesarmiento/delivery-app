@@ -27,6 +27,7 @@ export default function BranchProductsPage() {
   const theme = useMantineTheme();
   const branchId = (params?.branchId as string) || '';
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const contentWrapperRef = useRef<HTMLDivElement | null>(null);
   const {
     items: cartContextItems,
     addToCart: addToCartContext,
@@ -236,7 +237,25 @@ export default function BranchProductsPage() {
         return newState;
       });
 
-      // Scroll to the selected category section
+      // If selecting the first category, reset scroll position to the top
+      if (value.toLowerCase() === categories[0].toLowerCase()) {
+        // First try to use the contentWrapperRef method if available
+        if (
+          contentWrapperRef.current &&
+          (contentWrapperRef.current as any).scrollToTop
+        ) {
+          (contentWrapperRef.current as any).scrollToTop();
+        } else {
+          // Fallback to window scroll
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+          });
+        }
+        return;
+      }
+
+      // For all other categories, scroll to the selected category section
       const sectionElement = sectionRefs.current[value.toLowerCase()];
       if (sectionElement) {
         // Find the header element inside the section
@@ -347,6 +366,7 @@ export default function BranchProductsPage() {
 
       {/* Content wrapper for everything below the header */}
       <ContentWrapper
+        ref={contentWrapperRef}
         isHeaderCollapsed={isHeaderCollapsed}
         isMobile={isMobile}
         headerHeight={0}

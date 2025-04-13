@@ -9,12 +9,14 @@ interface EmptyCartProps {
   isVisible: boolean;
   isMobile?: boolean;
   isHeaderCollapsed?: boolean;
+  headerOffset?: number;
 }
 
 const EmptyCart = ({
   isVisible,
   isMobile = false,
   isHeaderCollapsed = false,
+  headerOffset = 0,
 }: EmptyCartProps) => {
   const [rightPosition, setRightPosition] = useState('80px');
 
@@ -42,14 +44,15 @@ const EmptyCart = ({
     return () => window.removeEventListener('resize', updatePosition);
   }, []);
 
-  // Calculate top position based on header state
-  const topPosition = isHeaderCollapsed ? '97px' : '307px'; // 97px for collapsed, 200px for expanded
+  // Using fixed top position now
+  const topPosition = isHeaderCollapsed ? '290px' : '307px'; // Aligned with categories when collapsed
 
   return (
     <Box
       style={{
         position: 'fixed',
         top: topPosition,
+        transform: `translateY(-${headerOffset}px)`,
         right: isVisible ? rightPosition : '-240px',
         width: '200px',
         height: '242px',
@@ -57,7 +60,7 @@ const EmptyCart = ({
         border: '1px solid #EEF2F6',
         boxShadow: '0px 4px 16px rgba(0, 0, 0, 0.1)',
         borderRadius: '4px',
-        transition: 'right 0.3s ease, top 0.3s ease',
+        transition: 'right 0.3s ease, transform 0.3s ease, top 0.3s ease',
         zIndex: 1000,
         overflow: 'hidden',
       }}

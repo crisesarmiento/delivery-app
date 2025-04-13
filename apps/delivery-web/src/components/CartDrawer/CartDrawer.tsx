@@ -36,6 +36,7 @@ const CartDrawer = ({
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
   const isMobileView = useMediaQuery('(max-width: 768px)');
   const isOnMobile = isMobile !== undefined ? isMobile : isMobileView;
+  const [headerOffset, setHeaderOffset] = useState(0);
 
   // Check if viewport is mobile and calculate position
   useEffect(() => {
@@ -63,16 +64,36 @@ const CartDrawer = ({
     return () => window.removeEventListener('resize', updatePositioning);
   }, []);
 
-  // Track scroll position to detect header collapse state
+  // Track scroll position to detect header collapse state and header height changes
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollPos = window.scrollY;
-      setIsHeaderCollapsed(currentScrollPos > 50);
+      const newIsHeaderCollapsed = currentScrollPos > 50;
+
+      if (newIsHeaderCollapsed !== isHeaderCollapsed) {
+        setIsHeaderCollapsed(newIsHeaderCollapsed);
+      }
+
+      // Calculate header offset based on scroll position
+      const collapsedHeaderHeight = 70; // Height when collapsed
+      const fullHeaderHeight = 280; // Height when expanded
+
+      // Calculate how much of the header has been scrolled
+      const scrolledPortion = Math.min(
+        currentScrollPos,
+        fullHeaderHeight - collapsedHeaderHeight
+      );
+      const currentHeaderOffset = scrolledPortion > 0 ? scrolledPortion : 0;
+
+      setHeaderOffset(currentHeaderOffset);
     };
 
     window.addEventListener('scroll', handleScroll);
+    // Initial call to set correct values
+    handleScroll();
+
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isHeaderCollapsed]);
 
   // Handle visibility based on opened prop and mobile status
   useEffect(() => {
@@ -101,18 +122,20 @@ const CartDrawer = ({
         isVisible={isVisible}
         isMobile={isMobile}
         isHeaderCollapsed={isHeaderCollapsed}
+        headerOffset={headerOffset}
       />
     );
   }
 
-  // Calculate top position based on header state
-  const topPosition = isHeaderCollapsed ? '155px' : '307px'; // 97px for collapsed, 200px for expanded
+  // Calculate top position based on header state - now using fixed position
+  const topPosition = isHeaderCollapsed ? '290px' : '307px'; // Aligned with categories when collapsed
 
   return (
     <Box
       style={{
         position: 'fixed',
         top: topPosition,
+        transform: `translateY(-${headerOffset}px)`,
         right: isVisible ? rightPosition : '-240px',
         width: '200px',
         maxHeight: '242px',
@@ -120,7 +143,7 @@ const CartDrawer = ({
         border: '1px solid #EEF2F6',
         boxShadow: '0px 4px 16px rgba(0, 0, 0, 0.1)',
         borderRadius: '4px',
-        transition: 'right 0.3s ease, top 0.3s ease',
+        transition: 'right 0.3s ease, transform 0.3s ease, top 0.3s ease',
         zIndex: 1000,
         overflow: 'hidden',
         boxSizing: 'border-box',
