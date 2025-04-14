@@ -1,3 +1,5 @@
+/* ======= MODAL OVERLAY ======= */
+/* This is the dark background overlay that covers the entire screen */
 .modalOverlay {
   position: fixed;
   top: 0;
@@ -14,9 +16,11 @@
   overflow: hidden;
 }
 
+/* ======= MODAL CONTAINER ======= */
+/* This is the white container holding all modal content */
 .modalContent {
   position: relative;
-  width: 870px;
+  width: 750px;
   max-height: 90vh;
   height: auto;
   background: #ffffff;
@@ -27,6 +31,446 @@
   overflow: hidden;
 }
 
+/* Close button */
+.closeButton {
+  position: absolute;
+  right: 32px;
+  top: 32px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  z-index: 11;
+  color: #ffffff;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  transition: background-color 0.2s ease;
+}
+
+.closeButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: none;
+}
+
+/* ======= HEADER SECTION ======= */
+/* The black section at the top with title, price, etc. */
+.modalHeader {
+  width: 100%;
+  height: 150px;
+  background: #000000;
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+/* Product title */
+.modalTitle {
+  position: absolute;
+  left: 32px;
+  top: 51px;
+  font-family: 'Inter';
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 38px;
+  color: #ffffff;
+  width: 316px;
+  white-space: nowrap;
+}
+
+/* Discount badge */
+.discountBadge {
+  position: absolute;
+  top: 24px;
+  left: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #b3ff00;
+  color: #000;
+  padding-right: 8px;
+  padding-left: 8px;
+  gap: 6px;
+  border-radius: 16px;
+  font-family: 'Inter';
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 18px;
+  height: 20px;
+  min-width: 64px;
+  margin-bottom: 0;
+}
+
+/* Price container */
+.priceContainer {
+  position: absolute;
+  left: 32px;
+  top: 89px;
+  display: flex;
+  align-items: center;
+}
+
+.currentPrice {
+  font-family: 'Inter';
+  font-size: 36px;
+  font-weight: 600;
+  line-height: 45px;
+  color: #ffffff;
+}
+
+.originalPrice {
+  font-family: 'Inter';
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 18px;
+  text-decoration: line-through;
+  color: #939393;
+  margin-left: 12px;
+  margin-top: 15px;
+}
+
+/* ======= BODY/CONTENT SECTION ======= */
+/* The scrollable content area below the header */
+.modalBody {
+  padding-top: 27px;
+  padding-right: 32px;
+  padding-bottom: 36px;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: calc(
+    90vh - 150px
+  ); /* Subtract header height from viewport height */
+}
+
+/* Top section with description and image */
+.contentTopSection {
+  display: flex;
+  margin-bottom: 36px;
+  width: 100%;
+  position: relative;
+}
+
+/* Left column - description and comments */
+.contentLeftColumn {
+  width: 410px;
+  height: 100%;
+  margin-right: 28px;
+}
+
+.productInfo {
+  width: 410px;
+  margin-bottom: 16px;
+}
+
+.productDescription {
+  font-family: 'Inter';
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 28px;
+  color: #000000;
+  margin-bottom: 20px;
+  white-space: wrap;
+}
+
+.helperText {
+  font-family: 'Inter';
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  color: #000000;
+  margin-bottom: 10px;
+  white-space: wrap;
+}
+
+/* Comments section */
+.commentsContainer {
+  width: 402px;
+  height: 124px;
+  margin-bottom: 36px;
+  position: relative;
+}
+
+.sectionLabel {
+  font-family: 'Inter';
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
+  color: #000000;
+  margin-bottom: 4px;
+}
+
+.commentTextarea {
+  width: 100%;
+  height: 100%;
+  border: 1px solid #eef2f6;
+  border-radius: 12px;
+  font-size: 16px;
+  background-color: #f7f7f7;
+  resize: none;
+  box-sizing: border-box;
+  margin-bottom: 36px;
+}
+
+.commentTextarea textarea {
+  width: 100% !important;
+  min-height: 100% !important;
+  resize: none !important;
+  box-sizing: border-box !important;
+  background-color: #f7f7f7;
+  border: none !important;
+  padding-left: 12px !important;
+  padding-top: 10px !important;
+}
+
+.commentTextarea textarea::placeholder {
+  font-family: 'Inter';
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 18px;
+  color: #6c7684;
+}
+
+.commentTextarea:focus-within {
+  outline: none !important;
+  border-color: #eef2f6 !important;
+  box-shadow: none !important;
+}
+
+.commentTextarea textarea:focus,
+.commentTextarea textarea:focus-visible,
+.commentTextarea textarea:active {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  -webkit-appearance: none !important;
+}
+
+/* Right column - product image */
+.contentRightColumn {
+  width: 256px;
+  height: 288px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  margin-bottom: 36px;
+}
+
+.productImageContainer {
+  width: 256px;
+  height: 288px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 36px;
+}
+
+.productImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ======= INGREDIENTS & CONDIMENTS SECTIONS ======= */
+/* Section containers */
+.section {
+  width: 100%;
+  margin-bottom: 24px;
+  border: 1px solid #eef2f6;
+  border-radius: 12px;
+  overflow: hidden;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sectionHeader {
+  height: 37px;
+  padding: 8px;
+  background-color: #f7f7f7;
+  cursor: pointer;
+  border-bottom: 1px solid #eef2f6;
+}
+
+.sectionHeaderContainer {
+  display: flex;
+  position: relative;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-right: 16px;
+}
+
+.sectionHeaderText {
+  font-family: 'Inter';
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  color: #000000;
+}
+
+/* Ingredient and condiment lists */
+.ingredientsList,
+.condimentsList {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.ingredientItem,
+.condimentItem {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #eef2f6;
+  position: relative;
+}
+
+.ingredientItem:last-child,
+.condimentItem:last-child {
+  border-bottom: none;
+}
+
+.ingredientName,
+.condimentName {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  color: #000000;
+  flex: 1;
+  max-width: 60%;
+}
+
+.priceTag {
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: #f0f0f0;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  color: #666666;
+  margin-right: 16px;
+}
+
+.ingredientQuantityWrapper {
+  display: flex;
+  justify-content: flex-end;
+  width: 100px;
+  max-width: 100px;
+}
+
+.quantityControl {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100px;
+  height: 36px;
+  background-color: #ffffff;
+  border: 1px solid #eef2f6;
+  border-radius: 8px;
+  padding: 0 8px;
+}
+
+.iconButton,
+.iconButtonAdd {
+  cursor: pointer;
+  color: #000000;
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.iconButtonAdd {
+  color: #b3ff00;
+}
+
+.iconButton:hover,
+.iconButtonAdd:hover {
+  transform: scale(1.1);
+}
+
+.quantityValue {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  color: #000000;
+  text-align: center;
+  min-width: 24px;
+}
+
+/* ======= FOOTER SECTION ======= */
+/* Footer with quantity controls and add to cart button */
+.footer {
+  width: 100%;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  background-color: #ffffff;
+  border-top: 1px solid #eef2f6;
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+}
+
+.quantityControls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 48px;
+}
+
+.quantityControlValue {
+  font-family: 'Inter', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 28px;
+  color: #000000;
+  text-align: center;
+  min-width: 30px;
+}
+
+.trashIcon {
+  cursor: pointer;
+}
+
+.addToCartButton {
+  width: 300px;
+  height: 48px;
+  background-color: #000000;
+  border-radius: 8px;
+  padding: 0 20px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.addToCartButton:hover {
+  background-color: #333333;
+}
+
+/* ======= MOBILE RESPONSIVE STYLES ======= */
 @media (max-width: 768px) {
   .modalContent {
     width: 100%;
@@ -37,7 +481,7 @@
 
   .modalBody {
     height: auto !important;
-    max-height: calc(100vh - 250px) !important;
+    max-height: calc(100vh - 150px) !important;
     padding: 24px 16px 0 16px;
     overflow-y: auto;
   }
@@ -180,549 +624,4 @@
     align-items: center !important;
     justify-content: center !important;
   }
-}
-
-@media (max-width: 480px) {
-  .modalTitle {
-    font-size: 20px;
-    line-height: 26px;
-    top: 60px;
-  }
-
-  .currentPrice {
-    font-size: 24px;
-    line-height: 30px;
-  }
-
-  .originalPrice {
-    font-size: 14px;
-  }
-
-  .productDescription {
-    font-size: 16px;
-    line-height: 24px;
-  }
-
-  .ingredientItem,
-  .condimentItem {
-    padding: 12px 0;
-  }
-
-  .ingredientName,
-  .condimentName {
-    font-size: 14px;
-    line-height: 20px;
-    max-width: 45%;
-  }
-
-  .priceTag {
-    position: relative;
-    right: auto;
-    margin: 0 4px;
-    padding: 4px 6px;
-    height: auto;
-    font-size: 12px;
-  }
-
-  .quantityControl {
-    width: 90px;
-    margin-left: auto;
-  }
-
-  .commentTextarea textarea {
-    min-height: 80px !important;
-    width: 100% !important;
-  }
-
-  .footer {
-    flex-direction: row;
-    padding: 12px;
-    gap: 12px;
-  }
-
-  .footer > div {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    padding: 0;
-    flex-wrap: wrap;
-  }
-
-  .addToCartButton {
-    min-height: 48px;
-  }
-
-  .addToCartButton > div {
-    gap: 8px !important;
-    flex-wrap: wrap;
-    justify-content: space-between;
-  }
-
-  .addToCartButton > div > div {
-    width: auto !important;
-    margin: 0 !important;
-  }
-
-  .iconButtonAdd {
-    background: #b3ff00;
-    border-radius: 50%;
-    color: #000;
-  }
-
-  .sectionHeaderText {
-    font-size: 14px;
-  }
-
-  .quantityValue {
-    width: 24px;
-    text-align: center;
-  }
-}
-
-.closeButton {
-  position: absolute;
-  right: 32px;
-  top: 32px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-  z-index: 10;
-  color: #ffffff;
-  border-radius: 50%;
-  width: 36px;
-  height: 36px;
-  transition: background-color 0.2s ease;
-}
-
-.closeButton:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-.modalHeader {
-  width: 100%;
-  height: 250px;
-  background: #000000;
-  position: sticky;
-  top: 0;
-  left: 0;
-  right: 0;
-  border-radius: 20px 20px 0 0;
-  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
-  z-index: 10;
-}
-
-.modalTitle {
-  position: absolute;
-  left: 40px;
-  top: 100px;
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
-  font-size: 36px;
-  line-height: 44px;
-  color: #ffffff;
-  width: 350px;
-}
-
-.discountBadge {
-  position: absolute;
-  top: 40px;
-  left: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #b3ff00;
-  color: #000;
-  padding: 8px 12px;
-  border-radius: 16px;
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 20px;
-  height: 28px;
-  min-width: 80px;
-}
-
-.priceContainer {
-  position: absolute;
-  left: 40px;
-  top: 152px;
-  display: flex;
-  align-items: center;
-}
-
-.currentPrice {
-  font-family: 'Inter', sans-serif;
-  font-size: 42px;
-  font-weight: 600;
-  line-height: 52px;
-  color: #ffffff;
-}
-
-.originalPrice {
-  font-family: 'Inter', sans-serif;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 18px;
-  text-decoration: line-through;
-  color: #939393;
-  margin-left: 12px;
-}
-
-.modalBody {
-  padding: 32px 40px 0 40px;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  max-height: calc(
-    90vh - 250px
-  ); /* Subtract header height from viewport height */
-}
-
-/* Product info and image layout */
-.contentTopSection {
-  display: flex;
-  margin-bottom: 40px;
-  width: 100%;
-  position: relative;
-}
-
-.contentLeftColumn {
-  width: 470px;
-  margin-right: 30px;
-}
-
-.contentRightColumn {
-  width: 280px;
-  height: 320px;
-  position: absolute;
-  right: 0;
-  top: 0;
-}
-
-.productInfo {
-  width: 100%;
-  margin-bottom: 24px;
-}
-
-.productDescription {
-  font-family: 'Inter', sans-serif;
-  font-size: 18px;
-  font-weight: 400;
-  line-height: 30px;
-  color: #000000;
-  margin-bottom: 20px;
-}
-
-.helperText {
-  font-family: 'Inter', sans-serif;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 24px;
-  color: #000000;
-  margin-bottom: 10px;
-}
-
-.productImageContainer {
-  width: 280px;
-  height: 320px;
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-.productImage {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Comments */
-.commentsContainer {
-  width: 470px;
-  margin-bottom: 40px;
-  position: relative;
-}
-
-.sectionLabel {
-  font-family: 'Inter', sans-serif;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 18px;
-  color: #000000;
-  margin-bottom: 8px;
-}
-
-.commentTextarea {
-  width: 100%;
-  height: 102px;
-  border: 1px solid #eef2f6;
-  border-radius: 12px;
-  padding: 14px 16px;
-  font-size: 16px;
-  background-color: #f7f7f7;
-  resize: none;
-  box-sizing: border-box;
-}
-
-.commentTextarea:focus-within {
-  outline: none !important;
-  border-color: #eef2f6 !important;
-  box-shadow: none !important;
-}
-
-.commentTextarea textarea {
-  width: 100% !important;
-  min-height: 100% !important;
-  resize: none !important;
-  box-sizing: border-box !important;
-  background-color: #f7f7f7;
-  border: none !important;
-}
-
-.commentTextarea textarea:focus,
-.commentTextarea textarea:focus-visible,
-.commentTextarea textarea:active {
-  outline: none !important;
-  box-shadow: none !important;
-  border: none !important;
-  -webkit-appearance: none !important;
-}
-
-.charCount {
-  text-align: right;
-  color: #6c7684;
-  font-family: 'Inter', sans-serif;
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 18px;
-  margin-top: 4px;
-}
-
-/* Ingredients and condiments sections */
-.section {
-  width: 100%;
-  margin-bottom: 24px;
-  border: 1px solid #eef2f6;
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-.sectionHeader {
-  height: 60px;
-  padding: 16px;
-  background-color: #f7f7f7;
-  cursor: pointer;
-  border-bottom: 1px solid #eef2f6;
-}
-
-.sectionHeaderText {
-  font-family: 'Inter', sans-serif;
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 24px;
-  color: #000000;
-}
-
-.ingredientsList,
-.condimentsList {
-  display: flex;
-  flex-direction: column;
-  padding: 16px;
-  width: 100%;
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.ingredientItem,
-.condimentItem {
-  display: flex;
-  align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid #eef2f6;
-  position: relative;
-}
-
-.ingredientItem:last-child,
-.condimentItem:last-child {
-  border-bottom: none;
-}
-
-.ingredientName,
-.condimentName {
-  font-family: 'Inter', sans-serif;
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 24px;
-  color: #000000;
-  flex: 1;
-  max-width: 60%;
-}
-
-.priceTag {
-  padding: 4px 8px;
-  border-radius: 4px;
-  background-color: #f0f0f0;
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 20px;
-  color: #666666;
-  margin-right: 16px;
-}
-
-.quantityControl {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100px;
-  height: 36px;
-  background-color: #ffffff;
-  border: 1px solid #eef2f6;
-  border-radius: 8px;
-  padding: 0 8px;
-}
-
-.iconButton,
-.iconButtonAdd {
-  cursor: pointer;
-  color: #000000;
-  background-color: transparent;
-  border: none;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-}
-
-.iconButtonAdd {
-  color: #b3ff00;
-}
-
-.iconButton:hover,
-.iconButtonAdd:hover {
-  transform: scale(1.1);
-}
-
-.quantityValue {
-  font-family: 'Inter', sans-serif;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 24px;
-  color: #000000;
-  text-align: center;
-  min-width: 24px;
-}
-
-.quantityContainer {
-  display: flex;
-  gap: 16px;
-  align-items: center;
-  margin-top: 24px;
-}
-
-.footerContainer {
-  padding: 16px 32px;
-  background-color: #ffffff;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  height: 72px;
-  border-top: 1px solid #eef2f6;
-}
-
-.footerActions {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  padding: 8px;
-  gap: 41px;
-  width: 197px;
-  height: 40px;
-  background: #ffffff;
-  border: 1px solid #eef2f6;
-  border-radius: 4px;
-  margin: 32px 0 16px 0;
-}
-
-.trashIcon {
-  cursor: pointer;
-}
-
-.quantityControlValue {
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 20px;
-  text-align: center;
-  color: #000000;
-  width: 31px;
-}
-
-/* Ensure footer stays at bottom */
-.footer {
-  width: 100%;
-  height: 80px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 40px;
-  background-color: #ffffff;
-  border-top: 1px solid #eef2f6;
-  position: sticky;
-  bottom: 0;
-  left: 0;
-  z-index: 10;
-}
-
-.quantityControls {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  height: 48px;
-}
-
-.quantityControlValue {
-  font-family: 'Inter', sans-serif;
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 28px;
-  color: #000000;
-  text-align: center;
-  min-width: 30px;
-}
-
-.addToCartButton {
-  width: 300px;
-  height: 48px;
-  background-color: #000000;
-  border-radius: 8px;
-  padding: 0 20px;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.addToCartButton:hover {
-  background-color: #333333;
-}
-
-.subtotalText {
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 20px;
-  color: #b3ff00;
-  width: fit-content;
-  text-align: right;
 }
