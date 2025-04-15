@@ -418,10 +418,12 @@ const IngredientsSection = ({
             <Text className={styles.ingredientName}>{ingredient.name}</Text>
 
             {ingredient.price && (
-              <Text className={styles.priceTag}>+${ingredient.price}</Text>
+              <Box className={styles.priceTagContainer}>
+                <Text className={styles.priceTag}>+${ingredient.price}</Text>
+              </Box>
             )}
 
-            <div className={styles.ingredientQuantityWrapper}>
+            <Box className={styles.ingredientQuantityWrapper}>
               <QuantityControl
                 initialQuantity={ingredient.quantity}
                 minQuantity={0}
@@ -429,8 +431,9 @@ const IngredientsSection = ({
                 onChange={(newValue) =>
                   handleUpdateIngredient(index, newValue - ingredient.quantity)
                 }
+                variant="ingredient"
               />
-            </div>
+            </Box>
           </Flex>
         ))}
       </Flex>
@@ -483,15 +486,10 @@ const CondimentsSection = ({
             <Checkbox
               checked={condiment.selected}
               onChange={() => handleToggleCondiment(index)}
-              className={styles.condimentCheckbox}
-              styles={{
-                input: {
-                  backgroundColor: condiment.selected
-                    ? '#B3FF00'
-                    : 'transparent',
-                  borderColor: condiment.selected ? '#B3FF00' : '#939393',
-                },
-                icon: { display: 'none' },
+              classNames={{
+                root: styles.condimentCheckbox,
+                input: styles.condimentCheckboxInput,
+                icon: styles.condimentCheckboxIcon,
               }}
             />
           </Flex>
@@ -520,6 +518,7 @@ const ModalFooter = ({
       initialQuantity={quantity}
       minQuantity={1}
       onChange={(newQuantity) => setQuantity(newQuantity)}
+      variant="footer"
     />
     <Button className={styles.addToCartButton} onClick={handleAddToCart}>
       <Group style={{ width: '100%' }} justify="apart">

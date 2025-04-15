@@ -30,3 +30,86 @@
   text-align: center;
   color: #000000;
 }
+
+/* Footer variant styling */
+.footerVariant {
+  height: 40px;
+  width: 197px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+  background: transparent;
+  border: 1px solid #eef2f6;
+  border-radius: 4px;
+  margin: 0;
+}
+
+.footerVariant .button {
+  width: 26px;
+  height: 26px;
+  background: transparent;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.footerVariant .button:hover {
+  background: #b3ff00;
+  border: none;
+}
+
+.footerVariant .quantityText {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  min-width: 31px;
+}
+
+/* Ingredient variant styling */
+.ingredientVariant {
+  width: 105px;
+  height: 32px;
+  border: 1px solid #eef2f6;
+  border-radius: 8px;
+  gap: 8px;
+  padding: 8px;
+  justify-content: space-between;
+}
+
+.ingredientVariant .button {
+  transition: all 0.2s ease;
+}
+
+.ingredientVariant .button:hover {
+  background: #b3ff00;
+  border: none;
+}
+
+.ingredientVariant .quantityText {
+  font-size: 10px;
+  line-height: 18px;
+  min-width: 17px;
+}
+
+/* Make sure button icons are properly sized */
+.button svg {
+  width: 13.5px;
+  height: 13.5px;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .footerVariant {
+    height: 40px;
+  }
+
+  .footerVariant .button {
+    width: 30px !important;
+    height: 30px !important;
+  }
+
+  .ingredientVariant {
+    width: 90px;
+    flex-shrink: 0;
+  }
+}

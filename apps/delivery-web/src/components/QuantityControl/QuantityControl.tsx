@@ -17,6 +17,10 @@ interface QuantityControlProps {
   onChange?: (quantity: number) => void;
   onAddToCart?: () => void;
   isDisabled?: boolean;
+  className?: string;
+  buttonClassName?: string;
+  quantityDisplayClassName?: string;
+  variant?: 'default' | 'footer' | 'ingredient';
 }
 
 const QuantityControl = ({
@@ -26,6 +30,10 @@ const QuantityControl = ({
   onChange,
   onAddToCart,
   isDisabled = false,
+  className = '',
+  buttonClassName = '',
+  quantityDisplayClassName = '',
+  variant = 'default',
 }: QuantityControlProps) => {
   const [quantity, setQuantity] = useState(initialQuantity);
 
@@ -50,12 +58,26 @@ const QuantityControl = ({
     }
   };
 
+  // Get container class based on variant
+  const getContainerClass = () => {
+    const baseClass = `${styles.container} ${styles.quantityControl}`;
+
+    switch (variant) {
+      case 'footer':
+        return `${baseClass} ${styles.footerVariant} ${className}`;
+      case 'ingredient':
+        return `${baseClass} ${styles.ingredientVariant} ${className}`;
+      default:
+        return `${baseClass} ${className}`;
+    }
+  };
+
   return (
-    <Flex className={`${styles.container} ${styles.quantityControl}`}>
+    <Flex className={getContainerClass()}>
       <Button
-        className={`${styles.button}`}
+        className={`${styles.button} ${buttonClassName}`}
         onClick={decrement}
-        disabled={quantity <= minQuantity}
+        disabled={quantity <= minQuantity || isDisabled}
         aria-label={
           quantity <= 1
             ? ACCESSIBILITY_TEXTS.REMOVE_FROM_CART
@@ -69,15 +91,14 @@ const QuantityControl = ({
         )}
       </Button>
 
-      <Box className={styles.quantityDisplay}>
+      <Box className={`${styles.quantityDisplay} ${quantityDisplayClassName}`}>
         <Text className={styles.quantityText}>{quantity}</Text>
       </Box>
 
       <Button
-        className={`${styles.button}`}
-        style={{ background: '#b3ff00', border: 'none' }}
+        className={`${styles.button} ${buttonClassName}`}
         onClick={increment}
-        disabled={quantity >= maxQuantity}
+        disabled={quantity >= maxQuantity || isDisabled}
         aria-label={ACCESSIBILITY_TEXTS.INCREASE_QUANTITY}
       >
         <IconCirclePlus style={{ color: '#000000' }} />
