@@ -43,7 +43,7 @@
   align-items: center;
   justify-content: center;
   padding: 8px;
-  z-index: 11;
+  z-index: 30;
   color: #ffffff;
   border-radius: 50%;
   width: 36px;
@@ -536,14 +536,16 @@
     border-radius: 8px;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    position: relative;
   }
 
   .modalHeader {
     position: sticky;
     top: 0;
-    z-index: 20;
+    z-index: 30;
     width: 100%;
-    border-radius: 0;
+    border-radius: 8px 8px 0 0;
     height: 139px;
     background: #000000;
   }
@@ -731,7 +733,7 @@
     bottom: 0;
     padding: 16px;
     background: white;
-    z-index: 20;
+    z-index: 30;
     border-top: 1px solid #eef2f6;
     width: 100%;
     min-height: auto;
