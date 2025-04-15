@@ -21,7 +21,7 @@ interface QuantityControlProps {
   buttonClassName?: string;
   quantityDisplayClassName?: string;
   isMobile?: boolean;
-  variant?: 'default' | 'footer' | 'ingredient';
+  variant?: 'default' | 'footer' | 'ingredient' | 'productCard';
 }
 
 const QuantityControl = ({
@@ -69,6 +69,8 @@ const QuantityControl = ({
         return `${baseClass} ${styles.footerVariant} ${className}`;
       case 'ingredient':
         return `${baseClass} ${styles.ingredientVariant} ${className}`;
+      case 'productCard':
+        return `${baseClass} ${styles.productCardVariant} ${className}`;
       default:
         return `${baseClass} ${className}`;
     }
@@ -88,13 +90,19 @@ const QuantityControl = ({
       >
         {quantity <= 1 ? (
           <IconTrash
-            size={variant === 'footer' ? 24 : 14}
+            size={
+              variant === 'footer' ? 24 : variant === 'productCard' ? 18 : 14
+            }
+            stroke={2}
             style={{ color: '#000000' }}
           />
         ) : (
           <IconCircleMinus
-            size={variant === 'footer' ? 24 : 14}
+            size={
+              variant === 'footer' ? 24 : variant === 'productCard' ? 18 : 14
+            }
             style={{ color: '#000000' }}
+            stroke={2}
           />
         )}
       </Button>
@@ -110,8 +118,9 @@ const QuantityControl = ({
         aria-label={ACCESSIBILITY_TEXTS.INCREASE_QUANTITY}
       >
         <IconCirclePlus
-          size={variant === 'footer' ? 24 : 14}
+          size={variant === 'footer' ? 24 : variant === 'productCard' ? 18 : 14}
           style={{ color: '#000000' }}
+          stroke={2}
         />
       </Button>
     </Flex>
