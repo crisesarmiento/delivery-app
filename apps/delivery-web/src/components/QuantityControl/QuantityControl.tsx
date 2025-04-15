@@ -20,6 +20,7 @@ interface QuantityControlProps {
   className?: string;
   buttonClassName?: string;
   quantityDisplayClassName?: string;
+  isMobile?: boolean;
   variant?: 'default' | 'footer' | 'ingredient';
 }
 
@@ -33,6 +34,7 @@ const QuantityControl = ({
   className = '',
   buttonClassName = '',
   quantityDisplayClassName = '',
+  isMobile = false,
   variant = 'default',
 }: QuantityControlProps) => {
   const [quantity, setQuantity] = useState(initialQuantity);
@@ -85,9 +87,15 @@ const QuantityControl = ({
         }
       >
         {quantity <= 1 ? (
-          <IconTrash style={{ color: '#000000' }} />
+          <IconTrash
+            size={variant === 'footer' ? 24 : 14}
+            style={{ color: '#000000' }}
+          />
         ) : (
-          <IconCircleMinus style={{ color: '#000000' }} />
+          <IconCircleMinus
+            size={variant === 'footer' ? 24 : 14}
+            style={{ color: '#000000' }}
+          />
         )}
       </Button>
 
@@ -101,7 +109,10 @@ const QuantityControl = ({
         disabled={quantity >= maxQuantity || isDisabled}
         aria-label={ACCESSIBILITY_TEXTS.INCREASE_QUANTITY}
       >
-        <IconCirclePlus style={{ color: '#000000' }} />
+        <IconCirclePlus
+          size={variant === 'footer' ? 24 : 14}
+          style={{ color: '#000000' }}
+        />
       </Button>
     </Flex>
   );

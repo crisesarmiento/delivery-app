@@ -11,16 +11,12 @@ import {
   Checkbox,
   Modal,
   Collapse,
-  Group,
 } from '@mantine/core';
 import {
   IconShoppingCart,
   IconX,
   IconChevronDown,
   IconChevronUp,
-  IconCircleMinus,
-  IconCirclePlus,
-  IconTrash,
 } from '@tabler/icons-react';
 import { IProduct } from '../../types';
 import styles from './AddToCartModal.module.css';
@@ -506,50 +502,37 @@ const ModalFooter = ({
   onClose,
   handleAddToCart,
   finalPrice,
+  isMobile,
 }: {
   quantity: number;
   setQuantity: (value: number) => void;
   onClose: () => void;
   handleAddToCart: () => void;
   finalPrice: number;
+  isMobile?: boolean;
 }) => (
-  <Box className={styles.footer}>
+  <Flex className={styles.footer} direction={isMobile ? 'column' : 'row'}>
     <QuantityControl
       initialQuantity={quantity}
       minQuantity={1}
       onChange={(newQuantity) => setQuantity(newQuantity)}
       variant="footer"
+      isMobile={isMobile}
     />
     <Button className={styles.addToCartButton} onClick={handleAddToCart}>
-      <Group style={{ width: '100%' }} justify="apart">
-        <Group>
+      <Flex className={styles.addToCartButtonContent}>
+        <Flex className={styles.addToCartButtonAddToCartContainer}>
           <IconShoppingCart size={24} style={{ color: '#B3FF00' }} />
-          <Text
-            style={{
-              fontFamily: 'Inter',
-              fontWeight: 600,
-              fontSize: '16px',
-              lineHeight: '24px',
-              color: '#B3FF00',
-            }}
-          >
+          <Text className={styles.addToCartButtonTextAddToCart}>
             {PRODUCT_TEXTS.ADD_TO_CART}
           </Text>
-        </Group>
-        <Text
-          style={{
-            fontFamily: 'Inter',
-            fontWeight: 600,
-            fontSize: '16px',
-            lineHeight: '24px',
-            color: '#B3FF00',
-          }}
-        >
+        </Flex>
+        <Text className={styles.addToCartButtonTextSubtotal}>
           {`${MODAL_TEXTS.SUBTOTAL_LABEL}${finalPrice.toFixed(2)}`}
         </Text>
-      </Group>
+      </Flex>
     </Button>
-  </Box>
+  </Flex>
 );
 
 // ===== Main Component =====
@@ -570,6 +553,21 @@ const AddToCartModal = ({
   const [commentChars, setCommentChars] = useState(
     initialComments ? initialComments.length : 0
   );
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check if we're on mobile
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    checkIfMobile();
+    window.addEventListener('resize', checkIfMobile);
+
+    return () => {
+      window.removeEventListener('resize', checkIfMobile);
+    };
+  }, []);
 
   // Get product with customization options from mock using useMemo
   const productWithCustomization = useMemo(
@@ -694,9 +692,25 @@ const AddToCartModal = ({
       />
 
       {/* Body */}
-      <div className={styles.modalBody}>
-        {/* Top section with content in two columns */}
-        <Flex className={styles.contentTopSection}>
+      <Box className={styles.modalBody}>
+        {/* Top section with content in two columns or reordered for mobile */}
+        <Flex
+          className={styles.contentTopSection}
+          direction={isMobile ? 'column' : 'row'}
+        >
+          {/* For mobile: Image first */}
+          {isMobile && (
+            <Box className={styles.contentRightColumn}>
+              <Box className={styles.productImageContainer}>
+                <Image
+                  src={product.imageUrl}
+                  alt={product.name}
+                  className={styles.productImage}
+                />
+              </Box>
+            </Box>
+          )}
+
           {/* Left column with product description and comments */}
           <Flex className={styles.contentLeftColumn}>
             <ProductInfo product={product} />
@@ -708,16 +722,18 @@ const AddToCartModal = ({
             />
           </Flex>
 
-          {/* Right column with product image */}
-          <Box className={styles.contentRightColumn}>
-            <Box className={styles.productImageContainer}>
-              <Image
-                src={product.imageUrl}
-                alt={product.name}
-                className={styles.productImage}
-              />
+          {/* Right column with product image (desktop only) */}
+          {!isMobile && (
+            <Box className={styles.contentRightColumn}>
+              <Box className={styles.productImageContainer}>
+                <Image
+                  src={product.imageUrl}
+                  alt={product.name}
+                  className={styles.productImage}
+                />
+              </Box>
             </Box>
-          </Box>
+          )}
         </Flex>
 
         {/* Ingredients Section */}
@@ -755,8 +771,9 @@ const AddToCartModal = ({
           onClose={onClose}
           handleAddToCart={handleAddToCart}
           finalPrice={finalPrice}
+          isMobile={isMobile}
         />
-      </div>
+      </Box>
     </Modal>
   );
 };

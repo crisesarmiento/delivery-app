@@ -68,7 +68,8 @@
   right: 0;
   border-radius: 20px 20px 0 0;
   box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
-  z-index: 10;
+  z-index: 20;
+  overflow: hidden;
 }
 
 /* Product title */
@@ -446,20 +447,17 @@
 /* Footer with quantity controls and add to cart button */
 .footer {
   width: 100%;
-  height: 96px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 27px;
-  padding-right: 32px;
-  padding-bottom: 29px;
-  padding-left: 32px;
   background-color: #ffffff;
   border-top: 1px solid #eef2f6;
   position: sticky;
   bottom: 0;
   left: 0;
   z-index: 10;
+  height: auto;
+  min-height: 96px;
 }
 
 .quantityControls {
@@ -484,14 +482,45 @@
 }
 
 .addToCartButton {
-  width: 300px;
-  height: 48px;
+  min-width: 465px;
+  height: 40px;
   background-color: #000000;
-  border-radius: 8px;
+  border-radius: 4px;
   padding: 0 20px;
+  gap: 171px;
   border: none;
   cursor: pointer;
   transition: all 0.2s ease;
+}
+
+.addToCartButtonContent {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  justify-content: space-between;
+}
+
+.addToCartButtonAddToCartContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.addToCartButtonTextAddToCart {
+  font-family: 'Inter';
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  color: #b3ff00;
+}
+
+.addToCartButtonTextSubtotal {
+  font-family: 'Inter';
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  color: #b3ff00;
 }
 
 .addToCartButton:hover {
@@ -501,17 +530,76 @@
 /* ======= MOBILE RESPONSIVE STYLES ======= */
 @media (max-width: 768px) {
   .modalContent {
-    width: 100%;
+    max-width: 350px;
     height: auto;
-    max-height: 100vh;
+    max-height: 1233px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .modalHeader {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    width: 100%;
     border-radius: 0;
+    height: 139px;
+    background: #000000;
+  }
+
+  .modalTitle {
+    font-size: 20px;
+    line-height: 30px;
+    font-weight: 600;
+    top: 51px;
+    left: 32px;
+    white-space: nowrap;
+  }
+
+  .closeButton {
+    right: 16px;
+    top: 16px;
+    z-index: 30;
+    width: 20px;
+    height: 20px;
+  }
+
+  .priceContainer {
+    left: 32px;
+    top: 86px;
+  }
+
+  .currentPrice {
+    font-size: 30px;
+    line-height: 38px;
+    font-weight: 600;
+  }
+
+  .originalPrice {
+    font-size: 16px;
+    line-height: 18px;
+    font-weight: 500;
+  }
+
+  .discountBadge {
+    left: 16px;
+    top: 16px;
+    width: 64px;
+    height: 20px;
   }
 
   .modalBody {
-    height: auto !important;
-    max-height: calc(100vh - 150px) !important;
-    padding: 24px 16px 0 16px;
+    flex: 1;
+    /* max-height: none !important; */
+    padding-top: 16px;
+    padding-bottom: 16px;
+    padding-left: 12px;
+    padding-right: 12px;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-top: 0;
+    z-index: 10;
   }
 
   .contentTopSection {
@@ -522,72 +610,36 @@
   .contentLeftColumn {
     width: 100%;
     margin-right: 0;
+    order: 2;
   }
 
   .contentRightColumn {
     position: relative;
     width: 100%;
     height: auto;
-    margin-top: 16px;
+    margin-top: 0;
+    margin-bottom: 16px;
     right: auto;
     top: auto;
+    order: 1;
+    display: flex;
+    justify-content: center;
   }
 
   .productImageContainer {
     width: 100%;
-    height: 200px;
+    max-width: 200px;
+    height: 225px;
+    border-radius: 12px;
+    margin: 0 auto 27px;
+    position: relative;
   }
 
-  .commentsContainer {
+  .productImage {
     width: 100%;
-    margin-bottom: 24px;
-  }
-
-  .commentTextarea {
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
-
-  .section {
-    width: 100%;
-  }
-
-  .addToCartButton {
-    width: 100%;
-  }
-
-  .footer {
-    padding: 16px;
-    position: sticky;
-    bottom: 0;
-    background: white;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .footer > div {
-    gap: 8px !important;
-  }
-
-  .quantityControls {
-    margin: 0;
-    height: 40px;
-    width: auto;
-  }
-
-  .iconButton,
-  .iconButtonAdd,
-  .trashIcon {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 30px !important;
-    height: 30px !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    z-index: 5;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
   }
 
   .productDescription {
@@ -597,25 +649,48 @@
     word-wrap: break-word;
     font-size: 16px;
     line-height: 24px;
-    padding: 8px 0;
+    padding: 0;
+    margin-bottom: 4px;
   }
 
-  .modalHeader {
-    position: sticky;
-    top: 0;
-    z-index: 11;
+  .productInfo {
+    width: 100%;
   }
 
-  .modalTitle {
-    width: 70%;
-    font-size: 24px;
-    line-height: 30px;
+  .helperText {
+    font-size: 16px;
+    line-height: 24px;
+    margin-bottom: 27px;
+  }
+
+  .commentsContainer {
+    width: 100%;
+    margin-bottom: 24px;
+    height: 100px;
+  }
+
+  .commentTextarea {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    height: 100px;
+  }
+
+  .section {
+    width: 100%;
+    margin-bottom: 16px;
+    border-radius: 8px;
   }
 
   .sectionHeader {
-    padding: 12px 8px;
-    margin-bottom: 8px;
-    height: auto;
+    padding: 8px;
+    margin-bottom: 0;
+    height: 37px;
+  }
+
+  .sectionHeaderText {
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 500;
   }
 
   .ingredientItem,
@@ -624,42 +699,82 @@
     flex-wrap: nowrap;
     gap: 4px;
     width: 100%;
+    height: 42px;
     align-items: center;
+    padding-left: 8px;
+    padding-right: 8px;
   }
 
   .ingredientName,
   .condimentName {
-    font-size: 14px;
+    font-size: 10px;
     line-height: 18px;
+    font-weight: 400;
     flex: 1;
     max-width: none;
-  }
-
-  .priceTag {
-    flex-shrink: 0;
-    font-size: 12px;
-    padding: 4px 8px;
-    margin: 0 4px;
-  }
-
-  .quantityControl {
-    width: 90px;
-    flex-shrink: 0;
-  }
-
-  .iconButton,
-  .iconButtonAdd {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
   }
 
   .priceTagContainer {
     margin-right: 12px;
     margin-left: auto;
+    width: 55px;
+    height: 20px;
+    border-radius: 16px;
   }
 
   .ingredientQuantityWrapper {
-    width: 90px;
+    width: 105px;
+  }
+
+  .footer {
+    position: sticky;
+    bottom: 0;
+    padding: 16px;
+    background: white;
+    z-index: 20;
+    border-top: 1px solid #eef2f6;
+    width: 100%;
+    min-height: auto;
+    height: 116px;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .footer > div:first-child {
+    width: 100%;
+  }
+
+  .addToCartButton {
+    width: 100%;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 10px;
+    padding-bottom: 7px;
+    padding-left: 17px;
+    padding-right: 17px;
+  }
+
+  .addToCartButtonContent {
+    width: 100%;
+  }
+
+  .addToCartButtonAddToCartContainer {
+    width: 100%;
+  }
+
+  .addToCartButton {
+    width: 100%;
+    min-width: 0;
+    margin-top: 0;
+  }
+
+  .addToCartButtonTextAddToCart,
+  .addToCartButtonTextSubtotal {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 600;
   }
 }
