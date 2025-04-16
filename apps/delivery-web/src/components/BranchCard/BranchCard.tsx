@@ -5,7 +5,7 @@ import { Card, Text, Box } from '@mantine/core';
 import { IconClock } from '@tabler/icons-react';
 import BranchBadge from './Badge';
 import BranchHoursTooltip from './BranchHoursTooltip';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface BranchCardProps {
   branch: IBranch;
@@ -14,13 +14,20 @@ interface BranchCardProps {
 
 const BranchCard = ({ branch, onClick }: BranchCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
-  const [showTooltip, setShowTooltip] = useState(false);
   const [isClockHovered, setIsClockHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkIsMobile();
+    window.addEventListener('resize', checkIsMobile);
+    return () => window.removeEventListener('resize', checkIsMobile);
+  }, []);
 
   const handleClick = () => {
-    if (onClick) {
-      onClick();
-    }
+    if (onClick) onClick();
   };
 
   return (
@@ -29,7 +36,7 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
       style={{
         boxSizing: 'border-box',
         width: '100%',
-        maxWidth: '240px',
+        maxWidth: isMobile ? '230px' : '240px',
         height: '242px',
         background: isHovered && !isClockHovered ? '#E3E8EF' : '#FFFFFF',
         border: `1px solid ${
@@ -41,12 +48,12 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
         padding: '6px 6px 8px 8px',
         transition: 'background 0.2s, border 0.2s',
         cursor: 'pointer',
+        overflow: 'visible',
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       data-testid={`branch-card-${branch.id}`}
     >
-      {/* Main card image section */}
       <Box
         style={{
           position: 'relative',
@@ -64,7 +71,6 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
         <BranchBadge isOpen={branch.isOpen ?? false} />
       </Box>
 
-      {/* White box with branch name */}
       <Box
         style={{
           padding: '10px',
@@ -89,6 +95,11 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
               lineHeight: '24px',
               color: '#000000',
               letterSpacing: '0%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              maxWidth: isMobile ? '200px' : '210px',
+              margin: '0 auto',
             }}
             data-testid="branch-card-description"
           >
@@ -98,7 +109,11 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
 
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <BranchHoursTooltip
-            isVisible={showTooltip}
+            isVisible={isClockHovered}
+            branch={branch}
+            onVisibilityChange={(visible) => {
+              if (!visible) setIsClockHovered(false);
+            }}
             trigger={
               <Box
                 style={{
@@ -109,21 +124,18 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
                   justifyContent: 'center',
                   background: 'transparent',
                   borderRadius: '4px',
+                  position: 'relative',
+                  zIndex: 1500,
                 }}
                 onMouseEnter={(e) => {
-                  e.stopPropagation(); // Stop propagation to parent
-                  setShowTooltip(true);
+                  e.stopPropagation();
                   setIsClockHovered(true);
-                  setIsHovered(false); // Reset card hover state
                 }}
                 onMouseLeave={(e) => {
-                  e.stopPropagation(); // Stop propagation to parent
-                  setShowTooltip(false);
+                  e.stopPropagation();
                   setIsClockHovered(false);
                 }}
-                onMouseOver={(e) => e.stopPropagation()} // Prevent mouseOver event bubbling
                 onClick={(e) => {
-                  // Prevent card click when clicking the icon
                   e.stopPropagation();
                 }}
                 data-testid="branch-card-hours-trigger"
@@ -131,8 +143,9 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
                 <IconClock
                   size={18}
                   style={{
-                    color: isHovered && !isClockHovered ? '#000000' : '#939393',
+                    color: isHovered ? '#000000' : '#939393',
                     transition: 'color 0.2s',
+                    zIndex: 1000,
                   }}
                 />
               </Box>

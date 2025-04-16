@@ -11,17 +11,13 @@ import {
   Box,
   useMantineTheme,
 } from '@mantine/core';
-import {
-  IconShoppingCart,
-  IconTrash,
-  IconCircleMinus,
-  IconCirclePlus,
-} from '@tabler/icons-react';
+import { IconShoppingCart } from '@tabler/icons-react';
 import styles from './ProductCard.module.css';
 import DiscountBadge from '../DiscountBadge';
 import AddToCartModal from '../AddToCartModal/AddToCartModal';
 import { useCart, CartItem } from '../../context/CartContext';
 import { BRANCH_TEXTS } from '../../config/constants';
+import QuantityControl from '../QuantityControl';
 
 interface ProductCardProps {
   product: IProduct;
@@ -240,95 +236,56 @@ const ProductCard = ({ product, isDisabled = false }: ProductCardProps) => {
                   className={styles.quantityControlContainer}
                   onMouseLeave={() => setShowQuantityControl(false)}
                 >
-                  <Box
-                    className={styles.controlButtons}
-                    style={{
-                      background: theme.colors.neutral[0],
-                      borderRadius: theme.radius.sm,
-                      padding: `${theme.spacing.xs} ${theme.spacing.sm}`,
-                      boxShadow: theme.shadows.xs,
-                    }}
-                  >
-                    {quantity <= 1 ? (
-                      <IconTrash
-                        size={20}
-                        stroke={1.5}
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => {
-                          if (cartItems.length === 1) {
-                            // Remove single item
+                  <QuantityControl
+                    variant="productCard"
+                    initialQuantity={quantity}
+                    onChange={(newQuantity) => {
+                      if (newQuantity === 0) {
+                        if (cartItems.length === 1) {
+                          // Remove single item
+                          updateCartItem(
+                            product.id,
+                            { quantity: 0 },
+                            cartItems[0].uniqueId
+                          );
+                        } else {
+                          // Remove all items of this product
+                          cartItems.forEach((item) => {
                             updateCartItem(
                               product.id,
                               { quantity: 0 },
-                              cartItems[0].uniqueId
+                              item.uniqueId
                             );
-                          } else {
-                            // Remove all items of this product
-                            cartItems.forEach((item) => {
-                              updateCartItem(
-                                product.id,
-                                { quantity: 0 },
-                                item.uniqueId
-                              );
-                            });
-                          }
-                          setShowQuantityControl(false);
-                        }}
-                      />
-                    ) : (
-                      <IconCircleMinus
-                        size={20}
-                        stroke={1.5}
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => {
-                          if (cartItems.length === 1) {
-                            // Decrease single item
+                          });
+                        }
+                        setShowQuantityControl(false);
+                      } else if (newQuantity < quantity) {
+                        if (cartItems.length === 1) {
+                          // Decrease single item
+                          updateCartItem(
+                            product.id,
+                            { quantity: cartItems[0].quantity - 1 },
+                            cartItems[0].uniqueId
+                          );
+                        } else {
+                          // Decrease one from the first item
+                          const firstItem = cartItems[0];
+                          if (firstItem.quantity > 1) {
                             updateCartItem(
                               product.id,
-                              { quantity: cartItems[0].quantity - 1 },
-                              cartItems[0].uniqueId
+                              { quantity: firstItem.quantity - 1 },
+                              firstItem.uniqueId
                             );
                           } else {
-                            // Decrease one from the first item
-                            const firstItem = cartItems[0];
-                            if (firstItem.quantity > 1) {
-                              updateCartItem(
-                                product.id,
-                                { quantity: firstItem.quantity - 1 },
-                                firstItem.uniqueId
-                              );
-                            } else {
-                              // If first item has quantity 1, remove it
-                              updateCartItem(
-                                product.id,
-                                { quantity: 0 },
-                                firstItem.uniqueId
-                              );
-                            }
+                            // If first item has quantity 1, remove it
+                            updateCartItem(
+                              product.id,
+                              { quantity: 0 },
+                              firstItem.uniqueId
+                            );
                           }
-                        }}
-                      />
-                    )}
-
-                    <Text
-                      mx={theme.spacing.sm}
-                      style={{
-                        fontFamily: theme.fontFamily,
-                        fontWeight: 600,
-                        fontSize: '14px',
-                        lineHeight: '18px',
-                        textAlign: 'center',
-                        color: theme.colors.neutral[9],
-                      }}
-                    >
-                      {quantity}
-                    </Text>
-
-                    <IconCirclePlus
-                      size={20}
-                      stroke={1.5}
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => {
+                        }
+                      } else if (newQuantity > quantity) {
                         if (cartItems.length === 1) {
                           // Increase single item
                           updateCartItem(
@@ -341,9 +298,9 @@ const ProductCard = ({ product, isDisabled = false }: ProductCardProps) => {
                           setShowModal(true);
                           setShowQuantityControl(false);
                         }
-                      }}
-                    />
-                  </Box>
+                      }
+                    }}
+                  />
                 </Box>
               )}
             </>
