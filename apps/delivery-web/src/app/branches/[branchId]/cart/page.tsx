@@ -219,8 +219,14 @@ export default function CheckoutPage() {
   };
 
   // Check if cart is empty
+  useEffect(() => {
+    if (items.length === 0) {
+      router.push(`/branches/${branchId}`);
+    }
+  }, [items.length, branchId, router]);
+
+  // If cart is empty, render nothing
   if (items.length === 0) {
-    router.push(`/branches/${branchId}`);
     return null;
   }
 
