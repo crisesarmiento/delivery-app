@@ -1,6 +1,13 @@
 'use client';
 
-import { ReactNode, useEffect, useState, useRef, forwardRef } from 'react';
+import {
+  ReactNode,
+  useEffect,
+  useState,
+  useRef,
+  forwardRef,
+  useCallback,
+} from 'react';
 import { Box, BoxProps } from '@mantine/core';
 import styles from './ContentWrapper.module.css';
 
@@ -55,18 +62,24 @@ const ContentWrapper = forwardRef<HTMLDivElement, ContentWrapperProps>(
     }, [isHeaderCollapsed, headerHeight, collapsedHeaderHeight, isMobile]);
 
     // Public method to scroll to top of content
-    const scrollToTop = () => {
+    const scrollToTop = useCallback(() => {
       if (contentRef.current) {
         contentRef.current.scrollIntoView({ behavior: 'smooth' });
       }
-    };
+    }, []);
 
     // Expose the scrollToTop method
     useEffect(() => {
       if (contentRef.current) {
         (contentRef.current as any).scrollToTop = scrollToTop;
       }
-    }, []);
+
+      return () => {
+        if (contentRef.current) {
+          delete (contentRef.current as any).scrollToTop;
+        }
+      };
+    }, [scrollToTop]);
 
     // Render the ContentWrapper component
     return (
