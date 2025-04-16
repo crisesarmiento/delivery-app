@@ -5,9 +5,22 @@ import { CartProvider } from '../context/CartContext';
 import Footer from '@/components/Footer';
 import ClientErrorBoundary from '@/components/ClientErrorBoundary/ClientErrorBoundary';
 import { theme } from '../theme/theme';
-import { ReactNode } from 'react';
+import { ReactNode, useState, useEffect, memo } from 'react';
+
+// Use memo to prevent unnecessary re-renders
+const MemoizedCart = memo(({ children }: { children: ReactNode }) => {
+  return <CartProvider>{children}</CartProvider>;
+});
+MemoizedCart.displayName = 'MemoizedCart';
 
 export default function ClientLayout({ children }: { children: ReactNode }) {
+  // Add client-side only rendering to prevent hydration issues
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   return (
     <MantineProvider theme={theme}>
       <div
@@ -32,19 +45,25 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
             alignItems: 'center',
           }}
         >
-          <CartProvider>
-            <ClientErrorBoundary>
-              <div
-                style={{
-                  flex: 1,
-                  width: '100%',
-                  maxWidth: '1440px',
-                }}
-              >
-                {children}
-              </div>
-            </ClientErrorBoundary>
-          </CartProvider>
+          {isMounted ? (
+            <MemoizedCart>
+              <ClientErrorBoundary>
+                <div
+                  style={{
+                    flex: 1,
+                    width: '100%',
+                    maxWidth: '1440px',
+                  }}
+                >
+                  {children}
+                </div>
+              </ClientErrorBoundary>
+            </MemoizedCart>
+          ) : (
+            <div style={{ flex: 1, width: '100%', maxWidth: '1440px' }}>
+              {/* Empty div for SSR placeholder */}
+            </div>
+          )}
           <Footer />
         </div>
       </div>
