@@ -10,6 +10,7 @@ import { useMediaQuery } from '@mantine/hooks';
 import EmptyCart from './EmptyCart';
 import CartItem from './CartItem';
 import { useCart } from '../../context/CartContext';
+import { useRouter } from 'next/navigation';
 
 interface CartItem {
   productId: string;
@@ -39,7 +40,8 @@ const CartDrawer = ({
   const isMobileView = useMediaQuery('(max-width: 768px)');
   const isOnMobile = isMobile !== undefined ? isMobile : isMobileView;
   const [headerOffset, setHeaderOffset] = useState(0);
-  const { clearCart } = useCart();
+  const { clearCart, currentBranchId } = useCart();
+  const router = useRouter();
 
   // Check if viewport is mobile and calculate position
   useEffect(() => {
@@ -132,6 +134,15 @@ const CartDrawer = ({
 
   // Calculate top position based on header state - now using fixed position
   const topPosition = isHeaderCollapsed ? '290px' : '307px'; // Aligned with categories when collapsed
+
+  // Handler for cart view button click
+  const handleViewCartClick = () => {
+    if (currentBranchId) {
+      router.push(`/branches/${currentBranchId}/cart`);
+    } else {
+      console.error('Cannot navigate to cart: No branch ID set');
+    }
+  };
 
   return (
     <Box
@@ -269,6 +280,8 @@ const CartDrawer = ({
             justifyContent: 'center',
             alignItems: 'center',
           }}
+          onClick={handleViewCartClick}
+          data-testid="view-cart-button"
         >
           <Box
             style={{

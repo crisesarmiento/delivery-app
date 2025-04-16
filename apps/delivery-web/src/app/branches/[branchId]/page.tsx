@@ -339,9 +339,15 @@ export default function BranchProductsPage() {
     return acc;
   }, {} as Record<string, IProduct[]>);
 
-  // Open cart drawer
+  // Open cart drawer or navigate to cart page
   const openCartDrawer = () => {
-    setCartDrawerOpened(true);
+    if (isMobile) {
+      // On mobile, navigate directly to the cart page
+      router.push(`/branches/${branchId}/cart`);
+    } else {
+      // On desktop, just open the cart drawer
+      setCartDrawerOpened(true);
+    }
   };
 
   // Define header state change handler
