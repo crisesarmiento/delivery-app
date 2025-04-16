@@ -25,9 +25,6 @@ export const useBranches = () => {
         data: branchesMock,
       };
 
-      // Debugging the source data
-      console.log('useBranches - mock data:', JSON.stringify(branchesMock));
-
       // Simulate network delay
       await new Promise((resolve) => setTimeout(resolve, 800));
 
@@ -44,7 +41,6 @@ export const useBranches = () => {
             })
           : [];
 
-        console.log('useBranches - setting branches:', validBranches);
         setBranches(validBranches);
       } else {
         setError('No se pudieron cargar las sucursales');

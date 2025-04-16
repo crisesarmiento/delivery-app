@@ -83,6 +83,18 @@ const useIngredients = (
     [productWithCustomization]
   );
 
+  // Calculate total selected ingredients
+  const totalSelectedIngredients = useMemo(
+    () => ingredients.filter((ing) => ing.quantity > 0).length,
+    [ingredients]
+  );
+
+  // Maximum allowed selections
+  const maxIngredientSelections = useMemo(
+    () => productWithCustomization?.customization?.maxIngredientSelections || 2,
+    [productWithCustomization]
+  );
+
   // Initialize ingredients
   useEffect(() => {
     if (!opened || !productWithCustomization || isInitialized.current) {
@@ -173,6 +185,8 @@ const useIngredients = (
     setShowIngredients,
     handleUpdateIngredient,
     ingredientOptions,
+    totalSelectedIngredients,
+    maxIngredientSelections,
   };
 };
 
@@ -276,7 +290,9 @@ const usePriceCalculation = (
     if (ingredients.length > 0) {
       ingredients.forEach((ing) => {
         if (ing.quantity > 0 && ing.price) {
-          total += ing.price;
+          // Multiply the ingredient price by its quantity
+          const ingredientCost = ing.price * ing.quantity;
+          total += ingredientCost;
         }
       });
     }
@@ -378,12 +394,14 @@ const IngredientsSection = ({
   ingredients,
   handleUpdateIngredient,
   maxIngredientSelections,
+  totalSelectedIngredients,
 }: {
   showIngredients: boolean;
   setShowIngredients: (value: boolean) => void;
   ingredients: IngredientItem[];
   handleUpdateIngredient: (index: number, change: number) => void;
   maxIngredientSelections: number;
+  totalSelectedIngredients: number;
 }) => (
   <Flex className={styles.section}>
     <Flex
@@ -428,6 +446,10 @@ const IngredientsSection = ({
                   handleUpdateIngredient(index, newValue - ingredient.quantity)
                 }
                 variant="ingredient"
+                isDisabled={
+                  totalSelectedIngredients >= maxIngredientSelections &&
+                  ingredient.quantity === 0
+                }
               />
             </Box>
           </Flex>
@@ -582,6 +604,8 @@ const AddToCartModal = ({
     setShowIngredients,
     handleUpdateIngredient,
     ingredientOptions,
+    totalSelectedIngredients,
+    maxIngredientSelections,
   } = useIngredients(
     initialIngredients,
     productWithCustomization || null,
@@ -642,6 +666,7 @@ const AddToCartModal = ({
       ingredients: ingredients.filter((ing) => ing.quantity > 0),
       condiments: condiments.filter((c) => c.selected).map((c) => c.name),
       comments,
+      totalPrice: finalPrice, // Pass the calculated finalPrice to the cart
     };
 
     onAddToCart(cartItem.quantity, cartItem);
@@ -743,10 +768,8 @@ const AddToCartModal = ({
             setShowIngredients={setShowIngredients}
             ingredients={ingredients}
             handleUpdateIngredient={handleUpdateIngredient}
-            maxIngredientSelections={
-              productWithCustomization?.customization
-                ?.maxIngredientSelections || 5
-            }
+            maxIngredientSelections={maxIngredientSelections}
+            totalSelectedIngredients={totalSelectedIngredients}
           />
         )}
 

@@ -162,14 +162,6 @@ export default function BranchProductsPage() {
     }
   }, [branchId, setBranchId]);
 
-  // Clean up cart when unmounting component (leaving the branch page)
-  useEffect(() => {
-    // This cleanup function runs when the component unmounts
-    return () => {
-      clearCart();
-    };
-  }, [clearCart]);
-
   // Handle back navigation
   const handleBack = useCallback((): void => {
     clearCart(); // Clear cart when navigating back
