@@ -18,10 +18,6 @@ export const useProducts = (branchId: string) => {
       const mockData: IProduct[] = productsMock;
 
       // Debug the data source
-      console.log(
-        `useProducts - mockData for branchId ${branchId}:`,
-        mockData ? JSON.stringify(mockData.slice(0, 2)) + '...' : 'undefined'
-      );
 
       // Simulate network delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -42,13 +38,6 @@ export const useProducts = (branchId: string) => {
                 'id' in product
             )
           : [];
-
-        console.log(
-          'useProducts - setting products:',
-          validProducts.length > 0
-            ? JSON.stringify(validProducts.slice(0, 1)) + '...'
-            : 'empty array'
-        );
 
         setProducts(validProducts);
       } else {

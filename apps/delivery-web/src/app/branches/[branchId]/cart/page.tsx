@@ -80,9 +80,6 @@ export default function CheckoutPage() {
     if (currentBranch) {
       const checkBranchStatus = () => {
         const isOpen = isBranchOpen(currentBranch);
-        console.log(
-          `Branch ${currentBranch.name} is ${isOpen ? 'open' : 'closed'}`
-        );
         setIsBranchClosed(!isOpen);
       };
 
