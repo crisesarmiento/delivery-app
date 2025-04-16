@@ -32,6 +32,8 @@ export default function BranchProductsPage() {
     items: cartContextItems,
     addToCart: addToCartContext,
     getTotalPrice,
+    clearCart,
+    setBranchId,
   } = useCart();
 
   const [isMobile, setIsMobile] = useState(false);
@@ -145,8 +147,24 @@ export default function BranchProductsPage() {
   // Get products for this branch
   const branchProducts = useMemo(() => products || [], []);
 
+  // Set branch ID when component mounts or branchId changes
+  useEffect(() => {
+    if (branchId) {
+      setBranchId(branchId);
+    }
+  }, [branchId, setBranchId]);
+
+  // Clean up cart when unmounting component (leaving the branch page)
+  useEffect(() => {
+    // This cleanup function runs when the component unmounts
+    return () => {
+      clearCart();
+    };
+  }, [clearCart]);
+
   // Handle back navigation
   const handleBack = (): void => {
+    clearCart(); // Clear cart when navigating back
     router.push('/');
   };
 

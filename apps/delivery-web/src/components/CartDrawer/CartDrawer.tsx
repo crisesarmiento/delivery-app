@@ -9,6 +9,8 @@ import { CART_TITLE, CART_TOTAL, CART_VIEW_BUTTON } from '@/constants/text';
 import { useMediaQuery } from '@mantine/hooks';
 import EmptyCart from './EmptyCart';
 import CartItem from './CartItem';
+import { useCart } from '../../context/CartContext';
+
 interface CartItem {
   productId: string;
   quantity: number;
@@ -37,6 +39,7 @@ const CartDrawer = ({
   const isMobileView = useMediaQuery('(max-width: 768px)');
   const isOnMobile = isMobile !== undefined ? isMobile : isMobileView;
   const [headerOffset, setHeaderOffset] = useState(0);
+  const { clearCart } = useCart();
 
   // Check if viewport is mobile and calculate position
   useEffect(() => {
@@ -168,7 +171,10 @@ const CartDrawer = ({
             size={18}
             stroke={1.5}
             style={{ cursor: 'pointer' }}
-            onClick={onClose}
+            onClick={() => {
+              clearCart();
+            }}
+            data-testid="cart-clear-button"
           />
         </Box>
       </Box>
