@@ -1,0 +1,17 @@
+.contentWrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  z-index: 5;
+  /* Transform for hardware acceleration to avoid flickering */
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .contentWrapper {
+    padding: 0;
+  }
+}

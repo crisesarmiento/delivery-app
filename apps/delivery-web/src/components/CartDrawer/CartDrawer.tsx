@@ -9,6 +9,9 @@ import { CART_TITLE, CART_TOTAL, CART_VIEW_BUTTON } from '@/constants/text';
 import { useMediaQuery } from '@mantine/hooks';
 import EmptyCart from './EmptyCart';
 import CartItem from './CartItem';
+import { useCart } from '../../context/CartContext';
+import { useRouter } from 'next/navigation';
+
 interface CartItem {
   productId: string;
   quantity: number;
@@ -32,25 +35,70 @@ const CartDrawer = ({
 }: CartDrawerProps) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [rightPosition, setRightPosition] = useState('80px');
+  const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
   const isMobileView = useMediaQuery('(max-width: 768px)');
   const isOnMobile = isMobile !== undefined ? isMobile : isMobileView;
+  const [headerOffset, setHeaderOffset] = useState(0);
+  const { clearCart, currentBranchId } = useCart();
+  const router = useRouter();
 
-  // Check if viewport is mobile
+  // Check if viewport is mobile and calculate position
   useEffect(() => {
-    const checkMobile = () => {
-      const isMobileView = window.innerWidth <= 768;
+    const updatePositioning = () => {
+      const viewportWidth = window.innerWidth;
+      const isMobileView = viewportWidth <= 768;
       setIsMobile(isMobileView);
+
+      // Calculate right position based on container width (1440px max)
+      if (viewportWidth > 1440) {
+        // If viewport is wider than 1440px, calculate offset from right edge
+        const offsetFromCenter = (viewportWidth - 1440) / 2;
+        setRightPosition(`${offsetFromCenter + 80}px`);
+      } else {
+        // For smaller viewports, keep standard 80px from right
+        setRightPosition('80px');
+      }
     };
 
-    // Check on mount
-    checkMobile();
-
-    // Add resize listener
-    window.addEventListener('resize', checkMobile);
+    // Check on mount and resize
+    updatePositioning();
+    window.addEventListener('resize', updatePositioning);
 
     // Clean up
-    return () => window.removeEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', updatePositioning);
   }, []);
+
+  // Track scroll position to detect header collapse state and header height changes
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollPos = window.scrollY;
+      const newIsHeaderCollapsed = currentScrollPos > 50;
+
+      if (newIsHeaderCollapsed !== isHeaderCollapsed) {
+        setIsHeaderCollapsed(newIsHeaderCollapsed);
+      }
+
+      // Calculate header offset based on scroll position
+      const collapsedHeaderHeight = 70; // Height when collapsed
+      const fullHeaderHeight = 280; // Height when expanded
+
+      // Calculate how much of the header has been scrolled
+      const scrolledPortion = Math.min(
+        currentScrollPos,
+        fullHeaderHeight - collapsedHeaderHeight
+      );
+      const currentHeaderOffset = scrolledPortion > 0 ? scrolledPortion : 0;
+
+      setHeaderOffset(currentHeaderOffset);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    // Initial call to set correct values
+    handleScroll();
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isHeaderCollapsed]);
 
   // Handle visibility based on opened prop and mobile status
   useEffect(() => {
@@ -74,22 +122,42 @@ const CartDrawer = ({
 
   // For empty cart - compact floating card with specified dimensions
   if (cartItems.length === 0) {
-    return <EmptyCart isVisible={isVisible} isMobile={isMobile} />;
+    return (
+      <EmptyCart
+        isVisible={isVisible}
+        isMobile={isMobile}
+        isHeaderCollapsed={isHeaderCollapsed}
+        headerOffset={headerOffset}
+      />
+    );
   }
+
+  // Calculate top position based on header state - now using fixed position
+  const topPosition = isHeaderCollapsed ? '290px' : '307px'; // Aligned with categories when collapsed
+
+  // Handler for cart view button click
+  const handleViewCartClick = () => {
+    if (currentBranchId) {
+      router.push(`/branches/${currentBranchId}/cart`);
+    } else {
+      console.error('Cannot navigate to cart: No branch ID set');
+    }
+  };
 
   return (
     <Box
       style={{
         position: 'fixed',
-        top: '406px',
-        right: isVisible ? '40px' : '-240px',
+        top: topPosition,
+        transform: `translateY(-${headerOffset}px)`,
+        right: isVisible ? rightPosition : '-240px',
         width: '200px',
         maxHeight: '242px',
         background: '#FFFFFF',
         border: '1px solid #EEF2F6',
         boxShadow: '0px 4px 16px rgba(0, 0, 0, 0.1)',
         borderRadius: '4px',
-        transition: 'right 0.3s ease',
+        transition: 'right 0.3s ease, transform 0.3s ease, top 0.3s ease',
         zIndex: 1000,
         overflow: 'hidden',
         boxSizing: 'border-box',
@@ -114,7 +182,10 @@ const CartDrawer = ({
             size={18}
             stroke={1.5}
             style={{ cursor: 'pointer' }}
-            onClick={onClose}
+            onClick={() => {
+              clearCart();
+            }}
+            data-testid="cart-clear-button"
           />
         </Box>
       </Box>
@@ -209,6 +280,8 @@ const CartDrawer = ({
             justifyContent: 'center',
             alignItems: 'center',
           }}
+          onClick={handleViewCartClick}
+          data-testid="view-cart-button"
         >
           <Box
             style={{

@@ -100,6 +100,7 @@ export const PRODUCT_TEXTS = {
 };
 
 export const MODAL_TEXTS = {
+  MODAL_TITLE: 'Armala Como Quieras',
   CUSTOMIZE_HELPER_TEXT:
     'En comentarios, aclaranos si lo preferis sin chimi. Gracias!',
   COMMENTS_LABEL: 'Comentarios',
@@ -168,6 +169,7 @@ export const SEARCH_TEXTS = {
 export const HEADER_TEXTS = {
   BACK_BUTTON: 'Atrás',
   LOGO_TEXT: 'PUNTO 33',
+  SUCURSALES: 'SUCURSALES',
 };
 
 // New constants for UI components

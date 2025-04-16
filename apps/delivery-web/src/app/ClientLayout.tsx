@@ -15,17 +15,38 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
           width: '100%',
           maxWidth: '100%',
           overflowX: 'hidden',
+          overflowY: 'visible',
           display: 'flex',
           flexDirection: 'column',
           minHeight: '100vh',
+          alignItems: 'center',
         }}
       >
-        <CartProvider>
-          <ClientErrorBoundary>
-            <div style={{ flex: 1 }}>{children}</div>
-          </ClientErrorBoundary>
-        </CartProvider>
-        <Footer />
+        <div
+          style={{
+            width: '100%',
+            position: 'relative',
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          <CartProvider>
+            <ClientErrorBoundary>
+              <div
+                style={{
+                  flex: 1,
+                  width: '100%',
+                  maxWidth: '1440px',
+                }}
+              >
+                {children}
+              </div>
+            </ClientErrorBoundary>
+          </CartProvider>
+          <Footer />
+        </div>
       </div>
     </MantineProvider>
   );

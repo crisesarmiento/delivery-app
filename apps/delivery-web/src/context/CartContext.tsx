@@ -42,6 +42,8 @@ interface CartContextType {
   clearCart: () => void;
   cartItems: CartItem[];
   cartTotal: number;
+  currentBranchId: string | null;
+  setBranchId: (branchId: string) => void;
 }
 
 // Create the context with a default empty value
@@ -61,6 +63,9 @@ const CartContext = createContext<CartContextType>({
   clearCart: () => {},
   cartItems: [],
   cartTotal: 0,
+  currentBranchId: null,
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  setBranchId: () => {},
 });
 
 // Custom hook to use the cart context
@@ -69,10 +74,17 @@ export const useCart = () => useContext(CartContext);
 // Provider component to wrap the application
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [currentBranchId, setCurrentBranchId] = useState<string | null>(null);
 
   // Load cart from localStorage on initial render
   useEffect(() => {
     const savedCart = localStorage.getItem('smarty-cart');
+    const savedBranchId = localStorage.getItem('smarty-current-branch');
+
+    if (savedBranchId) {
+      setCurrentBranchId(savedBranchId);
+    }
+
     if (savedCart) {
       try {
         const parsedCart = JSON.parse(savedCart);
@@ -89,6 +101,24 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     localStorage.setItem('smarty-cart', JSON.stringify(items));
   }, [items]);
+
+  // Save current branch ID to localStorage whenever it changes
+  useEffect(() => {
+    if (currentBranchId) {
+      localStorage.setItem('smarty-current-branch', currentBranchId);
+    } else {
+      localStorage.removeItem('smarty-current-branch');
+    }
+  }, [currentBranchId]);
+
+  // Set current branch ID and clear cart if branch changes
+  const setBranchId = (branchId: string) => {
+    // If branch ID changes, clear the cart
+    if (currentBranchId && currentBranchId !== branchId) {
+      setItems([]);
+    }
+    setCurrentBranchId(branchId);
+  };
 
   // Generate a unique identifier for cart items based on product ID and customizations
   const generateCartItemId = (item: CartItem): string => {
@@ -253,6 +283,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         clearCart,
         cartItems: items,
         cartTotal: getTotalPrice(),
+        currentBranchId,
+        setBranchId,
       }}
     >
       {children}

@@ -1,15 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Box, Text, Flex, Title, ActionIcon } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import { IconChevronLeft } from '@tabler/icons-react';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import { Box, Text, Flex, Title } from '@mantine/core';
+import { useDisclosure, useHeadroom } from '@mantine/hooks';
 import { useRouter } from 'next/navigation';
 import { MenuDrawer } from '../MenuDrawer/MenuDrawer';
-import { Logo, MenuButton, SearchBar } from './HeaderComponents';
+import { Logo, MenuButton, SearchBar, BackButton } from './HeaderComponents';
 import { IBranch } from '@/types';
-import BaseHeader from './BaseHeader';
-import { HEADER_TEXTS, SEARCH_TEXTS } from '../../config/constants';
+import { SEARCH_TEXTS } from '../../config/constants';
+import styles from './ProductsHeader.module.css';
 
 interface ProductsHeaderProps {
   branch: IBranch;
@@ -18,6 +17,7 @@ interface ProductsHeaderProps {
   onSearchChange?: (value: string) => void;
   isClosed?: boolean;
   closedMessage?: string;
+  isFiltering?: boolean;
 }
 
 export function ProductsHeader({
@@ -27,12 +27,44 @@ export function ProductsHeader({
   onSearchChange,
   isClosed = false,
   closedMessage,
+  isFiltering = false,
 }: ProductsHeaderProps) {
   const { name, address, phoneNumber } = branch;
   const [opened, { toggle, close }] = useDisclosure(false);
   const [internalSearchValue, setInternalSearchValue] = useState(searchValue);
   const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
+
+  // Get headroom state from Mantine hook
+  const pinned = useHeadroom({ fixedAt: 120 });
+
+  // Add a search active state to lock header state during typing
+  const [isSearchActive, setIsSearchActive] = useState(false);
+  // Store the latest header state before search became active
+  const [lockedHeaderState, setLockedHeaderState] = useState(false);
+
+  // Determine if the header is collapsed
+  const isHeaderCollapsed = useMemo(() => {
+    const result = (isSearchActive && !lockedHeaderState) || !pinned;
+    return result;
+  }, [isSearchActive, lockedHeaderState, pinned]);
+
+  // Emit a custom event when the header state changes to notify ContentWrapper
+  useEffect(() => {
+    // Create and dispatch a custom event with the header state
+    const headerStateEvent = new CustomEvent('header-state-change', {
+      detail: { collapsed: isHeaderCollapsed },
+      bubbles: true,
+    });
+    window.dispatchEvent(headerStateEvent);
+  }, [isHeaderCollapsed]);
+
+  // Refs for search bar components to manage focus during transitions
+  const expandedSearchRef = useRef<HTMLInputElement>(null);
+  const collapsedSearchRef = useRef<HTMLInputElement>(null);
+
+  // Track previous header state to detect changes
+  const prevCollapsedStateRef = useRef(isHeaderCollapsed);
 
   useEffect(() => {
     const checkIfMobile = () => {
@@ -46,188 +78,269 @@ export function ProductsHeader({
     window.addEventListener('resize', checkIfMobile);
 
     // Cleanup
-    return () => window.removeEventListener('resize', checkIfMobile);
+    return () => {
+      window.removeEventListener('resize', checkIfMobile);
+    };
   }, []);
+
+  // Handle autofocus when header state changes
+  useEffect(() => {
+    let cleanup: (() => void) | undefined;
+    // Only run when the collapsed state changes
+    if (prevCollapsedStateRef.current !== isHeaderCollapsed) {
+      prevCollapsedStateRef.current = isHeaderCollapsed;
+
+      // Small delay to let the animation complete
+      const focusTimeout = setTimeout(() => {
+        if (isHeaderCollapsed && collapsedSearchRef.current) {
+          collapsedSearchRef.current.focus();
+        } else if (!isHeaderCollapsed && expandedSearchRef.current) {
+          expandedSearchRef.current.focus();
+        }
+      }, 400); // Match transition duration
+
+      return () => clearTimeout(focusTimeout);
+    }
+    return cleanup;
+  }, [isHeaderCollapsed]);
 
   const handleNavigate = (route: string) => {
     router.push(route);
     close();
   };
 
+  const handleBackClick = () => {
+    if (onBackClick) {
+      onBackClick();
+    } else {
+      // Default behavior: go back in history
+      router.back();
+    }
+  };
+
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = event.currentTarget.value;
+
+    // If this is the first keystroke, lock the current header state
+    if (!isSearchActive && newValue.length === 1) {
+      setIsSearchActive(true);
+      setLockedHeaderState(isHeaderCollapsed);
+    }
+
+    // If search is being cleared, unlock the header state
+    if (isSearchActive && newValue.length === 0) {
+      setIsSearchActive(false);
+    }
+
     setInternalSearchValue(newValue);
     if (onSearchChange) {
       onSearchChange(newValue);
     }
   };
 
-  const headerContent = (
+  const headerContainerClass = isHeaderCollapsed
+    ? `${styles.headerContainer} ${styles.collapsedHeader}`
+    : styles.headerContainer;
+
+  return (
     <>
-      {/* Logo */}
-      <Box
-        style={{
-          position: 'absolute',
-          left: '71px',
-          top: '29px',
-        }}
-      >
-        <Logo />
-      </Box>
-
-      {/* Menu icon */}
-      <Box
-        style={{
-          position: 'absolute',
-          left: '23px',
-          top: '23px',
-          cursor: 'pointer',
-        }}
-      >
-        <MenuButton onClick={toggle} />
-      </Box>
-
-      {/* Back button */}
-      <Flex
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          position: 'absolute',
-          left: isMobile ? '16px' : '80px',
-          top: '93px',
-        }}
-      >
+      {/* Closed notification banner */}
+      {isClosed && (
         <Box
           style={{
-            width: '24px',
-            height: '24px',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            backgroundColor: '#FF385C',
+            color: 'white',
+            textAlign: 'center',
+            padding: '8px',
+            zIndex: 102,
           }}
         >
-          <ActionIcon
-            variant="transparent"
-            onClick={onBackClick}
-            style={{
-              width: '100%',
-              height: '100%',
-              background: '#000000',
-            }}
-          >
-            <IconChevronLeft
-              width={12}
-              height={12}
-              color="#FFFFFF"
-              stroke={2}
-            />
-          </ActionIcon>
+          <Text size="sm">{closedMessage}</Text>
         </Box>
-        <Text
-          onClick={onBackClick}
-          style={{
-            fontFamily: 'Inter, sans-serif',
-            fontStyle: 'normal',
-            fontWeight: 400,
-            fontSize: '12px',
-            lineHeight: '18px',
-            display: 'flex',
-            alignItems: 'center',
-            color: '#FFFFFF',
-            letterSpacing: '0px',
-          }}
-        >
-          {HEADER_TEXTS.BACK_BUTTON}
-        </Text>
-      </Flex>
+      )}
 
-      {/* Branch info */}
-      <Flex
-        direction="column"
-        align="flex-start"
-        gap={8}
-        style={{
-          position: 'absolute',
-          width: isMobile ? 'calc(100% - 32px)' : 'auto',
-          height: '74px',
-          left: isMobile ? '16px' : '80px',
-          top: '140px',
-        }}
-      >
-        <Title
-          order={1}
-          style={{
-            fontFamily: 'Inter, sans-serif',
-            fontStyle: 'normal',
-            fontWeight: 600,
-            fontSize: isMobile ? '24px' : '30px',
-            lineHeight: isMobile ? '30px' : '38px',
-            display: 'flex',
-            alignItems: 'center',
-            color: '#FFFFFF',
-            letterSpacing: '0px',
-            marginBottom: '8px',
-          }}
-        >
-          {name}
-        </Title>
-        <Text
-          style={{
-            fontFamily: 'Inter, sans-serif',
-            fontStyle: 'normal',
-            fontWeight: 500,
-            fontSize: isMobile ? '14px' : '16px',
-            lineHeight: isMobile ? '20px' : '24px',
-            display: 'flex',
-            alignItems: 'center',
-            color: '#FFFFFF',
-          }}
-        >
-          {address} | {phoneNumber}
-        </Text>
-      </Flex>
+      <Box className={headerContainerClass} data-testid="header">
+        {/* Top black header section */}
+        <Box className={styles.topHeader} data-testid="top-header">
+          {/* Content container for centered elements */}
+          <Box className={styles.contentContainer}>
+            {/* Logo - always visible on mobile */}
+            {isMobile && (
+              <Box
+                className={styles.logoContainer}
+                data-testid="header-logo-container"
+              >
+                <Logo />
+              </Box>
+            )}
 
-      {/* Search bar */}
-      <Box
-        style={{
-          position: 'absolute',
-          left: isMobile ? '16px' : '80px',
-          top: '231.91px',
-          width: isMobile ? 'calc(100% - 32px)' : '512px',
-          height: '39.54px',
-          filter: 'drop-shadow(0px 4px 16px rgba(0, 0, 0, 0.1))',
-        }}
-      >
-        <SearchBar
-          value={onSearchChange ? searchValue : internalSearchValue}
-          onChange={handleSearchChange}
-          placeholder={
-            isMobile
-              ? SEARCH_TEXTS.FOOD_SEARCH_PLACEHOLDER
-              : SEARCH_TEXTS.PRODUCT_SEARCH_PLACEHOLDER
-          }
-          variant="light-gray"
-          styles={{
-            root: {
-              width: '100%',
-            },
-          }}
-        />
+            {/* Menu button */}
+            <Box
+              className={styles.menuButtonContainer}
+              data-testid="header-menu-button-container"
+            >
+              <MenuButton onClick={toggle} />
+            </Box>
+
+            {/* Logo - only visible on desktop */}
+            {!isMobile && (
+              <Box
+                className={styles.logoContainer}
+                data-testid="header-logo-container"
+              >
+                <Logo />
+              </Box>
+            )}
+
+            {/* Search bar in collapsed state */}
+            <Box
+              className={`${styles.searchContainer} ${
+                !isHeaderCollapsed ? styles.hiddenSearch : ''
+              }`}
+              data-testid="header-search-container-collapsed"
+              style={{
+                opacity: isHeaderCollapsed ? 1 : 0,
+                pointerEvents: isHeaderCollapsed ? 'all' : 'none',
+              }}
+            >
+              <SearchBar
+                ref={collapsedSearchRef}
+                value={onSearchChange ? searchValue : internalSearchValue}
+                onChange={handleSearchChange}
+                placeholder={
+                  isMobile
+                    ? SEARCH_TEXTS.FOOD_SEARCH_PLACEHOLDER
+                    : SEARCH_TEXTS.PRODUCT_SEARCH_PLACEHOLDER
+                }
+                variant="white"
+                autoFocus={isHeaderCollapsed}
+                styles={{
+                  root: {
+                    width: '100%',
+                  },
+                }}
+                data-testid="header-search-bar-collapsed"
+              />
+            </Box>
+          </Box>
+        </Box>
+
+        {/* Bottom header section with background image */}
+        <Box className={styles.bottomHeader} data-testid="bottom-header">
+          <Box className={styles.bottomHeaderContent}>
+            {/* Background image */}
+            <Box
+              className={styles.headerBackground}
+              data-testid="header-background"
+            />
+
+            {/* Black overlay on the left side */}
+            <Box
+              className={styles.leftBlackOverlay}
+              data-testid="header-left-overlay"
+            />
+
+            {/* Dark overlay */}
+            <Box
+              className={styles.headerOverlay}
+              data-testid="header-overlay"
+            />
+
+            {/* Back button for mobile */}
+            {isMobile && (
+              <Box
+                className={styles.backButtonWrapper}
+                data-testid="back-button-wrapper"
+              >
+                <BackButton onClick={handleBackClick} />
+              </Box>
+            )}
+
+            {/* Branch info */}
+            <Flex
+              direction="column"
+              align="flex-start"
+              gap={isMobile ? 4 : 8}
+              className={styles.branchInfoContainer}
+            >
+              <Title
+                order={1}
+                className={styles.branchName}
+                style={{
+                  fontSize: isMobile ? '24px' : '30px',
+                  lineHeight: isMobile ? '30px' : '38px',
+                }}
+              >
+                {name}
+              </Title>
+              <Text
+                className={styles.branchDetails}
+                style={{
+                  fontSize: isMobile ? '14px' : '16px',
+                  lineHeight: isMobile ? '20px' : '24px',
+                }}
+              >
+                {address} | {phoneNumber}
+              </Text>
+            </Flex>
+
+            {/* Search bar in expanded state */}
+            <Box
+              className={`${styles.searchContainer} ${
+                isHeaderCollapsed ? styles.hiddenSearch : ''
+              }`}
+              data-testid="header-search-container"
+              style={{
+                opacity: isHeaderCollapsed ? 0 : 1,
+                pointerEvents: isHeaderCollapsed ? 'none' : 'all',
+              }}
+            >
+              <SearchBar
+                ref={expandedSearchRef}
+                value={onSearchChange ? searchValue : internalSearchValue}
+                onChange={handleSearchChange}
+                placeholder={
+                  isMobile
+                    ? SEARCH_TEXTS.FOOD_SEARCH_PLACEHOLDER
+                    : SEARCH_TEXTS.PRODUCT_SEARCH_PLACEHOLDER
+                }
+                variant="light-gray"
+                autoFocus={!isHeaderCollapsed}
+                styles={{
+                  root: {
+                    width: '100%',
+                  },
+                }}
+                data-testid="header-search-bar"
+              />
+            </Box>
+          </Box>
+        </Box>
       </Box>
+
+      {/* Empty space to push content below fixed header */}
+      <Box
+        className={styles.headerSpacer}
+        style={{
+          height:
+            isHeaderCollapsed && isFiltering
+              ? '80px' // Reduced height when header is collapsed and filtering
+              : isClosed
+              ? isMobile
+                ? '198px'
+                : '323px' // Add notification height (43px) for closed state
+              : undefined, // Use default from CSS
+        }}
+        data-testid="header-spacer"
+      />
 
       {/* Menu Drawer */}
       <MenuDrawer opened={opened} onClose={close} onNavigate={handleNavigate} />
     </>
-  );
-
-  return (
-    <BaseHeader
-      showClosedNotification={isClosed}
-      closedMessage={closedMessage}
-      topOffset="0px"
-      headerContent={headerContent}
-    />
   );
 }
 

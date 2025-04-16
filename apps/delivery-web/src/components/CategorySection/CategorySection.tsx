@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Box, useMantineTheme } from '@mantine/core';
+import { Box } from '@mantine/core';
 import { IProduct } from '../../types';
 import ProductGrid from '../ProductGrid';
 import SectionHeader from '../SectionHeader';
 import styles from './CategorySection.module.css';
-import { STYLE_CONSTANTS } from '../../config/constants';
 
 interface CategorySectionProps {
   title: string;
@@ -13,6 +12,7 @@ interface CategorySectionProps {
   isInitiallyExpanded?: boolean;
   onToggleExpand?: (isExpanded: boolean) => void;
   isDisabled?: boolean;
+  isFixed?: boolean;
 }
 
 const CategorySection = ({
@@ -22,13 +22,31 @@ const CategorySection = ({
   isInitiallyExpanded = false,
   onToggleExpand,
   isDisabled = false,
+  isFixed = false,
 }: CategorySectionProps) => {
   const [isExpanded, setIsExpanded] = useState(isInitiallyExpanded);
-  const theme = useMantineTheme();
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     setIsExpanded(isInitiallyExpanded);
   }, [isInitiallyExpanded]);
+
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    // Check on initial load
+    checkIfMobile();
+
+    // Add event listener for window resize
+    window.addEventListener('resize', checkIfMobile);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', checkIfMobile);
+    };
+  }, []);
 
   const toggleExpand = () => {
     const newExpandedState = !isExpanded;
@@ -38,22 +56,11 @@ const CategorySection = ({
     }
   };
 
+  const headerClasses = `${isFixed ? styles.categoriesFixed : ''}`;
+
   return (
-    <Box className={styles.categorySection} mb="32px">
-      <Box
-        py={theme.spacing.xs}
-        bg={theme.colors.neutral[1]}
-        w="100%"
-        h="100%"
-        data-testid="category-section-container"
-        style={{
-          borderRadius: theme.radius.md,
-          border: `1px solid ${theme.colors.neutral[2]}`,
-          transition: STYLE_CONSTANTS.TRANSITION_EASE,
-          boxShadow: isExpanded ? theme.shadows.xs : 'none',
-          marginBottom: '8px',
-        }}
-      >
+    <Box className={styles.categorySection} mb={isMobile ? '16px' : '32px'}>
+      <Box className={`${styles.categoriesContainer} ${headerClasses}`}>
         <SectionHeader
           title={title}
           isExpanded={isExpanded}

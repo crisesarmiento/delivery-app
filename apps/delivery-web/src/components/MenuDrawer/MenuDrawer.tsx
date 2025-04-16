@@ -13,7 +13,7 @@ import {
   IconPhoneCall,
   IconX,
 } from '@tabler/icons-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { MENU_TEXTS } from '../../config/constants';
 
 interface MenuDrawerProps {
@@ -24,6 +24,8 @@ interface MenuDrawerProps {
 
 export function MenuDrawer({ opened, onClose, onNavigate }: MenuDrawerProps) {
   const theme = useMantineTheme();
+  const [hoveredItem, setHoveredItem] = useState<number | null>(null);
+
   const handleNavigation = (route: string) => {
     onNavigate(route);
     onClose();
@@ -162,7 +164,9 @@ export function MenuDrawer({ opened, onClose, onNavigate }: MenuDrawerProps) {
         >
           {/* Branches Button (active/highlighted) */}
           <UnstyledButton
-            onClick={() => handleNavigation('/branches')}
+            onClick={() => handleNavigation('/')}
+            onMouseEnter={() => setHoveredItem(0)}
+            onMouseLeave={() => setHoveredItem(null)}
             style={{
               display: 'flex',
               flexDirection: 'row',
@@ -171,12 +175,14 @@ export function MenuDrawer({ opened, onClose, onNavigate }: MenuDrawerProps) {
               gap: '8px',
               width: '263px',
               height: '46px',
-              background: theme.colors.action[4],
+              background:
+                hoveredItem === 0 ? theme.colors.action[4] : 'transparent',
               borderRadius: '4px',
               flex: 'none',
               order: 0,
               alignSelf: 'stretch',
               flexGrow: 0,
+              transition: 'background-color 0.2s',
             }}
           >
             <Box
@@ -188,22 +194,25 @@ export function MenuDrawer({ opened, onClose, onNavigate }: MenuDrawerProps) {
                 padding: 0,
                 width: '26px',
                 height: '26px',
-                background: theme.colors.neutral[9],
+                background:
+                  hoveredItem === 0 ? theme.colors.neutral[9] : 'transparent',
                 borderRadius: '4px',
                 flex: 'none',
                 order: 0,
                 flexGrow: 0,
+                transition: 'background-color 0.2s',
               }}
             >
               <IconBuildingStore
                 size={18}
                 style={{
-                  color: theme.colors.action[4],
+                  color: hoveredItem === 0 ? theme.colors.action[4] : '#FFFFFF',
                   width: '18px',
                   height: '18px',
                   flex: 'none',
                   order: 0,
                   flexGrow: 0,
+                  transition: 'color 0.2s',
                 }}
               />
             </Box>
@@ -216,10 +225,11 @@ export function MenuDrawer({ opened, onClose, onNavigate }: MenuDrawerProps) {
                 fontWeight: 400,
                 fontSize: '14px',
                 lineHeight: '20px',
-                color: theme.colors.neutral[9],
+                color: hoveredItem === 0 ? theme.colors.neutral[9] : '#FFFFFF',
                 flex: 'none',
                 order: 1,
                 flexGrow: 0,
+                transition: 'color 0.2s',
               }}
             >
               {MENU_TEXTS.BRANCHES}
@@ -229,6 +239,8 @@ export function MenuDrawer({ opened, onClose, onNavigate }: MenuDrawerProps) {
           {/* About Us Button */}
           <UnstyledButton
             onClick={() => handleNavigation('/about')}
+            onMouseEnter={() => setHoveredItem(1)}
+            onMouseLeave={() => setHoveredItem(null)}
             style={{
               display: 'flex',
               flexDirection: 'row',
@@ -242,7 +254,9 @@ export function MenuDrawer({ opened, onClose, onNavigate }: MenuDrawerProps) {
               order: 1,
               alignSelf: 'stretch',
               flexGrow: 0,
-              background: 'transparent',
+              background:
+                hoveredItem === 1 ? theme.colors.action[4] : 'transparent',
+              transition: 'background-color 0.2s',
             }}
           >
             <Box
@@ -254,21 +268,25 @@ export function MenuDrawer({ opened, onClose, onNavigate }: MenuDrawerProps) {
                 padding: 0,
                 width: '26px',
                 height: '26px',
+                background:
+                  hoveredItem === 1 ? theme.colors.neutral[9] : 'transparent',
                 borderRadius: '4px',
                 flex: 'none',
                 order: 0,
                 flexGrow: 0,
+                transition: 'background-color 0.2s',
               }}
             >
               <IconUsers
                 size={18}
                 style={{
-                  color: '#FFFFFF',
+                  color: hoveredItem === 1 ? theme.colors.action[4] : '#FFFFFF',
                   width: '18px',
                   height: '18px',
                   flex: 'none',
                   order: 0,
                   flexGrow: 0,
+                  transition: 'color 0.2s',
                 }}
               />
             </Box>
@@ -281,10 +299,11 @@ export function MenuDrawer({ opened, onClose, onNavigate }: MenuDrawerProps) {
                 fontWeight: 400,
                 fontSize: '14px',
                 lineHeight: '20px',
-                color: '#FFFFFF',
+                color: hoveredItem === 1 ? theme.colors.neutral[9] : '#FFFFFF',
                 flex: 'none',
                 order: 1,
                 flexGrow: 0,
+                transition: 'color 0.2s',
               }}
             >
               {MENU_TEXTS.ABOUT_US}
@@ -294,6 +313,8 @@ export function MenuDrawer({ opened, onClose, onNavigate }: MenuDrawerProps) {
           {/* Contact Button */}
           <UnstyledButton
             onClick={() => handleNavigation('/contact')}
+            onMouseEnter={() => setHoveredItem(2)}
+            onMouseLeave={() => setHoveredItem(null)}
             style={{
               display: 'flex',
               flexDirection: 'row',
@@ -307,7 +328,9 @@ export function MenuDrawer({ opened, onClose, onNavigate }: MenuDrawerProps) {
               order: 2,
               alignSelf: 'stretch',
               flexGrow: 0,
-              background: 'transparent',
+              background:
+                hoveredItem === 2 ? theme.colors.action[4] : 'transparent',
+              transition: 'background-color 0.2s',
             }}
           >
             <Box
@@ -319,21 +342,25 @@ export function MenuDrawer({ opened, onClose, onNavigate }: MenuDrawerProps) {
                 padding: 0,
                 width: '26px',
                 height: '26px',
+                background:
+                  hoveredItem === 2 ? theme.colors.neutral[9] : 'transparent',
                 borderRadius: '4px',
                 flex: 'none',
                 order: 0,
                 flexGrow: 0,
+                transition: 'background-color 0.2s',
               }}
             >
               <IconPhoneCall
                 size={18}
                 style={{
-                  color: '#FFFFFF',
+                  color: hoveredItem === 2 ? theme.colors.action[4] : '#FFFFFF',
                   width: '18px',
                   height: '18px',
                   flex: 'none',
                   order: 0,
                   flexGrow: 0,
+                  transition: 'color 0.2s',
                 }}
               />
             </Box>
@@ -346,10 +373,11 @@ export function MenuDrawer({ opened, onClose, onNavigate }: MenuDrawerProps) {
                 fontWeight: 400,
                 fontSize: '14px',
                 lineHeight: '20px',
-                color: '#FFFFFF',
+                color: hoveredItem === 2 ? theme.colors.neutral[9] : '#FFFFFF',
                 flex: 'none',
                 order: 1,
                 flexGrow: 0,
+                transition: 'color 0.2s',
               }}
             >
               {MENU_TEXTS.CONTACT}

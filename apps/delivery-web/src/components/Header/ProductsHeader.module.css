@@ -1,0 +1,352 @@
+/* ProductsHeader styles based on Figma design */
+
+.headerContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  will-change: transform;
+}
+
+/* Top (black) header section */
+.topHeader {
+  position: fixed;
+  width: 100%;
+  max-width: 1440px;
+  position: relative;
+  height: 70px;
+  left: 0;
+  top: 0;
+  background-color: #000000;
+  z-index: 101;
+}
+
+/* Content container for centered elements */
+.contentContainer {
+  position: relative;
+  width: 100%;
+  max-width: 1440px;
+  height: 100%;
+  margin: 0 auto;
+}
+
+/* Bottom header section with background image */
+.bottomHeader {
+  position: fixed;
+  width: 100%;
+  height: 210px;
+  left: 0;
+  top: 70px;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 100;
+  overflow: visible;
+  display: flex;
+  justify-content: center;
+  will-change: transform;
+}
+
+/* Bottom header background container */
+.bottomHeaderContent {
+  position: relative;
+  width: 100%;
+  max-width: 1440px;
+  height: 100%;
+}
+
+/* Bottom header background image */
+.headerBackground {
+  position: relative;
+  width: 1440px;
+  height: 210px;
+  left: 0;
+  top: 0;
+  background-image: url('/images/hero-banner.jpeg');
+  background-size: cover;
+  background-position: bottom;
+  background-repeat: no-repeat;
+}
+
+/* Dark overlay on bottom header */
+.headerOverlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Left black overlay for bottom header */
+.leftBlackOverlay {
+  position: absolute;
+  width: 50%;
+  height: 210px;
+  left: 0px;
+  top: 0px;
+  background: #000000;
+  z-index: 100;
+}
+
+/* Logo positioning */
+.logoContainer {
+  position: absolute;
+  left: 80px;
+  top: 50%;
+  bottom: 95.18%;
+  z-index: 102;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-50%);
+}
+
+/* Menu button positioning */
+.menuButtonContainer {
+  position: absolute;
+  left: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  z-index: 102;
+}
+
+/* Back button styling */
+.backButtonContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  position: absolute;
+  left: 80px;
+  top: 23px;
+  z-index: 101;
+}
+
+.backButtonWrapper {
+  position: absolute;
+  left: 12px;
+  top: 89px;
+  z-index: 102;
+}
+
+.backIconContainer {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.backIcon {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+}
+
+.backText {
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 18px;
+  display: flex;
+  align-items: center;
+  color: #ffffff;
+  letter-spacing: 0px;
+  cursor: pointer;
+  margin-left: 4px;
+}
+
+/* Branch info styling */
+.branchInfoContainer {
+  position: absolute;
+  height: 74px;
+  left: 80px;
+  top: 25px;
+  z-index: 101;
+}
+
+.branchName {
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 38px;
+  display: flex;
+  align-items: center;
+  color: #ffffff;
+  letter-spacing: 0px;
+  margin-bottom: 8px;
+}
+
+.branchDetails {
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  display: flex;
+  align-items: center;
+  color: #ffffff;
+  margin-bottom: 9px;
+}
+
+/* Search bar styling */
+.searchContainer {
+  position: absolute;
+  left: 80px;
+  top: 95px;
+  filter: drop-shadow(0px 4px 16px rgba(0, 0, 0, 0.1));
+  width: 512px;
+  max-width: 512px;
+  height: 24px;
+  transform: none;
+  z-index: 101;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 1;
+}
+
+/* Hide search bar but keep it in the DOM for smoother transitions */
+.hiddenSearch {
+  visibility: visible;
+  pointer-events: none;
+}
+
+/* Header with collapsed state */
+.collapsedHeader .bottomHeader {
+  transform: translateY(-210px);
+}
+
+.collapsedHeader .searchContainer {
+  position: absolute;
+  right: 5%;
+  top: 13px;
+  left: auto;
+  transform: none;
+  max-width: 512px;
+  height: 24px;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Empty space to push content below fixed header */
+.headerSpacer {
+  height: 250px; /* 70px top header + 210px bottom header */
+  transition: height 0.3s ease;
+  transform: translateZ(0);
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .topHeader {
+    height: 50px;
+  }
+
+  .bottomHeader {
+    height: 105px;
+    top: 30px;
+    background-color: #000000; /* Ensure black background */
+  }
+
+  .leftBlackOverlay {
+    width: 100%;
+    height: 125px;
+    top: 19px;
+  }
+
+  .headerBackground {
+    display: none; /* Hide background image on mobile */
+  }
+
+  .headerOverlay {
+    height: 105px;
+    background-color: #000000; /* Solid black instead of semi-transparent */
+  }
+
+  .logoContainer {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 103;
+  }
+
+  .menuButtonContainer {
+    right: 16px;
+    left: auto;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 103;
+  }
+
+  .backButtonContainer {
+    left: 16px;
+  }
+
+  .backButtonWrapper {
+    position: absolute;
+    left: 12px;
+    top: 70px;
+    z-index: 102;
+    transition: opacity 0.3s ease;
+  }
+
+  .branchInfoContainer {
+    width: 313px;
+    left: 40px;
+    top: 65px;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .branchName {
+    font-size: 20px;
+    line-height: 30px;
+    font-weight: 600;
+    margin-bottom: 0;
+    height: 22px;
+  }
+
+  .branchDetails {
+    font-size: 12px;
+    line-height: 18px;
+    color: #ffffff;
+    font-weight: 500;
+    height: 18px;
+  }
+
+  .searchContainer {
+    max-width: calc(100% - 32px);
+    left: 16px;
+    width: calc(100% - 32px);
+    top: 125px;
+    transform: none;
+    z-index: 105;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .collapsedHeader .searchContainer {
+    right: 16px;
+    left: 16px;
+    max-width: calc(100% - 82px);
+    top: 13px;
+    opacity: 0;
+    display: none;
+    pointer-events: none;
+  }
+
+  .headerSpacer {
+    height: 150px;
+  }
+
+  .collapsedHeader .backButtonWrapper {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .collapsedHeader .branchInfoContainer {
+    opacity: 0;
+    transform: translateY(-20px);
+    pointer-events: none;
+  }
+}
