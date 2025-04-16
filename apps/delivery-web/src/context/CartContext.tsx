@@ -6,6 +6,8 @@ import React, {
   useState,
   ReactNode,
   useEffect,
+  useMemo,
+  useCallback,
 } from 'react';
 import { IProduct } from '../types';
 
@@ -78,6 +80,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   // Load cart from localStorage on initial render
   useEffect(() => {
+    // Skip during server-side rendering
+    if (typeof window === 'undefined') return;
+
     const savedCart = localStorage.getItem('smarty-cart');
     const savedBranchId = localStorage.getItem('smarty-current-branch');
 
@@ -99,11 +104,17 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   // Save cart to localStorage whenever it changes
   useEffect(() => {
+    // Skip during server-side rendering
+    if (typeof window === 'undefined') return;
+
     localStorage.setItem('smarty-cart', JSON.stringify(items));
   }, [items]);
 
   // Save current branch ID to localStorage whenever it changes
   useEffect(() => {
+    // Skip during server-side rendering
+    if (typeof window === 'undefined') return;
+
     if (currentBranchId) {
       localStorage.setItem('smarty-current-branch', currentBranchId);
     } else {
@@ -112,16 +123,19 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   }, [currentBranchId]);
 
   // Set current branch ID and clear cart if branch changes
-  const setBranchId = (branchId: string) => {
-    // If branch ID changes, clear the cart
-    if (currentBranchId && currentBranchId !== branchId) {
-      setItems([]);
-    }
-    setCurrentBranchId(branchId);
-  };
+  const setBranchId = useCallback(
+    (branchId: string) => {
+      // If branch ID changes, clear the cart
+      if (currentBranchId && currentBranchId !== branchId) {
+        setItems([]);
+      }
+      setCurrentBranchId(branchId);
+    },
+    [currentBranchId]
+  );
 
   // Generate a unique identifier for cart items based on product ID and customizations
-  const generateCartItemId = (item: CartItem): string => {
+  const generateCartItemId = useCallback((item: CartItem): string => {
     const productId = String(item.product.id);
 
     // Sort and stringify ingredients to ensure consistent ordering
@@ -143,152 +157,172 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
     // Combine all parts to create a unique identifier
     return `${productId}-${ingredientsStr}-${condimentsStr}-${commentsStr}`;
-  };
+  }, []);
 
   // Add a new item or update existing one
-  const addToCart = (item: CartItem) => {
-    setItems((prevItems) => {
-      // Generate unique ID for the new item
-      const newItemId = generateCartItemId(item);
+  const addToCart = useCallback(
+    (item: CartItem) => {
+      setItems((prevItems) => {
+        // Generate unique ID for the new item
+        const newItemId = generateCartItemId(item);
 
-      // Find existing item with matching ID (same product + same customizations)
-      const existingItemIndex = prevItems.findIndex(
-        (i) => generateCartItemId(i) === newItemId
-      );
+        // Find existing item with matching ID (same product + same customizations)
+        const existingItemIndex = prevItems.findIndex(
+          (i) => generateCartItemId(i) === newItemId
+        );
 
-      if (existingItemIndex >= 0) {
-        // Update existing item (same product with same customizations)
-        const updatedItems = [...prevItems];
-        updatedItems[existingItemIndex] = {
-          ...updatedItems[existingItemIndex],
-          quantity: updatedItems[existingItemIndex].quantity + item.quantity,
-          totalPrice: item.totalPrice
-            ? (updatedItems[existingItemIndex].totalPrice || 0) +
-              item.totalPrice
-            : undefined,
-        };
-        return updatedItems;
-      } else {
-        // Add new item (new product or same product with different customizations)
-        // Assign the unique ID to the new item
-        const newItem = {
-          ...item,
-          uniqueId: newItemId,
-        };
-        return [...prevItems, newItem];
-      }
-    });
-  };
+        if (existingItemIndex >= 0) {
+          // Update existing item (same product with same customizations)
+          const updatedItems = [...prevItems];
+          updatedItems[existingItemIndex] = {
+            ...updatedItems[existingItemIndex],
+            quantity: updatedItems[existingItemIndex].quantity + item.quantity,
+            totalPrice: item.totalPrice
+              ? (updatedItems[existingItemIndex].totalPrice || 0) +
+                item.totalPrice
+              : undefined,
+          };
+          return updatedItems;
+        } else {
+          // Add new item (new product or same product with different customizations)
+          // Assign the unique ID to the new item
+          const newItem = {
+            ...item,
+            uniqueId: newItemId,
+          };
+          return [...prevItems, newItem];
+        }
+      });
+    },
+    [generateCartItemId]
+  );
 
   // Update an existing cart item
-  const updateCartItem = (
-    productId: string | number,
-    updates: Partial<CartItem>,
-    uniqueId?: string
-  ) => {
-    setItems((prevItems) => {
-      let existingItemIndex = -1;
+  const updateCartItem = useCallback(
+    (
+      productId: string | number,
+      updates: Partial<CartItem>,
+      uniqueId?: string
+    ) => {
+      setItems((prevItems) => {
+        let existingItemIndex = -1;
 
-      if (uniqueId) {
-        // If uniqueId is provided, use it to find the exact item instance
-        existingItemIndex = prevItems.findIndex((i) => i.uniqueId === uniqueId);
-        console.log(
-          `Updating item with uniqueId: ${uniqueId}, found at index: ${existingItemIndex}`
-        );
-      } else {
-        // Fallback to product ID for backward compatibility
-        existingItemIndex = prevItems.findIndex(
-          (i) => String(i.product.id) === String(productId)
-        );
-        console.log(
-          `Updating item with productId: ${productId}, found at index: ${existingItemIndex}`
-        );
-      }
-
-      if (existingItemIndex >= 0) {
-        const updatedItems = [...prevItems];
-        updatedItems[existingItemIndex] = {
-          ...updatedItems[existingItemIndex],
-          ...updates,
-        };
-
-        console.log('Updated item:', updatedItems[existingItemIndex]);
-
-        // If quantity is 0, remove the item
-        if (updates.quantity === 0) {
-          return updatedItems.filter(
-            (item) => item !== updatedItems[existingItemIndex]
+        if (uniqueId) {
+          // If uniqueId is provided, use it to find the exact item instance
+          existingItemIndex = prevItems.findIndex(
+            (i) => i.uniqueId === uniqueId
+          );
+        } else {
+          // Fallback to product ID for backward compatibility
+          existingItemIndex = prevItems.findIndex(
+            (i) => String(i.product.id) === String(productId)
           );
         }
 
-        return updatedItems;
-      }
+        if (existingItemIndex >= 0) {
+          const updatedItems = [...prevItems];
+          updatedItems[existingItemIndex] = {
+            ...updatedItems[existingItemIndex],
+            ...updates,
+          };
 
-      return prevItems;
-    });
-  };
+          // If quantity is 0, remove the item
+          if (updates.quantity === 0) {
+            return updatedItems.filter(
+              (item) => item !== updatedItems[existingItemIndex]
+            );
+          }
+
+          return updatedItems;
+        }
+
+        return prevItems;
+      });
+    },
+    []
+  );
 
   // Remove an item from the cart
-  const removeFromCart = (productId: string | number) => {
+  const removeFromCart = useCallback((productId: string | number) => {
     setItems((prevItems) =>
       prevItems.filter((item) => String(item.product.id) !== String(productId))
     );
-  };
+  }, []);
 
   // Get quantity of a specific product
-  const getCartItemQuantity = (productId: string | number): number => {
-    const item = items.find(
-      (item) => String(item.product.id) === String(productId)
-    );
-    return item ? item.quantity : 0;
-  };
+  const getCartItemQuantity = useCallback(
+    (productId: string | number): number => {
+      const item = items.find(
+        (item) => String(item.product.id) === String(productId)
+      );
+      return item ? item.quantity : 0;
+    },
+    [items]
+  );
 
   // Get all cart items for a specific product ID
-  const getCartItemsByProductId = (productId: string | number): CartItem[] => {
-    return items.filter(
-      (item) => String(item.product.id) === String(productId)
-    );
-  };
+  const getCartItemsByProductId = useCallback(
+    (productId: string | number): CartItem[] => {
+      return items.filter(
+        (item) => String(item.product.id) === String(productId)
+      );
+    },
+    [items]
+  );
 
   // Get total number of items in cart
-  const getTotalItems = (): number => {
+  const getTotalItems = useCallback((): number => {
     return items.reduce((total, item) => total + item.quantity, 0);
-  };
+  }, [items]);
 
   // Get total price of all items in cart
-  const getTotalPrice = (): number => {
+  const getTotalPrice = useCallback((): number => {
     return items.reduce(
       (total, item) =>
         total + (item.totalPrice || item.product.price * item.quantity),
       0
     );
-  };
+  }, [items]);
 
   // Clear all items from cart
-  const clearCart = () => {
+  const clearCart = useCallback(() => {
     setItems([]);
-  };
+  }, []);
+
+  // Memoize the context value to prevent unnecessary re-renders
+  const contextValue = useMemo(
+    () => ({
+      items,
+      addToCart,
+      updateCartItem,
+      removeFromCart,
+      getCartItemQuantity,
+      getCartItemsByProductId,
+      getTotalItems,
+      getTotalPrice,
+      clearCart,
+      cartItems: items,
+      cartTotal: getTotalPrice(),
+      currentBranchId,
+      setBranchId,
+    }),
+    [
+      items,
+      addToCart,
+      updateCartItem,
+      removeFromCart,
+      getCartItemQuantity,
+      getCartItemsByProductId,
+      getTotalItems,
+      getTotalPrice,
+      clearCart,
+      currentBranchId,
+      setBranchId,
+    ]
+  );
 
   return (
-    <CartContext.Provider
-      value={{
-        items,
-        addToCart,
-        updateCartItem,
-        removeFromCart,
-        getCartItemQuantity,
-        getCartItemsByProductId,
-        getTotalItems,
-        getTotalPrice,
-        clearCart,
-        cartItems: items,
-        cartTotal: getTotalPrice(),
-        currentBranchId,
-        setBranchId,
-      }}
-    >
-      {children}
-    </CartContext.Provider>
+    <CartContext.Provider value={contextValue}>{children}</CartContext.Provider>
   );
 };
 

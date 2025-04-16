@@ -1,7 +1,8 @@
 import { Text, Box, Tabs, ScrollArea } from '@mantine/core';
 import styles from './CategoryTabs.module.css';
 import { CATEGORY_TEXTS } from '../../config/constants';
-import { useEffect, useRef } from 'react';
+import { useRef, useEffect } from 'react';
+import { useScrollIntoView } from '@mantine/hooks';
 
 interface CategoryTabsProps {
   categories: string[];
@@ -15,39 +16,15 @@ export default function CategoryTabs({
   onTabChange,
 }: CategoryTabsProps) {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
-  const activeTabRef = useRef<HTMLButtonElement>(null);
+  const { scrollIntoView, targetRef } = useScrollIntoView({
+    axis: 'x',
+    duration: 300,
+    easing: (t) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t),
+  });
 
-  // Scroll the active tab into view when it changes
   useEffect(() => {
-    if (activeTabRef.current && scrollAreaRef.current) {
-      const tabElement = activeTabRef.current;
-      const scrollArea = scrollAreaRef.current;
-
-      // Calculate positions to check if tab is in view
-      const tabLeft = tabElement.offsetLeft;
-      const tabRight = tabLeft + tabElement.offsetWidth;
-      const scrollLeft = scrollArea.scrollLeft;
-      const scrollRight = scrollLeft + scrollArea.clientWidth;
-
-      // Log actual height to diagnose rendering issues
-      console.log('Tab height:', tabElement.offsetHeight);
-      console.log(
-        'Tab container height:',
-        tabElement.parentElement?.offsetHeight
-      );
-
-      // If tab is not fully visible, scroll to make it visible
-      if (tabLeft < scrollLeft || tabRight > scrollRight) {
-        // Center the tab if possible
-        const scrollPosition =
-          tabLeft - scrollArea.clientWidth / 2 + tabElement.offsetWidth / 2;
-        scrollArea.scrollTo({
-          left: Math.max(0, scrollPosition),
-          behavior: 'smooth',
-        });
-      }
-    }
-  }, [activeTab]);
+    if (activeTab) scrollIntoView({ alignment: 'center' });
+  }, [activeTab, scrollIntoView]);
 
   return (
     <Box data-testid="category-tabs" className={styles.stickyContainer}>
@@ -107,7 +84,7 @@ export default function CategoryTabs({
                     value={category.toLowerCase()}
                     style={{ marginRight: '16px' }}
                     data-testid={`category-tab-${category.toLowerCase()}`}
-                    ref={isActive ? activeTabRef : undefined}
+                    ref={isActive ? targetRef : undefined}
                   >
                     {category}
                   </Tabs.Tab>

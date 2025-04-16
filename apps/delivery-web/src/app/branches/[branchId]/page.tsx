@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo, memo, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Text, Box, Flex, useMantineTheme } from '@mantine/core';
 import { products } from '../../../mocks/products.mock';
@@ -20,6 +20,18 @@ import {
 import CartDrawer from '@/components/CartDrawer/CartDrawer';
 import { BRANCH_TEXTS, COMMON_TEXTS, ERROR_TEXTS } from '@/config/constants';
 import { isBranchOpen } from '@/utils/branch';
+
+// Memoize the ProductsHeader component to prevent unnecessary re-renders
+const MemoizedProductsHeader = memo(ProductsHeader);
+MemoizedProductsHeader.displayName = 'MemoizedProductsHeader';
+
+// Memoize the CategoryTabs component to prevent unnecessary re-renders
+const MemoizedCategoryTabs = memo(CategoryTabs);
+MemoizedCategoryTabs.displayName = 'MemoizedCategoryTabs';
+
+// Memoize the CartDrawer component to prevent unnecessary re-renders
+const MemoizedCartDrawer = memo(CartDrawer);
+MemoizedCartDrawer.displayName = 'MemoizedCartDrawer';
 
 export default function BranchProductsPage() {
   const params = useParams();
@@ -44,12 +56,28 @@ export default function BranchProductsPage() {
     Record<string, boolean>
   >({});
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
+  const prevScrollPosition = useRef(0);
 
   // Find the current branch
   const [currentBranch, setCurrentBranch] = useState<IBranch | undefined>(
     branchesMock.find((branch) => branch.id === branchId)
   );
-  const prevScrollPosition = useRef(0);
+
+  // Add debounce utility function
+  function debounce(func: (...args: any[]) => void, wait: number) {
+    let timeout: NodeJS.Timeout | null = null;
+    return function executedFunction(...args: any[]) {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+      timeout = setTimeout(() => func(...args), wait);
+    };
+  }
+
+  // Define header state change handler once
+  const handleHeaderStateChange = useRef((event: CustomEvent) => {
+    setIsHeaderCollapsed(event.detail.collapsed);
+  }).current;
 
   useEffect(() => {
     const checkIsMobile = () => {
@@ -68,10 +96,6 @@ export default function BranchProductsPage() {
 
   // Add event listener for header state change events
   useEffect(() => {
-    const handleHeaderStateChange = (event: CustomEvent) => {
-      setIsHeaderCollapsed(event.detail.collapsed);
-    };
-
     window.addEventListener(
       'header-state-change',
       handleHeaderStateChange as EventListener
@@ -82,7 +106,7 @@ export default function BranchProductsPage() {
         handleHeaderStateChange as EventListener
       );
     };
-  }, []);
+  }, [handleHeaderStateChange]);
 
   // Track scroll position to detect header collapse state
   useEffect(() => {
@@ -93,27 +117,11 @@ export default function BranchProductsPage() {
     }, 100);
 
     window.addEventListener('scroll', handleScroll);
-    const headerStateEvent = 'headerStateChange';
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener(
-        headerStateEvent,
-        handleHeaderStateChange as EventListener
-      );
     };
   }, []);
-
-  // Add debounce utility at the bottom of the file
-  function debounce(func: (...args: any[]) => void, wait: number) {
-    let timeout: NodeJS.Timeout | null = null;
-    return function executedFunction(...args: any[]) {
-      if (timeout) {
-        clearTimeout(timeout);
-      }
-      timeout = setTimeout(() => func(...args), wait);
-    };
-  }
 
   // Check if branch is open on component mount and every minute
   useEffect(() => {
@@ -163,49 +171,52 @@ export default function BranchProductsPage() {
   }, [clearCart]);
 
   // Handle back navigation
-  const handleBack = (): void => {
+  const handleBack = useCallback((): void => {
     clearCart(); // Clear cart when navigating back
     router.push('/');
-  };
+  }, [clearCart, router]);
 
   // Handle search
-  const handleSearchChange = (value: string): void => {
+  const handleSearchChange = useCallback((value: string): void => {
     setSearchQuery(value);
-  };
+  }, []);
 
   // Add product to cart
-  const addToCart = (product: IProduct, quantity: number): void => {
-    // Check if branch is closed
-    if (currentBranch && !currentBranch.isOpen) {
-      alert(BRANCH_TEXTS.BRANCH_CLOSED_ALERT);
-      return;
-    }
+  const addToCart = useCallback(
+    (product: IProduct, quantity: number): void => {
+      // Check if branch is closed
+      if (currentBranch && !currentBranch.isOpen) {
+        alert(BRANCH_TEXTS.BRANCH_CLOSED_ALERT);
+        return;
+      }
 
-    // Validate product data before adding to cart
-    if (!product || !product.id) {
-      console.error(ERROR_TEXTS.INVALID_PRODUCT, product);
-      return;
-    }
+      // Validate product data before adding to cart
+      if (!product || !product.id) {
+        console.error(ERROR_TEXTS.INVALID_PRODUCT, product);
+        return;
+      }
 
-    if (quantity <= 0) {
-      console.error(ERROR_TEXTS.INVALID_QUANTITY, quantity);
-      return;
-    }
+      if (quantity <= 0) {
+        console.error(ERROR_TEXTS.INVALID_QUANTITY, quantity);
+        return;
+      }
 
-    // Use the CartContext to add item to cart
-    const cartItem: CartContextItem = {
-      product: {
-        ...product,
-        id: String(product.id),
-      },
-      quantity,
-    };
+      // Use the CartContext to add item to cart
+      const cartItem: CartContextItem = {
+        product: {
+          ...product,
+          id: String(product.id),
+        },
+        quantity,
+      };
 
-    addToCartContext(cartItem);
+      addToCartContext(cartItem);
 
-    // Open cart drawer
-    setCartDrawerOpened(true);
-  };
+      // Open cart drawer
+      setCartDrawerOpened(true);
+    },
+    [currentBranch, addToCartContext]
+  );
 
   // Convert cart context items to format expected by CartDrawer
   const cartItems = cartContextItems.map((item) => ({
@@ -340,7 +351,7 @@ export default function BranchProductsPage() {
   }, {} as Record<string, IProduct[]>);
 
   // Open cart drawer or navigate to cart page
-  const openCartDrawer = () => {
+  const openCartDrawer = useCallback(() => {
     if (isMobile) {
       // On mobile, navigate directly to the cart page
       router.push(`/branches/${branchId}/cart`);
@@ -348,29 +359,11 @@ export default function BranchProductsPage() {
       // On desktop, just open the cart drawer
       setCartDrawerOpened(true);
     }
-  };
+  }, [isMobile, router, branchId]);
 
-  // Define header state change handler
-  const handleHeaderStateChange = (event: CustomEvent) => {
-    const isCollapsed = event.detail.collapsed;
-    setIsHeaderCollapsed(isCollapsed);
-  };
-
-  // Register event listeners
-  useEffect(() => {
-    const headerStateEvent = 'headerStateChange';
-    window.addEventListener(
-      headerStateEvent,
-      handleHeaderStateChange as EventListener
-    );
-
-    return () => {
-      window.removeEventListener(
-        headerStateEvent,
-        handleHeaderStateChange as EventListener
-      );
-    };
-  }, [isMobile, isHeaderCollapsed]);
+  const handleCloseCartDrawer = useCallback(() => {
+    setCartDrawerOpened(false);
+  }, []);
 
   return (
     <Flex
@@ -379,7 +372,7 @@ export default function BranchProductsPage() {
       style={{ minHeight: '100vh' }}
     >
       {/* Use the reusable Header component with product page configuration */}
-      <ProductsHeader
+      <MemoizedProductsHeader
         branch={currentBranch as IBranch}
         onBackClick={handleBack}
         searchValue={searchQuery}
@@ -411,7 +404,7 @@ export default function BranchProductsPage() {
             minHeight: '75px',
           }}
         >
-          <CategoryTabs
+          <MemoizedCategoryTabs
             categories={categories}
             activeTab={activeTab}
             onTabChange={handleTabChange}
@@ -483,9 +476,9 @@ export default function BranchProductsPage() {
 
       {/* Only show CartDrawer in desktop view */}
       {!isMobile && (
-        <CartDrawer
+        <MemoizedCartDrawer
           opened={cartDrawerOpened}
-          onClose={() => setCartDrawerOpened(false)}
+          onClose={handleCloseCartDrawer}
           cartItems={cartItems}
           cartTotal={cartTotal}
           isMobile={false}

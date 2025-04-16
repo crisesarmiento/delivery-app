@@ -3,7 +3,7 @@
 import { Box, Text, Divider, Button } from '@mantine/core';
 
 import { IProduct } from '../../types';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { IconShoppingCart, IconTrash } from '@tabler/icons-react';
 import { CART_TITLE, CART_TOTAL, CART_VIEW_BUTTON } from '@/constants/text';
 import { useMediaQuery } from '@mantine/hooks';
@@ -70,35 +70,39 @@ const CartDrawer = ({
   }, []);
 
   // Track scroll position to detect header collapse state and header height changes
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollPos = window.scrollY;
-      const newIsHeaderCollapsed = currentScrollPos > 50;
+  const handleScroll = useCallback(() => {
+    const currentScrollPos = window.scrollY;
+    const newIsHeaderCollapsed = currentScrollPos > 50;
 
-      if (newIsHeaderCollapsed !== isHeaderCollapsed) {
-        setIsHeaderCollapsed(newIsHeaderCollapsed);
-      }
+    // Only update state when the value changes to prevent needless re-renders
+    if (newIsHeaderCollapsed !== isHeaderCollapsed) {
+      setIsHeaderCollapsed(newIsHeaderCollapsed);
+    }
 
-      // Calculate header offset based on scroll position
-      const collapsedHeaderHeight = 70; // Height when collapsed
-      const fullHeaderHeight = 280; // Height when expanded
+    // Calculate header offset based on scroll position
+    const collapsedHeaderHeight = 70; // Height when collapsed
+    const fullHeaderHeight = 280; // Height when expanded
 
-      // Calculate how much of the header has been scrolled
-      const scrolledPortion = Math.min(
-        currentScrollPos,
-        fullHeaderHeight - collapsedHeaderHeight
-      );
-      const currentHeaderOffset = scrolledPortion > 0 ? scrolledPortion : 0;
+    // Calculate how much of the header has been scrolled
+    const scrolledPortion = Math.min(
+      currentScrollPos,
+      fullHeaderHeight - collapsedHeaderHeight
+    );
+    const currentHeaderOffset = scrolledPortion > 0 ? scrolledPortion : 0;
 
+    // Only update if value has changed
+    if (currentHeaderOffset !== headerOffset) {
       setHeaderOffset(currentHeaderOffset);
-    };
+    }
+  }, [isHeaderCollapsed, headerOffset]);
 
+  useEffect(() => {
     window.addEventListener('scroll', handleScroll);
     // Initial call to set correct values
     handleScroll();
 
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [isHeaderCollapsed]);
+  }, [handleScroll]);
 
   // Handle visibility based on opened prop and mobile status
   useEffect(() => {
