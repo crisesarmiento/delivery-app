@@ -1,0 +1,45 @@
+.headerContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  will-change: transform;
+}
+
+.topHeader {
+  position: fixed;
+  width: 100%;
+  max-width: 1440px;
+  position: relative;
+  height: 70px;
+  left: 0;
+  top: 0;
+  background-color: #000000;
+}
+
+/* Menu button positioning */
+.menuButtonContainer {
+  position: absolute;
+  left: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  z-index: 102;
+}
+
+/* Logo positioning */
+.logoContainer {
+  position: absolute;
+  left: 80px;
+  right: 88.4%;
+  top: 50%;
+  bottom: 95.18%;
+  z-index: 102;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-50%);
+}

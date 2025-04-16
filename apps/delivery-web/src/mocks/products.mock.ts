@@ -303,9 +303,6 @@ export const getProductById = (
   // Convert ID to string for comparison
   const stringId = String(id);
 
-  // Log this for debugging
-  console.log(`Looking for product with ID: ${stringId}`);
-
   // Find the product
   const product = products.find((product) => String(product.id) === stringId);
 
