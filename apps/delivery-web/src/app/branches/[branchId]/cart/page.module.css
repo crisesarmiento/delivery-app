@@ -3,17 +3,18 @@
   flex-direction: column;
   width: 100%;
   min-height: 100vh;
-  background: #ffffff;
-  justify-content: space-between;
+  background-color: #ffffff;
+  padding-right: 80px;
+  padding-left: 80px;
 }
 
 .contentContainer {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
-  padding: 0 80px;
-  margin-top: 47px;
+  gap: 32px;
+  max-width: 1440px;
   width: 100%;
+  margin: 0;
 }
 
 .leftSection {
@@ -414,20 +415,6 @@
 .requiredAsterisk {
   color: #e02d3c;
   margin-left: 2px;
-}
-
-@media (max-width: 1400px) {
-  .contentContainer {
-    flex-direction: column;
-    align-items: center;
-    gap: 24px;
-  }
-
-  .leftSection,
-  .rightSection {
-    width: 90%;
-    max-width: 730px;
-  }
 }
 
 @media (max-width: 768px) {
