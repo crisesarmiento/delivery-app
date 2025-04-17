@@ -521,9 +521,10 @@ export default function CheckoutPage() {
                   value={paymentAmount}
                   onChange={handlePaymentAmountChange}
                   min={0}
+                  disabled={paymentMethod !== 'cash'}
                   classNames={{
                     root: styles.numberInput,
-                    input: styles.formInput,
+                    input: styles.formInputAmount,
                     wrapper: styles.numberInput,
                   }}
                 />
