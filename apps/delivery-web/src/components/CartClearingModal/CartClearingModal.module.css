@@ -1,0 +1,131 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(66, 61, 61, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2001;
+  overflow: hidden;
+  pointer-events: auto;
+}
+
+.modalContent {
+  position: relative;
+  width: 250px;
+  max-height: 90vh;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  align-items: center;
+  z-index: 2002;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.modalHeader {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.closeButton {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  z-index: 30;
+  color: #000000;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  transition: background-color 0.2s ease;
+}
+
+.closeButton:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  border: none;
+}
+
+.modalBody {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.modalTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #000000;
+  text-align: center;
+}
+
+.modalText {
+  font-size: 14px;
+  font-weight: 400;
+  color: #000000;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.modalFooter {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+}
+
+.modalConfirmButton {
+  width: 100%;
+  height: 48px;
+  background: #000000;
+  border-radius: 16px;
+  color: #b3ff00;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+  text-align: center;
+  border: 1px solid #000000;
+}
+
+.modalConfirmButton:hover {
+  background-color: rgba(54, 51, 51, 0.883);
+}
+
+.modalCancelButton {
+  width: 100%;
+  height: 48px;
+  background: #f8fafc;
+  border-radius: 16px;
+  color: #000000;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+  text-align: center;
+  border: 1px solid #000000;
+}
+
+.modalCancelButton:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #000000;
+}
