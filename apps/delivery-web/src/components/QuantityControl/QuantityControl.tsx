@@ -21,7 +21,7 @@ interface QuantityControlProps {
   buttonClassName?: string;
   quantityDisplayClassName?: string;
   isMobile?: boolean;
-  variant?: 'default' | 'footer' | 'ingredient' | 'productCard';
+  variant?: 'default' | 'footer' | 'ingredient' | 'productCard' | 'checkout';
 }
 
 const QuantityControl = ({
@@ -71,9 +71,32 @@ const QuantityControl = ({
         return `${baseClass} ${styles.ingredientVariant} ${className}`;
       case 'productCard':
         return `${baseClass} ${styles.productCardVariant} ${className}`;
+      case 'checkout':
+        return `${baseClass} ${styles.checkoutVariant} ${className}`;
       default:
         return `${baseClass} ${className}`;
     }
+  };
+
+  // Calculate icon size based on variant and mobile state
+  const getIconSize = () => {
+    if (variant === 'footer') {
+      return 24;
+    } else if (variant === 'productCard') {
+      return 18;
+    } else if (variant === 'checkout') {
+      return isMobile ? 14 : 26;
+    } else {
+      return 14;
+    }
+  };
+
+  // Calculate trash icon size based on variant and mobile state
+  const getTrashIconSize = () => {
+    if (variant === 'checkout' && isMobile) {
+      return 14; // Larger trash icon on mobile for checkout variant
+    }
+    return getIconSize();
   };
 
   return (
@@ -90,25 +113,28 @@ const QuantityControl = ({
       >
         {quantity <= 1 ? (
           <IconTrash
-            size={
-              variant === 'footer' ? 24 : variant === 'productCard' ? 18 : 14
-            }
-            stroke={2}
-            style={{ color: '#000000' }}
+            size={getTrashIconSize()}
+            className={`${styles.button} ${buttonClassName}`}
+            stroke={variant === 'checkout' ? 1.5 : 2}
+            style={{ color: '#000000', cursor: 'pointer' }}
           />
         ) : (
           <IconCircleMinus
-            size={
-              variant === 'footer' ? 24 : variant === 'productCard' ? 18 : 14
-            }
-            style={{ color: '#000000' }}
-            stroke={2}
+            size={getIconSize()}
+            className={`${styles.button} ${buttonClassName}`}
+            style={{ color: '#000000', cursor: 'pointer' }}
+            stroke={variant === 'checkout' ? 1.5 : 2}
           />
         )}
       </Button>
 
       <Box className={`${styles.quantityDisplay} ${quantityDisplayClassName}`}>
-        <Text className={styles.quantityText}>{quantity}</Text>
+        <Text
+          className={styles.quantityText}
+          fw={variant === 'checkout' ? 600 : undefined}
+        >
+          {quantity}
+        </Text>
       </Box>
 
       <Button
@@ -118,9 +144,9 @@ const QuantityControl = ({
         aria-label={ACCESSIBILITY_TEXTS.INCREASE_QUANTITY}
       >
         <IconCirclePlus
-          size={variant === 'footer' ? 24 : variant === 'productCard' ? 18 : 14}
-          style={{ color: '#000000' }}
-          stroke={2}
+          size={getIconSize()}
+          className={`${styles.button} ${buttonClassName}`}
+          stroke={variant === 'checkout' ? 1.5 : 2}
         />
       </Button>
     </Flex>

@@ -69,6 +69,50 @@
   min-width: 31px;
 }
 
+/* Checkout variant styling */
+.checkoutVariant {
+  display: flex;
+  width: 162px;
+  height: 40px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px;
+  background: transparent;
+  border: 1px solid #eef2f6;
+  border-radius: 0;
+  margin: 0;
+  box-shadow: 0px 4px 5px 0px rgba(0, 0, 0, 0.05);
+}
+
+.checkoutVariant .button {
+  width: 26px;
+  height: 26px;
+  min-width: 26px;
+  min-height: 26px;
+  background: transparent;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.checkoutVariant .button:hover {
+  background: #b3ff00;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.checkoutVariant .quantityText {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  min-width: 20px;
+  text-align: center;
+}
+
 /* Ingredient variant styling */
 .ingredientVariant {
   width: 105px;
@@ -181,5 +225,48 @@
   .ingredientVariant {
     width: 90px;
     flex-shrink: 0;
+  }
+
+  /* Checkout variant styling */
+  .checkoutVariant {
+    width: 85px;
+    height: 24px;
+    max-width: 85px;
+    justify-content: center;
+    padding: 6px 11px;
+    border: 1px solid #eef2f6;
+    border-radius: 4px;
+    margin: 0;
+    box-shadow: 0px 4px 5px 0px rgba(0, 0, 0, 0.05);
+  }
+
+  .checkoutVariant .button {
+    width: 15px !important;
+    height: 15px !important;
+    min-width: 15px !important;
+    min-height: 15px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Ensure SVG icons are centered in buttons */
+  .checkoutVariant .button svg {
+    display: block;
+    margin: auto;
+  }
+
+  .checkoutVariant .button:hover {
+    background: #b3ff00;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+
+  .checkoutVariant .quantityText {
+    font-size: 12px;
+    line-height: 18px;
+    font-weight: 600;
+    max-width: 20px;
+    text-align: center;
   }
 }
