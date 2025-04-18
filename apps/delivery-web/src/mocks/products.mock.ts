@@ -6,7 +6,6 @@ export interface IIngredientOption {
   name: string;
   price?: number;
   default: boolean;
-  maxQuantity?: number;
 }
 
 export interface ICondimentOption {
@@ -39,21 +38,20 @@ export const productCategories = [
 
 // Common ingredient options
 const commonBurgerIngredients: IIngredientOption[] = [
-  { id: 1, name: 'Lechuga', default: true, maxQuantity: 2 },
-  { id: 2, name: 'Tomate', default: true, maxQuantity: 2 },
-  { id: 3, name: 'Cebolla morada', default: false, maxQuantity: 1 },
-  { id: 4, name: 'Cebolla caramelizada', default: false, maxQuantity: 1 },
-  { id: 5, name: 'Queso cheddar', default: true, maxQuantity: 2 },
+  { id: 1, name: 'Lechuga', default: true },
+  { id: 2, name: 'Tomate', default: true },
+  { id: 3, name: 'Cebolla morada', default: false },
+  { id: 4, name: 'Cebolla caramelizada', default: false },
+  { id: 5, name: 'Queso cheddar', default: true },
   {
     id: 6,
     name: 'Queso mozzarella',
     default: false,
     price: 500,
-    maxQuantity: 1,
   },
-  { id: 7, name: 'Bacon', default: false, price: 800, maxQuantity: 2 },
-  { id: 8, name: 'Huevo frito', default: false, price: 600, maxQuantity: 1 },
-  { id: 9, name: 'Guacamole', default: false, price: 700, maxQuantity: 1 },
+  { id: 7, name: 'Bacon', default: false, price: 800 },
+  { id: 8, name: 'Huevo frito', default: false, price: 600 },
+  { id: 9, name: 'Guacamole', default: false, price: 700 },
 ];
 
 // Common condiment options
@@ -82,8 +80,8 @@ export const products: IProductWithCustomization[] = [
     customization: {
       ingredientOptions: commonBurgerIngredients,
       condimentOptions: commonCondiments,
-      maxIngredientSelections: 5,
-      maxCondimentSelections: 3,
+      maxIngredientSelections: 2,
+      maxCondimentSelections: 2,
       allowComments: true,
     },
   },
@@ -105,8 +103,8 @@ export const products: IProductWithCustomization[] = [
         ing.name === 'Bacon' ? { ...ing, default: true } : ing
       ),
       condimentOptions: commonCondiments,
-      maxIngredientSelections: 5,
-      maxCondimentSelections: 3,
+      maxIngredientSelections: 2,
+      maxCondimentSelections: 2,
       allowComments: true,
     },
   },
@@ -124,23 +122,21 @@ export const products: IProductWithCustomization[] = [
     tags: ['vegetariano'],
     customization: {
       ingredientOptions: [
-        { id: 1, name: 'Lechuga', default: true, maxQuantity: 2 },
-        { id: 2, name: 'Tomate', default: true, maxQuantity: 2 },
-        { id: 3, name: 'Cebolla morada', default: true, maxQuantity: 1 },
-        { id: 4, name: 'Rúcula', default: false, maxQuantity: 1 },
+        { id: 1, name: 'Lechuga', default: true },
+        { id: 2, name: 'Tomate', default: true },
+        { id: 3, name: 'Cebolla morada', default: true },
+        { id: 4, name: 'Rúcula', default: false },
         {
           id: 5,
           name: 'Queso vegano',
           default: false,
           price: 600,
-          maxQuantity: 1,
         },
         {
           id: 6,
           name: 'Guacamole',
           default: false,
           price: 700,
-          maxQuantity: 1,
         },
       ],
       condimentOptions: [
@@ -149,8 +145,8 @@ export const products: IProductWithCustomization[] = [
         { id: 3, name: 'Mostaza', default: false },
         { id: 4, name: 'Salsa de yogur', default: false },
       ],
-      maxIngredientSelections: 5,
-      maxCondimentSelections: 3,
+      maxIngredientSelections: 2,
+      maxCondimentSelections: 2,
       allowComments: true,
     },
   },
@@ -176,14 +172,13 @@ export const products: IProductWithCustomization[] = [
           name: 'Salsa BBQ extra',
           default: false,
           price: 300,
-          maxQuantity: 1,
         },
       ],
       condimentOptions: commonCondiments.map((con) =>
         con.name === 'BBQ' ? { ...con, default: true } : con
       ),
-      maxIngredientSelections: 5,
-      maxCondimentSelections: 3,
+      maxIngredientSelections: 2,
+      maxCondimentSelections: 2,
       allowComments: true,
     },
   },
@@ -200,22 +195,21 @@ export const products: IProductWithCustomization[] = [
     tags: [],
     customization: {
       ingredientOptions: [
-        { id: 1, name: 'Sal', default: true, maxQuantity: 1 },
+        { id: 1, name: 'Sal', default: true },
         {
           id: 2,
           name: 'Queso cheddar',
           default: false,
           price: 600,
-          maxQuantity: 1,
         },
-        { id: 3, name: 'Bacon', default: false, price: 800, maxQuantity: 1 },
+        { id: 3, name: 'Bacon', default: false, price: 800 },
       ],
       condimentOptions: [
         { id: 1, name: 'Mayonesa', default: false },
         { id: 2, name: 'Ketchup', default: false },
         { id: 3, name: 'Salsa barbacoa', default: false },
       ],
-      maxIngredientSelections: 3,
+      maxIngredientSelections: 2,
       maxCondimentSelections: 2,
       allowComments: true,
     },
@@ -236,6 +230,8 @@ export const products: IProductWithCustomization[] = [
       ingredientOptions: [],
       condimentOptions: [],
       allowComments: false,
+      maxIngredientSelections: 2,
+      maxCondimentSelections: 2,
     },
   },
   {
@@ -254,6 +250,8 @@ export const products: IProductWithCustomization[] = [
       ingredientOptions: [],
       condimentOptions: [],
       allowComments: false,
+      maxIngredientSelections: 2,
+      maxCondimentSelections: 2,
     },
   },
   {
@@ -271,19 +269,18 @@ export const products: IProductWithCustomization[] = [
     tags: ['popular', 'dulce'],
     customization: {
       ingredientOptions: [
-        { id: 1, name: 'Salsa de chocolate', default: true, maxQuantity: 1 },
-        { id: 2, name: 'Salsa de caramelo', default: false, maxQuantity: 1 },
+        { id: 1, name: 'Salsa de chocolate', default: true },
+        { id: 2, name: 'Salsa de caramelo', default: false },
         {
           id: 3,
           name: 'Crema batida',
           default: false,
           price: 300,
-          maxQuantity: 1,
         },
-        { id: 4, name: 'Nueces', default: false, price: 400, maxQuantity: 1 },
+        { id: 4, name: 'Nueces', default: false, price: 400 },
       ],
       condimentOptions: [],
-      maxIngredientSelections: 3,
+      maxIngredientSelections: 2,
       allowComments: true,
     },
   },

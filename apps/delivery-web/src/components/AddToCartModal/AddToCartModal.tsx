@@ -30,6 +30,7 @@ import {
   PRODUCT_TEXTS,
   MODAL_TEXTS,
   TOOLTIP_TEXTS,
+  QUANTITY_CONSTANTS,
 } from '../../config/constants';
 import QuantityControl from '../QuantityControl';
 
@@ -164,12 +165,7 @@ const useIngredients = (
 
     // Check limits
     if (newQuantity >= 0) {
-      // Check if there's a max quantity for this ingredient
-      const ingredientOption =
-        productWithCustomization?.customization?.ingredientOptions.find(
-          (opt: IIngredientOption) => opt.name === newIngredients[index].name
-        );
-      const maxQuantity = ingredientOption?.maxQuantity || 2;
+      const maxQuantity = QUANTITY_CONSTANTS.QUANTITY_MAX_VALUE;
 
       if (newQuantity <= maxQuantity) {
         newIngredients[index].quantity = newQuantity;
@@ -403,7 +399,7 @@ const IngredientsSection = ({
   maxIngredientSelections: number;
   totalSelectedIngredients: number;
 }) => (
-  <Flex className={styles.section}>
+  <Flex className={styles.ingredientsSection}>
     <Flex
       className={styles.sectionHeader}
       onClick={() => setShowIngredients(!showIngredients)}
@@ -426,34 +422,39 @@ const IngredientsSection = ({
     </Flex>
 
     <Collapse in={showIngredients}>
-      <Flex className={styles.ingredientsList}>
-        {ingredients.map((ingredient, index) => (
-          <Flex key={ingredient.name} className={styles.ingredientItem}>
-            <Text className={styles.ingredientName}>{ingredient.name}</Text>
+      <Flex className={styles.ingredientsSectionBody}>
+        <Flex className={styles.ingredientsList}>
+          {ingredients.map((ingredient, index) => (
+            <Flex key={ingredient.name} className={styles.ingredientItem}>
+              <Text className={styles.ingredientName}>{ingredient.name}</Text>
 
-            {ingredient.price && (
-              <Box className={styles.priceTagContainer}>
-                <Text className={styles.priceTag}>+${ingredient.price}</Text>
+              {ingredient.price && (
+                <Box className={styles.priceTagContainer}>
+                  <Text className={styles.priceTag}>+${ingredient.price}</Text>
+                </Box>
+              )}
+
+              <Box className={styles.ingredientQuantityWrapper}>
+                <QuantityControl
+                  initialQuantity={ingredient.quantity}
+                  minQuantity={0}
+                  maxQuantity={QUANTITY_CONSTANTS.QUANTITY_MAX_VALUE}
+                  onChange={(newValue) =>
+                    handleUpdateIngredient(
+                      index,
+                      newValue - ingredient.quantity
+                    )
+                  }
+                  variant="ingredient"
+                  isDisabled={
+                    totalSelectedIngredients >= maxIngredientSelections &&
+                    ingredient.quantity === 0
+                  }
+                />
               </Box>
-            )}
-
-            <Box className={styles.ingredientQuantityWrapper}>
-              <QuantityControl
-                initialQuantity={ingredient.quantity}
-                minQuantity={0}
-                maxQuantity={2}
-                onChange={(newValue) =>
-                  handleUpdateIngredient(index, newValue - ingredient.quantity)
-                }
-                variant="ingredient"
-                isDisabled={
-                  totalSelectedIngredients >= maxIngredientSelections &&
-                  ingredient.quantity === 0
-                }
-              />
-            </Box>
-          </Flex>
-        ))}
+            </Flex>
+          ))}
+        </Flex>
       </Flex>
     </Collapse>
   </Flex>
@@ -473,7 +474,7 @@ const CondimentsSection = ({
   handleToggleCondiment: (index: number) => void;
   maxCondimentSelections: number;
 }) => (
-  <Flex className={styles.section}>
+  <Flex className={styles.condimentsSection}>
     <Flex
       className={styles.sectionHeader}
       onClick={() => setShowCondiments(!showCondiments)}
@@ -496,22 +497,24 @@ const CondimentsSection = ({
     </Flex>
 
     <Collapse in={showCondiments}>
-      <Flex className={styles.condimentsList}>
-        {condiments.map((condiment, index) => (
-          <Flex key={condiment.name} className={styles.condimentItem}>
-            <Text className={styles.condimentName}>{condiment.name}</Text>
+      <Flex className={styles.condimentsSectionBody}>
+        <Flex className={styles.condimentsList}>
+          {condiments.map((condiment, index) => (
+            <Flex key={condiment.name} className={styles.condimentItem}>
+              <Text className={styles.condimentName}>{condiment.name}</Text>
 
-            <Checkbox
-              checked={condiment.selected}
-              onChange={() => handleToggleCondiment(index)}
-              classNames={{
-                root: styles.condimentCheckbox,
-                input: styles.condimentCheckboxInput,
-                icon: styles.condimentCheckboxIcon,
-              }}
-            />
-          </Flex>
-        ))}
+              <Checkbox
+                checked={condiment.selected}
+                onChange={() => handleToggleCondiment(index)}
+                classNames={{
+                  root: styles.condimentCheckbox,
+                  input: styles.condimentCheckboxInput,
+                  icon: styles.condimentCheckboxIcon,
+                }}
+              />
+            </Flex>
+          ))}
+        </Flex>
       </Flex>
     </Collapse>
   </Flex>
@@ -761,31 +764,33 @@ const AddToCartModal = ({
           )}
         </Flex>
 
-        {/* Ingredients Section */}
-        {ingredientOptions.length > 0 && (
-          <IngredientsSection
-            showIngredients={showIngredients}
-            setShowIngredients={setShowIngredients}
-            ingredients={ingredients}
-            handleUpdateIngredient={handleUpdateIngredient}
-            maxIngredientSelections={maxIngredientSelections}
-            totalSelectedIngredients={totalSelectedIngredients}
-          />
-        )}
+        <Flex className={styles.sectionBody}>
+          {/* Ingredients Section */}
+          {ingredientOptions.length > 0 && (
+            <IngredientsSection
+              showIngredients={showIngredients}
+              setShowIngredients={setShowIngredients}
+              ingredients={ingredients}
+              handleUpdateIngredient={handleUpdateIngredient}
+              maxIngredientSelections={maxIngredientSelections}
+              totalSelectedIngredients={totalSelectedIngredients}
+            />
+          )}
 
-        {/* Condiments Section */}
-        {condimentOptions.length > 0 && (
-          <CondimentsSection
-            showCondiments={showCondiments}
-            setShowCondiments={setShowCondiments}
-            condiments={condiments}
-            handleToggleCondiment={handleToggleCondiment}
-            maxCondimentSelections={
-              productWithCustomization?.customization?.maxCondimentSelections ||
-              3
-            }
-          />
-        )}
+          {/* Condiments Section */}
+          {condimentOptions.length > 0 && (
+            <CondimentsSection
+              showCondiments={showCondiments}
+              setShowCondiments={setShowCondiments}
+              condiments={condiments}
+              handleToggleCondiment={handleToggleCondiment}
+              maxCondimentSelections={
+                productWithCustomization?.customization
+                  ?.maxCondimentSelections || 2
+              }
+            />
+          )}
+        </Flex>
 
         {/* Footer */}
         <ModalFooter

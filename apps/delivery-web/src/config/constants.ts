@@ -99,6 +99,12 @@ export const PRODUCT_TEXTS = {
   PROMO_KEYWORD: 'promo',
 };
 
+export const QUANTITY_CONSTANTS = {
+  INGREDIENT_MAX_QUANTITY: 2,
+  CONDIMENT_MAX_QUANTITY: 2,
+  QUANTITY_MAX_VALUE: 9,
+};
+
 export const MODAL_TEXTS = {
   MODAL_TITLE: 'Armala Como Quieras',
   CUSTOMIZE_HELPER_TEXT:
