@@ -28,10 +28,12 @@ const Header = ({
 }: HeaderProps) => {
   const [opened, { toggle, close }] = useDisclosure(false);
   const [internalSearchValue, setInternalSearchValue] = useState(searchValue);
-  const [isMobile, setIsMobile] = useState(false);
 
   // Get headroom state from Mantine hook
   const pinned = useHeadroom({ fixedAt: 120 });
+
+  // TODO: Remove this once we have a better way to handle the header state
+  console.log('closedMessage', closedMessage);
 
   // Add a search active state to lock header state during typing
   const [isSearchActive, setIsSearchActive] = useState(false);
@@ -62,7 +64,7 @@ const Header = ({
 
   useEffect(() => {
     const checkIfMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
+      return window.innerWidth <= 768;
     };
 
     // Check on initial load
@@ -79,6 +81,7 @@ const Header = ({
 
   // Handle autofocus when header state changes
   useEffect(() => {
+    let cleanup: (() => void) | undefined;
     // Only run when the collapsed state changes
     if (prevCollapsedStateRef.current !== isHeaderCollapsed) {
       prevCollapsedStateRef.current = isHeaderCollapsed;
@@ -94,6 +97,7 @@ const Header = ({
 
       return () => clearTimeout(focusTimeout);
     }
+    return cleanup;
   }, [isHeaderCollapsed]);
 
   const handleNavigate = (route: string) => {

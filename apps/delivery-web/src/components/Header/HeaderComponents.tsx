@@ -74,9 +74,13 @@ interface SearchBarProps {
   value: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
+  // Using Record<string, any> here is necessary for Mantine's style system
+  // which accepts complex CSS-in-JS objects with nested selectors
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   styles?: Record<string, any>;
   variant?: SearchBarVariant;
   autoFocus?: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
 
@@ -173,6 +177,7 @@ export const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(
 
     // Handle autofocus when the component first renders or when autoFocus prop changes
     useEffect(() => {
+      let cleanup: (() => void) | undefined;
       if (autoFocus && ref && typeof ref !== 'function') {
         const inputElement = ref.current;
         if (inputElement) {
@@ -181,9 +186,11 @@ export const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(
             inputElement.focus();
           }, 100);
 
-          return () => clearTimeout(focusTimeout);
+          cleanup = () => clearTimeout(focusTimeout);
         }
       }
+
+      return cleanup;
     }, [autoFocus, ref]);
 
     const handleSearch = () => {

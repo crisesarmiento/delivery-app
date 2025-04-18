@@ -13,11 +13,7 @@ import {
   NumberInput,
   Flex,
 } from '@mantine/core';
-import {
-  IconTrash,
-  IconCirclePlus,
-  IconCircleMinus,
-} from '@tabler/icons-react';
+
 import styles from './page.module.css';
 import CheckoutHeader from '@/components/Header/CheckoutHeader';
 import { branchesMock } from '../../../../mocks/branches.mock';
@@ -92,6 +88,7 @@ export default function CheckoutPage() {
 
       return () => clearInterval(intervalId);
     }
+    return undefined;
   }, [currentBranch]);
 
   // Redirect if branch is not found
