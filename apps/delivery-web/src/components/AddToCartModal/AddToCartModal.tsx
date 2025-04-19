@@ -707,6 +707,7 @@ const AddToCartModal = ({
         variant="subtle"
         p={0}
         radius="xl"
+        data-testid="close-modal-button"
       >
         <IconX size={24} />
       </Button>

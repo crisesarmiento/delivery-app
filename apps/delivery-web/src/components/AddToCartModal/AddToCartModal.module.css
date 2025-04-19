@@ -43,7 +43,7 @@
   align-items: center;
   justify-content: center;
   padding: 8px;
-  z-index: 30;
+  z-index: 100;
   color: #ffffff;
   border-radius: 50%;
   width: 36px;
@@ -254,7 +254,6 @@
   outline: none !important;
   box-shadow: none !important;
   border: none !important;
-  appearance: none !important;
   -webkit-appearance: none !important;
 }
 
@@ -572,18 +571,19 @@
     border-radius: 8px;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow: visible;
     position: relative;
   }
 
   .modalHeader {
     position: sticky;
     top: 0;
-    z-index: 30;
+    z-index: 20;
     width: 100%;
     border-radius: 8px 8px 0 0;
     height: 139px;
     background: #000000;
+    overflow: visible;
   }
 
   .modalTitle {
@@ -596,11 +596,25 @@
   }
 
   .closeButton {
+    position: absolute;
     right: 16px;
     top: 16px;
-    z-index: 30;
     width: 20px;
     height: 20px;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    z-index: 100;
+    color: #ffffff;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+  }
+
+  .closeButton:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: none;
   }
 
   .priceContainer {
