@@ -24,7 +24,6 @@ import {
   getProductById,
   IProductWithCustomization,
   IIngredientOption,
-  ICondimentOption,
 } from '../../mocks/products.mock';
 import {
   PRODUCT_TEXTS,
@@ -196,10 +195,15 @@ const useCondiments = (
   const [condiments, setCondiments] = useState<CondimentItem[]>([]);
   const [showCondiments, setShowCondiments] = useState(true);
 
-  const condimentOptions = useMemo(
-    () => productWithCustomization?.customization?.condimentOptions || [],
-    [productWithCustomization]
-  );
+  const condimentOptions = useMemo(() => {
+    if (!productWithCustomization?.customization?.condimentOptions) {
+      return [];
+    }
+    // Convert object to array for easier handling
+    return Object.values(
+      productWithCustomization.customization.condimentOptions
+    );
+  }, [productWithCustomization]);
 
   // Initialize condiments
   useEffect(() => {
@@ -208,13 +212,12 @@ const useCondiments = (
     }
 
     if (productWithCustomization.customization?.condimentOptions) {
-      const defaultCondiments =
-        productWithCustomization.customization.condimentOptions.map(
-          (condiment: ICondimentOption) => ({
-            name: condiment.name,
-            selected: initialCondiments.includes(condiment.name),
-          })
-        );
+      const defaultCondiments = Object.values(
+        productWithCustomization.customization.condimentOptions
+      ).map((condiment) => ({
+        name: condiment.name,
+        selected: initialCondiments.includes(condiment.name),
+      }));
       setCondiments(defaultCondiments);
     }
   }, [opened, productWithCustomization, initialCondiments, isInitialized]);

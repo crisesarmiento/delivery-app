@@ -1,12 +1,12 @@
 import { IBranch, IOrder, IOrderItem, IProduct, OrderStatus } from '../types';
 import { branchesMock } from './branches.mock';
-import { products as productsMock } from './products.mock';
+import { products as productsMock, productCategories } from './products.mock';
 
 // Mock branches data
 export const branches: IBranch[] = branchesMock;
 
 // Categories for products
-export const categories = ['Burgers', 'Pizza', 'Drinks', 'Desserts', 'Sides'];
+export const categories = productCategories;
 
 // Mock products data
 export const products: IProduct[] = productsMock;
