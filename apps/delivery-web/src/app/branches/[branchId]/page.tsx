@@ -384,16 +384,23 @@ export default function BranchProductsPage() {
         <Box
           className={styles.categoriesContainer}
           style={{
-            position: 'sticky',
-            top: isMobile && isHeaderCollapsed ? '70px' : '0', // Match the collapsed header height exactly
+            position: 'fixed',
+            top: isMobile
+              ? isHeaderCollapsed
+                ? '90px'
+                : '0'
+              : isHeaderCollapsed
+              ? '0'
+              : '0',
             left: 0,
             right: 0,
-            zIndex: 20, // Increased z-index to be higher than sections
+            zIndex: 99,
             backgroundColor: '#ffffff',
             overflowX: 'visible',
             overflowY: 'hidden',
             height: '75px',
             minHeight: '75px',
+            transition: 'top 0.3s ease',
           }}
         >
           <MemoizedCategoryTabs
@@ -408,11 +415,11 @@ export default function BranchProductsPage() {
             flex: 1,
             overflowX: 'hidden',
             overflowY: 'auto',
-            position: 'relative', // Added explicit position
-            zIndex: 10, // Ensure proper stacking context
-            paddingTop: '16px', // Simplified padding logic
+            position: 'relative',
+            zIndex: 10,
+            paddingTop: '100px', // Increased to account for fixed category tabs
             paddingBottom: '0',
-            marginTop: '0', // Ensure clear spacing from categories
+            marginTop: '0',
           }}
         >
           {Object.keys(productsByCategory).length > 0 ? (
