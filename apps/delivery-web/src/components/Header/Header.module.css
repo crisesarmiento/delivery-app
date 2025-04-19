@@ -91,6 +91,7 @@
   align-items: center;
   justify-content: center;
   transform: translateY(-50%);
+  white-space: nowrap;
 }
 
 /* Menu button positioning */
@@ -174,6 +175,7 @@
     left: calc(13px + 46px);
     right: auto;
     transform: translateY(-50%);
+    white-space: nowrap;
   }
 
   .leftBlackOverlay {

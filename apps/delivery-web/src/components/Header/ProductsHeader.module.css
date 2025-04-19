@@ -101,6 +101,7 @@
   align-items: center;
   justify-content: center;
   transform: translateY(-50%);
+  white-space: nowrap;
 }
 
 /* Menu button positioning */
@@ -270,6 +271,7 @@
     top: 50%;
     transform: translateY(-50%);
     z-index: 103;
+    white-space: nowrap;
   }
 
   .menuButtonContainer {
