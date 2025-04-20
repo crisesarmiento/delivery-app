@@ -20,6 +20,7 @@ import {
 import CartDrawer from '@/components/CartDrawer/CartDrawer';
 import { BRANCH_TEXTS, COMMON_TEXTS, ERROR_TEXTS } from '@/config/constants';
 import { isBranchOpen } from '@/utils/branch';
+import ProductsHeaderWrapper from '@/components/ProductsHeaderWrapper';
 
 // Memoize the ProductsHeader component to prevent unnecessary re-renders
 const MemoizedProductsHeader = memo(ProductsHeader);
@@ -363,52 +364,43 @@ export default function BranchProductsPage() {
       className={styles.productPageContainer}
       style={{ minHeight: '100vh' }}
     >
-      {/* Use the reusable Header component with product page configuration */}
-      <MemoizedProductsHeader
-        branch={currentBranch as IBranch}
-        onBackClick={handleBack}
-        searchValue={searchQuery}
-        onSearchChange={handleSearchChange}
-        isClosed={currentBranch ? !currentBranch.isOpen : false}
-        closedMessage={BRANCH_TEXTS.BRANCH_CLOSED}
-      />
-
-      {/* Content wrapper for everything below the header */}
-      <ContentWrapper
-        ref={contentWrapperRef}
-        isHeaderCollapsed={isHeaderCollapsed}
+      {/* Wrap header and categories in ProductsHeaderWrapper */}
+      <ProductsHeaderWrapper
         isMobile={isMobile}
-        headerHeight={0}
-        collapsedHeaderHeight={0}
-      >
-        <Box
-          className={styles.categoriesContainer}
-          style={{
-            position: 'fixed',
-            top: isMobile
-              ? isHeaderCollapsed
-                ? '90px'
-                : '0'
-              : isHeaderCollapsed
-              ? '0'
-              : '0',
-            left: 0,
-            right: 0,
-            zIndex: 99,
-            backgroundColor: '#ffffff',
-            overflowX: 'visible',
-            overflowY: 'hidden',
-            height: '75px',
-            minHeight: '75px',
-            transition: 'top 0.3s ease',
-          }}
-        >
+        isHeaderCollapsed={isHeaderCollapsed}
+        headerHeight={isMobile ? 200 : 0} // Reduced from 200/320 for better spacing
+        collapsedHeaderHeight={isMobile ? 90 : 350} // Reduced from 115/115
+        header={
+          <MemoizedProductsHeader
+            branch={currentBranch as IBranch}
+            onBackClick={handleBack}
+            searchValue={searchQuery}
+            onSearchChange={handleSearchChange}
+            isClosed={currentBranch ? !currentBranch.isOpen : false}
+            closedMessage={BRANCH_TEXTS.BRANCH_CLOSED}
+            isFiltering={searchQuery.length > 0}
+          />
+        }
+        categories={
           <MemoizedCategoryTabs
             categories={categories}
             activeTab={activeTab}
             onTabChange={handleTabChange}
+            isMobile={isMobile}
+            isClosed={currentBranch ? !currentBranch.isOpen : false}
+            isHeaderCollapsed={isHeaderCollapsed}
           />
-        </Box>
+        }
+      />
+
+      {/* Content wrapper for everything below the header and category tabs */}
+      <ContentWrapper
+        ref={contentWrapperRef}
+        isHeaderCollapsed={isHeaderCollapsed}
+        isMobile={isMobile}
+        headerHeight={isMobile ? 200 : 0} // Reduced from 200/320 for better spacing
+        collapsedHeaderHeight={isMobile ? 90 : 350} // Reduced from 115/115
+      >
         <Box
           className={styles.sectionsContainer}
           style={{
@@ -417,7 +409,7 @@ export default function BranchProductsPage() {
             overflowY: 'auto',
             position: 'relative',
             zIndex: 10,
-            paddingTop: '100px', // Increased to account for fixed category tabs
+            paddingTop: '25px', // Reduced to account for ProductsHeaderWrapper
             paddingBottom: '0',
             marginTop: '0',
           }}
