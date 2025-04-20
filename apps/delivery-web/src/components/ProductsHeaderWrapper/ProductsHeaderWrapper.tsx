@@ -53,11 +53,7 @@ const ProductsHeaderWrapper = forwardRef<
     };
 
     useEffect(() => {
-      if (isMobile) {
-        setTopOffset(isHeaderCollapsed ? 70 : 0); // No offset needed with fixed categories
-      } else {
-        setTopOffset(isHeaderCollapsed ? collapsedHeaderHeight : headerHeight);
-      }
+      setTopOffset(isHeaderCollapsed ? collapsedHeaderHeight : headerHeight);
     }, [isHeaderCollapsed, headerHeight, collapsedHeaderHeight, isMobile]);
 
     // Public method to scroll to top of content
