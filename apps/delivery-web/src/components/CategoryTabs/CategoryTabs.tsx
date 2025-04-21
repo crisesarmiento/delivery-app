@@ -32,37 +32,37 @@ export default function CategoryTabs({
     if (activeTab) scrollIntoView({ alignment: 'center' });
   }, [activeTab, scrollIntoView]);
 
-  const determineMarginTopCategoryTabs = (
-    isClosed: boolean,
-    isHeaderCollapsed: boolean,
-    isMobile: boolean
-  ): string => {
-    if (isMobile) {
-      if (isClosed) {
-        return isHeaderCollapsed ? '17px' : '37px';
-      } else {
-        return isHeaderCollapsed ? '15px' : '70px';
-      }
-    } else {
-      if (isClosed) {
-        return isHeaderCollapsed ? '43px' : '63px';
-      } else {
-        return isHeaderCollapsed ? '17px' : '12px';
-      }
-    }
-  };
+  // const determineMarginTopCategoryTabs = (
+  //   isClosed: boolean,
+  //   isHeaderCollapsed: boolean,
+  //   isMobile: boolean
+  // ): string => {
+  //   if (isMobile) {
+  //     if (isClosed) {
+  //       return isHeaderCollapsed ? '17px' : '37px';
+  //     } else {
+  //       return isHeaderCollapsed ? '15px' : '70px';
+  //     }
+  //   } else {
+  //     if (isClosed) {
+  //       return isHeaderCollapsed ? '43px' : '63px';
+  //     } else {
+  //       return isHeaderCollapsed ? '17px' : '12px';
+  //     }
+  //   }
+  // };
 
   return (
     <Box
       data-testid="category-tabs"
       className={styles.stickyContainer}
-      style={{
-        marginTop: determineMarginTopCategoryTabs(
-          isClosed,
-          isHeaderCollapsed,
-          isMobile
-        ),
-      }}
+      // style={{
+      //   marginTop: determineMarginTopCategoryTabs(
+      //     isClosed,
+      //     isHeaderCollapsed,
+      //     isMobile
+      //   ),
+      // }}
     >
       <Box className={styles.categoryTitleContainer}>
         <Text

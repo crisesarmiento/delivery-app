@@ -76,6 +76,8 @@ const ProductsHeaderWrapper = forwardRef<
       };
     }, [scrollToTop]);
 
+    console.log('topOffset', topOffset);
+
     return (
       <Box className={styles.productsHeaderWrapper} ref={setRefs} {...boxProps}>
         {/* Header container */}
