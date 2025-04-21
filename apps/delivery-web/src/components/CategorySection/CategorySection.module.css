@@ -1,6 +1,7 @@
 .categorySection {
   display: flex;
   flex-direction: column;
+  margin-top: 8px;
   width: 100%;
   margin-bottom: 8px;
 }
@@ -75,6 +76,7 @@
 @media (max-width: 768px) {
   .categorySection {
     padding: 0 12px;
+    margin-top: 0;
     margin-bottom: 0;
   }
 
@@ -107,6 +109,9 @@
 }
 
 @media (max-width: 768px) {
+  .categorySection {
+    margin-top: 0;
+  }
   .categoriesContainer {
     background-color: #ffffff;
   }

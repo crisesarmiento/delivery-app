@@ -2,6 +2,9 @@
   position: relative;
   width: 100%;
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   z-index: 100;
 }
 
@@ -12,7 +15,12 @@
 
 .categoriesContainer {
   position: relative;
-  width: 1064px;
+  left: 0;
+  right: 0;
+  max-width: 1064px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 @media (max-width: 768px) {
@@ -26,5 +34,8 @@
 
   .categoriesContainer {
     width: 100%;
+    align-items: center;
+    left: 0;
+    right: 0;
   }
 }

@@ -41,7 +41,7 @@ export default function CategoryTabs({
       if (isClosed) {
         return isHeaderCollapsed ? '17px' : '37px';
       } else {
-        return isHeaderCollapsed ? '15px' : '55px';
+        return isHeaderCollapsed ? '15px' : '70px';
       }
     } else {
       if (isClosed) {
@@ -64,14 +64,16 @@ export default function CategoryTabs({
         ),
       }}
     >
-      <Text
-        fw={500}
-        size="md"
-        className={styles.categoryTitle}
-        data-testid="category-tabs-title"
-      >
-        {CATEGORY_TEXTS.TITLE}
-      </Text>
+      <Box className={styles.categoryTitleContainer}>
+        <Text
+          fw={500}
+          size="md"
+          className={styles.categoryTitle}
+          data-testid="category-tabs-title"
+        >
+          {CATEGORY_TEXTS.TITLE}
+        </Text>
+      </Box>
       <ScrollArea
         className={styles.categoriesContainer}
         type="auto"
