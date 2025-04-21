@@ -381,9 +381,6 @@ export default function BranchProductsPage() {
             categories={categories}
             activeTab={activeTab}
             onTabChange={handleTabChange}
-            isMobile={isMobile}
-            isClosed={currentBranch ? !currentBranch.isOpen : false}
-            isHeaderCollapsed={isHeaderCollapsed}
           />
         }
       />
