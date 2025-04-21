@@ -1,0 +1,75 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+# Smarty Web - Project Overview
+
+## Smarty Web Development Specification
+- **Version:** 1.0.0
+- **Repository:** `smarty-web`
+- **Architecture:** [React, Next.js, TypeScript, Nx]
+- **Focus:** Food-ordering platform
+- **Optimization Priority:** User experience and performance
+- **UI Library:** Mantine 8
+
+## What is this product?
+Smarty Web is a food ordering platform where customers can place home delivery food orders from branches of their choosing. It's built with React, Next.js, TypeScript, and uses Mantine 8 as the UI library, with a focus on user experience and performance.
+
+## Who is it for?
+- Anyone with the link to the platform can place a home delivery food order
+- Customers looking to order food from specific brand locations
+
+## What problem does it solve?
+- Provides a user-friendly interface for browsing branch locations
+- Enables customers to view menus and product details
+- Allows customization of food orders with toppings and special instructions
+- Facilitates the ordering process including delivery/pickup options and payment methods
+
+## Scope
+
+### In Scope
+- **Branches Screen**: Displaying all brand locations with their open/closed status and schedules
+- **Selected Branch Screen**: Showing the menu for a selected location with categorized products
+- **Product Detail Screen**: Detailed product view with customization options
+- **Cart Screen**: Order summary with delivery details and payment methods
+- Features such as:
+- Branch selection and filtering
+- Product browsing by categories
+- Product customization (toppings, special instructions)
+- Cart management
+- Payment method selection
+- Delivery/pickup toggle
+
+### Out of Scope
+- User authentication/login
+- Actual payment processing
+- Order history
+- Admin interfaces
+- Backend implementation
+
+## Key Features by Screen
+
+### Branches Screen
+- Header with search and navigation
+- Cards for each branch with open/closed status
+- Schedule display on hover
+- Footer with branding and links
+
+### Selected Branch Screen
+- Fixed categories section for navigation
+- Product listing by categories
+- Fixed cart with order summary
+- Special handling for closed locations
+
+### Product Detail Screen
+- Product information with pricing and discounts
+- Customization options (toppings)
+- Special instructions input
+- Quantity selection
+
+### Cart Screen
+- Delivery/pickup toggle
+- Payment method selection
+- Itemized order list
+- Order summary with discounts and totals

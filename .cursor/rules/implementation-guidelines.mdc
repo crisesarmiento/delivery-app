@@ -1,0 +1,59 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+# Implementation Guidelines
+
+## Technology Stack
+- **Framework**: React with Next.js
+- **Language**: TypeScript (strict mode)
+- **UI Library**: Mantine 8
+- **Build Tool**: Nx
+- **Focus**: Performance and user experience
+
+## Component Development
+- Use functional components with hooks
+- Prefer Mantine components (Container, Flex, Box) over classic divs
+- Create modular components for better maintainability
+- Store text strings in constants (UPPERCASE) in config files
+
+## State Management
+- Use React Context for global state (cart, user preferences)
+- Memoize components conditionally for performance
+
+## Styling Approach
+- Use Mantine's `createStyles` for theme-aware styling
+- Use CSS Modules for static styles if needed
+- Ensure responsiveness with Mantine props
+
+## File Organization
+- `/src/components`: Reusable, atomic components
+- `/src/pages`: Next.js routing pages
+- `/src/mocks`: Mock data files
+- `/src/styles`: Global styles (prioritize Mantine theme)
+- `/src/utils`: Pure, reusable functions
+- `/src/hooks`: Custom hooks
+- `/src/config`: Environment configs
+- `/src/types`: TypeScript definitions
+- `/src/theme`: Mantine theme setup
+
+## Naming Conventions
+- **Components**: PascalCase (e.g., `OrderSummary`)
+- **Functions**: camelCase (e.g., `fetchOrdersMock`)
+- **Constants**: UPPER_SNAKE_CASE (e.g., `MAX_ORDER_ITEMS`)
+- **Hooks**: `use` prefix, camelCase (e.g., `useCart`)
+- **State**: camelCase with `State` suffix (e.g., `cartState`)
+- **Types**:
+- Interfaces: `I` prefix (e.g., `IOrder`)
+- Enums: PascalCase (e.g., `OrderStatus`)
+
+## Performance Considerations
+- Leverage Next.js features (SSR, SSG, ISR)
+- Optimize for mobile with lazy loading and memoization
+- Minimize re-renders with proper React patterns
+
+## Mock Data
+- Use Spanish language for mock content
+- Create realistic data that reflects real-world scenarios
+- Avoid using sensitive data in mocks

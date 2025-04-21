@@ -49,7 +49,7 @@ out
 .npmrc
 
 # Cursor
-.cursor
+.cursor/mcp.json
 .qodo
 .ariana/
 .traces/
