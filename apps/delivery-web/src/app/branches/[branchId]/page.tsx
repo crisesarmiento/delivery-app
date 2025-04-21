@@ -362,7 +362,6 @@ export default function BranchProductsPage() {
     <Flex direction="column" className={styles.productPageContainer}>
       {/* Wrap header and categories in ProductsHeaderWrapper */}
       <ProductsHeaderWrapper
-        isMobile={isMobile}
         isHeaderCollapsed={isHeaderCollapsed}
         headerHeight={isMobile ? 45 : 0} // Reduced from 200/320 for better spacing
         collapsedHeaderHeight={isMobile ? -100 : -225} // Reduced from 115/115
@@ -393,9 +392,8 @@ export default function BranchProductsPage() {
       <ContentWrapper
         ref={contentWrapperRef}
         isHeaderCollapsed={isHeaderCollapsed}
-        isMobile={isMobile}
-        headerHeight={isMobile ? 200 : 45} // Reduced from 200/320 for better spacing
-        collapsedHeaderHeight={isMobile ? 90 : 350} // Reduced from 115/115
+        headerHeight={isMobile ? 145 : 45} // Reduced from 200/320 for better spacing
+        collapsedHeaderHeight={isMobile ? 115 : 45} // Reduced from 115/115
       >
         <Box
           className={styles.sectionsContainer}

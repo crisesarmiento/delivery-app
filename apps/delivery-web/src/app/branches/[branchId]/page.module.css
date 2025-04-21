@@ -10,6 +10,7 @@
   flex: 1;
   position: relative;
   background-color: #ffffff;
+  z-index: 99;
 }
 
 .productsContainer {

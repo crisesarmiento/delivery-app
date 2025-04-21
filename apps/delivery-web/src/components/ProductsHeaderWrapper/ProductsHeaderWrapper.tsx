@@ -1,13 +1,6 @@
 'use client';
 
-import {
-  ReactNode,
-  useEffect,
-  useState,
-  useRef,
-  useCallback,
-  forwardRef,
-} from 'react';
+import { ReactNode, useEffect, useState, useRef, forwardRef } from 'react';
 import { Box, BoxProps } from '@mantine/core';
 import styles from './ProductsHeaderWrapper.module.css';
 
@@ -16,7 +9,6 @@ interface ProductsHeaderWrapperProps extends BoxProps {
   categories: ReactNode;
   isHeaderCollapsed?: boolean;
   headerHeight?: number;
-  isMobile: boolean;
   collapsedHeaderHeight?: number;
 }
 
@@ -28,7 +20,6 @@ const ProductsHeaderWrapper = forwardRef<
     {
       header,
       categories,
-      isMobile = false,
       isHeaderCollapsed = false,
       headerHeight = 280, // Default full header height (desktop)
       collapsedHeaderHeight = 70, // Default collapsed header height (desktop)
@@ -54,29 +45,7 @@ const ProductsHeaderWrapper = forwardRef<
 
     useEffect(() => {
       setTopOffset(isHeaderCollapsed ? collapsedHeaderHeight : headerHeight);
-    }, [isHeaderCollapsed, headerHeight, collapsedHeaderHeight, isMobile]);
-
-    // Public method to scroll to top of content
-    const scrollToTop = useCallback(() => {
-      if (wrapperRef.current) {
-        wrapperRef.current.scrollIntoView({ behavior: 'smooth' });
-      }
-    }, []);
-
-    // Expose the scrollToTop method
-    useEffect(() => {
-      if (wrapperRef.current) {
-        (wrapperRef.current as any).scrollToTop = scrollToTop;
-      }
-
-      return () => {
-        if (wrapperRef.current) {
-          delete (wrapperRef.current as any).scrollToTop;
-        }
-      };
-    }, [scrollToTop]);
-
-    console.log('topOffset', topOffset);
+    }, [isHeaderCollapsed, headerHeight, collapsedHeaderHeight]);
 
     return (
       <Box className={styles.productsHeaderWrapper} ref={setRefs} {...boxProps}>

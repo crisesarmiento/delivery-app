@@ -16,7 +16,6 @@ interface ContentWrapperProps extends BoxProps {
   isHeaderCollapsed?: boolean;
   headerHeight?: number;
   collapsedHeaderHeight?: number;
-  isMobile?: boolean;
   className?: string;
 }
 
@@ -31,7 +30,6 @@ const ContentWrapper = forwardRef<HTMLDivElement, ContentWrapperProps>(
       isHeaderCollapsed = false,
       headerHeight = 280, // Default full header height (desktop)
       collapsedHeaderHeight = 70, // Default collapsed header height (desktop)
-      isMobile = false,
       className = '',
       ...boxProps
     }: ContentWrapperProps,
@@ -54,12 +52,8 @@ const ContentWrapper = forwardRef<HTMLDivElement, ContentWrapperProps>(
     };
 
     useEffect(() => {
-      if (isMobile) {
-        setTopOffset(isHeaderCollapsed ? 0 : 0); // No offset needed with fixed categories
-      } else {
-        setTopOffset(isHeaderCollapsed ? collapsedHeaderHeight : headerHeight);
-      }
-    }, [isHeaderCollapsed, headerHeight, collapsedHeaderHeight, isMobile]);
+      setTopOffset(isHeaderCollapsed ? collapsedHeaderHeight : headerHeight);
+    }, [isHeaderCollapsed, headerHeight, collapsedHeaderHeight]);
 
     // Public method to scroll to top of content
     const scrollToTop = useCallback(() => {
