@@ -16,6 +16,7 @@ export default function CategoryTabs({
   onTabChange,
 }: CategoryTabsProps) {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+
   const { scrollIntoView, targetRef } = useScrollIntoView({
     axis: 'x',
     duration: 300,

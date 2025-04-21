@@ -39,7 +39,6 @@ export default function BranchProductsPage() {
   const router = useRouter();
   const theme = useMantineTheme();
   const branchId = (params?.branchId as string) || '';
-  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const contentWrapperRef = useRef<HTMLDivElement | null>(null);
   const {
     items: cartContextItems,
@@ -248,16 +247,22 @@ export default function BranchProductsPage() {
   // Handle tab change
   const handleTabChange = (value: string | null): void => {
     if (value) {
-      setActiveTab(value);
+      // Always scroll to section even if it's already the active tab
+      const previousTab = activeTab;
 
-      // Update expanded sections based on active tab
-      setExpandedSections((prev) => {
-        const newState = { ...prev };
-        Object.keys(newState).forEach((key) => {
-          newState[key] = key === value.toLowerCase();
+      // Only update state if the tab has changed
+      if (previousTab !== value) {
+        setActiveTab(value);
+
+        // Update expanded sections based on active tab
+        setExpandedSections((prev) => {
+          const newState = { ...prev };
+          Object.keys(newState).forEach((key) => {
+            newState[key] = key === value.toLowerCase();
+          });
+          return newState;
         });
-        return newState;
-      });
+      }
 
       // If selecting the first category, reset scroll position to the top
       if (value.toLowerCase() === categories[0].toLowerCase()) {
@@ -275,36 +280,6 @@ export default function BranchProductsPage() {
           });
         }
         return;
-      }
-
-      // For all other categories, scroll to the selected category section
-      const sectionElement = sectionRefs.current[value.toLowerCase()];
-      if (sectionElement) {
-        // Find the header element inside the section
-        const headerElement = sectionElement.querySelector(
-          'div[style*="border-radius"]'
-        );
-
-        if (headerElement) {
-          // Get the position of the header element
-          const rect = headerElement.getBoundingClientRect();
-          const scrollTop = (window.scrollY || window.pageYOffset) + rect.top;
-
-          // Scroll to position the header at the top with a small buffer
-          window.scrollTo({
-            top: scrollTop - 120,
-            behavior: 'smooth',
-          });
-        } else {
-          // Fallback to the previous method if header can't be found
-          const rect = sectionElement.getBoundingClientRect();
-          const scrollTop = (window.scrollY || window.pageYOffset) + rect.top;
-
-          window.scrollTo({
-            top: scrollTop - 200,
-            behavior: 'smooth',
-          });
-        }
       }
     }
   };
@@ -409,9 +384,6 @@ export default function BranchProductsPage() {
             Object.entries(productsByCategory).map(([category, products]) => (
               <Flex
                 key={category}
-                ref={(el) => {
-                  sectionRefs.current[category.toLowerCase()] = el;
-                }}
                 style={{
                   margin: 0,
                   padding: 0,
