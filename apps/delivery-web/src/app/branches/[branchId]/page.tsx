@@ -363,8 +363,8 @@ export default function BranchProductsPage() {
       {/* Wrap header and categories in ProductsHeaderWrapper */}
       <ProductsHeaderWrapper
         isHeaderCollapsed={isHeaderCollapsed}
-        headerHeight={isMobile ? 45 : 0} // Reduced from 200/320 for better spacing
-        collapsedHeaderHeight={isMobile ? -100 : -225} // Reduced from 115/115
+        headerHeight={isMobile ? 37 : -10} // Reduced from 200/320 for better spacing
+        collapsedHeaderHeight={isMobile ? -113 : -233} // Reduced from 115/115
         header={
           <MemoizedProductsHeader
             branch={currentBranch as IBranch}

@@ -19,24 +19,23 @@
   right: 0;
   max-width: 1064px;
   display: flex;
-  /* align-items: center; */
   justify-content: center;
   background-color: #ffffff;
 }
 
 @media (max-width: 768px) {
   .productsHeaderWrapper {
+    width: 100%;
     max-height: 75px;
     position: relative;
     display: flex;
-    align-items: center;
+    /* align-items: center; */
     justify-content: center;
     background-color: #ffffff;
   }
 
   .categoriesContainer {
     width: 100%;
-    /* align-items: center; */
     left: 0;
     right: 0;
     background-color: #ffffff;
