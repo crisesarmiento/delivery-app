@@ -257,7 +257,6 @@ export default function CheckoutPage() {
         <ContentWrapper
           ref={contentWrapperRef}
           isHeaderCollapsed={false}
-          isMobile={isMobile}
           headerHeight={0}
           collapsedHeaderHeight={0}
         >
