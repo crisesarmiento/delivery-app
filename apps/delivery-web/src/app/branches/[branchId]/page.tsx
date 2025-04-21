@@ -288,7 +288,7 @@ export default function BranchProductsPage() {
         if (headerElement) {
           // Get the position of the header element
           const rect = headerElement.getBoundingClientRect();
-          const scrollTop = window.pageYOffset + rect.top;
+          const scrollTop = (window.scrollY || window.pageYOffset) + rect.top;
 
           // Scroll to position the header at the top with a small buffer
           window.scrollTo({
@@ -298,7 +298,7 @@ export default function BranchProductsPage() {
         } else {
           // Fallback to the previous method if header can't be found
           const rect = sectionElement.getBoundingClientRect();
-          const scrollTop = window.pageYOffset + rect.top;
+          const scrollTop = (window.scrollY || window.pageYOffset) + rect.top;
 
           window.scrollTo({
             top: scrollTop - 200,
@@ -359,11 +359,7 @@ export default function BranchProductsPage() {
   }, []);
 
   return (
-    <Flex
-      direction="column"
-      className={styles.productPageContainer}
-      style={{ minHeight: '100vh' }}
-    >
+    <Flex direction="column" className={styles.productPageContainer}>
       {/* Wrap header and categories in ProductsHeaderWrapper */}
       <ProductsHeaderWrapper
         isMobile={isMobile}
@@ -398,7 +394,7 @@ export default function BranchProductsPage() {
         ref={contentWrapperRef}
         isHeaderCollapsed={isHeaderCollapsed}
         isMobile={isMobile}
-        headerHeight={isMobile ? 200 : 0} // Reduced from 200/320 for better spacing
+        headerHeight={isMobile ? 200 : 45} // Reduced from 200/320 for better spacing
         collapsedHeaderHeight={isMobile ? 90 : 350} // Reduced from 115/115
       >
         <Box
