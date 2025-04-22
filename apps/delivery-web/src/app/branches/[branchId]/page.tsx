@@ -245,6 +245,42 @@ export default function BranchProductsPage() {
   }, [activeTab, categories]);
 
   // Handle tab change
+  const handleTabChange = (value: string | null): void => {
+    if (value) {
+      // Check if this is the first category tab
+      const isFirstCategory =
+        value.toLowerCase() === categories[0].toLowerCase();
+
+      // Force header to expanded state when selecting first tab
+      if (isFirstCategory) {
+        // Force header expanded and ensure search is inactive
+        setIsHeaderCollapsed(false);
+        setSearchQuery(''); // Reset search query if this is influencing the header
+      }
+
+      // Always scroll to section even if it's already the active tab
+      const previousTab = activeTab;
+
+      // Only update state if the tab has changed
+      if (previousTab !== value) {
+        setActiveTab(value);
+
+        // Update expanded sections based on active tab
+        setExpandedSections((prev) => {
+          const newState = { ...prev };
+          Object.keys(newState).forEach((key) => {
+            newState[key] = key === value.toLowerCase();
+          });
+          return newState;
+        });
+      }
+
+      // Scroll to the selected category
+      scrollToCategory(value);
+    }
+  };
+
+  // Handle tab change
   const scrollToCategory = (category: string) => {
     // Maximum transition duration among components (in ms)
     const maxTransitionDuration = 400;
@@ -259,7 +295,53 @@ export default function BranchProductsPage() {
 
     // Delay the scroll calculation and execution to allow animations to complete
     setTimeout(() => {
-      // Find category section by ID (for all categories including first)
+      // Mobile-specific handling for first category
+      if (isFirstCategory && isMobile) {
+        // For mobile first category, we need a more robust approach
+        // First scroll all the way to top to reset scroll-based header states
+        window.scrollTo({
+          top: 0,
+          behavior: 'auto', // Use 'auto' for immediate scroll, not animated
+        });
+
+        // Short delay to let the scroll register and force header state again
+        setTimeout(() => {
+          setIsHeaderCollapsed(false); // Force expanded state again
+
+          // Then smoothly scroll to the target with appropriate delay
+          setTimeout(() => {
+            const sectionElement = document.getElementById(
+              `category-section-${category.toLowerCase()}`
+            );
+
+            if (sectionElement) {
+              // Use smaller offset for mobile first tab
+              const viewportHeight = window.innerHeight;
+              const headerOffsetPercent = 0.05; // 5% of viewport height
+              const headerOffset = Math.round(
+                viewportHeight * headerOffsetPercent
+              );
+
+              // Get fresh position after previous scrolls
+              const elementPosition =
+                sectionElement.getBoundingClientRect().top;
+              const offsetPosition = Math.max(
+                0,
+                elementPosition + window.pageYOffset - headerOffset
+              );
+
+              window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth',
+              });
+            }
+          }, 150); // Longer delay for mobile to let UI stabilize
+        }, 50);
+
+        return; // Exit early as we've handled mobile first category
+      }
+
+      // Desktop first category or any other category (desktop or mobile)
       const sectionElement = document.getElementById(
         `category-section-${category.toLowerCase()}`
       );
@@ -301,7 +383,7 @@ export default function BranchProductsPage() {
             });
           }, 100);
         } else {
-          // For other categories or first category on mobile
+          // For other categories or non-first category on mobile
           const elementPosition = sectionElement.getBoundingClientRect().top;
           const offsetPosition =
             elementPosition + window.pageYOffset - headerOffset;
@@ -319,40 +401,6 @@ export default function BranchProductsPage() {
         });
       }
     }, maxTransitionDuration + 50); // Add 50ms buffer to be safe
-  };
-
-  // Handle tab change
-  const handleTabChange = (value: string | null): void => {
-    if (value) {
-      // Check if this is the first category tab
-      const isFirstCategory =
-        value.toLowerCase() === categories[0].toLowerCase();
-
-      // Force header to expanded state when selecting first tab
-      if (isFirstCategory) {
-        setIsHeaderCollapsed(false);
-      }
-
-      // Always scroll to section even if it's already the active tab
-      const previousTab = activeTab;
-
-      // Only update state if the tab has changed
-      if (previousTab !== value) {
-        setActiveTab(value);
-
-        // Update expanded sections based on active tab
-        setExpandedSections((prev) => {
-          const newState = { ...prev };
-          Object.keys(newState).forEach((key) => {
-            newState[key] = key === value.toLowerCase();
-          });
-          return newState;
-        });
-      }
-
-      // Scroll to the selected category
-      scrollToCategory(value);
-    }
   };
 
   // Handle section toggle
