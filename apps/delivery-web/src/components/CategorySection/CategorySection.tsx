@@ -63,7 +63,11 @@ const CategorySection = memo(
     const headerClasses = `${isFixed ? styles.categoriesFixed : ''}`;
 
     return (
-      <Box className={styles.categorySection} mb={isMobile ? '16px' : '32px'}>
+      <Box
+        id={`category-section-${title.toLowerCase()}`}
+        className={styles.categorySection}
+        mb={isMobile ? '16px' : '32px'}
+      >
         <Box className={`${styles.categoriesContainer} ${headerClasses}`}>
           <SectionHeader
             title={title}

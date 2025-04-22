@@ -245,6 +245,54 @@ export default function BranchProductsPage() {
   }, [activeTab, categories]);
 
   // Handle tab change
+  const scrollToCategory = (category: string) => {
+    // Maximum transition duration among components (in ms)
+    const maxTransitionDuration = 400;
+
+    // Delay the scroll calculation and execution to allow animations to complete
+    setTimeout(() => {
+      // Special case for first category
+      if (category.toLowerCase() === categories[0].toLowerCase()) {
+        // First try to use the contentWrapperRef method if available
+        if (
+          contentWrapperRef.current &&
+          (contentWrapperRef.current as any).scrollToTop
+        ) {
+          (contentWrapperRef.current as any).scrollToTop();
+        } else {
+          // Fallback to window scroll
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+          });
+        }
+        return;
+      }
+
+      // For other categories, find by ID and scroll
+      const sectionElement = document.getElementById(
+        `category-section-${category.toLowerCase()}`
+      );
+      if (sectionElement) {
+        // Calculate a more dynamic offset based on viewport height
+        const viewportHeight = window.innerHeight;
+        // Use percentage of viewport for header offset, with different values for mobile
+        const headerOffsetPercent = isMobile ? 0.15 : 0.12; // 15% for mobile, 12% for desktop
+        const headerOffset = Math.round(viewportHeight * headerOffsetPercent);
+
+        const elementPosition = sectionElement.getBoundingClientRect().top;
+        const offsetPosition =
+          elementPosition + window.pageYOffset - headerOffset;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth',
+        });
+      }
+    }, maxTransitionDuration + 50); // Add 50ms buffer to be safe
+  };
+
+  // Handle tab change
   const handleTabChange = (value: string | null): void => {
     if (value) {
       // Always scroll to section even if it's already the active tab
@@ -264,23 +312,8 @@ export default function BranchProductsPage() {
         });
       }
 
-      // If selecting the first category, reset scroll position to the top
-      if (value.toLowerCase() === categories[0].toLowerCase()) {
-        // First try to use the contentWrapperRef method if available
-        if (
-          contentWrapperRef.current &&
-          (contentWrapperRef.current as any).scrollToTop
-        ) {
-          (contentWrapperRef.current as any).scrollToTop();
-        } else {
-          // Fallback to window scroll
-          window.scrollTo({
-            top: 0,
-            behavior: 'smooth',
-          });
-        }
-        return;
-      }
+      // Scroll to the selected category
+      scrollToCategory(value);
     }
   };
 

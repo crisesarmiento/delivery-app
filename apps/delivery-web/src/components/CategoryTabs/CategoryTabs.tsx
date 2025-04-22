@@ -1,7 +1,7 @@
 import { Text, Box, Tabs, ScrollArea } from '@mantine/core';
 import styles from './CategoryTabs.module.css';
 import { CATEGORY_TEXTS } from '../../config/constants';
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useCallback } from 'react';
 import { useScrollIntoView } from '@mantine/hooks';
 
 interface CategoryTabsProps {
@@ -16,16 +16,36 @@ export default function CategoryTabs({
   onTabChange,
 }: CategoryTabsProps) {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const previousActiveTabRef = useRef<string>(activeTab);
 
   const { scrollIntoView, targetRef } = useScrollIntoView({
     axis: 'x',
-    duration: 300,
+    duration: 300, // Slightly reduced from 400 to finish before parent animations
     easing: (t) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t),
   });
 
-  useEffect(() => {
-    if (activeTab) scrollIntoView({ alignment: 'center' });
+  // Handle tab scrolling with improved timing
+  const scrollTabIntoView = useCallback(() => {
+    if (activeTab) {
+      // Small delay to ensure DOM has updated
+      setTimeout(() => {
+        scrollIntoView({ alignment: 'center' });
+      }, 50);
+    }
   }, [activeTab, scrollIntoView]);
+
+  // Respond to activeTab changes
+  useEffect(() => {
+    if (activeTab !== previousActiveTabRef.current) {
+      previousActiveTabRef.current = activeTab;
+      scrollTabIntoView();
+    }
+  }, [activeTab, scrollTabIntoView]);
+
+  // Initial scroll on mount
+  useEffect(() => {
+    scrollTabIntoView();
+  }, [scrollTabIntoView]);
 
   return (
     <Box data-testid="category-tabs" className={styles.stickyContainer}>
