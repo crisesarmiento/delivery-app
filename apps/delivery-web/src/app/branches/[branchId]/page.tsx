@@ -249,43 +249,72 @@ export default function BranchProductsPage() {
     // Maximum transition duration among components (in ms)
     const maxTransitionDuration = 400;
 
+    // Special handling for first category to reset header state
+    const isFirstCategory =
+      category.toLowerCase() === categories[0].toLowerCase();
+    if (isFirstCategory) {
+      // Force header to expanded state for first category
+      setIsHeaderCollapsed(false);
+    }
+
     // Delay the scroll calculation and execution to allow animations to complete
     setTimeout(() => {
-      // Special case for first category
-      if (category.toLowerCase() === categories[0].toLowerCase()) {
-        // First try to use the contentWrapperRef method if available
-        if (
-          contentWrapperRef.current &&
-          (contentWrapperRef.current as any).scrollToTop
-        ) {
-          (contentWrapperRef.current as any).scrollToTop();
+      // Find category section by ID (for all categories including first)
+      const sectionElement = document.getElementById(
+        `category-section-${category.toLowerCase()}`
+      );
+
+      if (sectionElement) {
+        // Calculate a dynamic offset based on viewport height
+        const viewportHeight = window.innerHeight;
+        let headerOffsetPercent;
+
+        if (isFirstCategory) {
+          // Lower offset for first category so it appears at top
+          headerOffsetPercent = isMobile ? 0.08 : 0.06; // 8% for mobile, 6% for desktop
         } else {
-          // Fallback to window scroll
+          // Standard offset for other categories
+          headerOffsetPercent = isMobile ? 0.15 : 0.12; // 15% for mobile, 12% for desktop
+        }
+
+        const headerOffset = Math.round(viewportHeight * headerOffsetPercent);
+
+        // Special case for first category on desktop
+        if (isFirstCategory && !isMobile) {
+          // For first category, first scroll to top
           window.scrollTo({
             top: 0,
             behavior: 'smooth',
           });
+
+          // Then after a short delay, fine-tune the scroll position
+          setTimeout(() => {
+            const elementPosition = sectionElement.getBoundingClientRect().top;
+            const offsetPosition = Math.max(
+              0,
+              elementPosition + window.pageYOffset - headerOffset
+            );
+
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: 'smooth',
+            });
+          }, 100);
+        } else {
+          // For other categories or first category on mobile
+          const elementPosition = sectionElement.getBoundingClientRect().top;
+          const offsetPosition =
+            elementPosition + window.pageYOffset - headerOffset;
+
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth',
+          });
         }
-        return;
-      }
-
-      // For other categories, find by ID and scroll
-      const sectionElement = document.getElementById(
-        `category-section-${category.toLowerCase()}`
-      );
-      if (sectionElement) {
-        // Calculate a more dynamic offset based on viewport height
-        const viewportHeight = window.innerHeight;
-        // Use percentage of viewport for header offset, with different values for mobile
-        const headerOffsetPercent = isMobile ? 0.15 : 0.12; // 15% for mobile, 12% for desktop
-        const headerOffset = Math.round(viewportHeight * headerOffsetPercent);
-
-        const elementPosition = sectionElement.getBoundingClientRect().top;
-        const offsetPosition =
-          elementPosition + window.pageYOffset - headerOffset;
-
+      } else if (isFirstCategory) {
+        // Fallback for first category if element not found
         window.scrollTo({
-          top: offsetPosition,
+          top: 0,
           behavior: 'smooth',
         });
       }
@@ -295,6 +324,15 @@ export default function BranchProductsPage() {
   // Handle tab change
   const handleTabChange = (value: string | null): void => {
     if (value) {
+      // Check if this is the first category tab
+      const isFirstCategory =
+        value.toLowerCase() === categories[0].toLowerCase();
+
+      // Force header to expanded state when selecting first tab
+      if (isFirstCategory) {
+        setIsHeaderCollapsed(false);
+      }
+
       // Always scroll to section even if it's already the active tab
       const previousTab = activeTab;
 
