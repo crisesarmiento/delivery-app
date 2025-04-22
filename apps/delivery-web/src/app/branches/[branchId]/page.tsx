@@ -285,9 +285,13 @@ export default function BranchProductsPage() {
     // Maximum transition duration among components (in ms)
     const maxTransitionDuration = 400;
 
+    // Store current header state to restore later
+    const currentHeaderState = isHeaderCollapsed;
+
     // Special handling for first category to reset header state
     const isFirstCategory =
       category.toLowerCase() === categories[0].toLowerCase();
+
     if (isFirstCategory) {
       // Force header to expanded state for first category
       setIsHeaderCollapsed(false);
@@ -319,7 +323,7 @@ export default function BranchProductsPage() {
             );
 
             if (sectionElement) {
-              // Step 5: Use offsetTop for more reliable positioning
+              // Step 5: Use offsetTop for more reliable positioning instead of getBoundingClientRect
               // Use a fixed header offset of 70px for mobile which is just below the header
               const offsetPosition = Math.max(0, sectionElement.offsetTop - 70);
 
@@ -342,6 +346,13 @@ export default function BranchProductsPage() {
       );
 
       if (sectionElement) {
+        // Lock header state for the duration of the scroll calculation and execution
+        // This prevents race conditions when scrolling upward
+        const temporaryHeaderState = isFirstCategory
+          ? false
+          : currentHeaderState;
+        setIsHeaderCollapsed(temporaryHeaderState);
+
         // Calculate a dynamic offset based on viewport height
         const viewportHeight = window.innerHeight;
         let headerOffsetPercent;
@@ -366,10 +377,11 @@ export default function BranchProductsPage() {
 
           // Then after a short delay, fine-tune the scroll position
           setTimeout(() => {
-            const elementPosition = sectionElement.getBoundingClientRect().top;
+            // Use element.offsetTop instead of getBoundingClientRect for more stable calculations
+            // This is less affected by header state changes during scroll
             const offsetPosition = Math.max(
               0,
-              elementPosition + window.pageYOffset - headerOffset
+              sectionElement.offsetTop - headerOffset
             );
 
             window.scrollTo({
@@ -379,9 +391,11 @@ export default function BranchProductsPage() {
           }, 100);
         } else {
           // For other categories or non-first category on mobile
-          const elementPosition = sectionElement.getBoundingClientRect().top;
-          const offsetPosition =
-            elementPosition + window.pageYOffset - headerOffset;
+          // Use offsetTop for stable scroll calculation that won't be affected by header transitions
+          const offsetPosition = Math.max(
+            0,
+            sectionElement.offsetTop - headerOffset
+          );
 
           window.scrollTo({
             top: offsetPosition,
@@ -452,8 +466,8 @@ export default function BranchProductsPage() {
       {/* Wrap header and categories in ProductsHeaderWrapper */}
       <ProductsHeaderWrapper
         isHeaderCollapsed={isHeaderCollapsed}
-        headerHeight={isMobile ? 37 : -10} // Reduced from 200/320 for better spacing
-        collapsedHeaderHeight={isMobile ? -113 : -233} // Reduced from 115/115
+        headerHeight={isMobile ? 37 : -10}
+        collapsedHeaderHeight={isMobile ? -113 : -233}
         header={
           <MemoizedProductsHeader
             branch={currentBranch as IBranch}
