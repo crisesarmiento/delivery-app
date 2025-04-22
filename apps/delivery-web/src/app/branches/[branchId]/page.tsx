@@ -297,48 +297,43 @@ export default function BranchProductsPage() {
     setTimeout(() => {
       // Mobile-specific handling for first category
       if (isFirstCategory && isMobile) {
-        // For mobile first category, we need a more robust approach
-        // First scroll all the way to top to reset scroll-based header states
+        // For mobile first category, we need to ensure the useHeadroom hook's 'pinned' state is true
+        // Step 1: Immediate scroll to absolute top with no animation to reset headroom state
         window.scrollTo({
           top: 0,
-          behavior: 'auto', // Use 'auto' for immediate scroll, not animated
+          behavior: 'auto', // Use 'auto' for immediate scroll reset
         });
 
-        // Short delay to let the scroll register and force header state again
+        // Step 2: Short delay to let the scroll register with useHeadroom (fixedAt: 120)
         setTimeout(() => {
-          setIsHeaderCollapsed(false); // Force expanded state again
+          // Step 3: Force header expanded state
+          setIsHeaderCollapsed(false);
+          // Reset search query to clear any search state
+          setSearchQuery('');
 
-          // Then smoothly scroll to the target with appropriate delay
+          // Step 4: Longer delay to ensure header transition completes
           setTimeout(() => {
+            // Get a fresh reference to the section element
             const sectionElement = document.getElementById(
               `category-section-${category.toLowerCase()}`
             );
 
             if (sectionElement) {
-              // Use smaller offset for mobile first tab
-              const viewportHeight = window.innerHeight;
-              const headerOffsetPercent = 0.05; // 5% of viewport height
-              const headerOffset = Math.round(
-                viewportHeight * headerOffsetPercent
-              );
+              // Step 5: Use offsetTop for more reliable positioning
+              // Use a fixed header offset of 70px for mobile which is just below the header
+              const offsetPosition = Math.max(0, sectionElement.offsetTop - 70);
 
-              // Get fresh position after previous scrolls
-              const elementPosition =
-                sectionElement.getBoundingClientRect().top;
-              const offsetPosition = Math.max(
-                0,
-                elementPosition + window.pageYOffset - headerOffset
-              );
-
+              // Step 6: Final smooth scroll to position
               window.scrollTo({
                 top: offsetPosition,
                 behavior: 'smooth',
               });
             }
-          }, 150); // Longer delay for mobile to let UI stabilize
-        }, 50);
+          }, 250); // Longer delay to ensure header fully expands
+        }, 50); // Short delay for scroll registration with useHeadroom
 
-        return; // Exit early as we've handled mobile first category
+        // Exit early as we've handled mobile first category
+        return;
       }
 
       // Desktop first category or any other category (desktop or mobile)
