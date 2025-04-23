@@ -11,6 +11,9 @@
   position: relative;
   background-color: #ffffff;
   z-index: 99;
+  padding-top: 0; /* Remove if offset is sufficient */
+  padding-bottom: 0;
+  margin-top: 0;
 }
 
 .productsContainer {

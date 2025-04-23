@@ -8,13 +8,15 @@ interface CategoryTabsProps {
   categories: string[];
   activeTab: string;
   onTabChange: (value: string | null) => void;
+  top?: number;
 }
 
-export default function CategoryTabs({
+const CategoryTabs: React.FC<CategoryTabsProps> = ({
   categories,
   activeTab,
   onTabChange,
-}: CategoryTabsProps) {
+  top,
+}) => {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const previousActiveTabRef = useRef<string>(activeTab);
 
@@ -48,7 +50,11 @@ export default function CategoryTabs({
   }, [scrollTabIntoView]);
 
   return (
-    <Box data-testid="category-tabs" className={styles.stickyContainer}>
+    <Box
+      data-testid="category-tabs"
+      className={styles.stickyContainer}
+      style={{ top: top }}
+    >
       <Box className={styles.categoryTitleContainer}>
         <Text
           fw={500}
@@ -121,4 +127,6 @@ export default function CategoryTabs({
       </ScrollArea>
     </Box>
   );
-}
+};
+
+export default CategoryTabs;

@@ -1,91 +1,15 @@
-'use client';
+import { forwardRef } from 'react';
+import { Box } from '@mantine/core';
 
-import {
-  ReactNode,
-  useEffect,
-  useState,
-  useRef,
-  forwardRef,
-  useCallback,
-} from 'react';
-import { Box, BoxProps } from '@mantine/core';
-import styles from './ContentWrapper.module.css';
-
-interface ContentWrapperProps extends BoxProps {
-  children: ReactNode;
-  isHeaderCollapsed?: boolean;
-  headerHeight?: number;
-  collapsedHeaderHeight?: number;
-  className?: string;
+interface ContentWrapperProps {
+  topOffset: number;
+  children: React.ReactNode;
 }
 
-/**
- * ContentWrapper - A component that positions its children properly below the header
- * and maintains a consistent distance as the header collapses/expands.
- */
-const ContentWrapper = forwardRef<HTMLDivElement, ContentWrapperProps>(
-  (
-    {
-      children,
-      isHeaderCollapsed = false,
-      headerHeight = 280, // Default full header height (desktop)
-      collapsedHeaderHeight = 70, // Default collapsed header height (desktop)
-      className = '',
-      ...boxProps
-    }: ContentWrapperProps,
-    ref
-  ) => {
-    const [topOffset, setTopOffset] = useState(headerHeight);
-    const contentRef = useRef<HTMLDivElement | null>(null);
-
-    // Combine forwarded ref with internal ref
-    const setRefs = (element: HTMLDivElement | null) => {
-      contentRef.current = element;
-
-      // Handle forwarded ref
-      if (typeof ref === 'function') {
-        ref(element);
-      } else if (ref) {
-        (ref as React.MutableRefObject<HTMLDivElement | null>).current =
-          element;
-      }
-    };
-
-    useEffect(() => {
-      setTopOffset(isHeaderCollapsed ? collapsedHeaderHeight : headerHeight);
-    }, [isHeaderCollapsed, headerHeight, collapsedHeaderHeight]);
-
-    // Public method to scroll to top of content
-    const scrollToTop = useCallback(() => {
-      if (contentRef.current) {
-        contentRef.current.scrollIntoView({ behavior: 'smooth' });
-      }
-    }, []);
-
-    // Expose the scrollToTop method
-    useEffect(() => {
-      if (contentRef.current) {
-        (contentRef.current as any).scrollToTop = scrollToTop;
-      }
-
-      return () => {
-        if (contentRef.current) {
-          delete (contentRef.current as any).scrollToTop;
-        }
-      };
-    }, [scrollToTop]);
-
-    // Render the ContentWrapper component
+const ContentWrapper = forwardRef<HTMLDivElement | null, ContentWrapperProps>(
+  ({ topOffset, children }, ref) => {
     return (
-      <Box
-        ref={setRefs}
-        className={`${styles.contentWrapper} ${className}`}
-        style={{
-          marginTop: topOffset,
-          transition: 'margin-top 0.3s ease',
-        }}
-        {...boxProps}
-      >
+      <Box style={{ marginTop: topOffset }} ref={ref}>
         {children}
       </Box>
     );
