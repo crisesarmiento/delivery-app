@@ -41,7 +41,6 @@ export interface IProduct {
   isAvailable: boolean;
   ingredients?: string;
   category?: string;
-  tags?: string[];
   branchId: string;
 }
 

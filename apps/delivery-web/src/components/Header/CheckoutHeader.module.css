@@ -42,4 +42,5 @@
   align-items: center;
   justify-content: center;
   transform: translateY(-50%);
+  white-space: nowrap;
 }

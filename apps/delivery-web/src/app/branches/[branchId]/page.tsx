@@ -20,26 +20,18 @@ import {
 import CartDrawer from '@/components/CartDrawer/CartDrawer';
 import { BRANCH_TEXTS, COMMON_TEXTS, ERROR_TEXTS } from '@/config/constants';
 import { isBranchOpen } from '@/utils/branch';
+import ProductsHeaderWrapper from '@/components/ProductsHeaderWrapper';
 
-// Memoize the ProductsHeader component to prevent unnecessary re-renders
 const MemoizedProductsHeader = memo(ProductsHeader);
-MemoizedProductsHeader.displayName = 'MemoizedProductsHeader';
-
-// Memoize the CategoryTabs component to prevent unnecessary re-renders
 const MemoizedCategoryTabs = memo(CategoryTabs);
-MemoizedCategoryTabs.displayName = 'MemoizedCategoryTabs';
-
-// Memoize the CartDrawer component to prevent unnecessary re-renders
 const MemoizedCartDrawer = memo(CartDrawer);
-MemoizedCartDrawer.displayName = 'MemoizedCartDrawer';
 
-export default function BranchProductsPage() {
+const BranchProductsPage = () => {
   const params = useParams();
   const router = useRouter();
   const theme = useMantineTheme();
   const branchId = (params?.branchId as string) || '';
-  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
-  const contentWrapperRef = useRef<HTMLDivElement | null>(null);
+  const contentWrapperRef = useRef<HTMLDivElement>(null);
   const {
     items: cartContextItems,
     addToCart: addToCartContext,
@@ -56,95 +48,82 @@ export default function BranchProductsPage() {
     Record<string, boolean>
   >({});
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
-  const prevScrollPosition = useRef(0);
 
-  // Find the current branch
-  const [currentBranch, setCurrentBranch] = useState<IBranch | undefined>(
-    branchesMock.find((branch) => branch.id === branchId)
-  );
+  const headerHeight = isMobile ? 200 : 280;
+  const collapsedHeaderHeight = isMobile ? 50 : 70;
+  const categoriesHeight = 61; // Updated to match new .stickyContainer height
 
-  // Add debounce utility function
+  const headerRef = useRef<HTMLDivElement>(null);
+  const [headerActualHeight, setHeaderActualHeight] = useState(headerHeight);
+
+  // Calculate the top offset for the content to start below both header and categories
+  const contentTopOffset =
+    (isHeaderCollapsed ? collapsedHeaderHeight : headerHeight) +
+    categoriesHeight;
+
   function debounce(func: (...args: any[]) => void, wait: number) {
     let timeout: NodeJS.Timeout | null = null;
-    return function executedFunction(...args: any[]) {
-      if (timeout) {
-        clearTimeout(timeout);
-      }
+    return function (...args: any[]) {
+      if (timeout) clearTimeout(timeout);
       timeout = setTimeout(() => func(...args), wait);
     };
   }
 
-  // Define header state change handler once
+  useEffect(() => {
+    const updateHeaderHeight = () => {
+      if (headerRef.current) {
+        const height = headerRef.current.getBoundingClientRect().height;
+        setHeaderActualHeight(height + categoriesHeight);
+      }
+    };
+
+    updateHeaderHeight(); // Initial measurement
+    window.addEventListener('resize', updateHeaderHeight);
+    return () => window.removeEventListener('resize', updateHeaderHeight);
+  }, [isHeaderCollapsed]);
+
   const handleHeaderStateChange = useRef((event: CustomEvent) => {
     setIsHeaderCollapsed(event.detail.collapsed);
   }).current;
 
   useEffect(() => {
-    const checkIsMobile = () => {
+    const checkIsMobile = debounce(() => {
       setIsMobile(window.innerWidth <= 768);
-    };
-
-    // Check on initial load
+    }, 100);
     checkIsMobile();
-
-    // Set up an event listener for window resize
     window.addEventListener('resize', checkIsMobile);
-
-    // Clean up the event listener on component unmount
     return () => window.removeEventListener('resize', checkIsMobile);
   }, []);
 
-  // Add event listener for header state change events
   useEffect(() => {
     window.addEventListener(
       'header-state-change',
       handleHeaderStateChange as EventListener
     );
-    return () => {
+    return () =>
       window.removeEventListener(
         'header-state-change',
         handleHeaderStateChange as EventListener
       );
-    };
   }, [handleHeaderStateChange]);
 
-  // Track scroll position to detect header collapse state
-  useEffect(() => {
-    const handleScroll = debounce(() => {
-      const currentScrollPos = window.scrollY;
-      setIsHeaderCollapsed(currentScrollPos > 50);
-      prevScrollPosition.current = currentScrollPos;
-    }, 100);
-
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
-  // Check if branch is open on component mount and every minute
   useEffect(() => {
     const branch = branchesMock.find((b) => b.id === branchId);
     if (branch) {
-      setCurrentBranch({
-        ...branch,
-        isOpen: isBranchOpen(branch),
-      });
-
-      // Update status every minute
+      setCurrentBranch({ ...branch, isOpen: isBranchOpen(branch) });
       const intervalId = setInterval(() => {
         setCurrentBranch((prev) =>
           prev ? { ...prev, isOpen: isBranchOpen(prev) } : undefined
         );
       }, 60000);
-
       return () => clearInterval(intervalId);
     }
-    return undefined; // Explicit return for the path when branch is not found
   }, [branchId]);
 
-  // Handle case when branch is not found
+  const [currentBranch, setCurrentBranch] = useState<IBranch | undefined>(
+    branchesMock.find((branch) => branch.id === branchId)
+  );
+
   useEffect(() => {
     if (!currentBranch && branchId) {
       alert(COMMON_TEXTS.BRANCH_NOT_FOUND);
@@ -152,65 +131,45 @@ export default function BranchProductsPage() {
     }
   }, [currentBranch, branchId, router]);
 
-  // Get products for this branch
   const branchProducts = useMemo(() => products || [], []);
 
-  // Set branch ID when component mounts or branchId changes
   useEffect(() => {
-    if (branchId) {
-      setBranchId(branchId);
-    }
+    if (branchId) setBranchId(branchId);
   }, [branchId, setBranchId]);
 
-  // Handle back navigation
-  const handleBack = useCallback((): void => {
-    clearCart(); // Clear cart when navigating back
+  const handleBack = useCallback(() => {
+    clearCart();
     router.push('/');
   }, [clearCart, router]);
 
-  // Handle search
-  const handleSearchChange = useCallback((value: string): void => {
+  const handleSearchChange = useCallback((value: string) => {
     setSearchQuery(value);
   }, []);
 
-  // Add product to cart
   const addToCart = useCallback(
-    (product: IProduct, quantity: number): void => {
-      // Check if branch is closed
+    (product: IProduct, quantity: number) => {
       if (currentBranch && !currentBranch.isOpen) {
         alert(BRANCH_TEXTS.BRANCH_CLOSED_ALERT);
         return;
       }
-
-      // Validate product data before adding to cart
       if (!product || !product.id) {
         console.error(ERROR_TEXTS.INVALID_PRODUCT, product);
         return;
       }
-
       if (quantity <= 0) {
         console.error(ERROR_TEXTS.INVALID_QUANTITY, quantity);
         return;
       }
-
-      // Use the CartContext to add item to cart
       const cartItem: CartContextItem = {
-        product: {
-          ...product,
-          id: String(product.id),
-        },
+        product: { ...product, id: String(product.id) },
         quantity,
       };
-
       addToCartContext(cartItem);
-
-      // Open cart drawer
       setCartDrawerOpened(true);
     },
     [currentBranch, addToCartContext]
   );
 
-  // Convert cart context items to format expected by CartDrawer
   const cartItems = cartContextItems.map((item) => ({
     productId: String(item.product.id),
     quantity: item.quantity,
@@ -218,38 +177,49 @@ export default function BranchProductsPage() {
     totalPrice: item.totalPrice,
   }));
 
-  // Get cart total from context
   const cartTotal = getTotalPrice();
 
-  // Create categories for tabs from products
   const categories = useMemo(() => {
     const categoryList = ['Promo'];
     branchProducts.forEach((product: IProduct) => {
       const category = product.category;
-      if (category && !categoryList.includes(category)) {
+      if (category && !categoryList.includes(category))
         categoryList.push(category);
-      }
     });
     return categoryList;
   }, [branchProducts]);
 
-  // Initialize expanded sections state
   useEffect(() => {
     const initialExpandedState = categories.reduce((acc, category) => {
       acc[category.toLowerCase()] =
         category.toLowerCase() === activeTab.toLowerCase();
       return acc;
     }, {} as Record<string, boolean>);
-
     setExpandedSections(initialExpandedState);
   }, [activeTab, categories]);
 
-  // Handle tab change
-  const handleTabChange = (value: string | null): void => {
+  const scrollToCategory = (category: string) => {
+    const sectionElement = document.getElementById(
+      `category-section-${category.toLowerCase()}`
+    );
+    const isFirstCategory =
+      category.toLowerCase() === categories[0].toLowerCase();
+    if (isFirstCategory) {
+      setIsHeaderCollapsed(false);
+      setSearchQuery('');
+    }
+    if (sectionElement) {
+      const offset = isFirstCategory ? 0 : contentTopOffset;
+      const position = Math.max(0, sectionElement.offsetTop - offset);
+      window.scrollTo({ top: position, behavior: 'smooth' });
+    } else if (isFirstCategory) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handleTabChange = (value: string | null) => {
     if (value) {
       setActiveTab(value);
-
-      // Update expanded sections based on active tab
       setExpandedSections((prev) => {
         const newState = { ...prev };
         Object.keys(newState).forEach((key) => {
@@ -257,100 +227,37 @@ export default function BranchProductsPage() {
         });
         return newState;
       });
-
-      // If selecting the first category, reset scroll position to the top
-      if (value.toLowerCase() === categories[0].toLowerCase()) {
-        // First try to use the contentWrapperRef method if available
-        if (
-          contentWrapperRef.current &&
-          (contentWrapperRef.current as any).scrollToTop
-        ) {
-          (contentWrapperRef.current as any).scrollToTop();
-        } else {
-          // Fallback to window scroll
-          window.scrollTo({
-            top: 0,
-            behavior: 'smooth',
-          });
-        }
-        return;
-      }
-
-      // For all other categories, scroll to the selected category section
-      const sectionElement = sectionRefs.current[value.toLowerCase()];
-      if (sectionElement) {
-        // Find the header element inside the section
-        const headerElement = sectionElement.querySelector(
-          'div[style*="border-radius"]'
-        );
-
-        if (headerElement) {
-          // Get the position of the header element
-          const rect = headerElement.getBoundingClientRect();
-          const scrollTop = window.pageYOffset + rect.top;
-
-          // Scroll to position the header at the top with a small buffer
-          window.scrollTo({
-            top: scrollTop - 120,
-            behavior: 'smooth',
-          });
-        } else {
-          // Fallback to the previous method if header can't be found
-          const rect = sectionElement.getBoundingClientRect();
-          const scrollTop = window.pageYOffset + rect.top;
-
-          window.scrollTo({
-            top: scrollTop - 200,
-            behavior: 'smooth',
-          });
-        }
-      }
+      scrollToCategory(value);
     }
   };
 
-  // Handle section toggle
-  const handleSectionToggle = (category: string, isExpanded: boolean): void => {
+  const handleSectionToggle = (category: string, isExpanded: boolean) => {
     setExpandedSections((prev) => ({
       ...prev,
       [category.toLowerCase()]: isExpanded,
     }));
-
     if (isExpanded && activeTab !== category.toLowerCase()) {
       setActiveTab(category.toLowerCase());
     }
   };
 
-  // Group products by category
   const productsByCategory = categories.reduce((acc, category) => {
     const categoryProducts = branchProducts
-      .filter((product: IProduct) => {
-        if (category.toLowerCase() === 'promo') {
-          return Boolean(product.category?.toLowerCase().includes('promo'));
-        }
-        return Boolean(
-          product.category?.toLowerCase() === category.toLowerCase()
-        );
-      })
       .filter((product: IProduct) =>
-        Boolean(product.name?.toLowerCase().includes(searchQuery.toLowerCase()))
+        category.toLowerCase() === 'promo'
+          ? product.category?.toLowerCase().includes('promo')
+          : product.category?.toLowerCase() === category.toLowerCase()
+      )
+      .filter((product: IProduct) =>
+        product.name?.toLowerCase().includes(searchQuery.toLowerCase())
       );
-
-    if (categoryProducts.length > 0) {
-      acc[category] = categoryProducts;
-    }
-
+    if (categoryProducts.length > 0) acc[category] = categoryProducts;
     return acc;
   }, {} as Record<string, IProduct[]>);
 
-  // Open cart drawer or navigate to cart page
   const openCartDrawer = useCallback(() => {
-    if (isMobile) {
-      // On mobile, navigate directly to the cart page
-      router.push(`/branches/${branchId}/cart`);
-    } else {
-      // On desktop, just open the cart drawer
-      setCartDrawerOpened(true);
-    }
+    if (isMobile) router.push(`/branches/${branchId}/cart`);
+    else setCartDrawerOpened(true);
   }, [isMobile, router, branchId]);
 
   const handleCloseCartDrawer = useCallback(() => {
@@ -358,76 +265,47 @@ export default function BranchProductsPage() {
   }, []);
 
   return (
-    <Flex
-      direction="column"
-      className={styles.productPageContainer}
-      style={{ minHeight: '100vh' }}
-    >
-      {/* Use the reusable Header component with product page configuration */}
-      <MemoizedProductsHeader
-        branch={currentBranch as IBranch}
-        onBackClick={handleBack}
-        searchValue={searchQuery}
-        onSearchChange={handleSearchChange}
-        isClosed={currentBranch ? !currentBranch.isOpen : false}
-        closedMessage={BRANCH_TEXTS.BRANCH_CLOSED}
-      />
-
-      {/* Content wrapper for everything below the header */}
-      <ContentWrapper
-        ref={contentWrapperRef}
+    <Flex direction="column" className={styles.productPageContainer}>
+      <ProductsHeaderWrapper
         isHeaderCollapsed={isHeaderCollapsed}
-        isMobile={isMobile}
-        headerHeight={0}
-        collapsedHeaderHeight={0}
-      >
-        <Box
-          className={styles.categoriesContainer}
-          style={{
-            position: 'sticky',
-            top: isMobile && isHeaderCollapsed ? '70px' : '0', // Match the collapsed header height exactly
-            left: 0,
-            right: 0,
-            zIndex: 20, // Increased z-index to be higher than sections
-            backgroundColor: '#ffffff',
-            overflowX: 'visible',
-            overflowY: 'hidden',
-            height: '75px',
-            minHeight: '75px',
-          }}
-        >
+        headerHeight={headerHeight}
+        collapsedHeaderHeight={collapsedHeaderHeight}
+        header={
+          <MemoizedProductsHeader
+            ref={headerRef}
+            branch={currentBranch as IBranch}
+            onBackClick={handleBack}
+            searchValue={searchQuery}
+            onSearchChange={handleSearchChange}
+            isClosed={currentBranch ? !currentBranch.isOpen : false}
+            closedMessage={BRANCH_TEXTS.BRANCH_CLOSED}
+            isFiltering={searchQuery.length > 0}
+          />
+        }
+        categories={
           <MemoizedCategoryTabs
             categories={categories}
             activeTab={activeTab}
             onTabChange={handleTabChange}
+            top={isHeaderCollapsed ? collapsedHeaderHeight : headerHeight}
           />
-        </Box>
+        }
+      />
+      <ContentWrapper ref={contentWrapperRef} topOffset={headerActualHeight}>
         <Box
           className={styles.sectionsContainer}
           style={{
             flex: 1,
             overflowX: 'hidden',
             overflowY: 'auto',
-            position: 'relative', // Added explicit position
-            zIndex: 10, // Ensure proper stacking context
-            paddingTop: '16px', // Simplified padding logic
-            paddingBottom: '0',
-            marginTop: '0', // Ensure clear spacing from categories
+            zIndex: 10,
           }}
         >
           {Object.keys(productsByCategory).length > 0 ? (
             Object.entries(productsByCategory).map(([category, products]) => (
               <Flex
                 key={category}
-                ref={(el) => {
-                  sectionRefs.current[category.toLowerCase()] = el;
-                }}
-                style={{
-                  margin: 0,
-                  padding: 0,
-                  width: '100%',
-                  marginBottom: '11px',
-                }}
+                style={{ width: '100%', marginBottom: '11px' }}
               >
                 <CategorySection
                   title={category}
@@ -453,8 +331,6 @@ export default function BranchProductsPage() {
             </Text>
           )}
         </Box>
-
-        {/* Cart button - now placed between sections and footer */}
         {isMobile && (
           <Box className={styles.cartButtonContainer}>
             <MobileCartButton
@@ -465,8 +341,6 @@ export default function BranchProductsPage() {
           </Box>
         )}
       </ContentWrapper>
-
-      {/* Only show CartDrawer in desktop view */}
       {!isMobile && (
         <MemoizedCartDrawer
           opened={cartDrawerOpened}
@@ -478,4 +352,6 @@ export default function BranchProductsPage() {
       )}
     </Flex>
   );
-}
+};
+
+export default BranchProductsPage;

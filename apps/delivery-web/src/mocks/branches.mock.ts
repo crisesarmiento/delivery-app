@@ -22,7 +22,7 @@ export const branchesMock: IBranch[] = [
     description: 'Av. Colón',
     address: 'Calle 45 #789, Quebrada las Rosas',
     openingHoursStructured: {
-      mondayToThursday: { open: '09:00', close: '21:00' },
+      mondayToThursday: { open: '09:00', close: '15:00' },
       fridayToSunday: {
         firstShift: { open: '11:00', close: '14:59' },
         secondShift: { open: '16:00', close: '20:00' },

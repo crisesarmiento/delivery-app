@@ -122,7 +122,6 @@ export default function HomePage() {
 
       <ContentWrapper
         isHeaderCollapsed={isHeaderCollapsed}
-        isMobile={isMobile}
         headerHeight={0}
         collapsedHeaderHeight={0}
       >

@@ -1,24 +1,21 @@
 .stickyContainer {
-  background-color: #ffffff;
-  padding: 0;
-  margin-bottom: 20px;
+  position: fixed;
+  top: 0; /* Will be overridden dynamically via inline style */
+  left: 0;
   width: 100%;
-  border-radius: 0;
-  position: relative;
-  height: auto; /* Changed from fixed height to auto */
-  min-height: 61px; /* Keep min-height for consistency */
-  z-index: 20;
-}
+  max-width: 1064px;
+  z-index: 100; /* Ensure it’s below the header (z-index: 101) but above content */
+  background-color: #ffffff;
+  padding: 16px 80px 0 80px; /* Match the left and right padding of .productPageContainer */
 
-.categoriesContainer {
-  background-color: #ffffff;
-  padding: 0;
-  margin-bottom: 16px;
-  width: 100%;
-  height: auto; /* Changed from fixed height to auto */
-  min-height: 75px;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
+  margin-bottom: 8px;
+  height: 61px;
+  max-height: 61px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  transition: top 0.3s ease;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
@@ -28,9 +25,21 @@
 
 .tabsContainer {
   background-color: #ffffff;
-  padding: 12px 0;
-  height: auto; /* Changed from fixed height to auto */
-  min-height: 32px; /* Changed from max-height to min-height */
+  width: 100%;
+  padding: 8px 0;
+  height: auto;
+  min-height: 32px;
+}
+
+.categoriesContainer {
+  background-color: #ffffff;
+  margin-bottom: 8px;
+  width: 100%; /* Use full width of the parent (after padding) */
+  height: auto;
+  min-height: 61px;
+  scrollbar-width: none;
+  /* -ms-overflow-style: none; */
+  /* overflow-x: auto; */
 }
 
 .tabsList {
@@ -40,8 +49,8 @@
   border-bottom: none;
   margin-bottom: 0;
   padding-right: 16px;
-  padding-left: 0; /* Ensure no left padding to align with title */
-  width: max-content;
+  padding-left: 0;
+  width: max-content; /* Ensures horizontal scrolling */
 }
 
 .tab {
@@ -51,10 +60,10 @@
   align-items: center;
   padding: 8px 16px;
   gap: 6px;
-  height: 32px; /* spacing-4xl - assuming 4x base unit of 8px */
+  height: 32px;
   background: #f8fafc;
   border: 1px solid #eef2f6;
-  border-radius: 24px; /* spacing-3xl - 3x base unit of 8px */
+  border-radius: 24px;
   font-family: 'Inter';
   font-style: normal;
   font-weight: 500;
@@ -63,6 +72,7 @@
   color: #939393;
   transition: all 0.2s ease;
   white-space: nowrap;
+  margin-right: 12px;
 }
 
 .tab:hover {
@@ -75,48 +85,75 @@
   color: #000000;
 }
 
+.categoryTitleContainer {
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  justify-content: flex-start;
+  width: 100%;
+  max-width: none;
+  margin-bottom: 8px;
+}
+
 .categoryTitle {
   position: relative;
-  width: 313px;
-  height: 15px;
+  width: auto;
   font-family: 'Inter';
   font-style: normal;
   font-weight: 500;
   font-size: 16px;
   line-height: 24px;
-  display: flex;
-  align-items: center;
   color: #000000;
+  margin-bottom: 0;
 }
 
 @media (max-width: 768px) {
   .stickyContainer {
-    padding: 12px 0px 0 0px;
-    margin-bottom: 16px;
-    height: auto; /* Keep as auto */
-    min-height: 61px;
-    z-index: 10;
+    height: 80px;
+    z-index: 100;
+    width: 100%;
+    padding: 12px 12px 0 12px; /* Match the padding of .productPageContainer on mobile */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+  .categoriesContainer {
+    width: 100%;
+    padding-top: 8px;
+    padding-left: 0;
+    padding-right: 16px;
+  }
+
+  .categoriesTitleContainer {
+    width: 100%;
+    padding-top: 0;
+    padding-left: 0;
+    margin-bottom: 6px;
   }
 
   .categoryTitle {
     width: auto;
+    padding-left: 0;
     font-size: 14px;
     line-height: 20px;
     font-weight: 500;
-    margin-bottom: 12px; /* Add space between title and tabs */
+    margin-bottom: 0;
   }
 
   .tabsContainer {
-    height: auto; /* Allow natural height */
-    padding: 0 0 12px 0; /* Add padding at the bottom instead of fixed height */
+    height: auto;
+    padding: 0 0 8px 0;
   }
 
   .tabsList {
-    padding-left: 0; /* Removed the 16px padding to align with title */
+    padding-left: 0;
   }
 
   .tab {
     padding: 6px 12px;
-    height: 32px; /* Maintain height for tabs */
+    height: 32px;
+    margin-right: 8px;
   }
 }

@@ -11,7 +11,7 @@
 .contentContainer {
   display: flex;
   flex-direction: row;
-  gap: 32px;
+  gap: 41px;
   max-width: 1440px;
   width: 100%;
   margin: 0;
@@ -19,6 +19,7 @@
 
 .leftSection {
   width: 510px;
+  height: 989px;
   background: #ffffff;
   border: 1px solid #eef2f6;
   box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
@@ -86,7 +87,7 @@
   padding: 0 16px;
   font-family: 'Inter';
   font-style: normal;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 16px;
   line-height: 24px;
 }
@@ -94,6 +95,7 @@
 .activeToggle {
   background: #b3ff00;
   border-radius: 4px 0px 0px 4px;
+  font-weight: 500;
   color: #000000;
 }
 
@@ -330,18 +332,24 @@
 
 .confirmButton {
   background: #000000;
-  box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.03);
-  border-radius: 8px;
+  box-shadow: 0px 1px 8px 0px rgba(0, 0, 0, 0.03);
+  border-radius: 4px;
   color: #b3ff00;
+  display: flex;
   font-family: 'Inter';
   font-style: normal;
   font-weight: 600;
   font-size: 16px;
   line-height: 24px;
-  width: 100%;
-  height: 56px;
-  margin-top: 32px;
-  padding: 16px;
+  width: 465px;
+  height: 40px;
+  margin-top: 22px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 12px;
+  padding-right: 12px;
+  align-self: center;
+  justify-content: center;
   transition: background-color 0.2s;
 }
 
@@ -381,6 +389,15 @@
   box-sizing: border-box !important;
   font-size: 16px !important;
   line-height: 24px !important;
+}
+
+.formInputAmount {
+  border: 1px solid #eff2f6;
+  border-radius: 4px;
+}
+
+.formInputAmount:disabled {
+  background-color: #f8fafc;
 }
 
 /* Styles for NumberInput wrapper and controls */

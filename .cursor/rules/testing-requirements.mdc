@@ -1,0 +1,10 @@
+---
+description: Testing Requirements
+globs: 
+alwaysApply: false
+---
+## Testing Requirments
+- **Unit Tests**: Jest + React Testing Library.
+  - Coverage: 80% state, 90% utils, 75% hooks.
+- **Visual Tests**: Storybook + Chromatic (2% diff threshold).
+- **Integration Tests**: Test flows (e.g., branch selection to order) with mocks.

@@ -1,60 +1,34 @@
 .productPageContainer {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
   background-color: #ffffff;
   padding: 0 80px 0 80px;
   padding-right: 296px;
 }
 
-.categoriesContainer {
-  background-color: #ffffff;
+.sectionsContainer {
+  flex: 1;
   position: sticky;
-  z-index: 20;
-  height: 75px;
-  min-height: 75px;
-  transition: all 0.3s ease;
-  width: 100%;
-}
-
-.tabsList {
-  display: flex;
-  gap: 16px;
-  border-bottom: none;
-  margin-bottom: 0;
-}
-
-.tab {
-  padding: 8px 16px;
+  max-height: 100%;
   background-color: #ffffff;
-  border-radius: 20px;
-  color: #495057;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  border: 1px solid #dee2e6;
-}
-
-.tab[data-active] {
-  background-color: #b3ff00;
-  color: #ffffff;
-  border-color: #b3ff00;
+  z-index: 99;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-top: 0;
 }
 
 .productsContainer {
   flex: 1;
-  padding: 16px;
+  padding: 16px 0; /* Remove extra side padding to align with container */
   display: grid;
-  grid-template-columns: repeat(auto-fill, 200px);
-  gap: 16px;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(220px, 1fr)
+  ); /* More flexible card sizes */
+  gap: 24px; /* Increased gap for better spacing */
   overflow-y: auto;
   background-color: #ffffff;
-  justify-content: space-between;
-}
-
-.sectionsContainer {
-  flex: 1;
-  position: relative;
-  background-color: #ffffff;
+  justify-content: flex-start; /* Align items to the left */
 }
 
 /* Cart button container - positioned at bottom but above global footer */
@@ -79,14 +53,6 @@
 }
 
 @media (max-width: 768px) {
-  .categoriesContainer {
-    padding: 0 12px;
-    height: 75px;
-    min-height: 75px;
-    position: sticky;
-    z-index: 20;
-  }
-
   .productPageContainer {
     padding: 0 12px;
   }

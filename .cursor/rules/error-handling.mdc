@@ -1,0 +1,72 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+# Error Handling Guidelines
+
+## Error Boundaries
+
+- Implement React Error Boundaries at strategic levels:
+- Root level to catch application-wide errors
+- Page level to isolate route-specific errors
+- Feature level for complex component trees
+- Use the `ErrorBoundary` component for wrapping critical UI sections
+- Provide user-friendly fallback UIs that match the overall design system
+
+## UI Error States
+
+### Network and API Errors
+- Display meaningful error messages instead of failing silently
+- Implement retry mechanisms for transient failures
+- Show skeletal loading states during pending operations
+- Never expose raw error stack traces to end users
+- Categorize errors by type (network, authentication, resource not found)
+
+### Form Validation
+- Validate input in real-time where appropriate
+- Show inline validation errors beneath form fields
+- Use color-coding and icons to indicate validation status
+- Provide clear instructions for fixing validation issues
+- Prevent form submission until all critical errors are resolved
+
+## Error Logging and Monitoring
+
+- Log errors with appropriate context (user action, component, error details)
+- Use different severity levels (warning, error, critical)
+- Avoid logging sensitive user information
+- Structure logs for easy filtering and analysis
+- Consider implementing client-side error tracking (optional)
+
+## Fallback Components
+
+- Create dedicated fallback components for:
+- Failed API requests
+- Empty data states
+- Image loading failures
+- Network connectivity issues
+- Design fallbacks to be consistent with the Mantine design system
+- Include action buttons in fallbacks where recovery is possible
+
+## Specific Application Error Scenarios
+
+### Cart and Order Processing
+- Handle item unavailability gracefully
+- Provide clear feedback for payment processing issues
+- Allow users to retry failed order submissions
+- Preserve cart state where possible after errors
+
+### Branch and Product Data
+- Show placeholder content when branch data cannot be loaded
+- Implement graceful degradation for missing product images
+- Provide alternate navigation options when category data fails to load
+
+## Implementation Approach
+
+- Use TypeScript to enforce error handling completeness
+- Define consistent error types and interfaces
+- Leverage Mantine's notification system for transient errors
+- Create reusable error handling hooks
+- Implement a centralized error tracking system
+- Use try/catch with async/await for asynchronous operations
+- Consider implementing a custom error handling context

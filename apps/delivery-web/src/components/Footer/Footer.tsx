@@ -52,50 +52,54 @@ const Footer = () => {
           </Box>
         </Box>
         <Divider className={styles.divider} data-testid="footer-divider" />
-        <Box
-          className={styles.socialContainer}
-          data-testid="footer-social-container"
-        >
-          <Link
-            href="#"
-            style={{ textDecoration: 'none' }}
-            data-testid="footer-social-facebook"
+        <Box className={styles.bottomContainer}>
+          <Box
+            className={styles.socialContainer}
+            data-testid="footer-social-container"
           >
-            <Image
-              src="/images/social/facebook.svg"
-              alt="Facebook"
-              width={16}
-              height={16}
-            />
-          </Link>
-          <Link
-            href="#"
-            style={{ textDecoration: 'none' }}
-            data-testid="footer-social-twitter"
-          >
-            <Image
-              src="/images/social/twitter.svg"
-              alt="Twitter"
-              width={16}
-              height={16}
-            />
-          </Link>
-          <Link
-            href="#"
-            style={{ textDecoration: 'none' }}
-            data-testid="footer-social-instagram"
-          >
-            <Image
-              src="/images/social/instagram.svg"
-              alt="Instagram"
-              width={16}
-              height={16}
-            />
-          </Link>
+            <Link
+              href="#"
+              style={{ textDecoration: 'none' }}
+              data-testid="footer-social-facebook"
+            >
+              <Image
+                src="/images/social/facebook.svg"
+                alt="Facebook"
+                width={16}
+                height={16}
+              />
+            </Link>
+            <Link
+              href="#"
+              style={{ textDecoration: 'none' }}
+              data-testid="footer-social-twitter"
+            >
+              <Image
+                src="/images/social/twitter.svg"
+                alt="Twitter"
+                width={16}
+                height={16}
+              />
+            </Link>
+            <Link
+              href="#"
+              style={{ textDecoration: 'none' }}
+              data-testid="footer-social-instagram"
+            >
+              <Image
+                src="/images/social/instagram.svg"
+                alt="Instagram"
+                width={16}
+                height={16}
+              />
+            </Link>
+          </Box>
+          <Box className={styles.copyrightContainer}>
+            <Text className={styles.copyright} data-testid="footer-copyright">
+              {FOOTER_TEXTS.COPYRIGHT}
+            </Text>
+          </Box>
         </Box>
-        <Text className={styles.copyright} data-testid="footer-copyright">
-          {FOOTER_TEXTS.COPYRIGHT}
-        </Text>
       </Box>
     </Box>
   );

@@ -13,11 +13,7 @@ import {
   NumberInput,
   Flex,
 } from '@mantine/core';
-import {
-  IconTrash,
-  IconCirclePlus,
-  IconCircleMinus,
-} from '@tabler/icons-react';
+
 import styles from './page.module.css';
 import CheckoutHeader from '@/components/Header/CheckoutHeader';
 import { branchesMock } from '../../../../mocks/branches.mock';
@@ -31,6 +27,7 @@ import {
 import AddToCartModal from '@/components/AddToCartModal/AddToCartModal';
 import ContentWrapper from '@/components/ContentWrapper/ContentWrapper';
 import { isBranchOpen } from '@/utils/branch';
+import QuantityControl from '@/components/QuantityControl/QuantityControl';
 
 interface CartItemCustomization {
   product: IProduct;
@@ -91,6 +88,7 @@ export default function CheckoutPage() {
 
       return () => clearInterval(intervalId);
     }
+    return undefined;
   }, [currentBranch]);
 
   // Redirect if branch is not found
@@ -259,7 +257,6 @@ export default function CheckoutPage() {
         <ContentWrapper
           ref={contentWrapperRef}
           isHeaderCollapsed={false}
-          isMobile={isMobile}
           headerHeight={0}
           collapsedHeaderHeight={0}
         >
@@ -520,9 +517,10 @@ export default function CheckoutPage() {
                   value={paymentAmount}
                   onChange={handlePaymentAmountChange}
                   min={0}
+                  disabled={paymentMethod !== 'cash'}
                   classNames={{
                     root: styles.numberInput,
-                    input: styles.formInput,
+                    input: styles.formInputAmount,
                     wrapper: styles.numberInput,
                   }}
                 />
@@ -627,12 +625,12 @@ export default function CheckoutPage() {
 
                             {/* Quantity controls */}
                             <Box className={styles.quantityControls}>
-                              {item.quantity <= 1 ? (
-                                <IconTrash
-                                  size={26}
-                                  stroke={1.5}
-                                  style={{ cursor: 'pointer' }}
-                                  onClick={() => {
+                              <QuantityControl
+                                initialQuantity={item.quantity}
+                                variant="checkout"
+                                isMobile={isMobile}
+                                onChange={(newQuantity) => {
+                                  if (newQuantity === 0) {
                                     if (item.uniqueId) {
                                       updateCartItem(
                                         item.product.id,
@@ -642,52 +640,19 @@ export default function CheckoutPage() {
                                     } else {
                                       removeFromCart(item.product.id);
                                     }
-                                  }}
-                                />
-                              ) : (
-                                <IconCircleMinus
-                                  size={26}
-                                  stroke={1.5}
-                                  style={{ cursor: 'pointer' }}
-                                  onClick={() => {
+                                  } else {
                                     if (item.uniqueId) {
                                       updateCartItem(
                                         item.product.id,
-                                        { quantity: item.quantity - 1 },
+                                        { quantity: newQuantity },
                                         item.uniqueId
                                       );
                                     } else {
                                       handleQuantityUpdate(
                                         item.product.id,
-                                        item.quantity - 1
+                                        newQuantity
                                       );
                                     }
-                                  }}
-                                />
-                              )}
-
-                              <Text fw={600}>{item.quantity}</Text>
-
-                              <IconCirclePlus
-                                size={26}
-                                stroke={1.5}
-                                style={{
-                                  background: '#B3FF00',
-                                  borderRadius: '50%',
-                                  cursor: 'pointer',
-                                }}
-                                onClick={() => {
-                                  if (item.uniqueId) {
-                                    updateCartItem(
-                                      item.product.id,
-                                      { quantity: item.quantity + 1 },
-                                      item.uniqueId
-                                    );
-                                  } else {
-                                    handleQuantityUpdate(
-                                      item.product.id,
-                                      item.quantity + 1
-                                    );
                                   }
                                 }}
                               />
