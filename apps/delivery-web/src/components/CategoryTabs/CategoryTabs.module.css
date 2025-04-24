@@ -5,10 +5,11 @@
   max-width: 1064px;
   z-index: 100; /* Ensure it’s below the header (z-index: 101) but above content */
   background-color: #ffffff;
-  padding: 35px 12px; /* Match the left and right padding of .productPageContainer */
+  padding: 35px 0px; /* Match the left and right padding of .productPageContainer */
   margin-right: 296px;
   margin-bottom: 8px;
-  height: 61px;
+  height: auto;
+  min-height: 61px;
   max-height: 61px;
   display: flex;
   flex-direction: column;

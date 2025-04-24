@@ -48,6 +48,8 @@ const BranchProductsPage = () => {
     Record<string, boolean>
   >({});
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
+  const categoriesRef = useRef<HTMLDivElement>(null);
+  const [categoriesHeight, setCategoriesHeight] = useState(61);
 
   const headerHeight = isMobile ? 200 : 280;
   const collapsedHeaderHeight = isMobile ? 40 : 60;
@@ -58,8 +60,6 @@ const BranchProductsPage = () => {
     : isMobile
     ? 12
     : 35;
-
-  const categoriesHeight = categoriesTopOffset + 61; // Updated to match new .stickyContainer height
 
   const headerRef = useRef<HTMLDivElement>(null);
   const [headerActualHeight, setHeaderActualHeight] = useState(headerHeight);
@@ -78,17 +78,24 @@ const BranchProductsPage = () => {
   }
 
   useEffect(() => {
+    if (categoriesRef.current) {
+      const height = categoriesRef.current.getBoundingClientRect().height;
+      setCategoriesHeight(height);
+    }
+  }, [isHeaderCollapsed]);
+
+  useEffect(() => {
     const updateHeaderHeight = () => {
-      if (headerRef.current) {
-        const height = headerRef.current.getBoundingClientRect().height;
-        setHeaderActualHeight(height + categoriesHeight);
+      if (headerRef.current && categoriesRef.current) {
+        const headerHeight = headerRef.current.getBoundingClientRect().height;
+        const catsHeight = categoriesRef.current.getBoundingClientRect().height;
+        setHeaderActualHeight(headerHeight + catsHeight);
       }
     };
-
-    updateHeaderHeight(); // Initial measurement
+    updateHeaderHeight();
     window.addEventListener('resize', updateHeaderHeight);
     return () => window.removeEventListener('resize', updateHeaderHeight);
-  }, [isHeaderCollapsed, categoriesHeight]);
+  }, [isHeaderCollapsed]);
 
   const handleHeaderStateChange = useRef((event: CustomEvent) => {
     setIsHeaderCollapsed(event.detail.collapsed);
