@@ -20,6 +20,7 @@ const ProductsHeaderWrapper: React.FC<ProductsHeaderWrapperProps> = ({
     <Box>
       {header}
       {categories} {/* Rely on CategoryTabs' own positioning */}
+      <Box className={styles.productsHeaderWrapper} />
     </Box>
   );
 };

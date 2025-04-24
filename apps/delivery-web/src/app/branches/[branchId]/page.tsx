@@ -51,9 +51,11 @@ export default function BranchProductsPage() {
 
   const headerHeight = isMobile ? 200 : 280;
   const collapsedHeaderHeight = isMobile ? 100 : 70;
-  const categoriesHeight = 75; // Adjust as needed
   const topOffset = isHeaderCollapsed ? collapsedHeaderHeight : headerHeight;
-  const contentTopOffset = topOffset + categoriesHeight;
+  const categoriesHeight = 75;
+
+  const headerRef = useRef<HTMLDivElement>(null);
+  const [headerActualHeight, setHeaderActualHeight] = useState(headerHeight);
 
   const [currentBranch, setCurrentBranch] = useState<IBranch | undefined>(
     branchesMock.find((branch) => branch.id === branchId)
@@ -66,6 +68,22 @@ export default function BranchProductsPage() {
       timeout = setTimeout(() => func(...args), wait);
     };
   }
+
+  useEffect(() => {
+    const updateHeaderHeight = () => {
+      if (headerRef.current) {
+        const height = headerRef.current.getBoundingClientRect().height;
+        setHeaderActualHeight(height);
+      }
+    };
+
+    updateHeaderHeight(); // Initial measurement
+    window.addEventListener('resize', updateHeaderHeight);
+    return () => window.removeEventListener('resize', updateHeaderHeight);
+  }, [isHeaderCollapsed]);
+
+  // Update contentTopOffset to use the actual header height
+  const contentTopOffset = headerActualHeight + categoriesHeight;
 
   const handleHeaderStateChange = useRef((event: CustomEvent) => {
     setIsHeaderCollapsed(event.detail.collapsed);
@@ -253,6 +271,7 @@ export default function BranchProductsPage() {
         collapsedHeaderHeight={collapsedHeaderHeight}
         header={
           <MemoizedProductsHeader
+            ref={headerRef}
             branch={currentBranch as IBranch}
             onBackClick={handleBack}
             searchValue={searchQuery}
@@ -267,7 +286,7 @@ export default function BranchProductsPage() {
             categories={categories}
             activeTab={activeTab}
             onTabChange={handleTabChange}
-            top={topOffset}
+            top={headerActualHeight}
           />
         }
       />

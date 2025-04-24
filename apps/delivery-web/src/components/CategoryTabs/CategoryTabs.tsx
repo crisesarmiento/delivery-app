@@ -53,7 +53,7 @@ const CategoryTabs: React.FC<CategoryTabsProps> = ({
     <Box
       data-testid="category-tabs"
       className={styles.stickyContainer}
-      style={{ top: top }}
+      style={{ top: top, position: 'fixed', width: '100%' }} // Override CSS with inline style
     >
       <Box className={styles.categoryTitleContainer}>
         <Text

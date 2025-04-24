@@ -8,7 +8,8 @@
 
 .sectionsContainer {
   flex: 1;
-  position: relative;
+  position: sticky;
+  max-height: 100%;
   background-color: #ffffff;
   z-index: 99;
   padding-top: 0; /* Remove if offset is sufficient */
