@@ -51,7 +51,7 @@ const BranchProductsPage = () => {
 
   const headerHeight = isMobile ? 200 : 280;
   const collapsedHeaderHeight = isMobile ? 50 : 70;
-  const categoriesHeight = isMobile ? 70 : 70; // Updated to match new .stickyContainer height
+  const categoriesHeight = 61; // Updated to match new .stickyContainer height
 
   const headerRef = useRef<HTMLDivElement>(null);
   const [headerActualHeight, setHeaderActualHeight] = useState(headerHeight);
@@ -73,7 +73,7 @@ const BranchProductsPage = () => {
     const updateHeaderHeight = () => {
       if (headerRef.current) {
         const height = headerRef.current.getBoundingClientRect().height;
-        setHeaderActualHeight(height);
+        setHeaderActualHeight(height + categoriesHeight);
       }
     };
 

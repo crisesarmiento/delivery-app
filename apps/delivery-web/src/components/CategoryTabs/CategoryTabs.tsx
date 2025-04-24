@@ -53,7 +53,7 @@ const CategoryTabs: React.FC<CategoryTabsProps> = ({
     <Box
       data-testid="category-tabs"
       className={styles.stickyContainer}
-      style={{ top: top, position: 'fixed', width: '100%' }} // Override CSS with inline style
+      style={{ top: top }} // Override CSS with inline style
     >
       <Box className={styles.categoryTitleContainer}>
         <Text
@@ -76,7 +76,6 @@ const CategoryTabs: React.FC<CategoryTabsProps> = ({
             overflowX: 'visible',
             overflowY: 'visible',
           },
-          root: { width: '100%', height: 'auto', minHeight: '75px' },
         }}
         data-testid="category-tabs-scroll-area"
         viewportRef={scrollAreaRef}

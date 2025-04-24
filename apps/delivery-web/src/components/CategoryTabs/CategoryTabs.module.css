@@ -3,10 +3,11 @@
   top: 0; /* Will be overridden dynamically via inline style */
   left: 0;
   width: 100%;
+  max-width: 1064px;
   z-index: 100; /* Ensure it’s below the header (z-index: 101) but above content */
   background-color: #ffffff;
   padding: 16px 80px 0 80px; /* Match the left and right padding of .productPageContainer */
-  padding-right: 296px; /* Explicitly match the right padding of .productPageContainer */
+
   margin-bottom: 8px;
   height: 61px;
   max-height: 61px;
@@ -34,12 +35,11 @@
   background-color: #ffffff;
   margin-bottom: 8px;
   width: 100%; /* Use full width of the parent (after padding) */
-  max-width: none;
   height: auto;
-  min-height: 32px;
+  min-height: 61px;
   scrollbar-width: none;
-  -ms-overflow-style: none;
-  overflow-x: auto;
+  /* -ms-overflow-style: none; */
+  /* overflow-x: auto; */
 }
 
 .tabsList {
