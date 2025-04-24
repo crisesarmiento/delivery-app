@@ -8,13 +8,15 @@ interface CategoryTabsProps {
   categories: string[];
   activeTab: string;
   onTabChange: (value: string | null) => void;
+  top?: number;
 }
 
-export default function CategoryTabs({
+const CategoryTabs: React.FC<CategoryTabsProps> = ({
   categories,
   activeTab,
   onTabChange,
-}: CategoryTabsProps) {
+  top,
+}) => {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const previousActiveTabRef = useRef<string>(activeTab);
 
@@ -48,7 +50,11 @@ export default function CategoryTabs({
   }, [scrollTabIntoView]);
 
   return (
-    <Box data-testid="category-tabs" className={styles.stickyContainer}>
+    <Box
+      data-testid="category-tabs"
+      className={styles.stickyContainer}
+      style={{ top: top }} // Override CSS with inline style
+    >
       <Box className={styles.categoryTitleContainer}>
         <Text
           fw={500}
@@ -70,7 +76,6 @@ export default function CategoryTabs({
             overflowX: 'visible',
             overflowY: 'visible',
           },
-          root: { width: '100%', height: 'auto', minHeight: '75px' },
         }}
         data-testid="category-tabs-scroll-area"
         viewportRef={scrollAreaRef}
@@ -121,4 +126,6 @@ export default function CategoryTabs({
       </ScrollArea>
     </Box>
   );
-}
+};
+
+export default CategoryTabs;

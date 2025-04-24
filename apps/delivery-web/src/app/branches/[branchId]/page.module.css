@@ -8,20 +8,27 @@
 
 .sectionsContainer {
   flex: 1;
-  position: relative;
+  position: sticky;
+  max-height: 100%;
   background-color: #ffffff;
   z-index: 99;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-top: 0;
 }
 
 .productsContainer {
   flex: 1;
-  padding: 16px;
+  padding: 16px 0; /* Remove extra side padding to align with container */
   display: grid;
-  grid-template-columns: repeat(auto-fill, 200px);
-  gap: 16px;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(220px, 1fr)
+  ); /* More flexible card sizes */
+  gap: 24px; /* Increased gap for better spacing */
   overflow-y: auto;
   background-color: #ffffff;
-  justify-content: space-between;
+  justify-content: flex-start; /* Align items to the left */
 }
 
 /* Cart button container - positioned at bottom but above global footer */
