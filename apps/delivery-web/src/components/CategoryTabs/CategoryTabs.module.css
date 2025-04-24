@@ -1,20 +1,20 @@
 .stickyContainer {
-  position: fixed; /* Changed from sticky */
+  position: fixed;
   top: 0; /* Will be overridden dynamically via inline style */
+  left: 0;
   width: 100%;
-  z-index: 100; /* Ensure it’s below the header (z-index: 101) */
+  z-index: 100; /* Ensure it’s below the header (z-index: 101) but above content */
   background-color: #ffffff;
-  padding-top: 16px;
-  padding-left: 16px;
-  padding-right: 16px;
+  padding: 16px 80px 0 80px; /* Match the left and right padding of .productPageContainer */
+  padding-right: 296px; /* Explicitly match the right padding of .productPageContainer */
   margin-bottom: 8px;
-  height: 75px;
-  max-height: 75px;
+  height: 61px;
+  max-height: 61px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  transition: top 0.3s ease; /* Smooth transition when header collapses */
+  align-items: flex-start;
+  justify-content: flex-start;
+  transition: top 0.3s ease;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
@@ -25,7 +25,7 @@
 .tabsContainer {
   background-color: #ffffff;
   width: 100%;
-  padding: 12px 0;
+  padding: 8px 0;
   height: auto;
   min-height: 32px;
 }
@@ -33,12 +33,12 @@
 .categoriesContainer {
   background-color: #ffffff;
   margin-bottom: 8px;
-  width: 100%;
-  max-width: 1064px;
+  width: 100%; /* Use full width of the parent (after padding) */
+  max-width: none;
   height: auto;
-  min-height: 75px;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
+  min-height: 32px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   overflow-x: auto;
 }
 
@@ -50,7 +50,7 @@
   margin-bottom: 0;
   padding-right: 16px;
   padding-left: 0;
-  width: max-content;
+  width: max-content; /* Ensures horizontal scrolling */
 }
 
 .tab {
@@ -72,7 +72,7 @@
   color: #939393;
   transition: all 0.2s ease;
   white-space: nowrap;
-  margin-right: 16px;
+  margin-right: 12px;
 }
 
 .tab:hover {
@@ -91,61 +91,60 @@
   background-color: #ffffff;
   justify-content: flex-start;
   width: 100%;
-  max-width: 1064px;
+  max-width: none;
+  margin-bottom: 8px;
 }
 
 .categoryTitle {
   position: relative;
   width: auto;
-  height: 15px;
   font-family: 'Inter';
   font-style: normal;
   font-weight: 500;
   font-size: 16px;
   line-height: 24px;
   color: #000000;
-  margin-bottom: 8px;
+  margin-bottom: 0;
 }
 
 @media (max-width: 768px) {
   .stickyContainer {
-    height: 75px;
+    height: 80px;
     z-index: 100;
     width: 100%;
-    padding-top: 16px;
-    padding-left: 16px;
-    padding-right: 16px;
+    padding: 12px 12px 0 12px; /* Match the padding of .productPageContainer on mobile */
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    align-items: flex-start;
+    justify-content: flex-start;
   }
 
   .categoriesContainer {
     width: 100%;
-    padding-top: 16px;
-    padding-left: 12px;
+    padding-top: 8px;
+    padding-left: 0;
     padding-right: 16px;
   }
 
   .categoriesTitleContainer {
     width: 100%;
-    padding-top: 16px;
-    padding-left: 16px;
+    padding-top: 0;
+    padding-left: 0;
+    margin-bottom: 6px;
   }
 
   .categoryTitle {
     width: auto;
-    padding-left: 12px;
+    padding-left: 0;
     font-size: 14px;
     line-height: 20px;
     font-weight: 500;
-    margin-bottom: 12px;
+    margin-bottom: 0;
   }
 
   .tabsContainer {
     height: auto;
-    padding: 0 0 12px 0;
+    padding: 0 0 8px 0;
   }
 
   .tabsList {
@@ -155,5 +154,6 @@
   .tab {
     padding: 6px 12px;
     height: 32px;
+    margin-right: 8px;
   }
 }

@@ -26,7 +26,7 @@ const MemoizedProductsHeader = memo(ProductsHeader);
 const MemoizedCategoryTabs = memo(CategoryTabs);
 const MemoizedCartDrawer = memo(CartDrawer);
 
-export default function BranchProductsPage() {
+const BranchProductsPage = () => {
   const params = useParams();
   const router = useRouter();
   const theme = useMantineTheme();
@@ -50,16 +50,16 @@ export default function BranchProductsPage() {
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
 
   const headerHeight = isMobile ? 200 : 280;
-  const collapsedHeaderHeight = isMobile ? 100 : 70;
-  const topOffset = isHeaderCollapsed ? collapsedHeaderHeight : headerHeight;
-  const categoriesHeight = 75;
+  const collapsedHeaderHeight = isMobile ? 50 : 70;
+  const categoriesHeight = isMobile ? 70 : 70; // Updated to match new .stickyContainer height
 
   const headerRef = useRef<HTMLDivElement>(null);
   const [headerActualHeight, setHeaderActualHeight] = useState(headerHeight);
 
-  const [currentBranch, setCurrentBranch] = useState<IBranch | undefined>(
-    branchesMock.find((branch) => branch.id === branchId)
-  );
+  // Calculate the top offset for the content to start below both header and categories
+  const contentTopOffset =
+    (isHeaderCollapsed ? collapsedHeaderHeight : headerHeight) +
+    categoriesHeight;
 
   function debounce(func: (...args: any[]) => void, wait: number) {
     let timeout: NodeJS.Timeout | null = null;
@@ -81,9 +81,6 @@ export default function BranchProductsPage() {
     window.addEventListener('resize', updateHeaderHeight);
     return () => window.removeEventListener('resize', updateHeaderHeight);
   }, [isHeaderCollapsed]);
-
-  // Update contentTopOffset to use the actual header height
-  const contentTopOffset = headerActualHeight + categoriesHeight;
 
   const handleHeaderStateChange = useRef((event: CustomEvent) => {
     setIsHeaderCollapsed(event.detail.collapsed);
@@ -122,6 +119,10 @@ export default function BranchProductsPage() {
       return () => clearInterval(intervalId);
     }
   }, [branchId]);
+
+  const [currentBranch, setCurrentBranch] = useState<IBranch | undefined>(
+    branchesMock.find((branch) => branch.id === branchId)
+  );
 
   useEffect(() => {
     if (!currentBranch && branchId) {
@@ -208,7 +209,7 @@ export default function BranchProductsPage() {
       setSearchQuery('');
     }
     if (sectionElement) {
-      const offset = isFirstCategory ? 0 : topOffset;
+      const offset = isFirstCategory ? 0 : contentTopOffset;
       const position = Math.max(0, sectionElement.offsetTop - offset);
       window.scrollTo({ top: position, behavior: 'smooth' });
     } else if (isFirstCategory) {
@@ -286,11 +287,11 @@ export default function BranchProductsPage() {
             categories={categories}
             activeTab={activeTab}
             onTabChange={handleTabChange}
-            top={headerActualHeight}
+            top={isHeaderCollapsed ? collapsedHeaderHeight : headerHeight}
           />
         }
       />
-      <ContentWrapper ref={contentWrapperRef} topOffset={contentTopOffset}>
+      <ContentWrapper ref={contentWrapperRef} topOffset={headerActualHeight}>
         <Box
           className={styles.sectionsContainer}
           style={{
@@ -351,4 +352,6 @@ export default function BranchProductsPage() {
       )}
     </Flex>
   );
-}
+};
+
+export default BranchProductsPage;
