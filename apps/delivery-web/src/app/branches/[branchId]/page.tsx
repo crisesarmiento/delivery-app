@@ -126,6 +126,7 @@ const BranchProductsPage = () => {
       }, 60000);
       return () => clearInterval(intervalId);
     }
+    return;
   }, [branchId]);
 
   const [currentBranch, setCurrentBranch] = useState<IBranch | undefined>(

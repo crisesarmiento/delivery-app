@@ -254,12 +254,7 @@ export default function CheckoutPage() {
           closedMessage={BRANCH_TEXTS.BRANCH_CLOSED}
         />
 
-        <ContentWrapper
-          ref={contentWrapperRef}
-          isHeaderCollapsed={false}
-          headerHeight={0}
-          collapsedHeaderHeight={0}
-        >
+        <ContentWrapper ref={contentWrapperRef} topOffset={0}>
           <Box className={styles.contentContainer}>
             {/* Left Section - Delivery Details */}
             <Box className={styles.leftSection}>

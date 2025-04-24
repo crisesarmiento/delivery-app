@@ -20,19 +20,45 @@ export default function HomePage() {
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
   const prevScrollPosition = useRef(0);
 
-  // Add responsive check for mobile devices
+  const headerRef = useRef<HTMLDivElement>(null);
+
+  const headerHeight = isMobile ? 200 : 280;
+  const collapsedHeaderHeight = isMobile ? 40 : 70;
+
+  const topOffset = isHeaderCollapsed ? collapsedHeaderHeight : headerHeight;
+
+  const [headerActualHeight, setHeaderActualHeight] = useState(topOffset);
+
+  function debounce(func: (...args: any[]) => void, wait: number) {
+    let timeout: NodeJS.Timeout | null = null;
+    return function (...args: any[]) {
+      if (timeout) clearTimeout(timeout);
+      timeout = setTimeout(() => func(...args), wait);
+    };
+  }
   useEffect(() => {
-    const checkIsMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
+    const updateHeaderHeight = () => {
+      if (headerRef.current) {
+        const height = headerRef.current.getBoundingClientRect().height;
+        setHeaderActualHeight(height);
+      }
     };
 
-    // Check on initial load
+    updateHeaderHeight(); // Initial measurement
+    window.addEventListener('resize', updateHeaderHeight);
+    return () => window.removeEventListener('resize', updateHeaderHeight);
+  }, [isHeaderCollapsed]);
+
+  const handleHeaderStateChange = useRef((event: CustomEvent) => {
+    setIsHeaderCollapsed(event.detail.collapsed);
+  }).current;
+
+  useEffect(() => {
+    const checkIsMobile = debounce(() => {
+      setIsMobile(window.innerWidth <= 768);
+    }, 100);
     checkIsMobile();
-
-    // Set up an event listener for window resize
     window.addEventListener('resize', checkIsMobile);
-
-    // Clean up the event listener on component unmount
     return () => window.removeEventListener('resize', checkIsMobile);
   }, []);
 
@@ -50,10 +76,6 @@ export default function HomePage() {
 
   // Add event listener for header state change events
   useEffect(() => {
-    const handleHeaderStateChange = (event: CustomEvent) => {
-      setIsHeaderCollapsed(event.detail.collapsed);
-    };
-
     window.addEventListener(
       'header-state-change',
       handleHeaderStateChange as EventListener
@@ -64,7 +86,7 @@ export default function HomePage() {
         handleHeaderStateChange as EventListener
       );
     };
-  }, []);
+  }, [handleHeaderStateChange]);
 
   // Update branch open/closed status based on current time
   useEffect(() => {
@@ -120,11 +142,7 @@ export default function HomePage() {
         isFiltering={isFiltering}
       />
 
-      <ContentWrapper
-        isHeaderCollapsed={isHeaderCollapsed}
-        headerHeight={0}
-        collapsedHeaderHeight={0}
-      >
+      <ContentWrapper topOffset={headerActualHeight}>
         <Container
           fluid
           px={0}
@@ -150,6 +168,7 @@ export default function HomePage() {
               maxWidth: '1440px',
               overflowX: 'hidden',
               overflowY: 'visible',
+              marginTop: isHeaderCollapsed && isFiltering ? 0 : 0,
             }}
           >
             {filteredBranches.length > 0 ? (
@@ -160,7 +179,10 @@ export default function HomePage() {
                     isMobile ? '230px' : '240px'
                   }, 1fr))`,
                   gap: theme.spacing.md,
-                  marginBottom: theme.spacing.lg,
+                  marginTop:
+                    isHeaderCollapsed && isFiltering
+                      ? 0 - headerActualHeight
+                      : 0,
                   width: '100%',
                   maxWidth: '100%',
                   justifyContent: 'center',
@@ -169,7 +191,7 @@ export default function HomePage() {
                   // Adjust top padding when filtering with collapsed header
                   paddingTop:
                     isHeaderCollapsed && isFiltering
-                      ? theme.spacing.xs
+                      ? 0 - headerActualHeight
                       : theme.spacing.md,
                 }}
               >
