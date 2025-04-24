@@ -72,9 +72,13 @@ const CategoryTabs: React.FC<CategoryTabsProps> = ({
         styles={{
           scrollbar: { display: 'none' },
           viewport: {
-            paddingLeft: 0,
             overflowX: 'visible',
             overflowY: 'visible',
+          },
+          root: {
+            width: '100%',
+            height: 'auto',
+            minHeight: '61px',
           },
         }}
         data-testid="category-tabs-scroll-area"

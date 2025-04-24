@@ -50,8 +50,16 @@ const BranchProductsPage = () => {
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
 
   const headerHeight = isMobile ? 200 : 280;
-  const collapsedHeaderHeight = isMobile ? 50 : 70;
-  const categoriesHeight = 61; // Updated to match new .stickyContainer height
+  const collapsedHeaderHeight = isMobile ? 40 : 60;
+  const categoriesTopOffset = isHeaderCollapsed
+    ? isMobile
+      ? 10
+      : 25
+    : isMobile
+    ? 12
+    : 35;
+
+  const categoriesHeight = categoriesTopOffset + 61; // Updated to match new .stickyContainer height
 
   const headerRef = useRef<HTMLDivElement>(null);
   const [headerActualHeight, setHeaderActualHeight] = useState(headerHeight);
@@ -80,7 +88,7 @@ const BranchProductsPage = () => {
     updateHeaderHeight(); // Initial measurement
     window.addEventListener('resize', updateHeaderHeight);
     return () => window.removeEventListener('resize', updateHeaderHeight);
-  }, [isHeaderCollapsed]);
+  }, [isHeaderCollapsed, categoriesHeight]);
 
   const handleHeaderStateChange = useRef((event: CustomEvent) => {
     setIsHeaderCollapsed(event.detail.collapsed);
@@ -287,7 +295,11 @@ const BranchProductsPage = () => {
             categories={categories}
             activeTab={activeTab}
             onTabChange={handleTabChange}
-            top={isHeaderCollapsed ? collapsedHeaderHeight : headerHeight}
+            top={
+              isHeaderCollapsed
+                ? collapsedHeaderHeight + categoriesTopOffset
+                : headerHeight + categoriesTopOffset
+            }
           />
         }
       />

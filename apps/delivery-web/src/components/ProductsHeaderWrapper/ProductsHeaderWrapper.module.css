@@ -4,11 +4,13 @@
   display: flex;
   flex-direction: column;
   z-index: 100;
+  background-color: #ffffff;
 }
 
 .headerContainer {
   position: fixed;
   width: 100%;
+  background-color: #ffffff;
 }
 
 @media (max-width: 768px) {

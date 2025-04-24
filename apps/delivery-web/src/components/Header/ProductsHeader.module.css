@@ -101,7 +101,6 @@
   align-items: center;
   justify-content: center;
   transform: translateY(-50%);
-  white-space: nowrap;
 }
 
 /* Menu button positioning */
@@ -234,6 +233,7 @@
 /* Empty space to push content below fixed header */
 .headerSpacer {
   height: 250px; /* 70px top header + 210px bottom header */
+  background-color: #ffffff;
   transition: height 0.3s ease;
   transform: translateZ(0);
 }
@@ -271,7 +271,6 @@
     top: 50%;
     transform: translateY(-50%);
     z-index: 103;
-    white-space: nowrap;
   }
 
   .menuButtonContainer {
@@ -339,6 +338,7 @@
 
   .headerSpacer {
     height: 150px;
+    background-color: #ffffff;
   }
 
   .collapsedHeader .backButtonWrapper {

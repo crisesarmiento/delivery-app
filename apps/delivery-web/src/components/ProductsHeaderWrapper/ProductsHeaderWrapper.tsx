@@ -17,7 +17,7 @@ const ProductsHeaderWrapper: React.FC<ProductsHeaderWrapperProps> = ({
   categories,
 }) => {
   return (
-    <Box>
+    <Box style={{ backgroundColor: '#ffffff' }}>
       {header}
       {categories} {/* Rely on CategoryTabs' own positioning */}
       <Box className={styles.productsHeaderWrapper} />
