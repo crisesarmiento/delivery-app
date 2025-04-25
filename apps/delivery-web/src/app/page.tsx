@@ -2,7 +2,6 @@
 
 import { Box, Container, Text, useMantineTheme } from '@mantine/core';
 import BranchCard from '../components/BranchCard/BranchCard';
-import { branchesMock } from '../mocks/branches.mock';
 import Header from '../components/Header/Header';
 import ContentWrapper from '../components/ContentWrapper';
 import { useRouter } from 'next/navigation';
@@ -10,10 +9,10 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import { updateBranchesStatus } from '../utils/branch';
 import { normalizeText } from '../utils/string';
 import { BRANCH_TEXTS } from '../config/constants';
+import { useNav } from '@/context/navContext';
 
 export default function HomePage() {
   const router = useRouter();
-  const [branches, setBranches] = useState(branchesMock);
   const [searchValue, setSearchValue] = useState('');
   const theme = useMantineTheme();
   const [isMobile, setIsMobile] = useState(false);
@@ -28,6 +27,7 @@ export default function HomePage() {
   const topOffset = isHeaderCollapsed ? collapsedHeaderHeight : headerHeight;
 
   const [headerActualHeight, setHeaderActualHeight] = useState(topOffset);
+  const { branches, setActiveBranch, setBranches } = useNav();
 
   function debounce(func: (...args: any[]) => void, wait: number) {
     let timeout: NodeJS.Timeout | null = null;
@@ -36,6 +36,7 @@ export default function HomePage() {
       timeout = setTimeout(() => func(...args), wait);
     };
   }
+
   useEffect(() => {
     const updateHeaderHeight = () => {
       if (headerRef.current) {
@@ -90,17 +91,17 @@ export default function HomePage() {
 
   // Update branch open/closed status based on current time
   useEffect(() => {
-    const updatedBranches = updateBranchesStatus(branchesMock);
+    const updatedBranches = updateBranchesStatus(branches);
     setBranches(updatedBranches);
 
     // Set up an interval to check status every minute
     const intervalId = setInterval(() => {
-      const updatedBranches = updateBranchesStatus(branchesMock);
+      const updatedBranches = updateBranchesStatus(branches);
       setBranches(updatedBranches);
-    }, 60000); // 60 seconds
+    }, 6000); // 6 seconds
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [branches, setBranches]);
 
   // Check if any branches are closed
   const hasClosedBranches = useMemo(() => {
@@ -202,7 +203,6 @@ export default function HomePage() {
                       display: 'flex',
                       justifyContent: 'center',
                       alignItems: 'center',
-                      // Adjust top margin based on filtering state
                       marginTop:
                         isHeaderCollapsed && isFiltering
                           ? theme.spacing.xs
@@ -213,6 +213,7 @@ export default function HomePage() {
                     <BranchCard
                       branch={branch}
                       onClick={() => {
+                        setActiveBranch(branch);
                         router.push(`/branches/${branch.id}`);
                       }}
                     />

@@ -1,21 +1,26 @@
 import { useState, useEffect } from 'react';
 import { IProduct, IApiResponse } from '@/types';
 import { products as productsMock } from '@/mocks/products.mock';
+import { useNav } from '@/context/navContext';
 
-export const useProducts = (branchId: string) => {
-  const [products, setProducts] = useState<IProduct[]>([]);
+export const useProducts = () => {
+  const [branchProducts, setBranchProducts] = useState<IProduct[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
+  const { activeTab, setActiveTab, setExpandedSections, activeBranch } = useNav();
+
   const fetchProducts = async () => {
-    if (!branchId) return;
+    if (!activeBranch?.id) return;
 
     setLoading(true);
     setError(null);
 
     try {
       // Product mock data varies by branch ID
-      const mockData: IProduct[] = productsMock;
+      const mockData: IProduct[] = productsMock.filter(
+        (product) => product?.branchId === activeBranch?.id
+      );
 
       // Debug the data source
 
@@ -39,7 +44,13 @@ export const useProducts = (branchId: string) => {
             )
           : [];
 
-        setProducts(validProducts);
+        setBranchProducts(validProducts);
+        if (!activeTab && validProducts.length > 0) {
+          setActiveTab(validProducts[0].category?.toLowerCase() || '');
+          setExpandedSections({
+            [validProducts[0].category?.toLowerCase() || '']: true,
+          });
+        }
       } else {
         setError('No se pudieron cargar los productos');
       }
@@ -53,7 +64,7 @@ export const useProducts = (branchId: string) => {
 
   useEffect(() => {
     fetchProducts();
-  }, [branchId]);
+  }, [activeBranch?.id]);
 
-  return { products, loading, error, refetch: fetchProducts };
+  return { branchProducts, loading, error, refetch: fetchProducts };
 };

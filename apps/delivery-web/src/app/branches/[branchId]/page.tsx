@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef, useMemo, memo, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Box, Flex } from '@mantine/core';
-import { products } from '../../../mocks/products.mock';
 import { branchesMock } from '../../../mocks/branches.mock';
 import { IBranch, IProduct } from '../../../types';
 import styles from './page.module.css';
@@ -27,11 +26,12 @@ const MemoizedCategoryTabs = memo(CategoryTabs);
 const MemoizedCartDrawer = memo(CartDrawer);
 
 const BranchProductsPage = () => {
-  const headerRef = useRef<HTMLDivElement>(null);
-  const categoryTabsRef = useRef<HTMLDivElement>(null);
+  // --- Guarantee activeBranch is set ---
   const params = useParams();
   const router = useRouter();
   const branchId = (params?.branchId as string) || '';
+  const headerRef = useRef<HTMLDivElement>(null);
+  const categoryTabsRef = useRef<HTMLDivElement>(null);
   const contentWrapperRef = useRef<HTMLDivElement>(null);
   const {
     items: cartContextItems,
@@ -41,11 +41,26 @@ const BranchProductsPage = () => {
     setBranchId,
   } = useCart();
 
-  const { setActiveTab } = useNav();
+  const { activeTab, setActiveTab, products, activeBranch } = useNav();
 
   const [isMobile, setIsMobile] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [cartDrawerOpened, setCartDrawerOpened] = useState(true);
+  const [currentBranch, setCurrentBranch] = useState<IBranch | undefined>(
+    activeBranch?.id === branchId ? activeBranch : undefined
+  );
+
+  useEffect(() => {
+    if (products.length > 0) {
+      const intervalId = setInterval(() => {
+        setCurrentBranch((prev) =>
+          prev ? { ...prev, isOpen: isBranchOpen(prev) } : undefined
+        );
+      }, 60000);
+      return () => clearInterval(intervalId);
+    }
+    return;
+  }, [branchId, products]);
 
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
 
@@ -94,42 +109,29 @@ const BranchProductsPage = () => {
   }, [handleHeaderStateChange]);
 
   useEffect(() => {
-    const branch = branchesMock.find((b) => b.id === branchId);
-    if (branch) {
-      setCurrentBranch({ ...branch, isOpen: isBranchOpen(branch) });
-      const intervalId = setInterval(() => {
-        setCurrentBranch((prev) =>
-          prev ? { ...prev, isOpen: isBranchOpen(prev) } : undefined
-        );
-      }, 60000);
-      return () => clearInterval(intervalId);
-    }
-    return;
-  }, [branchId]);
-
-  const [currentBranch, setCurrentBranch] = useState<IBranch | undefined>(
-    branchesMock.find((branch) => branch.id === branchId)
-  );
-
-  useEffect(() => {
     if (!currentBranch && branchId) {
       alert(COMMON_TEXTS.BRANCH_NOT_FOUND);
       router.push('/branches');
     }
   }, [currentBranch, branchId, router]);
 
-  const allBranchProducts = useMemo(() => products || [], []);
+  // allBranchProducts now comes from the useProducts hook above
 
   const categories = useMemo(() => {
     const categoryList: string[] = [];
-    allBranchProducts.forEach((product: IProduct) => {
+    products.forEach((product: IProduct) => {
       const category = product.category;
       if (category && !categoryList.includes(category))
         categoryList.push(category);
-      setActiveTab(categoryList[0].toLowerCase());
     });
     return categoryList;
-  }, [allBranchProducts, setActiveTab]);
+  }, [products]);
+
+  useEffect(() => {
+    if (!activeTab && categories.length > 0) {
+      setActiveTab(categories[0].toLowerCase());
+    }
+  }, [activeTab, categories, setActiveTab]);
 
   useEffect(() => {
     if (branchId) setBranchId(branchId);
@@ -159,7 +161,7 @@ const BranchProductsPage = () => {
         return;
       }
       const cartItem: CartContextItem = {
-        product: { ...product, id: String(product.id) },
+        product: { ...product, id: product.id },
         quantity,
       };
       addToCartContext(cartItem);
@@ -250,7 +252,7 @@ const BranchProductsPage = () => {
       >
         <ProductsSectionsContainer
           categories={categories}
-          products={allBranchProducts}
+          products={products}
           searchQuery={searchQuery}
         />
         {isMobile && (
