@@ -8,9 +8,8 @@ import React, {
   useEffect,
 } from 'react';
 import { useParams } from 'next/navigation';
-import { IBranch, IProduct } from '@/types';
+import { IBranch } from '@/types';
 import { useBranches } from '@/hooks/useBranches';
-import { useProducts } from '@/hooks/useProducts';
 
 // Define navigation context interface
 interface NavContextType {
@@ -22,27 +21,18 @@ interface NavContextType {
   setExpandedSections: (sections: Record<string, boolean>) => void;
   branches: IBranch[];
   setBranches: (branches: IBranch[]) => void;
-  products: IProduct[];
-  setProducts: (products: IProduct[]) => void;
 }
 
 // Create the context with a default empty value
 const NavContext = createContext<NavContextType>({
   activeTab: '',
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setActiveTab: (value: string) => {},
   activeBranch: undefined,
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setActiveBranch: (branch: IBranch | undefined) => {},
   expandedSections: {},
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setExpandedSections: (sections: Record<string, boolean>) => {},
   branches: [],
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setBranches: (branches: IBranch[]) => {},
-  products: [],
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  setProducts: (products: IProduct[]) => {},
 });
 
 // Custom hook to use the navigation context
@@ -57,10 +47,9 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
   const [activeBranch, setActiveBranch] = useState<IBranch | undefined>(
     undefined
   );
+  const [branches, setBranches] = useState<IBranch[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [branches, setBranches] = useState<IBranch[]>([]);
-  const [products, setProducts] = useState<IProduct[]>([]);
 
   const {
     allBranches,
@@ -72,19 +61,11 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
 
   const branchId = (params?.branchId as string) || '';
 
-  const {
-    branchProducts,
-    loading: productsLoading,
-    error: productsError,
-  } = useProducts();
-
   useEffect(() => {
     if (allBranches.length > 0) {
       setBranches(allBranches);
     }
   }, [allBranches]);
-
-  console.log(allBranches);
 
   useEffect(() => {
     setLoading(branchesLoading);
@@ -103,14 +84,6 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
       if (found) setActiveBranch(found);
     }
   }, [branchId, branches, setActiveBranch]);
-
-  useEffect(() => {
-    if (activeBranch) {
-      setProducts(branchProducts);
-      setLoading(productsLoading);
-      setError(productsError);
-    }
-  }, [activeBranch, branchProducts, productsLoading, productsError]);
 
   useEffect(() => {
     if (activeTab) {
@@ -135,8 +108,6 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
         setActiveBranch,
         branches,
         setBranches,
-        products,
-        setProducts,
       }}
     >
       {children}

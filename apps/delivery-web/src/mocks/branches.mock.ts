@@ -2,7 +2,7 @@ import { IBranch } from '@/types';
 
 export const branchesMock: IBranch[] = [
   {
-    id: '1',
+    id: 1,
     name: 'Punto 33 Alta Córdoba',
     description: 'Alta Córdoba',
     address: 'Av. Principal 123, Alta Córdoba',
@@ -17,7 +17,7 @@ export const branchesMock: IBranch[] = [
     imageUrl: `/images/branches/1.jpg`,
   },
   {
-    id: '2',
+    id: 2,
     name: 'Punto 33 Quebrada las Rosas',
     description: 'Av. Colón',
     address: 'Calle 45 #789, Quebrada las Rosas',
@@ -32,7 +32,7 @@ export const branchesMock: IBranch[] = [
     imageUrl: `/images/branches/2.jpg`,
   },
   {
-    id: '3',
+    id: 3,
     name: 'Punto 33 Jardín y las Flores',
     description: 'Av. Richieri',
     address: 'Av. del Jardín 567, Barrio Jardín',
@@ -47,7 +47,7 @@ export const branchesMock: IBranch[] = [
     imageUrl: `/images/branches/3.jpg`,
   },
   {
-    id: '4',
+    id: 4,
     name: 'Punto 33 Av. Sabattini',
     description: 'Av. Sabattini',
     address: 'Av. Sabattini 456, Centro',
@@ -62,7 +62,7 @@ export const branchesMock: IBranch[] = [
     imageUrl: `/images/branches/4.jpg`,
   },
   {
-    id: '5',
+    id: 5,
     name: 'Punto 33 Duarte Quirós',
     description: 'Duarte Quirós',
     address: 'Av. Duarte Quirós 789, Centro',
@@ -77,7 +77,7 @@ export const branchesMock: IBranch[] = [
     imageUrl: `/images/branches/5.jpg`,
   },
   {
-    id: '6',
+    id: 6,
     name: 'Punto 33 General Paz',
     description: 'General Paz',
     address: 'Barrio General Paz 123',
@@ -92,7 +92,7 @@ export const branchesMock: IBranch[] = [
     imageUrl: `/images/branches/6.jpg`,
   },
   {
-    id: '7',
+    id: 7,
     name: 'Punto 33 Inaudi',
     description: 'Inaudi',
     address: 'Av. Principal 123, Inaudi',
@@ -107,7 +107,7 @@ export const branchesMock: IBranch[] = [
     imageUrl: `/images/branches/7.jpg`,
   },
   {
-    id: '8',
+    id: 8,
     name: 'Punto 33 Nueva Córdoba',
     description: 'Nueva Córdoba',
     address: 'Av. Principal 123, Nueva Córdoba',
@@ -122,7 +122,7 @@ export const branchesMock: IBranch[] = [
     imageUrl: `/images/branches/8.jpg`,
   },
   {
-    id: '9',
+    id: 9,
     name: 'Punto 33 Villa Belgrano',
     description: 'Recta Martinolli',
     address: 'Av. Principal 123, Villa Belgrano',
@@ -137,7 +137,7 @@ export const branchesMock: IBranch[] = [
     imageUrl: `/images/branches/9.jpg`,
   },
   {
-    id: '10',
+    id: 10,
     name: 'Punto 33 Barrio Yofre',
     description: 'Yofre',
     address: 'Av. Principal 123, Barrio Yofre',
@@ -152,7 +152,7 @@ export const branchesMock: IBranch[] = [
     imageUrl: `/images/branches/10.jpg`,
   },
   {
-    id: '11',
+    id: 11,
     name: 'Punto 33 Fuerza Aérea',
     description: 'Fuerza Aérea',
     address: 'Av. Principal 123, Fuerza Aérea',
@@ -167,7 +167,7 @@ export const branchesMock: IBranch[] = [
     imageUrl: `/images/branches/11.jpg`,
   },
   {
-    id: '12',
+    id: 12,
     name: 'Punto 33 Villa María',
     description: 'Villa María',
     address: 'Av. Principal 123, Villa María',

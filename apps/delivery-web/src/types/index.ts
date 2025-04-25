@@ -20,7 +20,7 @@ export interface IOpeningHours {
 
 // Branch type
 export interface IBranch {
-  id: string | number;
+  id: number;
   name: string;
   description: string;
   address: string;
@@ -34,6 +34,7 @@ export interface IBranch {
 // Product type
 export interface IProduct {
   id: number;
+  branchId: number;
   name: string;
   description?: string;
   price: number;
@@ -41,7 +42,6 @@ export interface IProduct {
   isAvailable: boolean;
   ingredients?: string;
   category?: string;
-  branchId: number;
 }
 
 // Order status enum
@@ -54,7 +54,7 @@ export enum OrderStatus {
 
 // Order type
 export interface IOrder {
-  id: string;
+  id: number;
   items: IOrderItem[];
   total: number;
   status: OrderStatus;
@@ -65,7 +65,7 @@ export interface IOrder {
 
 // Order item type
 export interface IOrderItem {
-  id: string;
+  id: number;
   productId: string;
   quantity: number;
   price: number;

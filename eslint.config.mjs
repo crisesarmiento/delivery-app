@@ -37,6 +37,10 @@ export default [
       '**/*.mjs',
     ],
     // Override or add rules here
-    rules: {},
+    rules: {
+      'no-empty-function': 'off',
+      '@typescript-eslint/no-empty-function': 'off',
+      '@angular-eslint/no-empty-lifecycle-method': 'off',
+    },
   },
 ];

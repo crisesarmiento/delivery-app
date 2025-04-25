@@ -19,6 +19,7 @@ import ProductsHeaderWrapper from '@/components/ProductsHeaderWrapper';
 import ProductsContentWrapper from '@/components/ProductsContentWrapper';
 import ProductsSectionsContainer from '@/components/ProductsSections/ProductsSectionsContainer';
 import { useNav } from '@/context/navContext';
+import { useProducts } from '@/hooks/useProducts';
 
 const MemoizedProductsHeader = memo(ProductsHeader);
 const MemoizedCategoryTabs = memo(CategoryTabs);
@@ -28,7 +29,10 @@ const BranchProductsPage = () => {
   // --- Guarantee activeBranch is set ---
   const params = useParams();
   const router = useRouter();
-  const branchId = (params?.branchId as string) || '';
+  const branchId = Number(params?.branchId);
+
+  const { branchProducts, loading, error } = useProducts(branchId);
+
   const headerRef = useRef<HTMLDivElement>(null);
   const categoryTabsRef = useRef<HTMLDivElement>(null);
   const contentWrapperRef = useRef<HTMLDivElement>(null);
@@ -40,7 +44,7 @@ const BranchProductsPage = () => {
     setBranchId,
   } = useCart();
 
-  const { activeTab, setActiveTab, products, activeBranch } = useNav();
+  const { activeTab, setActiveTab, activeBranch } = useNav();
 
   const [isMobile, setIsMobile] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -50,7 +54,7 @@ const BranchProductsPage = () => {
   );
 
   useEffect(() => {
-    if (products.length > 0) {
+    if (branchProducts.length > 0) {
       const intervalId = setInterval(() => {
         setCurrentBranch((prev) =>
           prev ? { ...prev, isOpen: isBranchOpen(prev) } : undefined
@@ -59,7 +63,7 @@ const BranchProductsPage = () => {
       return () => clearInterval(intervalId);
     }
     return;
-  }, [branchId, products]);
+  }, [branchId, branchProducts]);
 
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
 
@@ -118,13 +122,13 @@ const BranchProductsPage = () => {
 
   const categories = useMemo(() => {
     const categoryList: string[] = [];
-    products.forEach((product: IProduct) => {
+    branchProducts.forEach((product: IProduct) => {
       const category = product.category;
       if (category && !categoryList.includes(category))
         categoryList.push(category);
     });
     return categoryList;
-  }, [products]);
+  }, [branchProducts]);
 
   useEffect(() => {
     if (!activeTab && categories.length > 0) {
@@ -251,7 +255,7 @@ const BranchProductsPage = () => {
       >
         <ProductsSectionsContainer
           categories={categories}
-          products={products}
+          products={branchProducts}
           searchQuery={searchQuery}
         />
         {isMobile && (
