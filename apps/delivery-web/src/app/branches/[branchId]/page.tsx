@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo, memo, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Text, Box, Flex, useMantineTheme } from '@mantine/core';
+import { Box, Flex } from '@mantine/core';
 import { products } from '../../../mocks/products.mock';
 import { branchesMock } from '../../../mocks/branches.mock';
 import { IBranch, IProduct } from '../../../types';
@@ -10,9 +10,6 @@ import styles from './page.module.css';
 import ProductsHeader from '@/components/Header/ProductsHeader';
 import CategoryTabs from '@/components/CategoryTabs/CategoryTabs';
 import MobileCartButton from '@/components/MobileCartButton/MobileCartButton';
-import CategorySection from '@/components/CategorySection';
-import ContentWrapper from '@/components/ContentWrapper';
-import { NO_PRODUCTS_AVAILABLE } from '@/constants/text';
 import {
   useCart,
   CartItem as CartContextItem,
@@ -21,15 +18,19 @@ import CartDrawer from '@/components/CartDrawer/CartDrawer';
 import { BRANCH_TEXTS, COMMON_TEXTS, ERROR_TEXTS } from '@/config/constants';
 import { isBranchOpen } from '@/utils/branch';
 import ProductsHeaderWrapper from '@/components/ProductsHeaderWrapper';
+import ProductsContentWrapper from '@/components/ProductsContentWrapper';
+import ProductsSectionsContainer from '@/components/ProductsSections/ProductsSectionsContainer';
+import { useNav } from '@/context/navContext';
 
 const MemoizedProductsHeader = memo(ProductsHeader);
 const MemoizedCategoryTabs = memo(CategoryTabs);
 const MemoizedCartDrawer = memo(CartDrawer);
 
 const BranchProductsPage = () => {
+  const headerRef = useRef<HTMLDivElement>(null);
+  const categoryTabsRef = useRef<HTMLDivElement>(null);
   const params = useParams();
   const router = useRouter();
-  const theme = useMantineTheme();
   const branchId = (params?.branchId as string) || '';
   const contentWrapperRef = useRef<HTMLDivElement>(null);
   const {
@@ -40,13 +41,12 @@ const BranchProductsPage = () => {
     setBranchId,
   } = useCart();
 
+  const { setActiveTab } = useNav();
+
   const [isMobile, setIsMobile] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState('promo');
   const [cartDrawerOpened, setCartDrawerOpened] = useState(true);
-  const [expandedSections, setExpandedSections] = useState<
-    Record<string, boolean>
-  >({});
+
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
 
   const categoriesHeight = 61;
@@ -59,10 +59,6 @@ const BranchProductsPage = () => {
     : isMobile
     ? 10
     : 35;
-
-  const totalCategoriesHeight = categoriesHeight + categoriesTopOffset;
-
-  const headerRef = useRef<HTMLDivElement>(null);
 
   function debounce(func: (...args: any[]) => void, wait: number) {
     let timeout: NodeJS.Timeout | null = null;
@@ -122,7 +118,18 @@ const BranchProductsPage = () => {
     }
   }, [currentBranch, branchId, router]);
 
-  const branchProducts = useMemo(() => products || [], []);
+  const allBranchProducts = useMemo(() => products || [], []);
+
+  const categories = useMemo(() => {
+    const categoryList: string[] = [];
+    allBranchProducts.forEach((product: IProduct) => {
+      const category = product.category;
+      if (category && !categoryList.includes(category))
+        categoryList.push(category);
+      setActiveTab(categoryList[0].toLowerCase());
+    });
+    return categoryList;
+  }, [allBranchProducts, setActiveTab]);
 
   useEffect(() => {
     if (branchId) setBranchId(branchId);
@@ -170,81 +177,33 @@ const BranchProductsPage = () => {
 
   const cartTotal = getTotalPrice();
 
-  const categories = useMemo(() => {
-    const categoryList = ['Promo'];
-    branchProducts.forEach((product: IProduct) => {
-      const category = product.category;
-      if (category && !categoryList.includes(category))
-        categoryList.push(category);
-    });
-    return categoryList;
-  }, [branchProducts]);
-
-  useEffect(() => {
-    const initialExpandedState = categories.reduce((acc, category) => {
-      acc[category.toLowerCase()] =
-        category.toLowerCase() === activeTab.toLowerCase();
-      return acc;
-    }, {} as Record<string, boolean>);
-    setExpandedSections(initialExpandedState);
-  }, [activeTab, categories]);
-
   const scrollToCategory = (category: string) => {
-    const sectionElement = document.getElementById(
-      `category-section-${category.toLowerCase()}`
-    );
-    const isFirstCategory =
-      category.toLowerCase() === categories[0].toLowerCase();
-    if (isFirstCategory) {
-      setIsHeaderCollapsed(false);
-      setSearchQuery('');
-    }
-    if (sectionElement) {
-      const offset = isFirstCategory ? 0 : categoriesHeight;
-      const position = Math.max(0, sectionElement.offsetTop - offset);
-      window.scrollTo({ top: position, behavior: 'smooth' });
-    } else if (isFirstCategory) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    setTimeout(() => {
+      const sectionElement = document.getElementById(
+        `category-section-${category.toLowerCase()}`
+      );
+      const isFirstCategory =
+        category.toLowerCase() === categories[0].toLowerCase();
+      const headerHeight = headerRef.current?.offsetHeight || 0;
+      const tabsHeight = categoryTabsRef.current?.offsetHeight || 0;
+      const offset = headerHeight + tabsHeight;
+
+      if (isFirstCategory) {
+        setSearchQuery('');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (sectionElement) {
+        const position = Math.max(0, sectionElement.offsetTop - offset);
+        window.scrollTo({ top: position, behavior: 'smooth' });
+      }
+    }, 0);
   };
 
   const handleTabChange = (value: string | null) => {
     if (value) {
       setActiveTab(value);
-      setExpandedSections((prev) => {
-        const newState = { ...prev };
-        Object.keys(newState).forEach((key) => {
-          newState[key] = key === value.toLowerCase();
-        });
-        return newState;
-      });
       scrollToCategory(value);
     }
   };
-
-  const handleSectionToggle = (category: string, isExpanded: boolean) => {
-    setExpandedSections((prev) => ({
-      ...prev,
-      [category.toLowerCase()]: isExpanded,
-    }));
-    if (isExpanded && activeTab !== category.toLowerCase()) {
-      setActiveTab(category.toLowerCase());
-    }
-  };
-
-  const productsByCategory = categories.reduce((acc, category) => {
-    const categoryProducts = branchProducts
-      .filter((product: IProduct) =>
-        category.toLowerCase() === 'promo'
-          ? product.category?.toLowerCase().includes('promo')
-          : product.category?.toLowerCase() === category.toLowerCase()
-      )
-      .filter((product: IProduct) =>
-        product.name?.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    if (categoryProducts.length > 0) acc[category] = categoryProducts;
-    return acc;
-  }, {} as Record<string, IProduct[]>);
 
   const openCartDrawer = useCallback(() => {
     if (isMobile) router.push(`/branches/${branchId}/cart`);
@@ -276,7 +235,6 @@ const BranchProductsPage = () => {
         categories={
           <MemoizedCategoryTabs
             categories={categories}
-            activeTab={activeTab}
             onTabChange={handleTabChange}
             top={
               isHeaderCollapsed
@@ -286,49 +244,15 @@ const BranchProductsPage = () => {
           />
         }
       />
-      <ContentWrapper
+      <ProductsContentWrapper
         ref={contentWrapperRef}
-        topOffset={categoriesHeight + totalCategoriesHeight}
+        topOffset={18 + categoriesHeight}
       >
-        <Box
-          className={styles.sectionsContainer}
-          style={{
-            flex: 1,
-            overflowX: 'hidden',
-            overflowY: 'auto',
-            zIndex: 10,
-          }}
-        >
-          {Object.keys(productsByCategory).length > 0 ? (
-            Object.entries(productsByCategory).map(([category, products]) => (
-              <Flex
-                key={category}
-                style={{ width: '100%', marginBottom: '11px' }}
-              >
-                <CategorySection
-                  title={category}
-                  products={products}
-                  onAddToCart={addToCart}
-                  isInitiallyExpanded={
-                    expandedSections[category.toLowerCase()] || false
-                  }
-                  onToggleExpand={(isExpanded) =>
-                    handleSectionToggle(category, isExpanded)
-                  }
-                />
-              </Flex>
-            ))
-          ) : (
-            <Text
-              ta="center"
-              fz={theme.fontSizes.lg}
-              c="dimmed"
-              style={{ padding: '40px 0' }}
-            >
-              {NO_PRODUCTS_AVAILABLE}
-            </Text>
-          )}
-        </Box>
+        <ProductsSectionsContainer
+          categories={categories}
+          products={allBranchProducts}
+          searchQuery={searchQuery}
+        />
         {isMobile && (
           <Box className={styles.cartButtonContainer}>
             <MobileCartButton
@@ -338,7 +262,7 @@ const BranchProductsPage = () => {
             />
           </Box>
         )}
-      </ContentWrapper>
+      </ProductsContentWrapper>
       {!isMobile && (
         <MemoizedCartDrawer
           opened={cartDrawerOpened}

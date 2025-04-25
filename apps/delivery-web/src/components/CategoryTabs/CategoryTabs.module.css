@@ -79,7 +79,7 @@
   background-color: #f0f3f6;
 }
 
-.tab[data-active] {
+.tab[dataActive] {
   background: #b3ff00;
   border-color: #b3ff00;
   color: #000000;

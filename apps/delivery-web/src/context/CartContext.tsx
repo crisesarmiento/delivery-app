@@ -9,7 +9,7 @@ import React, {
   useMemo,
   useCallback,
 } from 'react';
-import { IProduct } from '../types';
+import { IProduct } from '@/types';
 
 // Define cart item interface with product customizations
 export interface CartItem {
