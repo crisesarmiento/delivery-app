@@ -8,7 +8,6 @@ import styles from './CategorySection.module.css';
 interface CategorySectionProps {
   title: string;
   products: IProduct[];
-  onAddToCart: (product: IProduct, quantity: number) => void;
   isInitiallyExpanded?: boolean;
   onToggleExpand?: (isExpanded: boolean) => void;
   isDisabled?: boolean;
@@ -19,7 +18,6 @@ const CategorySection = memo(
   ({
     title,
     products,
-    onAddToCart,
     isInitiallyExpanded = false,
     onToggleExpand,
     isDisabled = false,

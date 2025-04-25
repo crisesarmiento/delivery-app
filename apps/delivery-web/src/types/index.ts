@@ -33,7 +33,7 @@ export interface IBranch {
 
 // Product type
 export interface IProduct {
-  id: string | number;
+  id: number;
   name: string;
   description?: string;
   price: number;
@@ -41,7 +41,7 @@ export interface IProduct {
   isAvailable: boolean;
   ingredients?: string;
   category?: string;
-  branchId: string;
+  branchId: number;
 }
 
 // Order status enum

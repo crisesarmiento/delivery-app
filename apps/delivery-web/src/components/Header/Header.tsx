@@ -249,10 +249,10 @@ const Header = ({
         style={{
           height:
             isHeaderCollapsed && isFiltering
-              ? '80px' // Reduced height when header is collapsed and filtering
+              ? '0' // Reduced height when header is collapsed and filtering
               : showClosedNotification
-              ? '323px' // 70px top header + 210px bottom header + 43px notification
-              : '280px', // 70px top header + 210px bottom header
+              ? '0'
+              : '0',
           transition: 'height 0.3s ease',
         }}
         data-testid="header-spacer"

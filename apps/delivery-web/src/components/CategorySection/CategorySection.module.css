@@ -1,7 +1,6 @@
 .categorySection {
   display: flex;
   flex-direction: column;
-  margin-top: 8px;
   width: 100%;
   margin-bottom: 8px;
   z-index: 99;

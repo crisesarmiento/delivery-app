@@ -2,7 +2,6 @@
 
 import { Box, Container, Text, useMantineTheme } from '@mantine/core';
 import BranchCard from '../components/BranchCard/BranchCard';
-import { branchesMock } from '../mocks/branches.mock';
 import Header from '../components/Header/Header';
 import ContentWrapper from '../components/ContentWrapper';
 import { useRouter } from 'next/navigation';
@@ -10,29 +9,57 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import { updateBranchesStatus } from '../utils/branch';
 import { normalizeText } from '../utils/string';
 import { BRANCH_TEXTS } from '../config/constants';
+import { useNav } from '@/context/navContext';
 
 export default function HomePage() {
   const router = useRouter();
-  const [branches, setBranches] = useState(branchesMock);
   const [searchValue, setSearchValue] = useState('');
   const theme = useMantineTheme();
   const [isMobile, setIsMobile] = useState(false);
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
   const prevScrollPosition = useRef(0);
 
-  // Add responsive check for mobile devices
+  const headerRef = useRef<HTMLDivElement>(null);
+
+  const headerHeight = isMobile ? 200 : 280;
+  const collapsedHeaderHeight = isMobile ? 40 : 70;
+
+  const topOffset = isHeaderCollapsed ? collapsedHeaderHeight : headerHeight;
+
+  const [headerActualHeight, setHeaderActualHeight] = useState(topOffset);
+  const { branches, setActiveBranch, setBranches } = useNav();
+
+  function debounce(func: (...args: any[]) => void, wait: number) {
+    let timeout: NodeJS.Timeout | null = null;
+    return function (...args: any[]) {
+      if (timeout) clearTimeout(timeout);
+      timeout = setTimeout(() => func(...args), wait);
+    };
+  }
+
   useEffect(() => {
-    const checkIsMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
+    const updateHeaderHeight = () => {
+      if (headerRef.current) {
+        const height = headerRef.current.getBoundingClientRect().height;
+        setHeaderActualHeight(height);
+      }
     };
 
-    // Check on initial load
+    updateHeaderHeight(); // Initial measurement
+    window.addEventListener('resize', updateHeaderHeight);
+    return () => window.removeEventListener('resize', updateHeaderHeight);
+  }, [isHeaderCollapsed]);
+
+  const handleHeaderStateChange = useRef((event: CustomEvent) => {
+    setIsHeaderCollapsed(event.detail.collapsed);
+  }).current;
+
+  useEffect(() => {
+    const checkIsMobile = debounce(() => {
+      setIsMobile(window.innerWidth <= 768);
+    }, 100);
     checkIsMobile();
-
-    // Set up an event listener for window resize
     window.addEventListener('resize', checkIsMobile);
-
-    // Clean up the event listener on component unmount
     return () => window.removeEventListener('resize', checkIsMobile);
   }, []);
 
@@ -50,10 +77,6 @@ export default function HomePage() {
 
   // Add event listener for header state change events
   useEffect(() => {
-    const handleHeaderStateChange = (event: CustomEvent) => {
-      setIsHeaderCollapsed(event.detail.collapsed);
-    };
-
     window.addEventListener(
       'header-state-change',
       handleHeaderStateChange as EventListener
@@ -64,21 +87,21 @@ export default function HomePage() {
         handleHeaderStateChange as EventListener
       );
     };
-  }, []);
+  }, [handleHeaderStateChange]);
 
   // Update branch open/closed status based on current time
   useEffect(() => {
-    const updatedBranches = updateBranchesStatus(branchesMock);
+    const updatedBranches = updateBranchesStatus(branches);
     setBranches(updatedBranches);
 
     // Set up an interval to check status every minute
     const intervalId = setInterval(() => {
-      const updatedBranches = updateBranchesStatus(branchesMock);
+      const updatedBranches = updateBranchesStatus(branches);
       setBranches(updatedBranches);
-    }, 60000); // 60 seconds
+    }, 6000); // 6 seconds
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [branches, setBranches]);
 
   // Check if any branches are closed
   const hasClosedBranches = useMemo(() => {
@@ -120,11 +143,7 @@ export default function HomePage() {
         isFiltering={isFiltering}
       />
 
-      <ContentWrapper
-        isHeaderCollapsed={isHeaderCollapsed}
-        headerHeight={0}
-        collapsedHeaderHeight={0}
-      >
+      <ContentWrapper topOffset={headerActualHeight}>
         <Container
           fluid
           px={0}
@@ -150,6 +169,7 @@ export default function HomePage() {
               maxWidth: '1440px',
               overflowX: 'hidden',
               overflowY: 'visible',
+              marginTop: isHeaderCollapsed && isFiltering ? 0 : 0,
             }}
           >
             {filteredBranches.length > 0 ? (
@@ -160,7 +180,10 @@ export default function HomePage() {
                     isMobile ? '230px' : '240px'
                   }, 1fr))`,
                   gap: theme.spacing.md,
-                  marginBottom: theme.spacing.lg,
+                  marginTop:
+                    isHeaderCollapsed && isFiltering
+                      ? 0 - headerActualHeight
+                      : 0,
                   width: '100%',
                   maxWidth: '100%',
                   justifyContent: 'center',
@@ -169,7 +192,7 @@ export default function HomePage() {
                   // Adjust top padding when filtering with collapsed header
                   paddingTop:
                     isHeaderCollapsed && isFiltering
-                      ? theme.spacing.xs
+                      ? 0 - headerActualHeight
                       : theme.spacing.md,
                 }}
               >
@@ -180,7 +203,6 @@ export default function HomePage() {
                       display: 'flex',
                       justifyContent: 'center',
                       alignItems: 'center',
-                      // Adjust top margin based on filtering state
                       marginTop:
                         isHeaderCollapsed && isFiltering
                           ? theme.spacing.xs
@@ -191,6 +213,7 @@ export default function HomePage() {
                     <BranchCard
                       branch={branch}
                       onClick={() => {
+                        setActiveBranch(branch);
                         router.push(`/branches/${branch.id}`);
                       }}
                     />

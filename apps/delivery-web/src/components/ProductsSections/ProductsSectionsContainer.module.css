@@ -1,0 +1,10 @@
+.sectionsContainer {
+    flex: 1;
+    position: sticky;
+    max-height: 100%;
+    background-color: #ffffff;
+    z-index: 99;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+  }
