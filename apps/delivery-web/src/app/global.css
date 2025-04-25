@@ -10,7 +10,7 @@ body {
   position: relative;
   margin: 0;
   padding: 0;
-  background-color: #ffffff;
+  background-color: #ffffff !important;
 }
 
 /* Comprehensive solution for all containers */

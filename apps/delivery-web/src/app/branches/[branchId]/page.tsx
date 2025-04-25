@@ -48,9 +48,8 @@ const BranchProductsPage = () => {
     Record<string, boolean>
   >({});
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
-  const categoriesRef = useRef<HTMLDivElement>(null);
-  const [categoriesHeight, setCategoriesHeight] = useState(61);
 
+  const categoriesHeight = 61;
   const headerHeight = isMobile ? 200 : 280;
   const collapsedHeaderHeight = isMobile ? 40 : 60;
   const categoriesTopOffset = isHeaderCollapsed
@@ -58,16 +57,12 @@ const BranchProductsPage = () => {
       ? 10
       : 25
     : isMobile
-    ? 12
+    ? 10
     : 35;
 
-  const headerRef = useRef<HTMLDivElement>(null);
-  const [headerActualHeight, setHeaderActualHeight] = useState(headerHeight);
+  const totalCategoriesHeight = categoriesHeight + categoriesTopOffset;
 
-  // Calculate the top offset for the content to start below both header and categories
-  const contentTopOffset =
-    (isHeaderCollapsed ? collapsedHeaderHeight : headerHeight) +
-    categoriesHeight;
+  const headerRef = useRef<HTMLDivElement>(null);
 
   function debounce(func: (...args: any[]) => void, wait: number) {
     let timeout: NodeJS.Timeout | null = null;
@@ -76,26 +71,6 @@ const BranchProductsPage = () => {
       timeout = setTimeout(() => func(...args), wait);
     };
   }
-
-  useEffect(() => {
-    if (categoriesRef.current) {
-      const height = categoriesRef.current.getBoundingClientRect().height;
-      setCategoriesHeight(height);
-    }
-  }, [isHeaderCollapsed]);
-
-  useEffect(() => {
-    const updateHeaderHeight = () => {
-      if (headerRef.current && categoriesRef.current) {
-        const headerHeight = headerRef.current.getBoundingClientRect().height;
-        const catsHeight = categoriesRef.current.getBoundingClientRect().height;
-        setHeaderActualHeight(headerHeight + catsHeight);
-      }
-    };
-    updateHeaderHeight();
-    window.addEventListener('resize', updateHeaderHeight);
-    return () => window.removeEventListener('resize', updateHeaderHeight);
-  }, [isHeaderCollapsed]);
 
   const handleHeaderStateChange = useRef((event: CustomEvent) => {
     setIsHeaderCollapsed(event.detail.collapsed);
@@ -225,7 +200,7 @@ const BranchProductsPage = () => {
       setSearchQuery('');
     }
     if (sectionElement) {
-      const offset = isFirstCategory ? 0 : contentTopOffset;
+      const offset = isFirstCategory ? 0 : categoriesHeight;
       const position = Math.max(0, sectionElement.offsetTop - offset);
       window.scrollTo({ top: position, behavior: 'smooth' });
     } else if (isFirstCategory) {
@@ -311,7 +286,10 @@ const BranchProductsPage = () => {
           />
         }
       />
-      <ContentWrapper ref={contentWrapperRef} topOffset={headerActualHeight}>
+      <ContentWrapper
+        ref={contentWrapperRef}
+        topOffset={categoriesHeight + totalCategoriesHeight}
+      >
         <Box
           className={styles.sectionsContainer}
           style={{
