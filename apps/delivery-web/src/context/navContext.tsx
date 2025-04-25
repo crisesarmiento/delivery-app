@@ -21,6 +21,7 @@ interface NavContextType {
   setExpandedSections: (sections: Record<string, boolean>) => void;
   branches: IBranch[];
   setBranches: (branches: IBranch[]) => void;
+  loading: boolean;
 }
 
 // Create the context with a default empty value
@@ -33,6 +34,7 @@ const NavContext = createContext<NavContextType>({
   setExpandedSections: (sections: Record<string, boolean>) => {},
   branches: [],
   setBranches: (branches: IBranch[]) => {},
+  loading: false,
 });
 
 // Custom hook to use the navigation context
@@ -55,17 +57,18 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
     allBranches,
     loading: branchesLoading,
     error: branchesError,
+    refetch,
   } = useBranches();
 
   const params = useParams();
 
-  const branchId = (params?.branchId as string) || '';
+  const branchId = params?.branchId ? Number(params.branchId) : null;
 
   useEffect(() => {
-    if (allBranches.length > 0) {
-      setBranches(allBranches);
-    }
-  }, [allBranches]);
+    refetch();
+    // Only run once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     setLoading(branchesLoading);
@@ -79,8 +82,8 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
   }, [allBranches, branchesLoading, branchesError]);
 
   useEffect(() => {
-    if (parseInt(branchId)) {
-      const found = branches.find((b) => b.id === parseInt(branchId));
+    if (branchId) {
+      const found = branches.find((b) => b.id === branchId);
       if (found) setActiveBranch(found);
     }
   }, [branchId, branches, setActiveBranch]);
@@ -108,6 +111,7 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
         setActiveBranch,
         branches,
         setBranches,
+        loading,
       }}
     >
       {children}

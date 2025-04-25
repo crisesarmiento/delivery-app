@@ -8,6 +8,7 @@ export const useBranches = () => {
   const [error, setError] = useState<string | null>(null);
   
   const fetchBranches = async () => {
+    ('[useBranches] fetchBranches called');
     if (allBranches.length > 0) return;
 
     setLoading(true);
@@ -16,14 +17,12 @@ export const useBranches = () => {
     try {
       // Make sure the mock data is valid
       if (!Array.isArray(branchesMock)) {
-        console.error('branchesMock is not an array:', branchesMock);
+        console.error('[useBranches] branchesMock is not an array:', branchesMock);
         setError('Error en formato de datos de sucursales');
         return;
       }
 
       const mockData: IBranch[] = branchesMock;
-
-      // Debug the data source
 
       // Simulate network delay
       await new Promise((resolve) => setTimeout(resolve, 1000))
@@ -54,7 +53,7 @@ export const useBranches = () => {
       }
     } catch (err) {
       setError('Error al obtener las sucursales');
-      console.error(err);
+      console.error('[useBranches] error', err);
     } finally {
       setLoading(false);
     }

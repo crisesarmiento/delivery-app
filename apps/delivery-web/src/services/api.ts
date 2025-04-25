@@ -1,5 +1,11 @@
 import { IApiResponse, IBranch, IOrder, IProduct, OrderStatus } from '../types';
-import { branches, orders, products } from '../mocks/data';
+import { branchesMock } from '../mocks/branches.mock';
+import { ordersMock } from '../mocks/orders.mock';
+import { products as productsMock } from '../mocks/products.mock';
+
+const branches = branchesMock;
+const products = productsMock;
+const orders = ordersMock;
 
 // Delay function to simulate network latency
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -28,7 +34,7 @@ async function fetchData<T>(url: string): Promise<IApiResponse<T>> {
     if (url === '/api/branches') {
       data = [...branches];
     } else if (url.startsWith('/api/branches/')) {
-      const branchId = url.split('/').pop();
+      const branchId = Number(url.split('/').pop());
       data = branches.find((branch) => branch.id === branchId);
       if (!data) {
         return {
@@ -38,10 +44,10 @@ async function fetchData<T>(url: string): Promise<IApiResponse<T>> {
         };
       }
     } else if (url.startsWith('/api/products?branchId=')) {
-      const branchId = url.split('=').pop();
+      const branchId = Number(url.split('=').pop());
       data = products.filter((product) => product.branchId === branchId);
     } else if (url.startsWith('/api/products/')) {
-      const productId = url.split('/').pop();
+      const productId = Number(url.split('/').pop());
       data = products.find((product) => product.id === productId);
       if (!data) {
         return {

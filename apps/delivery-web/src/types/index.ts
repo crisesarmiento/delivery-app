@@ -54,7 +54,7 @@ export enum OrderStatus {
 
 // Order type
 export interface IOrder {
-  id: number;
+  id: string;
   items: IOrderItem[];
   total: number;
   status: OrderStatus;
@@ -65,7 +65,7 @@ export interface IOrder {
 
 // Order item type
 export interface IOrderItem {
-  id: number;
+  id: string;
   productId: string;
   quantity: number;
   price: number;
