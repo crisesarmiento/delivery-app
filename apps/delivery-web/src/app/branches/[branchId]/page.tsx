@@ -1,69 +1,81 @@
+/**
+ * BranchProductsPage: Robust branch context/data flow
+ *
+ * - Loads all branches using useBranches (mock or API).
+ * - Sets activeBranch in context if it matches the branchId from the URL.
+ * - If the branch does not exist, renders BranchNotFoundError.
+ * - While loading branches, shows a centered Loader spinner.
+ * - Passes activeBranch as the branch prop to ProductsHeader and other components.
+ *
+ * This ensures:
+ * - Direct navigation, reloads, and bookmarks work.
+ * - Users see a clear error page for invalid branch IDs.
+ * - No unnecessary redirects or popups.
+ */
 'use client';
 
 import { useState, useEffect, useRef, useMemo, memo, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Box, Flex } from '@mantine/core';
-import { IBranch, IProduct } from '../../../types';
+import { IProduct } from '@/types';
 import styles from './page.module.css';
 import ProductsHeader from '@/components/Header/ProductsHeader';
 import CategoryTabs from '@/components/CategoryTabs/CategoryTabs';
 import MobileCartButton from '@/components/MobileCartButton/MobileCartButton';
-import {
-  useCart,
-  CartItem as CartContextItem,
-} from '../../../context/CartContext';
+import { useCart, CartItem as CartContextItem } from '@/context/CartContext';
 import CartDrawer from '@/components/CartDrawer/CartDrawer';
-import { BRANCH_TEXTS, COMMON_TEXTS, ERROR_TEXTS } from '@/config/constants';
-import { isBranchOpen } from '@/utils/branch';
+import { BRANCH_TEXTS, ERROR_TEXTS } from '@/config/constants';
+import BranchNotFoundError from '@/components/ErrorScreen/BranchNotFoundError';
+import { Loader, Center } from '@mantine/core';
 import ProductsHeaderWrapper from '@/components/ProductsHeaderWrapper';
 import ProductsContentWrapper from '@/components/ProductsContentWrapper';
 import ProductsSectionsContainer from '@/components/ProductsSections/ProductsSectionsContainer';
 import { useNav } from '@/context/navContext';
 import { useProducts } from '@/hooks/useProducts';
+import { isBranchOpen } from '@/utils/branch';
 
 const MemoizedProductsHeader = memo(ProductsHeader);
 const MemoizedCategoryTabs = memo(CategoryTabs);
 const MemoizedCartDrawer = memo(CartDrawer);
 
 const BranchProductsPage = () => {
-  // --- Guarantee activeBranch is set ---
   const params = useParams();
   const router = useRouter();
+  const { activeTab, setActiveTab, activeBranch, setActiveBranch, branches } =
+    useNav();
+
   const branchId = Number(params?.branchId);
+  const isValidBranch = branches.some((b) => b.id === branchId);
 
-  const { branchProducts, loading, error } = useProducts(branchId);
+  useEffect(() => {
+    if (isValidBranch) {
+      const branch = branches.find((b) => b.id === branchId);
+      setActiveBranch(branch);
+    }
+  }, [branchId, branches, setActiveBranch, isValidBranch]);
 
-  const headerRef = useRef<HTMLDivElement>(null);
-  const categoryTabsRef = useRef<HTMLDivElement>(null);
-  const contentWrapperRef = useRef<HTMLDivElement>(null);
+  const { branchProducts, loading, error } = useProducts(activeBranch?.id);
+
   const {
     items: cartContextItems,
     addToCart: addToCartContext,
     getTotalPrice,
     clearCart,
-    setBranchId,
   } = useCart();
 
-  const { activeTab, setActiveTab, activeBranch } = useNav();
+  const headerRef = useRef<HTMLDivElement>(null);
+  const categoryTabsRef = useRef<HTMLDivElement>(null);
+  const contentWrapperRef = useRef<HTMLDivElement>(null);
 
   const [isMobile, setIsMobile] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [cartDrawerOpened, setCartDrawerOpened] = useState(true);
-  const [currentBranch, setCurrentBranch] = useState<IBranch | undefined>(
-    activeBranch?.id === branchId ? activeBranch : undefined
-  );
+  const [cartDrawerOpened, setCartDrawerOpened] = useState(false);
 
+  const [now, setNow] = useState(() => new Date());
   useEffect(() => {
-    if (branchProducts.length > 0) {
-      const intervalId = setInterval(() => {
-        setCurrentBranch((prev) =>
-          prev ? { ...prev, isOpen: isBranchOpen(prev) } : undefined
-        );
-      }, 60000);
-      return () => clearInterval(intervalId);
-    }
-    return;
-  }, [branchId, branchProducts]);
+    const interval = setInterval(() => setNow(new Date()), 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
 
@@ -111,15 +123,6 @@ const BranchProductsPage = () => {
       );
   }, [handleHeaderStateChange]);
 
-  useEffect(() => {
-    if (!currentBranch && branchId) {
-      alert(COMMON_TEXTS.BRANCH_NOT_FOUND);
-      router.push('/branches');
-    }
-  }, [currentBranch, branchId, router]);
-
-  // allBranchProducts now comes from the useProducts hook above
-
   const categories = useMemo(() => {
     const categoryList: string[] = [];
     branchProducts.forEach((product: IProduct) => {
@@ -136,10 +139,6 @@ const BranchProductsPage = () => {
     }
   }, [activeTab, categories, setActiveTab]);
 
-  useEffect(() => {
-    if (branchId) setBranchId(branchId);
-  }, [branchId, setBranchId]);
-
   const handleBack = useCallback(() => {
     clearCart();
     router.push('/');
@@ -151,7 +150,7 @@ const BranchProductsPage = () => {
 
   const addToCart = useCallback(
     (product: IProduct, quantity: number) => {
-      if (currentBranch && !currentBranch.isOpen) {
+      if (activeBranch && !activeBranch.isOpen) {
         alert(BRANCH_TEXTS.BRANCH_CLOSED_ALERT);
         return;
       }
@@ -170,8 +169,30 @@ const BranchProductsPage = () => {
       addToCartContext(cartItem);
       setCartDrawerOpened(true);
     },
-    [currentBranch, addToCartContext]
+    [activeBranch, addToCartContext]
   );
+
+  const openCartDrawer = useCallback(() => {
+    if (isMobile) router.push(`/branches/${branchId}/cart`);
+    else setCartDrawerOpened(true);
+  }, [isMobile, router, branchId]);
+
+  const handleCloseCartDrawer = useCallback(() => {
+    setCartDrawerOpened(false);
+  }, []);
+
+  // Compute isClosed only when activeBranch or now changes
+  const isClosed = useMemo(() => {
+    return activeBranch ? !isBranchOpen(activeBranch, now) : false;
+  }, [activeBranch, now]);
+
+  if (loading) {
+    return (
+      <Center style={{ minHeight: '50vh' }}>
+        <Loader size="lg" />
+      </Center>
+    );
+  }
 
   const cartItems = cartContextItems.map((item) => ({
     productId: String(item.product.id),
@@ -210,16 +231,7 @@ const BranchProductsPage = () => {
     }
   };
 
-  const openCartDrawer = useCallback(() => {
-    if (isMobile) router.push(`/branches/${branchId}/cart`);
-    else setCartDrawerOpened(true);
-  }, [isMobile, router, branchId]);
-
-  const handleCloseCartDrawer = useCallback(() => {
-    setCartDrawerOpened(false);
-  }, []);
-
-  return (
+  return activeBranch ? (
     <Flex direction="column" className={styles.productPageContainer}>
       <ProductsHeaderWrapper
         isHeaderCollapsed={isHeaderCollapsed}
@@ -228,11 +240,11 @@ const BranchProductsPage = () => {
         header={
           <MemoizedProductsHeader
             ref={headerRef}
-            branch={currentBranch as IBranch}
+            branch={activeBranch}
             onBackClick={handleBack}
             searchValue={searchQuery}
             onSearchChange={handleSearchChange}
-            isClosed={currentBranch ? !currentBranch.isOpen : false}
+            isClosed={isClosed}
             closedMessage={BRANCH_TEXTS.BRANCH_CLOSED}
             isFiltering={searchQuery.length > 0}
           />
@@ -278,6 +290,8 @@ const BranchProductsPage = () => {
         />
       )}
     </Flex>
+  ) : (
+    <BranchNotFoundError />
   );
 };
 
