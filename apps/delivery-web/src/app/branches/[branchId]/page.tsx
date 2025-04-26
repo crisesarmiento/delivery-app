@@ -23,7 +23,7 @@ import ProductsHeader from '@/components/Header/ProductsHeader';
 import CategoryTabs from '@/components/CategoryTabs/CategoryTabs';
 import MobileCartButton from '@/components/MobileCartButton/MobileCartButton';
 import { useCart, CartItem as CartContextItem } from '@/context/CartContext';
-import CartDrawer from '@/components/CartDrawer/CartDrawer';
+import CartDrawerContainer from '@/components/CartDrawer/CartDrawerContainer';
 import { BRANCH_TEXTS, ERROR_TEXTS } from '@/config/constants';
 import BranchNotFoundError from '@/components/ErrorScreen/BranchNotFoundError';
 import { Loader, Center } from '@mantine/core';
@@ -37,7 +37,7 @@ import { isBranchOpen } from '@/utils/branch';
 
 const MemoizedProductsHeader = memo(ProductsHeader);
 const MemoizedCategoryTabs = memo(CategoryTabs);
-const MemoizedCartDrawer = memo(CartDrawer);
+const MemoizedCartDrawerContainer = memo(CartDrawerContainer);
 
 const BranchProductsPage = () => {
   // --- AddToCartModal and CartDrawer state ---
@@ -47,18 +47,6 @@ const BranchProductsPage = () => {
   const handleProductClick = (product: IProduct) => {
     setSelectedProduct(product);
     setAddToCartModalOpened(true);
-  };
-
-  const handleAddToCart = (quantity: number, cartItem?: CartContextItem) => {
-    if (selectedProduct) {
-      addToCartContext({
-        product: selectedProduct,
-        quantity,
-        ...cartItem,
-      });
-      setAddToCartModalOpened(false);
-      if (!isMobile) openCartDrawer();
-    }
   };
 
   const params = useParams();
@@ -91,7 +79,6 @@ const BranchProductsPage = () => {
 
   const [isMobile, setIsMobile] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [cartDrawerOpened, setCartDrawerOpened] = useState(false);
 
   const [now, setNow] = useState(() => new Date());
   useEffect(() => {
@@ -189,19 +176,14 @@ const BranchProductsPage = () => {
         quantity,
       };
       addToCartContext(cartItem);
-      setCartDrawerOpened(true);
+      setTimeout(() => setSelectedProduct(null), 200);
     },
     [activeBranch, addToCartContext]
   );
 
   const openCartDrawer = useCallback(() => {
     if (isMobile) router.push(`/branches/${branchId}/cart`);
-    else setCartDrawerOpened(true);
   }, [isMobile, router, branchId]);
-
-  const handleCloseCartDrawer = useCallback(() => {
-    setCartDrawerOpened(false);
-  }, []);
 
   // Compute isClosed only when activeBranch or now changes
   const isClosed = useMemo(() => {
@@ -253,22 +235,19 @@ const BranchProductsPage = () => {
     }
   };
 
+  const handleOnClose = () => {
+    setAddToCartModalOpened(false);
+    setTimeout(() => setSelectedProduct(null), 200);
+  };
+
   return activeBranch ? (
     <>
       {selectedProduct && (
         <AddToCartModal
           product={selectedProduct}
           opened={addToCartModalOpened}
-          onClose={() => {
-            setAddToCartModalOpened(false);
-            // Optionally clear selectedProduct after a short delay
-            setTimeout(() => setSelectedProduct(null), 200);
-          }}
-          onAddToCart={(...args) => {
-            handleAddToCart(...args);
-            setAddToCartModalOpened(false);
-            setTimeout(() => setSelectedProduct(null), 200);
-          }}
+          onClose={handleOnClose}
+          onAddToCart={(quantity) => addToCart(selectedProduct, quantity)}
         />
       )}
       <Flex direction="column" className={styles.productPageContainer}>
@@ -320,13 +299,7 @@ const BranchProductsPage = () => {
             </Box>
           )}
         </ProductsContentWrapper>
-        {!isMobile && (
-          <MemoizedCartDrawer
-            opened={cartDrawerOpened}
-            onClose={handleCloseCartDrawer}
-            isMobile={false}
-          />
-        )}
+        {<MemoizedCartDrawerContainer isMobile={isMobile} />}
       </Flex>
     </>
   ) : loading ? (

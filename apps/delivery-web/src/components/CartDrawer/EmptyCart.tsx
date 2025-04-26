@@ -6,14 +6,12 @@ import { CART_TEXTS } from '../../config/constants';
 import { useEffect, useState } from 'react';
 
 interface EmptyCartProps {
-  isVisible: boolean;
   isMobile?: boolean;
   isHeaderCollapsed?: boolean;
   headerOffset?: number;
 }
 
 const EmptyCart = ({
-  isVisible,
   isMobile = false,
   isHeaderCollapsed = false,
   headerOffset = 0,
@@ -53,7 +51,7 @@ const EmptyCart = ({
         position: 'fixed',
         top: topPosition,
         transform: `translateY(-${headerOffset}px)`,
-        right: isVisible ? rightPosition : '-240px',
+        right: isMobile ? '80px' : '-240px',
         width: '200px',
         height: '242px',
         backgroundColor: '#FFFFFF',

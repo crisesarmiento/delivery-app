@@ -1,76 +1,7 @@
-import { IProduct } from '@/types';
+import { IProductWithCustomization } from '@/types';
+import { condiments } from '@/types';
+import { productCategories } from '@/types/enums';
 
-// Define types for product customizations
-export interface IIngredientOption {
-  id: number;
-  name: string;
-  price?: number;
-  default: boolean;
-}
-
-export interface ICondimentOption {
-  [key: string]: {
-    name: string;
-    default: boolean;
-  };
-}
-
-export interface IProductCustomization {
-  ingredientOptions: IIngredientOption[];
-  condimentOptions: ICondimentOption;
-  maxIngredientSelections?: number;
-  maxCondimentSelections?: number;
-}
-
-// Extended product type with customization options
-export interface IProductWithCustomization extends IProduct {
-  customization: IProductCustomization;
-}
-
-// Product categories
-export const productCategories = {
-  1: 'Promo 33',
-  2: 'Burgers',
-  3: 'Bebidas',
-  4: 'Postres',
-  5: 'Lomos & Sandwiches XL',
-  6: 'Lomos Medianos',
-  7: 'Wraps',
-  8: 'Bebidas',
-  9: 'Cazuelas',
-  10: 'Papas & Snacks',
-  11: 'Ensalada',
-  12: 'Menu Infantil',
-  13: 'Chimichurri',
-};
-
-// Common condiment options
-const condiments: ICondimentOption = {
-  Mayonesa: {
-    name: 'Mayonesa',
-    default: true,
-  },
-  Ketchup: {
-    name: 'Ketchup',
-    default: false,
-  },
-  Mostaza: {
-    name: 'Mostaza',
-    default: false,
-  },
-  BBQ: {
-    name: 'BBQ',
-    default: false,
-  },
-  Chimichurri: {
-    name: 'Chimichurri',
-    default: false,
-  },
-  'Salsa picante': {
-    name: 'Salsa picante',
-    default: false,
-  },
-};
 
 // Mock data for products with customization options
 export const products: IProductWithCustomization[] = [
@@ -83,7 +14,7 @@ export const products: IProductWithCustomization[] = [
     imageUrl: '/images/products/Cheese Burger 2 1.jpg',
     isAvailable: true,
     ingredients: 'Carne de res, pan artesanal, lechuga, tomate, queso cheddar',
-    category: productCategories[2],
+    category: productCategories.Burgers,
     customization: {
       ingredientOptions: [
         { id: 1, name: 'Extra Queso', default: false, price: 600 },
@@ -108,7 +39,7 @@ export const products: IProductWithCustomization[] = [
     isAvailable: true,
     ingredients:
       'Carne de res, pan artesanal, bacon, queso, cebolla caramelizada',
-    category: productCategories[2],
+    category: productCategories.Burgers,
     customization: {
       ingredientOptions: [
         { id: 1, name: 'Extra Queso', default: false, price: 600 },
@@ -132,7 +63,7 @@ export const products: IProductWithCustomization[] = [
     imageUrl: '/images/products/Burger Champi 2 1.jpg',
     isAvailable: true,
     ingredients: 'Medallón de lentejas, pan artesanal, lechuga, tomate, queso',
-    category: productCategories[2],
+    category: productCategories.Burgers,
     customization: {
       ingredientOptions: [
         { id: 1, name: 'Lechuga', default: true },
@@ -157,7 +88,7 @@ export const products: IProductWithCustomization[] = [
     isAvailable: true,
     ingredients:
       'Hamburguesa con salsa BBQ, bacon, cebolla, papas fritas y bebida a elección',
-    category: productCategories[1],
+    category: productCategories.Promo,
     customization: {
       ingredientOptions: [
         { id: 1, name: 'Extra Queso', default: false, price: 600 },
@@ -181,7 +112,7 @@ export const products: IProductWithCustomization[] = [
     imageUrl: '/images/products/Papas con Mayo y Chimi 2 1.jpg',
     isAvailable: true,
     ingredients: 'Papas, sal',
-    category: productCategories[10],
+    category: productCategories.FriesSnacks,
     customization: {
       ingredientOptions: [
         { id: 1, name: 'Sal', default: true },
@@ -203,7 +134,7 @@ export const products: IProductWithCustomization[] = [
     isAvailable: true,
     ingredients:
       'Pan de lomo, bife de pollo, mayo chimi, lechuga, tomate, jamón, queso, huevo, toque de chimi (opcional) + papas',
-    category: productCategories[5],
+    category: productCategories.LomoCompleto,
     customization: {
       ingredientOptions: [
         { id: 1, name: 'Extra Queso', default: false, price: 600 },
@@ -227,7 +158,7 @@ export const products: IProductWithCustomization[] = [
     isAvailable: true,
     ingredients:
       'Pan de lomo, bife de pollo, mayo chimi, lechuga, tomate, jamón, queso, huevo, toque de chimi (opcional) + papas',
-    category: productCategories[5],
+    category: productCategories.LomoCompleto,
     customization: {
       ingredientOptions: [
         { id: 1, name: 'Extra Queso', default: false, price: 600 },
@@ -252,7 +183,7 @@ export const products: IProductWithCustomization[] = [
     isAvailable: true,
     ingredients:
       'Pan de lomo, bife de pollo, mayo chimi, lechuga, tomate, jamón, queso, huevo, toque de chimi (opcional) + papas',
-    category: productCategories[5],
+    category: productCategories.LomoMediano,
     customization: {
       ingredientOptions: [
         { id: 1, name: 'Lechuga', default: true },
@@ -274,7 +205,7 @@ export const products: IProductWithCustomization[] = [
     imageUrl: '/images/products/Burger Doble 2 1.jpg',
     isAvailable: true,
     ingredients: 'Doble carne, pan artesanal, doble queso cheddar',
-    category: productCategories[2],
+    category: productCategories.Burgers,
     customization: {
       ingredientOptions: [
         { id: 1, name: 'Extra Queso', default: false, price: 600 },
@@ -298,7 +229,7 @@ export const products: IProductWithCustomization[] = [
     isAvailable: true,
     ingredients:
       'Carne, pan artesanal, salsa BBQ, cebolla crispy, queso cheddar',
-    category: productCategories[2],
+    category: productCategories.Burgers,
     customization: {
       ingredientOptions: [
         { id: 1, name: 'Extra Queso', default: false, price: 600 },
@@ -321,7 +252,7 @@ export const products: IProductWithCustomization[] = [
     imageUrl: '/images/products/Burger Blue Cheese 2 1.jpg',
     isAvailable: true,
     ingredients: 'Carne, pan artesanal, queso azul, rúcula',
-    category: productCategories[2],
+    category: productCategories.Burgers,
     customization: {
       ingredientOptions: [
         { id: 1, name: 'Extra Queso', default: false, price: 600 },
@@ -344,7 +275,7 @@ export const products: IProductWithCustomization[] = [
     imageUrl: '/images/products/Promo Para Compartir Lomos 2 1.jpg',
     isAvailable: true,
     ingredients: '2 lomos completos, papas grandes, 2 bebidas',
-    category: productCategories[1],
+    category: productCategories.Promo,
     customization: {
       ingredientOptions: [
         { id: 1, name: 'Extra Queso', default: false, price: 600 },
@@ -365,7 +296,7 @@ export const products: IProductWithCustomization[] = [
     imageUrl: '/images/products/Helado-de-Vainilla.jpg',
     isAvailable: true,
     ingredients: 'Leche, azúcar, vainilla',
-    category: productCategories[4],
+    category: productCategories.Postres,
     customization: {
       ingredientOptions: [
         { id: 1, name: 'Extra Queso', default: false, price: 600 },
@@ -388,7 +319,7 @@ export const products: IProductWithCustomization[] = [
     imageUrl: '/images/products/Wrap-de-Pollo.jpg',
     isAvailable: true,
     ingredients: 'Tortilla, pollo a la parrilla, lechuga, tomate, salsa',
-    category: productCategories[7],
+    category: productCategories.Wraps,
     customization: {
       ingredientOptions: [
         { id: 1, name: 'Salsa Especial', default: false, price: 200 },
@@ -407,7 +338,7 @@ export const products: IProductWithCustomization[] = [
     imageUrl: '/images/products/Cazuela-de-Mariscos.jpg',
     isAvailable: true,
     ingredients: 'Mariscos, caldo, vegetales, especias',
-    category: productCategories[9],
+    category: productCategories.Cazuelas,
     customization: {
       ingredientOptions: [
         { id: 1, name: 'Extra Mariscos', default: false, price: 500 },
@@ -426,7 +357,7 @@ export const products: IProductWithCustomization[] = [
     imageUrl: '/images/products/Alitas-con-Chimichurri.jpg',
     isAvailable: true,
     ingredients: 'Alitas de pollo, salsa chimichurri',
-    category: productCategories[13],
+    category: productCategories.Chimichurri,
     customization: {
       ingredientOptions: [
         { id: 1, name: 'Salsa extra chimichurri', default: false, price: 300 },
@@ -445,7 +376,7 @@ export const products: IProductWithCustomization[] = [
     imageUrl: '/images/products/Lomo Mediano 1.jpg',
     isAvailable: true,
     ingredients: 'Pan de lomo, carne, lechuga, tomate, mayonesa',
-    category: productCategories[6],
+    category: productCategories.LomoMediano,
     customization: {
       ingredientOptions: [
         { id: 1, name: 'Extra Queso', default: false, price: 300 },
@@ -466,7 +397,7 @@ export const products: IProductWithCustomization[] = [
     isAvailable: true,
     ingredients:
       'Tortilla, pollo sazonado, pimientos, verduras, salsa especial',
-    category: productCategories[7],
+    category: productCategories.Wraps,
     customization: {
       ingredientOptions: [
         { id: 1, name: 'Extra Pollo', default: false, price: 400 },
@@ -486,7 +417,7 @@ export const products: IProductWithCustomization[] = [
     imageUrl: '/images/products/Wraps 1.jpg',
     isAvailable: true,
     ingredients: 'Tortilla, mix de verduras, pimientos, zanahoria, espinaca',
-    category: productCategories[7],
+    category: productCategories.Wraps,
     customization: {
       ingredientOptions: [
         { id: 1, name: 'Queso vegano', default: false, price: 350 },
@@ -506,7 +437,7 @@ export const products: IProductWithCustomization[] = [
     imageUrl: '/images/products/Cerveza.jpg',
     isAvailable: true,
     ingredients: 'Agua, malta, lúpulo',
-    category: productCategories[8],
+    category: productCategories.Bebidas,
     customization: {
       ingredientOptions: [],
       condimentOptions: {},
@@ -523,7 +454,7 @@ export const products: IProductWithCustomization[] = [
     imageUrl: '/images/products/Sprite.jpg',
     isAvailable: true,
     ingredients: 'Agua carbonatada, azúcar, saborizantes',
-    category: productCategories[8],
+    category: productCategories.Bebidas,
     customization: {
       ingredientOptions: [],
       condimentOptions: {},
@@ -540,7 +471,7 @@ export const products: IProductWithCustomization[] = [
     imageUrl: '/images/products/Coca Cola.jpg',
     isAvailable: true,
     ingredients: 'Agua carbonatada, azúcar, extracto de cola',
-    category: productCategories[8],
+    category: productCategories.Bebidas,
     customization: {
       ingredientOptions: [],
       condimentOptions: {},
@@ -557,7 +488,7 @@ export const products: IProductWithCustomization[] = [
     imageUrl: '/images/products/Cazuelas 1.jpg',
     isAvailable: true,
     ingredients: 'Carne, caldo, verduras, especias',
-    category: productCategories[9],
+    category: productCategories.Cazuelas,
     customization: {
       ingredientOptions: [
         { id: 1, name: 'Extra Carne', default: false, price: 500 },
@@ -576,7 +507,7 @@ export const products: IProductWithCustomization[] = [
     imageUrl: '/images/products/Papas & Snacks 1.jpg',
     isAvailable: true,
     ingredients: 'Papas, queso cheddar, especias',
-    category: productCategories[10],
+    category: productCategories.FriesSnacks,
     customization: {
       ingredientOptions: [
         { id: 1, name: 'Bacon', default: false, price: 400 },
@@ -596,7 +527,7 @@ export const products: IProductWithCustomization[] = [
     imageUrl: '/images/products/Chicken Nuggets.jpg',
     isAvailable: true,
     ingredients: 'Pollo rebozado, especias',
-    category: productCategories[10],
+    category: productCategories.FriesSnacks,
     customization: {
       ingredientOptions: [],
       condimentOptions: condiments,
@@ -613,7 +544,7 @@ export const products: IProductWithCustomization[] = [
     imageUrl: '/images/products/Ensalada 1.jpg',
     isAvailable: true,
     ingredients: 'Lechuga, rúcula, espinaca, tomates cherry, aderezo',
-    category: productCategories[11],
+    category: productCategories.Ensalada,
     customization: {
       ingredientOptions: [
         { id: 1, name: 'Queso Parmesano', default: false, price: 200 },
@@ -634,7 +565,7 @@ export const products: IProductWithCustomization[] = [
     imageUrl: '/images/products/Ensalada de Quinoa y Calabaza.jpg',
     isAvailable: true,
     ingredients: 'Quinoa, tomate, palta, pepino, cebolla morada, vinagreta',
-    category: productCategories[11],
+    category: productCategories.Ensalada,
     customization: {
       ingredientOptions: [
         { id: 1, name: 'Pollo Grillado', default: false, price: 400 },
@@ -654,7 +585,7 @@ export const products: IProductWithCustomization[] = [
     imageUrl: '/images/products/Infantil Nuggets.jpg',
     isAvailable: true,
     ingredients: 'Nuggets de pollo, papas fritas, salsa ketchup, jugo',
-    category: productCategories[12],
+    category: productCategories.Infantil,
     customization: {
       ingredientOptions: [],
       condimentOptions: condiments,
@@ -671,7 +602,7 @@ export const products: IProductWithCustomization[] = [
     imageUrl: '/images/products/Chimichurri.jpg',
     isAvailable: true,
     ingredients: 'Perejil, ajo, aceite de oliva, vinagre, orégano, ají molido',
-    category: productCategories[13],
+    category: productCategories.Chimichurri,
     customization: {
       ingredientOptions: [
         { id: 1, name: 'Extra Picante', default: false, price: 0 },
@@ -691,7 +622,7 @@ export const products: IProductWithCustomization[] = [
     imageUrl: '/images/products/Lomo Mediano 2.jpg',
     isAvailable: true,
     ingredients: 'Pan de lomo, carne, lechuga, tomate, queso, huevo, especias',
-    category: productCategories[6],
+    category: productCategories.LomoMediano,
     customization: {
       ingredientOptions: [
         { id: 1, name: 'Extra Queso', default: false, price: 350 },
@@ -712,7 +643,7 @@ export const products: IProductWithCustomization[] = [
     isAvailable: true,
     ingredients:
       'Tortilla, mix de vegetales, pimientos, cebolla, aderezo especial',
-    category: productCategories[7],
+    category: productCategories.Wraps,
     customization: {
       ingredientOptions: [
         { id: 1, name: 'Queso', default: false, price: 300 },
@@ -732,7 +663,7 @@ export const products: IProductWithCustomization[] = [
     imageUrl: '/images/products/Wraps 3.jpg',
     isAvailable: true,
     ingredients: 'Tortilla, carne de res, lechuga, tomate, cebolla, aderezo',
-    category: productCategories[7],
+    category: productCategories.Wraps,
     customization: {
       ingredientOptions: [
         { id: 1, name: 'Extra Carne', default: false, price: 450 },
@@ -752,7 +683,7 @@ export const products: IProductWithCustomization[] = [
     imageUrl: '/images/products/Wraps 4.jpg',
     isAvailable: true,
     ingredients: 'Tortilla, carne, pollo, vegetales, salsa especial',
-    category: productCategories[7],
+    category: productCategories.Wraps,
     customization: {
       ingredientOptions: [
         { id: 1, name: 'Extra Proteína', default: false, price: 450 },
@@ -772,7 +703,7 @@ export const products: IProductWithCustomization[] = [
     imageUrl: '/images/products/Cazuelas 2.jpg',
     isAvailable: true,
     ingredients: 'Carne, pollo, mariscos, verduras, caldo, especias',
-    category: productCategories[9],
+    category: productCategories.Cazuelas,
     customization: {
       ingredientOptions: [
         { id: 1, name: 'Extra Mariscos', default: false, price: 600 },
@@ -791,7 +722,7 @@ export const products: IProductWithCustomization[] = [
     imageUrl: '/images/products/Papas & Snacks 2.jpg',
     isAvailable: true,
     ingredients: 'Papas fritas, nuggets, aros de cebolla, salsas',
-    category: productCategories[10],
+    category: productCategories.FriesSnacks,
     customization: {
       ingredientOptions: [
         { id: 1, name: 'Extra Salsa', default: false, price: 250 },
@@ -811,7 +742,7 @@ export const products: IProductWithCustomization[] = [
     isAvailable: true,
     ingredients:
       'Lechuga romana, crutones, queso parmesano, pollo, aderezo césar',
-    category: productCategories[11],
+    category: productCategories.Ensalada,
     customization: {
       ingredientOptions: [
         { id: 1, name: 'Extra Pollo', default: false, price: 400 },
@@ -831,7 +762,7 @@ export const products: IProductWithCustomization[] = [
     imageUrl: '/images/products/Ensalada Primavera.jpg',
     isAvailable: true,
     ingredients: 'Mix de verdes, tomate cherry, zanahoria, pepino, vinagreta',
-    category: productCategories[11],
+    category: productCategories.Ensalada,
     customization: {
       ingredientOptions: [
         { id: 1, name: 'Pollo', default: false, price: 400 },
@@ -851,7 +782,7 @@ export const products: IProductWithCustomization[] = [
     imageUrl: '/images/products/Burger Infantil.jpg',
     isAvailable: true,
     ingredients: 'Mini hamburguesa, pan, queso, papas fritas, jugo',
-    category: productCategories[12],
+    category: productCategories.Infantil,
     customization: {
       ingredientOptions: [
         { id: 1, name: 'Extra Queso', default: false, price: 200 },
@@ -870,7 +801,7 @@ export const products: IProductWithCustomization[] = [
     imageUrl: '/images/products/Jugo-de-Naranja.jpg',
     isAvailable: true,
     ingredients: 'Naranjas frescas',
-    category: productCategories[8],
+    category: productCategories.Bebidas,
     customization: {
       ingredientOptions: [],
       condimentOptions: {},
@@ -879,29 +810,5 @@ export const products: IProductWithCustomization[] = [
     },
   },
 ];
-
-// Helper function to get products by category
-export const getProductsByCategory = (
-  category: string
-): IProductWithCustomization[] => {
-  return products.filter((product) => product.category === category);
-};
-
-// Helper function to get a product by ID
-export const getProductById = (
-  id: string | number
-): IProductWithCustomization | undefined => {
-  // Convert ID to string for comparison
-  const stringId = String(id);
-
-  // Find the product
-  const product = products.find((product) => String(product.id) === stringId);
-
-  if (!product) {
-    console.warn(`Product with ID ${stringId} not found`);
-  }
-
-  return product;
-};
 
 export default products;

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { IOrder, IApiResponse, OrderStatus } from '@/types';
+import { IOrder, IApiResponse } from '@/types';
+import { OrderStatus } from '@/types/enums';
 import { ordersMock } from '@/mocks/orders.mock';
 
 export const useOrders = (userId?: string) => {

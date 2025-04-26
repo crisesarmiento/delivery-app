@@ -1,4 +1,60 @@
-// Basic types for the Smarty delivery web app
+import {OrderStatus } from './enums';
+
+// Define types for product customizations
+export interface IIngredientOption {
+  id: number;
+  name: string;
+  price?: number;
+  default: boolean;
+}
+
+export interface ICondimentOption {
+  [key: string]: {
+    name: string;
+    default: boolean;
+  };
+}
+
+
+// Common condiment options
+export const condiments: ICondimentOption = {
+  Mayonesa: {
+    name: 'Mayonesa',
+    default: true,
+  },
+  Ketchup: {
+    name: 'Ketchup',
+    default: false,
+  },
+  Mostaza: {
+    name: 'Mostaza',
+    default: false,
+  },
+  BBQ: {
+    name: 'BBQ',
+    default: false,
+  },
+  Chimichurri: {
+    name: 'Chimichurri',
+    default: false,
+  },
+  'Salsa picante': {
+    name: 'Salsa picante',
+    default: false,
+  },
+};
+
+// Extended product type with customization options
+export interface IProductWithCustomization extends IProduct {
+  customization: IProductCustomization;
+}
+
+export interface IProductCustomization {
+  ingredientOptions: IIngredientOption[];
+  condimentOptions: ICondimentOption;
+  maxIngredientSelections?: number;
+  maxCondimentSelections?: number;
+}
 
 // Branch opening hours type
 export interface IOpeningHours {
@@ -42,14 +98,6 @@ export interface IProduct {
   isAvailable: boolean;
   ingredients?: string;
   category?: string;
-}
-
-// Order status enum
-export enum OrderStatus {
-  Pending = 'pendiente',
-  Processing = 'en_proceso',
-  Completed = 'completado',
-  Cancelled = 'cancelado',
 }
 
 // Order type

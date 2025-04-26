@@ -1,4 +1,5 @@
-import { IOrder, OrderStatus } from '@/types';
+import { IOrder } from '@/types';
+import { OrderStatus } from '@/types/enums';
 
 export const ordersMock: IOrder[] = [
   {

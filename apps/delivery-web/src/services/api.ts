@@ -1,4 +1,5 @@
-import { IApiResponse, IBranch, IOrder, IProduct, OrderStatus } from '../types';
+import { IApiResponse, IBranch, IOrder, IProduct } from '../types';
+import { OrderStatus } from '@/types/enums';
 import { branchesMock } from '../mocks/branches.mock';
 import { ordersMock } from '../mocks/orders.mock';
 import { products as productsMock } from '../mocks/products.mock';
