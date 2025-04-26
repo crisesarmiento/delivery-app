@@ -1,52 +1,104 @@
+/**
+ * BranchProductsPage: Robust branch context/data flow
+ *
+ * - Loads all branches using useBranches (mock or API).
+ * - Sets activeBranch in context if it matches the branchId from the URL.
+ * - If the branch does not exist, renders BranchNotFoundError.
+ * - While loading branches, shows a centered Loader spinner.
+ * - Passes activeBranch as the branch prop to ProductsHeader and other components.
+ *
+ * This ensures:
+ * - Direct navigation, reloads, and bookmarks work.
+ * - Users see a clear error page for invalid branch IDs.
+ * - No unnecessary redirects or popups.
+ */
 'use client';
 
 import { useState, useEffect, useRef, useMemo, memo, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Text, Box, Flex, useMantineTheme } from '@mantine/core';
-import { products } from '../../../mocks/products.mock';
-import { branchesMock } from '../../../mocks/branches.mock';
-import { IBranch, IProduct } from '../../../types';
+import { Box, Flex } from '@mantine/core';
+import { IProduct } from '@/types';
 import styles from './page.module.css';
 import ProductsHeader from '@/components/Header/ProductsHeader';
 import CategoryTabs from '@/components/CategoryTabs/CategoryTabs';
 import MobileCartButton from '@/components/MobileCartButton/MobileCartButton';
-import CategorySection from '@/components/CategorySection';
-import ContentWrapper from '@/components/ContentWrapper';
-import { NO_PRODUCTS_AVAILABLE } from '@/constants/text';
-import {
-  useCart,
-  CartItem as CartContextItem,
-} from '../../../context/CartContext';
+import { useCart, CartItem as CartContextItem } from '@/context/CartContext';
 import CartDrawer from '@/components/CartDrawer/CartDrawer';
-import { BRANCH_TEXTS, COMMON_TEXTS, ERROR_TEXTS } from '@/config/constants';
-import { isBranchOpen } from '@/utils/branch';
+import { BRANCH_TEXTS, ERROR_TEXTS } from '@/config/constants';
+import BranchNotFoundError from '@/components/ErrorScreen/BranchNotFoundError';
+import { Loader, Center } from '@mantine/core';
 import ProductsHeaderWrapper from '@/components/ProductsHeaderWrapper';
+import ProductsContentWrapper from '@/components/ProductsContentWrapper';
+import ProductsSectionsContainer from '@/components/ProductsSections/ProductsSectionsContainer';
+import AddToCartModal from '@/components/AddToCartModal/AddToCartModal';
+import { useNav } from '@/context/navContext';
+import { useProducts } from '@/hooks/useProducts';
+import { isBranchOpen } from '@/utils/branch';
 
 const MemoizedProductsHeader = memo(ProductsHeader);
 const MemoizedCategoryTabs = memo(CategoryTabs);
 const MemoizedCartDrawer = memo(CartDrawer);
 
 const BranchProductsPage = () => {
+  // --- AddToCartModal and CartDrawer state ---
+  const [addToCartModalOpened, setAddToCartModalOpened] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<IProduct | null>(null);
+
+  const handleProductClick = (product: IProduct) => {
+    setSelectedProduct(product);
+    setAddToCartModalOpened(true);
+  };
+
+  const handleAddToCart = (quantity: number, cartItem?: CartContextItem) => {
+    if (selectedProduct) {
+      addToCartContext({
+        product: selectedProduct,
+        quantity,
+        ...cartItem,
+      });
+      setAddToCartModalOpened(false);
+      if (!isMobile) openCartDrawer();
+    }
+  };
+
   const params = useParams();
   const router = useRouter();
-  const theme = useMantineTheme();
-  const branchId = (params?.branchId as string) || '';
-  const contentWrapperRef = useRef<HTMLDivElement>(null);
+  const { activeTab, setActiveTab, activeBranch, setActiveBranch, branches } =
+    useNav();
+
+  const branchId = Number(params?.branchId);
+  const isValidBranch = branches.some((b) => b.id === branchId);
+
+  useEffect(() => {
+    if (isValidBranch) {
+      const branch = branches.find((b) => b.id === branchId);
+      setActiveBranch(branch);
+    }
+  }, [branchId, branches, setActiveBranch, isValidBranch]);
+
+  const { branchProducts, loading, error } = useProducts(activeBranch?.id);
+
   const {
     items: cartContextItems,
     addToCart: addToCartContext,
     getTotalPrice,
     clearCart,
-    setBranchId,
   } = useCart();
+
+  const headerRef = useRef<HTMLDivElement>(null);
+  const categoryTabsRef = useRef<HTMLDivElement>(null);
+  const contentWrapperRef = useRef<HTMLDivElement>(null);
 
   const [isMobile, setIsMobile] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState('promo');
-  const [cartDrawerOpened, setCartDrawerOpened] = useState(true);
-  const [expandedSections, setExpandedSections] = useState<
-    Record<string, boolean>
-  >({});
+  const [cartDrawerOpened, setCartDrawerOpened] = useState(false);
+
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const interval = setInterval(() => setNow(new Date()), 60000);
+    return () => clearInterval(interval);
+  }, []);
+
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
 
   const categoriesHeight = 61;
@@ -59,10 +111,6 @@ const BranchProductsPage = () => {
     : isMobile
     ? 10
     : 35;
-
-  const totalCategoriesHeight = categoriesHeight + categoriesTopOffset;
-
-  const headerRef = useRef<HTMLDivElement>(null);
 
   function debounce(func: (...args: any[]) => void, wait: number) {
     let timeout: NodeJS.Timeout | null = null;
@@ -97,36 +145,21 @@ const BranchProductsPage = () => {
       );
   }, [handleHeaderStateChange]);
 
+  const categories = useMemo(() => {
+    const categoryList: string[] = [];
+    branchProducts.forEach((product: IProduct) => {
+      const category = product.category;
+      if (category && !categoryList.includes(category))
+        categoryList.push(category);
+    });
+    return categoryList;
+  }, [branchProducts]);
+
   useEffect(() => {
-    const branch = branchesMock.find((b) => b.id === branchId);
-    if (branch) {
-      setCurrentBranch({ ...branch, isOpen: isBranchOpen(branch) });
-      const intervalId = setInterval(() => {
-        setCurrentBranch((prev) =>
-          prev ? { ...prev, isOpen: isBranchOpen(prev) } : undefined
-        );
-      }, 60000);
-      return () => clearInterval(intervalId);
+    if (!activeTab && categories.length > 0) {
+      setActiveTab(categories[0].toLowerCase());
     }
-    return;
-  }, [branchId]);
-
-  const [currentBranch, setCurrentBranch] = useState<IBranch | undefined>(
-    branchesMock.find((branch) => branch.id === branchId)
-  );
-
-  useEffect(() => {
-    if (!currentBranch && branchId) {
-      alert(COMMON_TEXTS.BRANCH_NOT_FOUND);
-      router.push('/branches');
-    }
-  }, [currentBranch, branchId, router]);
-
-  const branchProducts = useMemo(() => products || [], []);
-
-  useEffect(() => {
-    if (branchId) setBranchId(branchId);
-  }, [branchId, setBranchId]);
+  }, [activeTab, categories, setActiveTab]);
 
   const handleBack = useCallback(() => {
     clearCart();
@@ -139,7 +172,7 @@ const BranchProductsPage = () => {
 
   const addToCart = useCallback(
     (product: IProduct, quantity: number) => {
-      if (currentBranch && !currentBranch.isOpen) {
+      if (activeBranch && !activeBranch.isOpen) {
         alert(BRANCH_TEXTS.BRANCH_CLOSED_ALERT);
         return;
       }
@@ -152,99 +185,14 @@ const BranchProductsPage = () => {
         return;
       }
       const cartItem: CartContextItem = {
-        product: { ...product, id: String(product.id) },
+        product: { ...product, id: product.id },
         quantity,
       };
       addToCartContext(cartItem);
       setCartDrawerOpened(true);
     },
-    [currentBranch, addToCartContext]
+    [activeBranch, addToCartContext]
   );
-
-  const cartItems = cartContextItems.map((item) => ({
-    productId: String(item.product.id),
-    quantity: item.quantity,
-    product: item.product,
-    totalPrice: item.totalPrice,
-  }));
-
-  const cartTotal = getTotalPrice();
-
-  const categories = useMemo(() => {
-    const categoryList = ['Promo'];
-    branchProducts.forEach((product: IProduct) => {
-      const category = product.category;
-      if (category && !categoryList.includes(category))
-        categoryList.push(category);
-    });
-    return categoryList;
-  }, [branchProducts]);
-
-  useEffect(() => {
-    const initialExpandedState = categories.reduce((acc, category) => {
-      acc[category.toLowerCase()] =
-        category.toLowerCase() === activeTab.toLowerCase();
-      return acc;
-    }, {} as Record<string, boolean>);
-    setExpandedSections(initialExpandedState);
-  }, [activeTab, categories]);
-
-  const scrollToCategory = (category: string) => {
-    const sectionElement = document.getElementById(
-      `category-section-${category.toLowerCase()}`
-    );
-    const isFirstCategory =
-      category.toLowerCase() === categories[0].toLowerCase();
-    if (isFirstCategory) {
-      setIsHeaderCollapsed(false);
-      setSearchQuery('');
-    }
-    if (sectionElement) {
-      const offset = isFirstCategory ? 0 : categoriesHeight;
-      const position = Math.max(0, sectionElement.offsetTop - offset);
-      window.scrollTo({ top: position, behavior: 'smooth' });
-    } else if (isFirstCategory) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
-
-  const handleTabChange = (value: string | null) => {
-    if (value) {
-      setActiveTab(value);
-      setExpandedSections((prev) => {
-        const newState = { ...prev };
-        Object.keys(newState).forEach((key) => {
-          newState[key] = key === value.toLowerCase();
-        });
-        return newState;
-      });
-      scrollToCategory(value);
-    }
-  };
-
-  const handleSectionToggle = (category: string, isExpanded: boolean) => {
-    setExpandedSections((prev) => ({
-      ...prev,
-      [category.toLowerCase()]: isExpanded,
-    }));
-    if (isExpanded && activeTab !== category.toLowerCase()) {
-      setActiveTab(category.toLowerCase());
-    }
-  };
-
-  const productsByCategory = categories.reduce((acc, category) => {
-    const categoryProducts = branchProducts
-      .filter((product: IProduct) =>
-        category.toLowerCase() === 'promo'
-          ? product.category?.toLowerCase().includes('promo')
-          : product.category?.toLowerCase() === category.toLowerCase()
-      )
-      .filter((product: IProduct) =>
-        product.name?.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    if (categoryProducts.length > 0) acc[category] = categoryProducts;
-    return acc;
-  }, {} as Record<string, IProduct[]>);
 
   const openCartDrawer = useCallback(() => {
     if (isMobile) router.push(`/branches/${branchId}/cart`);
@@ -255,100 +203,138 @@ const BranchProductsPage = () => {
     setCartDrawerOpened(false);
   }, []);
 
-  return (
-    <Flex direction="column" className={styles.productPageContainer}>
-      <ProductsHeaderWrapper
-        isHeaderCollapsed={isHeaderCollapsed}
-        headerHeight={headerHeight}
-        collapsedHeaderHeight={collapsedHeaderHeight}
-        header={
-          <MemoizedProductsHeader
-            ref={headerRef}
-            branch={currentBranch as IBranch}
-            onBackClick={handleBack}
-            searchValue={searchQuery}
-            onSearchChange={handleSearchChange}
-            isClosed={currentBranch ? !currentBranch.isOpen : false}
-            closedMessage={BRANCH_TEXTS.BRANCH_CLOSED}
-            isFiltering={searchQuery.length > 0}
-          />
-        }
-        categories={
-          <MemoizedCategoryTabs
-            categories={categories}
-            activeTab={activeTab}
-            onTabChange={handleTabChange}
-            top={
-              isHeaderCollapsed
-                ? collapsedHeaderHeight + categoriesTopOffset
-                : headerHeight + categoriesTopOffset
-            }
-          />
-        }
-      />
-      <ContentWrapper
-        ref={contentWrapperRef}
-        topOffset={categoriesHeight + totalCategoriesHeight}
-      >
-        <Box
-          className={styles.sectionsContainer}
-          style={{
-            flex: 1,
-            overflowX: 'hidden',
-            overflowY: 'auto',
-            zIndex: 10,
+  // Compute isClosed only when activeBranch or now changes
+  const isClosed = useMemo(() => {
+    return activeBranch ? !isBranchOpen(activeBranch, now) : false;
+  }, [activeBranch, now]);
+
+  if (loading) {
+    return (
+      <Center style={{ minHeight: '50vh' }}>
+        <Loader size="lg" />
+      </Center>
+    );
+  }
+
+  const cartItems = cartContextItems.map((item) => ({
+    productId: String(item.product.id),
+    quantity: item.quantity,
+    product: item.product,
+    totalPrice: item.totalPrice,
+  }));
+
+  const cartTotal = getTotalPrice();
+
+  const scrollToCategory = (category: string) => {
+    setTimeout(() => {
+      const sectionElement = document.getElementById(
+        `category-section-${category.toLowerCase()}`
+      );
+      const isFirstCategory =
+        category.toLowerCase() === categories[0].toLowerCase();
+      const headerHeight = headerRef.current?.offsetHeight || 0;
+      const tabsHeight = categoryTabsRef.current?.offsetHeight || 0;
+      const offset = headerHeight + tabsHeight;
+
+      if (isFirstCategory) {
+        setSearchQuery('');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (sectionElement) {
+        const position = Math.max(0, sectionElement.offsetTop - offset);
+        window.scrollTo({ top: position, behavior: 'smooth' });
+      }
+    }, 0);
+  };
+
+  const handleTabChange = (value: string | null) => {
+    if (value) {
+      setActiveTab(value);
+      scrollToCategory(value);
+    }
+  };
+
+  return activeBranch ? (
+    <>
+      {selectedProduct && (
+        <AddToCartModal
+          product={selectedProduct}
+          opened={addToCartModalOpened}
+          onClose={() => {
+            setAddToCartModalOpened(false);
+            // Optionally clear selectedProduct after a short delay
+            setTimeout(() => setSelectedProduct(null), 200);
           }}
-        >
-          {Object.keys(productsByCategory).length > 0 ? (
-            Object.entries(productsByCategory).map(([category, products]) => (
-              <Flex
-                key={category}
-                style={{ width: '100%', marginBottom: '11px' }}
-              >
-                <CategorySection
-                  title={category}
-                  products={products}
-                  onAddToCart={addToCart}
-                  isInitiallyExpanded={
-                    expandedSections[category.toLowerCase()] || false
-                  }
-                  onToggleExpand={(isExpanded) =>
-                    handleSectionToggle(category, isExpanded)
-                  }
-                />
-              </Flex>
-            ))
-          ) : (
-            <Text
-              ta="center"
-              fz={theme.fontSizes.lg}
-              c="dimmed"
-              style={{ padding: '40px 0' }}
-            >
-              {NO_PRODUCTS_AVAILABLE}
-            </Text>
-          )}
-        </Box>
-        {isMobile && (
-          <Box className={styles.cartButtonContainer}>
-            <MobileCartButton
-              onClick={openCartDrawer}
-              cartItems={cartItems}
-              cartTotal={cartTotal}
-            />
-          </Box>
-        )}
-      </ContentWrapper>
-      {!isMobile && (
-        <MemoizedCartDrawer
-          opened={cartDrawerOpened}
-          onClose={handleCloseCartDrawer}
-          cartItems={cartItems}
-          cartTotal={cartTotal}
-          isMobile={false}
+          onAddToCart={(...args) => {
+            handleAddToCart(...args);
+            setAddToCartModalOpened(false);
+            setTimeout(() => setSelectedProduct(null), 200);
+          }}
         />
       )}
-    </Flex>
+      <Flex direction="column" className={styles.productPageContainer}>
+        <ProductsHeaderWrapper
+          isHeaderCollapsed={isHeaderCollapsed}
+          headerHeight={headerHeight}
+          collapsedHeaderHeight={collapsedHeaderHeight}
+          header={
+            <MemoizedProductsHeader
+              ref={headerRef}
+              branch={activeBranch}
+              onBackClick={handleBack}
+              searchValue={searchQuery}
+              onSearchChange={handleSearchChange}
+              isClosed={isClosed}
+              closedMessage={BRANCH_TEXTS.BRANCH_CLOSED}
+              isFiltering={searchQuery.length > 0}
+            />
+          }
+          categories={
+            <MemoizedCategoryTabs
+              categories={categories}
+              onTabChange={handleTabChange}
+              top={
+                isHeaderCollapsed
+                  ? collapsedHeaderHeight + categoriesTopOffset
+                  : headerHeight + categoriesTopOffset
+              }
+            />
+          }
+        />
+        <ProductsContentWrapper
+          ref={contentWrapperRef}
+          topOffset={18 + categoriesHeight}
+        >
+          <ProductsSectionsContainer
+            categories={categories}
+            products={branchProducts}
+            searchQuery={searchQuery}
+            onProductClick={handleProductClick}
+          />
+          {isMobile && (
+            <Box className={styles.cartButtonContainer}>
+              <MobileCartButton
+                onClick={openCartDrawer}
+                cartItems={cartItems}
+                cartTotal={cartTotal}
+              />
+            </Box>
+          )}
+        </ProductsContentWrapper>
+        {!isMobile && (
+          <MemoizedCartDrawer
+            opened={cartDrawerOpened}
+            onClose={handleCloseCartDrawer}
+            isMobile={false}
+          />
+        )}
+      </Flex>
+    </>
+  ) : loading ? (
+    <Center style={{ minHeight: '50vh' }}>
+      <Loader size="lg" />
+    </Center>
+  ) : (
+    <BranchNotFoundError />
   );
 };
 

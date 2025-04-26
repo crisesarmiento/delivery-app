@@ -2,18 +2,18 @@
 
 import { Box, Container, Text, useMantineTheme } from '@mantine/core';
 import BranchCard from '../components/BranchCard/BranchCard';
-import { branchesMock } from '../mocks/branches.mock';
 import Header from '../components/Header/Header';
 import ContentWrapper from '../components/ContentWrapper';
 import { useRouter } from 'next/navigation';
 import { useState, useMemo, useEffect, useRef } from 'react';
-import { updateBranchesStatus } from '../utils/branch';
 import { normalizeText } from '../utils/string';
 import { BRANCH_TEXTS } from '../config/constants';
+import { useNav } from '@/context/navContext';
+import AppLoader from '@/components/Loader/AppLoader';
 
 export default function HomePage() {
   const router = useRouter();
-  const [branches, setBranches] = useState(branchesMock);
+  const { branches, setActiveBranch, loading } = useNav();
   const [searchValue, setSearchValue] = useState('');
   const theme = useMantineTheme();
   const [isMobile, setIsMobile] = useState(false);
@@ -36,22 +36,6 @@ export default function HomePage() {
       timeout = setTimeout(() => func(...args), wait);
     };
   }
-  useEffect(() => {
-    const updateHeaderHeight = () => {
-      if (headerRef.current) {
-        const height = headerRef.current.getBoundingClientRect().height;
-        setHeaderActualHeight(height);
-      }
-    };
-
-    updateHeaderHeight(); // Initial measurement
-    window.addEventListener('resize', updateHeaderHeight);
-    return () => window.removeEventListener('resize', updateHeaderHeight);
-  }, [isHeaderCollapsed]);
-
-  const handleHeaderStateChange = useRef((event: CustomEvent) => {
-    setIsHeaderCollapsed(event.detail.collapsed);
-  }).current;
 
   useEffect(() => {
     const checkIsMobile = debounce(() => {
@@ -74,33 +58,22 @@ export default function HomePage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Add event listener for header state change events
   useEffect(() => {
-    window.addEventListener(
-      'header-state-change',
-      handleHeaderStateChange as EventListener
-    );
-    return () => {
-      window.removeEventListener(
-        'header-state-change',
-        handleHeaderStateChange as EventListener
-      );
+    const updateHeaderHeight = () => {
+      if (headerRef.current) {
+        const height = headerRef.current.getBoundingClientRect().height;
+        setHeaderActualHeight(height);
+      }
     };
-  }, [handleHeaderStateChange]);
 
-  // Update branch open/closed status based on current time
-  useEffect(() => {
-    const updatedBranches = updateBranchesStatus(branchesMock);
-    setBranches(updatedBranches);
+    updateHeaderHeight(); // Initial measurement
+    window.addEventListener('resize', updateHeaderHeight);
+    return () => window.removeEventListener('resize', updateHeaderHeight);
+  }, [isHeaderCollapsed]);
 
-    // Set up an interval to check status every minute
-    const intervalId = setInterval(() => {
-      const updatedBranches = updateBranchesStatus(branchesMock);
-      setBranches(updatedBranches);
-    }, 60000); // 60 seconds
-
-    return () => clearInterval(intervalId);
-  }, []);
+  const handleHeaderStateChange = useRef((event: CustomEvent) => {
+    setIsHeaderCollapsed(event.detail.collapsed);
+  }).current;
 
   // Check if any branches are closed
   const hasClosedBranches = useMemo(() => {
@@ -131,6 +104,25 @@ export default function HomePage() {
     return searchValue.length > 0 && filteredBranches.length < branches.length;
   }, [searchValue, filteredBranches.length, branches.length]);
 
+  // Add event listener for header state change events
+  useEffect(() => {
+    window.addEventListener(
+      'header-state-change',
+      handleHeaderStateChange as EventListener
+    );
+    return () => {
+      window.removeEventListener(
+        'header-state-change',
+        handleHeaderStateChange as EventListener
+      );
+    };
+  }, [handleHeaderStateChange]);
+
+  // Show loader while loading branches
+  if (loading) {
+    return <AppLoader message="Cargando sucursales..." size="lg" />;
+  }
+
   return (
     <>
       <Header
@@ -143,89 +135,92 @@ export default function HomePage() {
       />
 
       <ContentWrapper topOffset={headerActualHeight}>
-        <Container
-          fluid
-          px={0}
-          style={{
-            backgroundColor: theme.colors.neutral[0],
-            width: '100%',
-            maxWidth: '100%',
-            overflowX: 'hidden',
-            overflowY: 'visible',
-            display: 'flex',
-            justifyContent: 'center',
-            transform: 'translateZ(0)',
-            backfaceVisibility: 'hidden',
-            willChange: 'transform',
-          }}
-        >
+        {loading && <AppLoader message="Cargando sucursales..." size="lg" />}
+        {!loading && (
           <Container
-            size="xl"
-            py="xl"
-            px={{ base: theme.spacing.md, md: theme.spacing.xl, lg: '80px' }}
+            fluid
+            px={0}
             style={{
+              backgroundColor: theme.colors.neutral[0],
               width: '100%',
-              maxWidth: '1440px',
+              maxWidth: '100%',
               overflowX: 'hidden',
               overflowY: 'visible',
-              marginTop: isHeaderCollapsed && isFiltering ? 0 : 0,
+              display: 'flex',
+              justifyContent: 'center',
+              transform: 'translateZ(0)',
+              backfaceVisibility: 'hidden',
+              willChange: 'transform',
             }}
           >
-            {filteredBranches.length > 0 ? (
-              <Box
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: `repeat(auto-fill, minmax(${
-                    isMobile ? '230px' : '240px'
-                  }, 1fr))`,
-                  gap: theme.spacing.md,
-                  marginTop:
-                    isHeaderCollapsed && isFiltering
-                      ? 0 - headerActualHeight
-                      : 0,
-                  width: '100%',
-                  maxWidth: '100%',
-                  justifyContent: 'center',
-                  paddingLeft: isMobile ? '8px' : '0',
-                  paddingRight: isMobile ? '8px' : '0',
-                  // Adjust top padding when filtering with collapsed header
-                  paddingTop:
-                    isHeaderCollapsed && isFiltering
-                      ? 0 - headerActualHeight
-                      : theme.spacing.md,
-                }}
-              >
-                {filteredBranches.map((branch) => (
-                  <Box
-                    key={branch.id}
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      // Adjust top margin based on filtering state
-                      marginTop:
-                        isHeaderCollapsed && isFiltering
-                          ? theme.spacing.xs
-                          : theme.spacing.xl,
-                      maxWidth: '100%',
-                    }}
-                  >
-                    <BranchCard
-                      branch={branch}
-                      onClick={() => {
-                        router.push(`/branches/${branch.id}`);
+            <Container
+              size="xl"
+              py="xl"
+              px={{ base: theme.spacing.md, md: theme.spacing.xl, lg: '80px' }}
+              style={{
+                width: '100%',
+                maxWidth: '1440px',
+                overflowX: 'hidden',
+                overflowY: 'visible',
+                marginTop: isHeaderCollapsed && isFiltering ? 0 : 0,
+              }}
+            >
+              {filteredBranches.length > 0 ? (
+                <Box
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: `repeat(auto-fill, minmax(${
+                      isMobile ? '230px' : '240px'
+                    }, 1fr))`,
+                    gap: theme.spacing.md,
+                    marginTop:
+                      isHeaderCollapsed && isFiltering
+                        ? 0 - headerActualHeight
+                        : 0,
+                    width: '100%',
+                    maxWidth: '100%',
+                    justifyContent: 'center',
+                    paddingLeft: isMobile ? '8px' : '0',
+                    paddingRight: isMobile ? '8px' : '0',
+                    // Adjust top padding when filtering with collapsed header
+                    paddingTop:
+                      isHeaderCollapsed && isFiltering
+                        ? 0 - headerActualHeight
+                        : theme.spacing.md,
+                  }}
+                >
+                  {filteredBranches.map((branch) => (
+                    <Box
+                      key={branch.id}
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        marginTop:
+                          isHeaderCollapsed && isFiltering
+                            ? theme.spacing.xs
+                            : theme.spacing.xl,
+                        maxWidth: '100%',
                       }}
-                    />
-                  </Box>
-                ))}
-              </Box>
-            ) : (
-              <Box style={{ textAlign: 'center', padding: theme.spacing.xl }}>
-                <Text variant="body">{BRANCH_TEXTS.NO_BRANCHES_FOUND}</Text>
-              </Box>
-            )}
+                    >
+                      <BranchCard
+                        branch={branch}
+                        onClick={() => {
+                          setActiveBranch(branch);
+                          router.push(`/branches/${branch.id}`);
+                        }}
+                      />
+                    </Box>
+                  ))}
+                </Box>
+              ) : (
+                <Box style={{ textAlign: 'center', padding: theme.spacing.xl }}>
+                  <Text variant="body">{BRANCH_TEXTS.NO_BRANCHES_FOUND}</Text>
+                </Box>
+              )}
+            </Container>
           </Container>
-        </Container>
+        )}
       </ContentWrapper>
     </>
   );

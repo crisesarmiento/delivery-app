@@ -16,6 +16,10 @@ export default [
   ...baseConfig,
   ...nx.configs['flat/react-typescript'],
   {
+    files: ['**/*.ts', '**/*.tsx'],
+    rules: {
+      '@typescript-eslint/no-empty-function': 'off',
+    },
     ignores: ['.next/**/*'],
   },
 ];

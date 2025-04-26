@@ -1,15 +1,10 @@
 'use client';
 
 import { Box, Text } from '@mantine/core';
-import { IProduct } from '../../types';
+import { CartItem as CartContextItem } from '@/context/CartContext';
 
 interface CartItemProps {
-  item: {
-    productId: string;
-    quantity: number;
-    product: IProduct;
-    totalPrice?: number;
-  };
+  item: CartContextItem;
 }
 
 const CartItem = ({ item }: CartItemProps) => {

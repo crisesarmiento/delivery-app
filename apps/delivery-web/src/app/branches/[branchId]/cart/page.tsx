@@ -28,6 +28,7 @@ import AddToCartModal from '@/components/AddToCartModal/AddToCartModal';
 import ContentWrapper from '@/components/ContentWrapper/ContentWrapper';
 import { isBranchOpen } from '@/utils/branch';
 import QuantityControl from '@/components/QuantityControl/QuantityControl';
+import { useNav } from '@/context/navContext';
 
 interface CartItemCustomization {
   product: IProduct;
@@ -42,6 +43,7 @@ interface CartItemCustomization {
 export default function CheckoutPage() {
   const params = useParams();
   const router = useRouter();
+  const { activeBranch } = useNav();
   const branchId = (params?.branchId as string) || '';
   const { items, updateCartItem, removeFromCart, getTotalPrice } = useCart();
   const contentWrapperRef = useRef<HTMLDivElement | null>(null);
@@ -67,7 +69,7 @@ export default function CheckoutPage() {
   >();
 
   // Find the current branch
-  const currentBranch = branchesMock.find((branch) => branch.id === branchId);
+  const currentBranch = activeBranch;
 
   // Set branch open status
   const [isBranchClosed, setIsBranchClosed] = useState(false);
@@ -167,10 +169,7 @@ export default function CheckoutPage() {
   };
 
   // Handle product quantity update
-  const handleQuantityUpdate = (
-    productId: string | number,
-    newQuantity: number
-  ) => {
+  const handleQuantityUpdate = (productId: number, newQuantity: number) => {
     if (newQuantity === 0) {
       removeFromCart(productId);
     } else {

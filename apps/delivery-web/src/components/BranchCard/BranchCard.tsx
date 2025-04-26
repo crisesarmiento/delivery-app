@@ -6,6 +6,7 @@ import { IconClock } from '@tabler/icons-react';
 import BranchBadge from './Badge';
 import BranchHoursTooltip from './BranchHoursTooltip';
 import { useState, useEffect } from 'react';
+import { isBranchOpen } from '@/utils/branch';
 
 interface BranchCardProps {
   branch: IBranch;
@@ -16,6 +17,7 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isClockHovered, setIsClockHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [now, setNow] = useState(() => new Date());
 
   useEffect(() => {
     const checkIsMobile = () => {
@@ -24,6 +26,12 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
     checkIsMobile();
     window.addEventListener('resize', checkIsMobile);
     return () => window.removeEventListener('resize', checkIsMobile);
+  }, []);
+
+  // Auto-update open/closed status every minute
+  useEffect(() => {
+    const interval = setInterval(() => setNow(new Date()), 60000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleClick = () => {
@@ -66,9 +74,9 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
           backgroundPosition: 'center',
           borderRadius: '4px',
         }}
-        data-testid="branch-card-image"
       >
-        <BranchBadge isOpen={branch.isOpen ?? false} />
+        {/* Status badge */}
+        <BranchBadge isOpen={isBranchOpen(branch, now)} />
       </Box>
 
       <Box

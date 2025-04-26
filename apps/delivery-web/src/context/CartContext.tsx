@@ -9,17 +9,17 @@ import React, {
   useMemo,
   useCallback,
 } from 'react';
-import { IProduct } from '../types';
+import { IProduct } from '@/types';
 
 // Define cart item interface with product customizations
 export interface CartItem {
+  uniqueId?: string; // Unique identifier for this specific item
   product: IProduct;
   quantity: number;
   ingredients?: { name: string; quantity: number; price?: number }[];
   condiments?: string[];
   comments?: string;
   totalPrice?: number;
-  uniqueId?: string; // Unique identifier for this specific item
   customizations?: {
     ingredients?: { name: string; quantity: number; price?: number }[];
     condiments?: string[];
@@ -32,41 +32,36 @@ interface CartContextType {
   items: CartItem[];
   addToCart: (item: CartItem) => void;
   updateCartItem: (
-    productId: string | number,
+    productId: number,
     updates: Partial<CartItem>,
     uniqueId?: string
   ) => void;
-  removeFromCart: (productId: string | number) => void;
-  getCartItemQuantity: (productId: string | number) => number;
-  getCartItemsByProductId: (productId: string | number) => CartItem[];
+  removeFromCart: (productId: number) => void;
+  getCartItemQuantity: (productId: number) => number;
+  getCartItemsByProductId: (productId: number) => CartItem[];
   getTotalItems: () => number;
   getTotalPrice: () => number;
   clearCart: () => void;
   cartItems: CartItem[];
   cartTotal: number;
-  currentBranchId: string | null;
-  setBranchId: (branchId: string) => void;
+  currentBranchId: number | null;
+  setBranchId: (branchId: number) => void;
 }
 
 // Create the context with a default empty value
 const CartContext = createContext<CartContextType>({
   items: [],
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   addToCart: () => {},
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   updateCartItem: () => {},
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   removeFromCart: () => {},
   getCartItemQuantity: () => 0,
   getCartItemsByProductId: () => [],
   getTotalItems: () => 0,
   getTotalPrice: () => 0,
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   clearCart: () => {},
   cartItems: [],
   cartTotal: 0,
   currentBranchId: null,
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setBranchId: () => {},
 });
 
@@ -76,7 +71,7 @@ export const useCart = () => useContext(CartContext);
 // Provider component to wrap the application
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [items, setItems] = useState<CartItem[]>([]);
-  const [currentBranchId, setCurrentBranchId] = useState<string | null>(null);
+  const [currentBranchId, setCurrentBranchId] = useState<number | null>(null);
 
   // Load cart from localStorage on initial render
   useEffect(() => {
@@ -84,7 +79,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     if (typeof window === 'undefined') return;
 
     const savedCart = localStorage.getItem('smarty-cart');
-    const savedBranchId = localStorage.getItem('smarty-current-branch');
+    const savedBranchId = Number(localStorage.getItem('smarty-current-branch'));
 
     if (savedBranchId) {
       setCurrentBranchId(savedBranchId);
@@ -116,7 +111,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     if (typeof window === 'undefined') return;
 
     if (currentBranchId) {
-      localStorage.setItem('smarty-current-branch', currentBranchId);
+      localStorage.setItem('smarty-current-branch', String(currentBranchId));
     } else {
       localStorage.removeItem('smarty-current-branch');
     }
@@ -124,7 +119,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   // Set current branch ID and clear cart if branch changes
   const setBranchId = useCallback(
-    (branchId: string) => {
+    (branchId: number) => {
       // If branch ID changes, clear the cart
       if (currentBranchId && currentBranchId !== branchId) {
         setItems([]);
@@ -136,7 +131,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   // Generate a unique identifier for cart items based on product ID and customizations
   const generateCartItemId = useCallback((item: CartItem): string => {
-    const productId = String(item.product.id);
+    const productId = item.product.id;
 
     // Sort and stringify ingredients to ensure consistent ordering
     const ingredientsStr = item.ingredients
@@ -199,11 +194,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   // Update an existing cart item
   const updateCartItem = useCallback(
-    (
-      productId: string | number,
-      updates: Partial<CartItem>,
-      uniqueId?: string
-    ) => {
+    (productId: number, updates: Partial<CartItem>, uniqueId?: string) => {
       setItems((prevItems) => {
         let existingItemIndex = -1;
 
@@ -215,7 +206,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         } else {
           // Fallback to product ID for backward compatibility
           existingItemIndex = prevItems.findIndex(
-            (i) => String(i.product.id) === String(productId)
+            (i) => i.product.id === productId
           );
         }
 
@@ -243,18 +234,16 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   );
 
   // Remove an item from the cart
-  const removeFromCart = useCallback((productId: string | number) => {
+  const removeFromCart = useCallback((productId: number) => {
     setItems((prevItems) =>
-      prevItems.filter((item) => String(item.product.id) !== String(productId))
+      prevItems.filter((item) => item.product.id !== productId)
     );
   }, []);
 
   // Get quantity of a specific product
   const getCartItemQuantity = useCallback(
-    (productId: string | number): number => {
-      const item = items.find(
-        (item) => String(item.product.id) === String(productId)
-      );
+    (productId: number): number => {
+      const item = items.find((item) => item.product.id === productId);
       return item ? item.quantity : 0;
     },
     [items]
@@ -262,7 +251,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   // Get all cart items for a specific product ID
   const getCartItemsByProductId = useCallback(
-    (productId: string | number): CartItem[] => {
+    (productId: number): CartItem[] => {
       return items.filter(
         (item) => String(item.product.id) === String(productId)
       );

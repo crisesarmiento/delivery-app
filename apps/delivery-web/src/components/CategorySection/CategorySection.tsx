@@ -8,22 +8,22 @@ import styles from './CategorySection.module.css';
 interface CategorySectionProps {
   title: string;
   products: IProduct[];
-  onAddToCart: (product: IProduct, quantity: number) => void;
   isInitiallyExpanded?: boolean;
   onToggleExpand?: (isExpanded: boolean) => void;
   isDisabled?: boolean;
   isFixed?: boolean;
+  onProductClick?: (product: IProduct) => void;
 }
 
 const CategorySection = memo(
   ({
     title,
     products,
-    onAddToCart,
     isInitiallyExpanded = false,
     onToggleExpand,
     isDisabled = false,
     isFixed = false,
+    onProductClick,
   }: CategorySectionProps) => {
     const [isExpanded, setIsExpanded] = useState(isInitiallyExpanded);
     const [isMobile, setIsMobile] = useState(false);
@@ -78,7 +78,11 @@ const CategorySection = memo(
 
         {isExpanded && (
           <Box className={styles.scrollableContainer}>
-            <ProductGrid products={products} isDisabled={isDisabled} />
+            <ProductGrid
+              products={products}
+              isDisabled={isDisabled}
+              onProductClick={onProductClick}
+            />
           </Box>
         )}
       </Box>

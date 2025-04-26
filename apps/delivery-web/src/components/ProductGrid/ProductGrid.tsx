@@ -10,12 +10,14 @@ interface ProductGridProps {
   products: IProduct[];
   className?: string;
   isDisabled?: boolean;
+  onProductClick?: (product: IProduct) => void;
 }
 
 const ProductGrid = ({
   products,
   className = '',
   isDisabled = false,
+  onProductClick,
 }: ProductGridProps) => {
   const gridRef = useRef<HTMLDivElement>(null);
 
@@ -31,6 +33,7 @@ const ProductGrid = ({
           product={product}
           isDisabled={isDisabled}
           data-testid={`product-grid-item-${product.id}`}
+          onProductClick={onProductClick}
         />
       ))}
     </Box>

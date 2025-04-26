@@ -2,7 +2,6 @@
 
 import { Box, Text, Divider, Button } from '@mantine/core';
 
-import { IProduct } from '../../types';
 import { useEffect, useState, useCallback } from 'react';
 import { IconShoppingCart, IconTrash } from '@tabler/icons-react';
 import { CART_TITLE, CART_TOTAL, CART_VIEW_BUTTON } from '@/constants/text';
@@ -12,27 +11,13 @@ import CartItem from './CartItem';
 import { useCart } from '../../context/CartContext';
 import { useRouter } from 'next/navigation';
 
-interface CartItem {
-  productId: string;
-  quantity: number;
-  product: IProduct;
-  uniqueId?: string;
-}
-
 interface CartDrawerProps {
   opened: boolean;
   onClose: () => void;
-  cartItems: CartItem[];
-  cartTotal: number;
   isMobile?: boolean;
 }
 
-const CartDrawer = ({
-  opened,
-  onClose,
-  cartItems,
-  cartTotal,
-}: CartDrawerProps) => {
+const CartDrawer = ({ opened, onClose }: CartDrawerProps) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [rightPosition, setRightPosition] = useState('80px');
@@ -40,7 +25,7 @@ const CartDrawer = ({
   const isMobileView = useMediaQuery('(max-width: 768px)');
   const isOnMobile = isMobile !== undefined ? isMobile : isMobileView;
   const [headerOffset, setHeaderOffset] = useState(0);
-  const { clearCart, currentBranchId } = useCart();
+  const { clearCart, currentBranchId, cartItems, cartTotal } = useCart();
   const router = useRouter();
 
   // Check if viewport is mobile and calculate position
@@ -215,11 +200,11 @@ const CartDrawer = ({
         {cartItems.map((item, index) => {
           // Create a stable unique key for each cart item
           const itemKey =
-            item.uniqueId || `cart-item-${item.productId}-${index}`;
+            item.uniqueId || `cart-item-${item.product.id}-${index}`;
           return (
             <CartItem
               key={itemKey}
-              item={item}
+              item={cartItems[index]}
               data-testid={`cart-item-${index}`}
             />
           );
