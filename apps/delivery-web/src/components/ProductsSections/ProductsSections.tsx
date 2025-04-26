@@ -7,12 +7,14 @@ interface ProductsSectionsProps {
   category: string;
   products: IProduct[];
   handleSectionToggle: (category: string, isExpanded: boolean) => void;
+  onProductClick?: (product: IProduct) => void;
 }
 
 const ProductsSections = ({
   category,
   products,
   handleSectionToggle,
+  onProductClick,
 }: ProductsSectionsProps) => {
   const { expandedSections } = useNav();
   return (
@@ -24,6 +26,7 @@ const ProductsSections = ({
         onToggleExpand={(isExpanded) =>
           handleSectionToggle(category, isExpanded)
         }
+        onProductClick={onProductClick}
       />
     </Flex>
   );

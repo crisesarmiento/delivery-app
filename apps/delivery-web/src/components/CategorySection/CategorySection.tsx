@@ -12,6 +12,7 @@ interface CategorySectionProps {
   onToggleExpand?: (isExpanded: boolean) => void;
   isDisabled?: boolean;
   isFixed?: boolean;
+  onProductClick?: (product: IProduct) => void;
 }
 
 const CategorySection = memo(
@@ -22,6 +23,7 @@ const CategorySection = memo(
     onToggleExpand,
     isDisabled = false,
     isFixed = false,
+    onProductClick,
   }: CategorySectionProps) => {
     const [isExpanded, setIsExpanded] = useState(isInitiallyExpanded);
     const [isMobile, setIsMobile] = useState(false);
@@ -76,7 +78,11 @@ const CategorySection = memo(
 
         {isExpanded && (
           <Box className={styles.scrollableContainer}>
-            <ProductGrid products={products} isDisabled={isDisabled} />
+            <ProductGrid
+              products={products}
+              isDisabled={isDisabled}
+              onProductClick={onProductClick}
+            />
           </Box>
         )}
       </Box>

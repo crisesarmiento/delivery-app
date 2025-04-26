@@ -12,12 +12,14 @@ interface ProductsSectionsContainerProps {
   products: IProduct[];
   categories: string[];
   searchQuery: string;
+  onProductClick?: (product: IProduct) => void;
 }
 
 const ProductsSectionsContainer = ({
   products,
   categories,
   searchQuery,
+  onProductClick,
 }: ProductsSectionsContainerProps) => {
   const { activeTab, setActiveTab, expandedSections, setExpandedSections } =
     useNav();
@@ -79,6 +81,7 @@ const ProductsSectionsContainer = ({
             category={category}
             products={products}
             handleSectionToggle={handleSectionToggle}
+            onProductClick={onProductClick}
           />
         ))
       ) : (

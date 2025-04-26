@@ -32,6 +32,7 @@ import {
   QUANTITY_CONSTANTS,
 } from '../../config/constants';
 import QuantityControl from '../QuantityControl';
+import { CartItem as CartContextItem } from '@/context/CartContext';
 
 // ===== Types =====
 interface IngredientItem {
@@ -59,7 +60,7 @@ interface AddToCartModalProps {
   product: IProduct;
   opened: boolean;
   onClose: () => void;
-  onAddToCart: (quantity: number, cartItem?: CartItemCustomization) => void;
+  onAddToCart: (quantity: number, cartItem?: CartContextItem) => void;
   initialQuantity?: number;
   initialIngredients?: IngredientItem[];
   initialCondiments?: string[];
@@ -527,14 +528,12 @@ const CondimentsSection = ({
 const ModalFooter = ({
   quantity,
   setQuantity,
-  onClose,
   handleAddToCart,
   finalPrice,
   isMobile,
 }: {
   quantity: number;
   setQuantity: (value: number) => void;
-  onClose: () => void;
   handleAddToCart: () => void;
   finalPrice: number;
   isMobile?: boolean;
@@ -800,7 +799,6 @@ const AddToCartModal = ({
         <ModalFooter
           quantity={quantity}
           setQuantity={setQuantity}
-          onClose={onClose}
           handleAddToCart={handleAddToCart}
           finalPrice={finalPrice}
           isMobile={isMobile}

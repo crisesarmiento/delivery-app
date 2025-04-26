@@ -29,7 +29,8 @@ export const useProducts = (branchId?: number ) => {
         if (mockResponse.success && mockResponse.data) {
           setBranchProducts(mockResponse.data);
         } else {
-          setError('No se pudieron cargar los productos');
+          setError('No se pudieron cargar los productos o la sucursal no existe');
+          setBranchProducts([]);
         }
       } catch (err) {
         setError(`Error al obtener los productos: ${err}`);

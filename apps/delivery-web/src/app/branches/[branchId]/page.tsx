@@ -30,6 +30,7 @@ import { Loader, Center } from '@mantine/core';
 import ProductsHeaderWrapper from '@/components/ProductsHeaderWrapper';
 import ProductsContentWrapper from '@/components/ProductsContentWrapper';
 import ProductsSectionsContainer from '@/components/ProductsSections/ProductsSectionsContainer';
+import AddToCartModal from '@/components/AddToCartModal/AddToCartModal';
 import { useNav } from '@/context/navContext';
 import { useProducts } from '@/hooks/useProducts';
 import { isBranchOpen } from '@/utils/branch';
@@ -39,6 +40,27 @@ const MemoizedCategoryTabs = memo(CategoryTabs);
 const MemoizedCartDrawer = memo(CartDrawer);
 
 const BranchProductsPage = () => {
+  // --- AddToCartModal and CartDrawer state ---
+  const [addToCartModalOpened, setAddToCartModalOpened] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<IProduct | null>(null);
+
+  const handleProductClick = (product: IProduct) => {
+    setSelectedProduct(product);
+    setAddToCartModalOpened(true);
+  };
+
+  const handleAddToCart = (quantity: number, cartItem?: CartContextItem) => {
+    if (selectedProduct) {
+      addToCartContext({
+        product: selectedProduct,
+        quantity,
+        ...cartItem,
+      });
+      setAddToCartModalOpened(false);
+      if (!isMobile) openCartDrawer();
+    }
+  };
+
   const params = useParams();
   const router = useRouter();
   const { activeTab, setActiveTab, activeBranch, setActiveBranch, branches } =
@@ -232,64 +254,85 @@ const BranchProductsPage = () => {
   };
 
   return activeBranch ? (
-    <Flex direction="column" className={styles.productPageContainer}>
-      <ProductsHeaderWrapper
-        isHeaderCollapsed={isHeaderCollapsed}
-        headerHeight={headerHeight}
-        collapsedHeaderHeight={collapsedHeaderHeight}
-        header={
-          <MemoizedProductsHeader
-            ref={headerRef}
-            branch={activeBranch}
-            onBackClick={handleBack}
-            searchValue={searchQuery}
-            onSearchChange={handleSearchChange}
-            isClosed={isClosed}
-            closedMessage={BRANCH_TEXTS.BRANCH_CLOSED}
-            isFiltering={searchQuery.length > 0}
-          />
-        }
-        categories={
-          <MemoizedCategoryTabs
-            categories={categories}
-            onTabChange={handleTabChange}
-            top={
-              isHeaderCollapsed
-                ? collapsedHeaderHeight + categoriesTopOffset
-                : headerHeight + categoriesTopOffset
-            }
-          />
-        }
-      />
-      <ProductsContentWrapper
-        ref={contentWrapperRef}
-        topOffset={18 + categoriesHeight}
-      >
-        <ProductsSectionsContainer
-          categories={categories}
-          products={branchProducts}
-          searchQuery={searchQuery}
-        />
-        {isMobile && (
-          <Box className={styles.cartButtonContainer}>
-            <MobileCartButton
-              onClick={openCartDrawer}
-              cartItems={cartItems}
-              cartTotal={cartTotal}
-            />
-          </Box>
-        )}
-      </ProductsContentWrapper>
-      {!isMobile && (
-        <MemoizedCartDrawer
-          opened={cartDrawerOpened}
-          onClose={handleCloseCartDrawer}
-          cartItems={cartItems}
-          cartTotal={cartTotal}
-          isMobile={false}
+    <>
+      {selectedProduct && (
+        <AddToCartModal
+          product={selectedProduct}
+          opened={addToCartModalOpened}
+          onClose={() => {
+            setAddToCartModalOpened(false);
+            // Optionally clear selectedProduct after a short delay
+            setTimeout(() => setSelectedProduct(null), 200);
+          }}
+          onAddToCart={(...args) => {
+            handleAddToCart(...args);
+            setAddToCartModalOpened(false);
+            setTimeout(() => setSelectedProduct(null), 200);
+          }}
         />
       )}
-    </Flex>
+      <Flex direction="column" className={styles.productPageContainer}>
+        <ProductsHeaderWrapper
+          isHeaderCollapsed={isHeaderCollapsed}
+          headerHeight={headerHeight}
+          collapsedHeaderHeight={collapsedHeaderHeight}
+          header={
+            <MemoizedProductsHeader
+              ref={headerRef}
+              branch={activeBranch}
+              onBackClick={handleBack}
+              searchValue={searchQuery}
+              onSearchChange={handleSearchChange}
+              isClosed={isClosed}
+              closedMessage={BRANCH_TEXTS.BRANCH_CLOSED}
+              isFiltering={searchQuery.length > 0}
+            />
+          }
+          categories={
+            <MemoizedCategoryTabs
+              categories={categories}
+              onTabChange={handleTabChange}
+              top={
+                isHeaderCollapsed
+                  ? collapsedHeaderHeight + categoriesTopOffset
+                  : headerHeight + categoriesTopOffset
+              }
+            />
+          }
+        />
+        <ProductsContentWrapper
+          ref={contentWrapperRef}
+          topOffset={18 + categoriesHeight}
+        >
+          <ProductsSectionsContainer
+            categories={categories}
+            products={branchProducts}
+            searchQuery={searchQuery}
+            onProductClick={handleProductClick}
+          />
+          {isMobile && (
+            <Box className={styles.cartButtonContainer}>
+              <MobileCartButton
+                onClick={openCartDrawer}
+                cartItems={cartItems}
+                cartTotal={cartTotal}
+              />
+            </Box>
+          )}
+        </ProductsContentWrapper>
+        {!isMobile && (
+          <MemoizedCartDrawer
+            opened={cartDrawerOpened}
+            onClose={handleCloseCartDrawer}
+            isMobile={false}
+          />
+        )}
+      </Flex>
+    </>
+  ) : loading ? (
+    <Center style={{ minHeight: '50vh' }}>
+      <Loader size="lg" />
+    </Center>
   ) : (
     <BranchNotFoundError />
   );
