@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { IProduct } from '../../types';
 import {
   Card,
@@ -40,6 +40,12 @@ const ProductCard = ({
 
   // Get total quantity of this product in the cart (all versions combined)
   const quantity = cartItems.reduce((total, item) => total + item.quantity, 0);
+
+  useEffect(() => {
+    if (quantity > 0) {
+      setShowQuantityControl(true);
+    }
+  }, [quantity]);
 
   // Check if product has discount - use a stable approach
   const hasDiscount = useMemo(() => {
@@ -140,6 +146,7 @@ const ProductCard = ({
                     e.stopPropagation();
                     if (!isDisabled) onProductClick?.(product);
                   }}
+                  onMouseEnter={() => setShowQuantityControl(true)}
                   data-testid="product-card-quantity-badge"
                 >
                   <Text
