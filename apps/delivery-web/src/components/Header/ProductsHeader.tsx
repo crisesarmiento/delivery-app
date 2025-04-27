@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useMemo, forwardRef } from 'react';
+import useIsMobile from '@/hooks/useIsMobile';
 import { Box, Text, Flex, Title } from '@mantine/core';
 import { useDisclosure, useHeadroom } from '@mantine/hooks';
 import { useRouter } from 'next/navigation';
@@ -36,7 +37,7 @@ const ProductsHeader = forwardRef<HTMLDivElement, ProductsHeaderProps>(
     const { name, address, phoneNumber } = branch;
     const [opened, { toggle, close }] = useDisclosure(false);
     const [internalSearchValue, setInternalSearchValue] = useState(searchValue);
-    const [isMobile, setIsMobile] = useState(false);
+    const isMobile = useIsMobile();
     const router = useRouter();
 
     // Get headroom state from Mantine hook
@@ -69,23 +70,6 @@ const ProductsHeader = forwardRef<HTMLDivElement, ProductsHeaderProps>(
 
     // Track previous header state to detect changes
     const prevCollapsedStateRef = useRef(isHeaderCollapsed);
-
-    useEffect(() => {
-      const checkIfMobile = () => {
-        setIsMobile(window.innerWidth <= 768);
-      };
-
-      // Check on initial load
-      checkIfMobile();
-
-      // Add event listener for window resize
-      window.addEventListener('resize', checkIfMobile);
-
-      // Cleanup
-      return () => {
-        window.removeEventListener('resize', checkIfMobile);
-      };
-    }, []);
 
     // Handle autofocus when header state changes
     useEffect(() => {

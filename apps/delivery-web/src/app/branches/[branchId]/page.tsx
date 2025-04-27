@@ -15,6 +15,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useMemo, memo, useCallback } from 'react';
+import useIsMobile from '@/hooks/useIsMobile';
 import { useParams, useRouter } from 'next/navigation';
 import { Box, Flex } from '@mantine/core';
 import { IProduct } from '@/types';
@@ -77,7 +78,7 @@ const BranchProductsPage = () => {
   const categoryTabsRef = useRef<HTMLDivElement>(null);
   const contentWrapperRef = useRef<HTMLDivElement>(null);
 
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useIsMobile();
   const [searchQuery, setSearchQuery] = useState('');
 
   const [now, setNow] = useState(() => new Date());
@@ -99,26 +100,9 @@ const BranchProductsPage = () => {
     ? 10
     : 35;
 
-  function debounce(func: (...args: any[]) => void, wait: number) {
-    let timeout: NodeJS.Timeout | null = null;
-    return function (...args: any[]) {
-      if (timeout) clearTimeout(timeout);
-      timeout = setTimeout(() => func(...args), wait);
-    };
-  }
-
   const handleHeaderStateChange = useRef((event: CustomEvent) => {
     setIsHeaderCollapsed(event.detail.collapsed);
   }).current;
-
-  useEffect(() => {
-    const checkIsMobile = debounce(() => {
-      setIsMobile(window.innerWidth <= 768);
-    }, 100);
-    checkIsMobile();
-    window.addEventListener('resize', checkIsMobile);
-    return () => window.removeEventListener('resize', checkIsMobile);
-  }, []);
 
   useEffect(() => {
     window.addEventListener(
@@ -207,8 +191,10 @@ const BranchProductsPage = () => {
 
   const cartTotal = getTotalPrice();
 
+  // Helper to wait for header transition before scrolling
   const scrollToCategory = (category: string) => {
-    setTimeout(() => {
+    // Listen for transitionend on header, then scroll
+    const doScroll = () => {
       const sectionElement = document.getElementById(
         `category-section-${category.toLowerCase()}`
       );
@@ -217,7 +203,6 @@ const BranchProductsPage = () => {
       const headerHeight = headerRef.current?.offsetHeight || 0;
       const tabsHeight = categoryTabsRef.current?.offsetHeight || 0;
       const offset = headerHeight + tabsHeight;
-
       if (isFirstCategory) {
         setSearchQuery('');
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -225,7 +210,39 @@ const BranchProductsPage = () => {
         const position = Math.max(0, sectionElement.offsetTop - offset);
         window.scrollTo({ top: position, behavior: 'smooth' });
       }
-    }, 0);
+    };
+    // If header is transitioning, wait for transitionend
+    const headerEl = headerRef.current;
+    if (headerEl) {
+      let scrolled = false;
+      const onTransitionEnd = () => {
+        if (!scrolled) {
+          scrolled = true;
+          doScroll();
+        }
+        headerEl.removeEventListener('transitionend', onTransitionEnd);
+      };
+      // If header is animating (has transition), wait for it
+      const computedStyle = window.getComputedStyle(headerEl);
+      if (
+        computedStyle.transitionDuration &&
+        computedStyle.transitionDuration !== '0s'
+      ) {
+        headerEl.addEventListener('transitionend', onTransitionEnd);
+        // Fallback: scroll anyway after 400ms if transitionend doesn't fire
+        setTimeout(() => {
+          if (!scrolled) {
+            scrolled = true;
+            doScroll();
+            headerEl.removeEventListener('transitionend', onTransitionEnd);
+          }
+        }, 400);
+      } else {
+        doScroll();
+      }
+    } else {
+      doScroll();
+    }
   };
 
   const handleTabChange = (value: string | null) => {
