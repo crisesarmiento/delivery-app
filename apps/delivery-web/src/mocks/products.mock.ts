@@ -1,10 +1,11 @@
 import { IProductWithCustomization } from '@/types';
 import { condiments } from '@/types';
 import { productCategories } from '@/types/enums';
+import { branchesMock } from './branches.mock';
 
 
 // Mock data for products with customization options
-export const products: IProductWithCustomization[] = [
+const baseProducts: IProductWithCustomization[] = [
   {
     id: 1,
     branchId: 1,
@@ -810,5 +811,14 @@ export const products: IProductWithCustomization[] = [
     },
   },
 ];
+
+
+export const products: IProductWithCustomization[] = branchesMock.flatMap(branch => 
+  baseProducts.map(product => ({
+    ...product,
+    branchId: branch.id,
+  }))
+);
+
 
 export default products;
