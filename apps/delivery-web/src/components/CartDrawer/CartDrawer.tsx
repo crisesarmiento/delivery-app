@@ -5,35 +5,23 @@ import { Box, Text, Divider, Button } from '@mantine/core';
 import { useEffect, useState, useCallback } from 'react';
 import { IconShoppingCart, IconTrash } from '@tabler/icons-react';
 import { CART_TITLE, CART_TOTAL, CART_VIEW_BUTTON } from '@/constants/text';
-import { useMediaQuery } from '@mantine/hooks';
-import EmptyCart from './EmptyCart';
 import CartItem from './CartItem';
-import { useCart } from '../../context/CartContext';
+import { useCart } from '@/context/CartContext';
 import { useRouter } from 'next/navigation';
+import { CartDrawerProps } from './types';
 
-interface CartDrawerProps {
-  opened: boolean;
-  onClose: () => void;
-  isMobile?: boolean;
-}
-
-const CartDrawer = ({ opened, onClose }: CartDrawerProps) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+const CartDrawer = ({ clearCart }: CartDrawerProps) => {
   const [rightPosition, setRightPosition] = useState('80px');
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
-  const isMobileView = useMediaQuery('(max-width: 768px)');
-  const isOnMobile = isMobile !== undefined ? isMobile : isMobileView;
   const [headerOffset, setHeaderOffset] = useState(0);
-  const { clearCart, currentBranchId, cartItems, cartTotal } = useCart();
+
+  const { currentBranchId, cartItems, cartTotal } = useCart();
   const router = useRouter();
 
   // Check if viewport is mobile and calculate position
   useEffect(() => {
     const updatePositioning = () => {
       const viewportWidth = window.innerWidth;
-      const isMobileView = viewportWidth <= 768;
-      setIsMobile(isMobileView);
 
       // Calculate right position based on container width (1440px max)
       if (viewportWidth > 1440) {
@@ -53,6 +41,11 @@ const CartDrawer = ({ opened, onClose }: CartDrawerProps) => {
     // Clean up
     return () => window.removeEventListener('resize', updatePositioning);
   }, []);
+
+  // Handler for closing/clearing the cart
+  const handleClearCart = () => {
+    clearCart();
+  };
 
   // Track scroll position to detect header collapse state and header height changes
   const handleScroll = useCallback(() => {
@@ -89,38 +82,6 @@ const CartDrawer = ({ opened, onClose }: CartDrawerProps) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
 
-  // Handle visibility based on opened prop and mobile status
-  useEffect(() => {
-    // Only update visibility if not in mobile view
-    if (!isMobile) {
-      setIsVisible(opened);
-    } else {
-      setIsVisible(false);
-    }
-  }, [opened, isMobile]);
-
-  // Hide the cart drawer on mobile
-  if (isOnMobile) {
-    return null;
-  }
-
-  // Don't render anything in mobile view
-  if (isMobile) {
-    return null;
-  }
-
-  // For empty cart - compact floating card with specified dimensions
-  if (cartItems.length === 0) {
-    return (
-      <EmptyCart
-        isVisible={isVisible}
-        isMobile={isMobile}
-        isHeaderCollapsed={isHeaderCollapsed}
-        headerOffset={headerOffset}
-      />
-    );
-  }
-
   // Calculate top position based on header state - now using fixed position
   const topPosition = isHeaderCollapsed ? '290px' : '307px'; // Aligned with categories when collapsed
 
@@ -139,7 +100,7 @@ const CartDrawer = ({ opened, onClose }: CartDrawerProps) => {
         position: 'fixed',
         top: topPosition,
         transform: `translateY(-${headerOffset}px)`,
-        right: isVisible ? rightPosition : '-240px',
+        right: rightPosition || '-240px',
         width: '200px',
         maxHeight: '242px',
         background: '#FFFFFF',
@@ -167,14 +128,12 @@ const CartDrawer = ({ opened, onClose }: CartDrawerProps) => {
           {CART_TITLE}
         </Text>
         <Box style={{ position: 'absolute', top: 0, right: 16 }}>
+          {/* Trash/Clear Cart Icon */}
           <IconTrash
             size={18}
-            stroke={1.5}
-            style={{ cursor: 'pointer' }}
-            onClick={() => {
-              clearCart();
-            }}
-            data-testid="cart-clear-button"
+            style={{ cursor: 'pointer', marginLeft: 8 }}
+            onClick={handleClearCart}
+            title="Vaciar carrito"
           />
         </Box>
       </Box>
