@@ -76,7 +76,6 @@ const ProductCard = ({
         className={styles.productCard}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        onClick={() => !isDisabled && onProductClick?.(product)}
         style={{
           boxShadow: isHovered ? theme.shadows.md : theme.shadows.xs,
           backgroundColor: isHovered
@@ -142,10 +141,6 @@ const ProductCard = ({
               {quantity > 0 && (
                 <Box
                   className={styles.quantityBadge}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (!isDisabled) onProductClick?.(product);
-                  }}
                   onMouseEnter={() => setShowQuantityControl(true)}
                   data-testid="product-card-quantity-badge"
                 >
@@ -166,7 +161,6 @@ const ProductCard = ({
               {isHovered && !isDisabled && (
                 <Box
                   className={styles.cartIconContainer}
-                  onClick={() => onProductClick?.(product)}
                   style={{
                     backgroundColor: theme.colors.action[4],
                     boxShadow: theme.shadows.md,
@@ -177,6 +171,12 @@ const ProductCard = ({
                     size={24}
                     className={styles.cartIcon}
                     stroke={1.5}
+                    aria-label="Add to cart"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevents bubbling to parent
+                      if (!isDisabled) onProductClick?.(product);
+                    }}
+                    data-testid="product-card-cart-icon"
                     style={{ color: theme.colors.neutral[9] }}
                   />
                 </Box>
