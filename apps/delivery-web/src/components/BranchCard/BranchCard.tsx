@@ -72,7 +72,8 @@ const BranchCard = ({ branch, onClick }: BranchCardProps) => {
           })`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          borderRadius: '4px',
+          borderRadius: '8px',
+          marginBottom: '12px',
         }}
       >
         {/* Status badge */}

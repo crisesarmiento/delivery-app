@@ -159,7 +159,7 @@ const BranchProductsPage = () => {
 
   const addToCart = useCallback(
     (product: IProduct, quantity: number) => {
-      if (activeBranch && !activeBranch.isOpen) {
+      if (activeBranch && !isBranchOpen(activeBranch, now)) {
         alert(BRANCH_TEXTS.BRANCH_CLOSED_ALERT);
         return;
       }
@@ -178,7 +178,7 @@ const BranchProductsPage = () => {
       addToCartContext(cartItem);
       setTimeout(() => setSelectedProduct(null), 200);
     },
-    [activeBranch, addToCartContext]
+    [activeBranch, addToCartContext, now]
   );
 
   const openCartDrawer = useCallback(() => {

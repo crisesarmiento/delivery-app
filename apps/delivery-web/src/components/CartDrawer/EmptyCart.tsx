@@ -3,24 +3,16 @@
 import { Box, Text, Flex, Divider } from '@mantine/core';
 import { IconShoppingCart } from '@tabler/icons-react';
 import { CART_TEXTS } from '../../config/constants';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
-interface EmptyCartProps {
-  isMobile?: boolean;
-  isHeaderCollapsed?: boolean;
-  headerOffset?: number;
-}
-
-const EmptyCart = ({
-  isMobile = false,
-  isHeaderCollapsed = false,
-  headerOffset = 0,
-}: EmptyCartProps) => {
+const EmptyCart = () => {
   const [rightPosition, setRightPosition] = useState('80px');
+  const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
+  const [headerOffset, setHeaderOffset] = useState(0);
 
-  // Calculate position based on viewport width and container max-width
+  // Check if viewport is mobile and calculate position
   useEffect(() => {
-    const updatePosition = () => {
+    const updatePositioning = () => {
       const viewportWidth = window.innerWidth;
 
       // Calculate right position based on container width (1440px max)
@@ -34,15 +26,50 @@ const EmptyCart = ({
       }
     };
 
-    // Initial calculation and set up resize listener
-    updatePosition();
-    window.addEventListener('resize', updatePosition);
+    // Check on mount and resize
+    updatePositioning();
+    window.addEventListener('resize', updatePositioning);
 
     // Clean up
-    return () => window.removeEventListener('resize', updatePosition);
+    return () => window.removeEventListener('resize', updatePositioning);
   }, []);
 
-  // Using fixed top position now
+  // Track scroll position to detect header collapse state and header height changes
+  const handleScroll = useCallback(() => {
+    const currentScrollPos = window.scrollY;
+    const newIsHeaderCollapsed = currentScrollPos > 50;
+
+    // Only update state when the value changes to prevent needless re-renders
+    if (newIsHeaderCollapsed !== isHeaderCollapsed) {
+      setIsHeaderCollapsed(newIsHeaderCollapsed);
+    }
+
+    // Calculate header offset based on scroll position
+    const collapsedHeaderHeight = 70; // Height when collapsed
+    const fullHeaderHeight = 280; // Height when expanded
+
+    // Calculate how much of the header has been scrolled
+    const scrolledPortion = Math.min(
+      currentScrollPos,
+      fullHeaderHeight - collapsedHeaderHeight
+    );
+    const currentHeaderOffset = scrolledPortion > 0 ? scrolledPortion : 0;
+
+    // Only update if value has changed
+    if (currentHeaderOffset !== headerOffset) {
+      setHeaderOffset(currentHeaderOffset);
+    }
+  }, [isHeaderCollapsed, headerOffset]);
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    // Initial call to set correct values
+    handleScroll();
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [handleScroll]);
+
+  // Calculate top position based on header state - now using fixed position
   const topPosition = isHeaderCollapsed ? '290px' : '307px'; // Aligned with categories when collapsed
 
   return (
@@ -51,7 +78,7 @@ const EmptyCart = ({
         position: 'fixed',
         top: topPosition,
         transform: `translateY(-${headerOffset}px)`,
-        right: isMobile ? '80px' : '-240px',
+        right: rightPosition || '-240px',
         width: '200px',
         height: '242px',
         backgroundColor: '#FFFFFF',
