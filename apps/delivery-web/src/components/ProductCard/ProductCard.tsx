@@ -171,6 +171,7 @@ const ProductCard = ({
                     size={24}
                     className={styles.cartIcon}
                     stroke={1.5}
+                    aria-label="Add to cart"
                     onClick={(e) => {
                       e.stopPropagation(); // Prevents bubbling to parent
                       if (!isDisabled) onProductClick?.(product);
