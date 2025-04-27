@@ -128,14 +128,12 @@ const CartDrawer = ({ clearCart }: CartDrawerProps) => {
           {CART_TITLE}
         </Text>
         <Box style={{ position: 'absolute', top: 0, right: 16 }}>
+          {/* Trash/Clear Cart Icon */}
           <IconTrash
             size={18}
-            stroke={1.5}
-            style={{ cursor: 'pointer' }}
-            onClick={() => {
-              clearCart();
-            }}
-            data-testid="cart-clear-button"
+            style={{ cursor: 'pointer', marginLeft: 8 }}
+            onClick={handleClearCart}
+            title="Vaciar carrito"
           />
         </Box>
       </Box>
@@ -212,13 +210,6 @@ const CartDrawer = ({ clearCart }: CartDrawerProps) => {
           >
             ${cartTotal.toLocaleString()}
           </Text>
-          {/* Trash/Clear Cart Icon */}
-          <IconTrash
-            size={18}
-            style={{ cursor: 'pointer', marginLeft: 8 }}
-            onClick={handleClearCart}
-            title="Vaciar carrito"
-          />
         </Box>
 
         <Button
