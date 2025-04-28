@@ -115,6 +115,7 @@ export default function HomePage() {
         showClosedNotification={hasClosedBranches}
         closedMessage={BRANCH_TEXTS.SOME_BRANCHES_CLOSED}
         isFiltering={isFiltering}
+        isHeaderCollapsed={isHeaderCollapsed}
       />
 
       <ContentWrapper topOffset={headerActualHeight}>

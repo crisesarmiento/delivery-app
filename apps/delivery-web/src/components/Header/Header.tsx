@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Box, Text } from '@mantine/core';
-import { useDisclosure, useHeadroom } from '@mantine/hooks';
+import { useDisclosure } from '@mantine/hooks';
 import { useRouter } from 'next/navigation';
 import { MenuDrawer } from '../MenuDrawer/MenuDrawer';
 import { Logo, MenuButton, SearchBar } from './HeaderComponents';
@@ -16,6 +16,7 @@ interface HeaderProps {
   showClosedNotification?: boolean;
   closedMessage?: string;
   isFiltering?: boolean;
+  isHeaderCollapsed: boolean;
 }
 
 const Header = ({
@@ -25,23 +26,13 @@ const Header = ({
   showClosedNotification = false,
   closedMessage,
   isFiltering = false,
+  isHeaderCollapsed,
 }: HeaderProps) => {
   const [opened, { toggle, close }] = useDisclosure(false);
   const [internalSearchValue, setInternalSearchValue] = useState(searchValue);
 
-  // Get headroom state from Mantine hook
-  const pinned = useHeadroom({ fixedAt: 120 });
-
-  // TODO: Remove this once we have a better way to handle the header state
-  console.log('closedMessage', closedMessage);
-
   // Add a search active state to lock header state during typing
   const [isSearchActive, setIsSearchActive] = useState(false);
-  // Store the latest header state before search became active
-  const [lockedHeaderState, setLockedHeaderState] = useState(false);
-
-  // Determine if header should be collapsed based on pinned state and search activity
-  const isHeaderCollapsed = isSearchActive ? lockedHeaderState : !pinned;
 
   // Emit a custom event when the header state changes to notify ContentWrapper
   useEffect(() => {
@@ -111,7 +102,6 @@ const Header = ({
     // If this is the first keystroke, lock the current header state
     if (!isSearchActive && newValue.length === 1) {
       setIsSearchActive(true);
-      setLockedHeaderState(isHeaderCollapsed);
     }
 
     // If search is being cleared, unlock the header state
