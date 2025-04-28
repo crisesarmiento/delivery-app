@@ -245,7 +245,7 @@ const Header = ({
       </Box>
 
       {/* Empty space to push content below fixed header */}
-      <Box
+      {/* <Box
         style={{
           height:
             isHeaderCollapsed && isFiltering
@@ -256,7 +256,7 @@ const Header = ({
           transition: 'height 0.3s ease',
         }}
         data-testid="header-spacer"
-      />
+      /> */}
 
       {/* Mobile Navigation Drawer */}
       <MenuDrawer opened={opened} onClose={close} onNavigate={handleNavigate} />

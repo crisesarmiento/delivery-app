@@ -1,15 +1,15 @@
 'use client';
 
-import { Box, Container, Text, useMantineTheme } from '@mantine/core';
-import BranchCard from '../components/BranchCard/BranchCard';
-import Header from '../components/Header/Header';
+import { useMantineTheme } from '@mantine/core';
+import Header from '@/components/Header/Header';
 import ContentWrapper from '../components/ContentWrapper';
 import { useRouter } from 'next/navigation';
 import { useState, useMemo, useEffect, useRef } from 'react';
-import { normalizeText } from '../utils/string';
-import { BRANCH_TEXTS } from '../config/constants';
+import { normalizeText } from '@/utils/string';
+import { BRANCH_TEXTS } from '@/config/constants';
 import { useNav } from '@/context/navContext';
 import AppLoader from '@/components/Loader/AppLoader';
+import BranchesContainer from '@/components/BranchesContainer/BranchesContainer';
 
 export default function HomePage() {
   const router = useRouter();
@@ -135,85 +135,17 @@ export default function HomePage() {
       />
 
       <ContentWrapper topOffset={headerActualHeight}>
-        {loading && <AppLoader message="Cargando sucursales..." size="lg" />}
-        {!loading && (
-          <Container
-            fluid
-            px={0}
-            style={{
-              backgroundColor: theme.colors.neutral[0],
-              width: '100%',
-              maxWidth: '100%',
-              overflowX: 'hidden',
-              overflowY: 'visible',
-              display: 'flex',
-              justifyContent: 'center',
-              transform: 'translateZ(0)',
-              backfaceVisibility: 'hidden',
-              willChange: 'transform',
+        {loading ? (
+          <AppLoader message="Cargando sucursales..." size="lg" />
+        ) : (
+          <BranchesContainer
+            branches={filteredBranches}
+            onBranchClick={(branch) => {
+              setActiveBranch(branch);
+              router.push(`/branches/${branch.id}`);
             }}
-          >
-            <Container
-              size="xl"
-              py="xl"
-              px={{ base: theme.spacing.md, md: theme.spacing.xl, lg: '80px' }}
-              style={{
-                width: '100%',
-                maxWidth: '1440px',
-                overflowX: 'hidden',
-                overflowY: 'visible',
-                marginTop: isHeaderCollapsed && isFiltering ? 0 : 0,
-              }}
-            >
-              {filteredBranches.length > 0 ? (
-                <Box
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: `repeat(auto-fill, minmax(${
-                      isMobile ? '230px' : '240px'
-                    }, 1fr))`,
-                    gap: theme.spacing.md,
-                    marginTop: 0,
-                    width: '100%',
-                    maxWidth: '100%',
-                    justifyContent: 'center',
-                    paddingLeft: isMobile ? '8px' : '0',
-                    paddingRight: isMobile ? '8px' : '0',
-                    // Adjust top padding when filtering with collapsed header
-                    paddingTop: theme.spacing.md,
-                  }}
-                >
-                  {filteredBranches.map((branch) => (
-                    <Box
-                      key={branch.id}
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        marginTop:
-                          isHeaderCollapsed && isFiltering
-                            ? theme.spacing.xs
-                            : theme.spacing.xl,
-                        maxWidth: '100%',
-                      }}
-                    >
-                      <BranchCard
-                        branch={branch}
-                        onClick={() => {
-                          setActiveBranch(branch);
-                          router.push(`/branches/${branch.id}`);
-                        }}
-                      />
-                    </Box>
-                  ))}
-                </Box>
-              ) : (
-                <Box style={{ textAlign: 'center', padding: theme.spacing.xl }}>
-                  <Text variant="body">{BRANCH_TEXTS.NO_BRANCHES_FOUND}</Text>
-                </Box>
-              )}
-            </Container>
-          </Container>
+            isMobile={isMobile}
+          />
         )}
       </ContentWrapper>
     </>
