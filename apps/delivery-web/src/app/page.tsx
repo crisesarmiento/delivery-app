@@ -10,13 +10,13 @@ import { BRANCH_TEXTS } from '@/config/constants';
 import { useNav } from '@/context/navContext';
 import AppLoader from '@/components/Loader/AppLoader';
 import BranchesContainer from '@/components/BranchesContainer/BranchesContainer';
+import useIsMobile from '@/hooks/useIsMobile';
 
 export default function HomePage() {
   const router = useRouter();
+  const isMobile = useIsMobile();
   const { branches, setActiveBranch, loading } = useNav();
   const [searchValue, setSearchValue] = useState('');
-  const theme = useMantineTheme();
-  const [isMobile, setIsMobile] = useState(false);
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
   const prevScrollPosition = useRef(0);
 
@@ -28,23 +28,6 @@ export default function HomePage() {
   const topOffset = isHeaderCollapsed ? collapsedHeaderHeight : headerHeight;
 
   const [headerActualHeight, setHeaderActualHeight] = useState(topOffset);
-
-  function debounce(func: (...args: any[]) => void, wait: number) {
-    let timeout: NodeJS.Timeout | null = null;
-    return function (...args: any[]) {
-      if (timeout) clearTimeout(timeout);
-      timeout = setTimeout(() => func(...args), wait);
-    };
-  }
-
-  useEffect(() => {
-    const checkIsMobile = debounce(() => {
-      setIsMobile(window.innerWidth <= 768);
-    }, 100);
-    checkIsMobile();
-    window.addEventListener('resize', checkIsMobile);
-    return () => window.removeEventListener('resize', checkIsMobile);
-  }, []);
 
   // Track scroll position to detect header collapse state
   useEffect(() => {
