@@ -20,6 +20,7 @@ interface ProductsHeaderProps {
   closedMessage?: string;
   isFiltering?: boolean;
   isHeaderCollapsed: boolean;
+  collapsedHeaderHeight?: number;
 }
 
 const ProductsHeader = forwardRef<HTMLDivElement, ProductsHeaderProps>(
@@ -33,6 +34,7 @@ const ProductsHeader = forwardRef<HTMLDivElement, ProductsHeaderProps>(
       closedMessage,
       isFiltering = false,
       isHeaderCollapsed,
+      collapsedHeaderHeight,
     },
     ref
   ) => {
@@ -299,7 +301,7 @@ const ProductsHeader = forwardRef<HTMLDivElement, ProductsHeaderProps>(
           style={{
             height:
               isHeaderCollapsed && isFiltering
-                ? '80px' // Reduced height when header is collapsed and filtering
+                ? collapsedHeaderHeight
                 : isClosed
                 ? isMobile
                   ? '198px'
