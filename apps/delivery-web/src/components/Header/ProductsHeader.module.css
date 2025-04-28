@@ -232,7 +232,6 @@
 
 /* Empty space to push content below fixed header */
 .headerSpacer {
-  height: 250px; /* 70px top header + 210px bottom header */
   background-color: #ffffff !important;
   transition: height 0.3s ease;
   transform: translateZ(0);
