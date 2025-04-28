@@ -9,6 +9,10 @@
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .productsContentWrapper {
-    padding: 0;
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    z-index: 5;
   }
 }

@@ -114,9 +114,9 @@ const BranchProductsPage = () => {
       ? 10
       : 25
     : isMobile
-    ? 10
+    ? 5
     : 35;
-  const distanceWithCategories = 27;
+  const distanceWithCategories = isMobile ? 33 : 27;
 
   // Canonical offset: header height + top offset (do NOT add categoriesHeight)
   const totalTopOffset = isHeaderCollapsed
