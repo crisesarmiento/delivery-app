@@ -308,6 +308,7 @@ const BranchProductsPage = () => {
               closedMessage={BRANCH_TEXTS.BRANCH_CLOSED}
               isFiltering={searchQuery.length > 0}
               isHeaderCollapsed={isHeaderCollapsed}
+              collapsedHeaderHeight={collapsedHeaderHeight}
             />
           }
           categories={

@@ -173,20 +173,14 @@ export default function HomePage() {
                       isMobile ? '230px' : '240px'
                     }, 1fr))`,
                     gap: theme.spacing.md,
-                    marginTop:
-                      isHeaderCollapsed && isFiltering
-                        ? 0 - headerActualHeight
-                        : 0,
+                    marginTop: 0,
                     width: '100%',
                     maxWidth: '100%',
                     justifyContent: 'center',
                     paddingLeft: isMobile ? '8px' : '0',
                     paddingRight: isMobile ? '8px' : '0',
                     // Adjust top padding when filtering with collapsed header
-                    paddingTop:
-                      isHeaderCollapsed && isFiltering
-                        ? 0 - headerActualHeight
-                        : theme.spacing.md,
+                    paddingTop: theme.spacing.md,
                   }}
                 >
                   {filteredBranches.map((branch) => (
