@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect, useRef, useMemo, forwardRef } from 'react';
+import { useState, useEffect, useRef, forwardRef } from 'react';
+import useIsMobile from '@/hooks/useIsMobile';
 import { Box, Text, Flex, Title } from '@mantine/core';
-import { useDisclosure, useHeadroom } from '@mantine/hooks';
+import { useDisclosure } from '@mantine/hooks';
 import { useRouter } from 'next/navigation';
 import { MenuDrawer } from '../MenuDrawer/MenuDrawer';
 import { Logo, MenuButton, SearchBar, BackButton } from './HeaderComponents';
@@ -18,6 +19,7 @@ interface ProductsHeaderProps {
   isClosed?: boolean;
   closedMessage?: string;
   isFiltering?: boolean;
+  isHeaderCollapsed: boolean;
 }
 
 const ProductsHeader = forwardRef<HTMLDivElement, ProductsHeaderProps>(
@@ -30,38 +32,20 @@ const ProductsHeader = forwardRef<HTMLDivElement, ProductsHeaderProps>(
       isClosed = false,
       closedMessage,
       isFiltering = false,
+      isHeaderCollapsed,
     },
     ref
   ) => {
     const { name, address, phoneNumber } = branch;
     const [opened, { toggle, close }] = useDisclosure(false);
     const [internalSearchValue, setInternalSearchValue] = useState(searchValue);
-    const [isMobile, setIsMobile] = useState(false);
+    const isMobile = useIsMobile();
     const router = useRouter();
-
-    // Get headroom state from Mantine hook
-    const pinned = useHeadroom({ fixedAt: 120 });
 
     // Add a search active state to lock header state during typing
     const [isSearchActive, setIsSearchActive] = useState(false);
     // Store the latest header state before search became active
     const [lockedHeaderState, setLockedHeaderState] = useState(false);
-
-    // Determine if the header is collapsed
-    const isHeaderCollapsed = useMemo(() => {
-      const result = (isSearchActive && !lockedHeaderState) || !pinned;
-      return result;
-    }, [isSearchActive, lockedHeaderState, pinned]);
-
-    // Emit a custom event when the header state changes to notify ContentWrapper
-    useEffect(() => {
-      // Create and dispatch a custom event with the header state
-      const headerStateEvent = new CustomEvent('header-state-change', {
-        detail: { collapsed: isHeaderCollapsed },
-        bubbles: true,
-      });
-      window.dispatchEvent(headerStateEvent);
-    }, [isHeaderCollapsed]);
 
     // Refs for search bar components to manage focus during transitions
     const expandedSearchRef = useRef<HTMLInputElement>(null);
@@ -69,23 +53,6 @@ const ProductsHeader = forwardRef<HTMLDivElement, ProductsHeaderProps>(
 
     // Track previous header state to detect changes
     const prevCollapsedStateRef = useRef(isHeaderCollapsed);
-
-    useEffect(() => {
-      const checkIfMobile = () => {
-        setIsMobile(window.innerWidth <= 768);
-      };
-
-      // Check on initial load
-      checkIfMobile();
-
-      // Add event listener for window resize
-      window.addEventListener('resize', checkIfMobile);
-
-      // Cleanup
-      return () => {
-        window.removeEventListener('resize', checkIfMobile);
-      };
-    }, []);
 
     // Handle autofocus when header state changes
     useEffect(() => {

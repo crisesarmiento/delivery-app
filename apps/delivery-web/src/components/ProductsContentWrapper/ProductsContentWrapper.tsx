@@ -6,15 +6,20 @@ interface ContentWrapperProps {
   children: React.ReactNode;
 }
 
-const ProductsContentWrapper = forwardRef<HTMLDivElement | null, ContentWrapperProps>(
-  ({ topOffset, children }, ref) => {
-    return (
-      <Box style={{ marginTop: topOffset }} ref={ref}>
-        {children}
-      </Box>
-    );
-  }
-);
+const ProductsContentWrapper = forwardRef<
+  HTMLDivElement | null,
+  ContentWrapperProps
+>(({ topOffset, children }, ref) => {
+  return (
+    <Box
+      className="productsContentWrapper"
+      style={{ marginTop: topOffset }}
+      ref={ref}
+    >
+      {children}
+    </Box>
+  );
+});
 
 ProductsContentWrapper.displayName = 'ProductsContentWrapper';
 

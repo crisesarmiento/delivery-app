@@ -15,6 +15,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useMemo, memo, useCallback } from 'react';
+import useIsMobile from '@/hooks/useIsMobile';
 import { useParams, useRouter } from 'next/navigation';
 import { Box, Flex } from '@mantine/core';
 import { IProduct } from '@/types';
@@ -77,7 +78,7 @@ const BranchProductsPage = () => {
   const categoryTabsRef = useRef<HTMLDivElement>(null);
   const contentWrapperRef = useRef<HTMLDivElement>(null);
 
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useIsMobile();
   const [searchQuery, setSearchQuery] = useState('');
 
   const [now, setNow] = useState(() => new Date());
@@ -87,8 +88,25 @@ const BranchProductsPage = () => {
   }, []);
 
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
+  const [pendingScrollCategory, setPendingScrollCategory] = useState<
+    string | null
+  >(null);
+  const [scrollLock, setScrollLock] = useState(false); // NEW: lock scroll events during programmatic scroll
 
-  const categoriesHeight = 61;
+  // Collapse header on manual scroll, but ignore during programmatic scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      if (scrollLock) return; // Ignore scroll events while locked
+      if (window.scrollY > 50 && !isHeaderCollapsed) {
+        setIsHeaderCollapsed(true);
+      } else if (window.scrollY <= 50 && isHeaderCollapsed) {
+        setIsHeaderCollapsed(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isHeaderCollapsed, scrollLock]);
+
   const headerHeight = isMobile ? 200 : 280;
   const collapsedHeaderHeight = isMobile ? 40 : 60;
   const categoriesTopOffset = isHeaderCollapsed
@@ -96,41 +114,14 @@ const BranchProductsPage = () => {
       ? 10
       : 25
     : isMobile
-    ? 10
+    ? 5
     : 35;
+  const distanceWithCategories = isMobile ? 33 : 27;
 
-  function debounce(func: (...args: any[]) => void, wait: number) {
-    let timeout: NodeJS.Timeout | null = null;
-    return function (...args: any[]) {
-      if (timeout) clearTimeout(timeout);
-      timeout = setTimeout(() => func(...args), wait);
-    };
-  }
-
-  const handleHeaderStateChange = useRef((event: CustomEvent) => {
-    setIsHeaderCollapsed(event.detail.collapsed);
-  }).current;
-
-  useEffect(() => {
-    const checkIsMobile = debounce(() => {
-      setIsMobile(window.innerWidth <= 768);
-    }, 100);
-    checkIsMobile();
-    window.addEventListener('resize', checkIsMobile);
-    return () => window.removeEventListener('resize', checkIsMobile);
-  }, []);
-
-  useEffect(() => {
-    window.addEventListener(
-      'header-state-change',
-      handleHeaderStateChange as EventListener
-    );
-    return () =>
-      window.removeEventListener(
-        'header-state-change',
-        handleHeaderStateChange as EventListener
-      );
-  }, [handleHeaderStateChange]);
+  // Canonical offset: header height + top offset (do NOT add categoriesHeight)
+  const totalTopOffset = isHeaderCollapsed
+    ? collapsedHeaderHeight + categoriesTopOffset
+    : headerHeight + categoriesTopOffset;
 
   const categories = useMemo(() => {
     const categoryList: string[] = [];
@@ -190,14 +181,6 @@ const BranchProductsPage = () => {
     return activeBranch ? !isBranchOpen(activeBranch, now) : false;
   }, [activeBranch, now]);
 
-  if (loading) {
-    return (
-      <Center style={{ minHeight: '50vh' }}>
-        <Loader size="lg" />
-      </Center>
-    );
-  }
-
   const cartItems = cartContextItems.map((item) => ({
     productId: String(item.product.id),
     quantity: item.quantity,
@@ -207,33 +190,92 @@ const BranchProductsPage = () => {
 
   const cartTotal = getTotalPrice();
 
+  // Helper to wait for header transition before scrolling
+  // Robust scroll logic: force header collapse before scrolling
+  // Always set pendingScrollCategory and trigger scroll logic
   const scrollToCategory = (category: string) => {
-    setTimeout(() => {
+    setScrollLock(true); // Lock scroll events during programmatic scroll
+    setPendingScrollCategory(category);
+    // If header is not collapsed, force collapse (scroll will happen after transition)
+    if (!isHeaderCollapsed) {
+      setIsHeaderCollapsed(true);
+      return;
+    }
+    // If already collapsed, effect below will scroll immediately
+  };
+
+  // Effect: when header collapses and a pending scroll is set, do the scroll
+  // When header is collapsed and pendingScrollCategory is set, scroll to the category
+  useEffect(() => {
+    if (isHeaderCollapsed && pendingScrollCategory) {
+      const category = pendingScrollCategory;
       const sectionElement = document.getElementById(
         `category-section-${category.toLowerCase()}`
       );
       const isFirstCategory =
-        category.toLowerCase() === categories[0].toLowerCase();
+        category.toLowerCase() === categories[0]?.toLowerCase();
       const headerHeight = headerRef.current?.offsetHeight || 0;
       const tabsHeight = categoryTabsRef.current?.offsetHeight || 0;
       const offset = headerHeight + tabsHeight;
-
-      if (isFirstCategory) {
-        setSearchQuery('');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else if (sectionElement) {
-        const position = Math.max(0, sectionElement.offsetTop - offset);
-        window.scrollTo({ top: position, behavior: 'smooth' });
+      const doScroll = () => {
+        if (isFirstCategory) {
+          setSearchQuery('');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else if (sectionElement) {
+          const position = Math.max(0, sectionElement.offsetTop - offset);
+          window.scrollTo({ top: position, behavior: 'smooth' });
+        }
+        setPendingScrollCategory(null);
+        // Release scrollLock after scroll completes (estimate 500ms)
+        setTimeout(() => setScrollLock(false), 500);
+      };
+      // Wait for header transition if applicable
+      const headerEl = headerRef.current;
+      let scrolled = false;
+      if (headerEl) {
+        const onTransitionEnd = () => {
+          if (!scrolled) {
+            scrolled = true;
+            doScroll();
+          }
+          headerEl.removeEventListener('transitionend', onTransitionEnd);
+        };
+        const computedStyle = window.getComputedStyle(headerEl);
+        if (
+          computedStyle.transitionDuration &&
+          computedStyle.transitionDuration !== '0s'
+        ) {
+          headerEl.addEventListener('transitionend', onTransitionEnd);
+          setTimeout(() => {
+            if (!scrolled) {
+              scrolled = true;
+              doScroll();
+              headerEl.removeEventListener('transitionend', onTransitionEnd);
+            }
+          }, 400);
+        } else {
+          doScroll();
+        }
+      } else {
+        doScroll();
       }
-    }, 0);
-  };
+    }
+  }, [isHeaderCollapsed, pendingScrollCategory, categories]);
 
   const handleTabChange = (value: string | null) => {
     if (value) {
-      setActiveTab(value);
-      scrollToCategory(value);
+      setActiveTab(value); // Always update, even if already active
+      scrollToCategory(value); // Always trigger scroll logic
     }
   };
+
+  if (loading) {
+    return (
+      <Center style={{ minHeight: '50vh' }}>
+        <Loader size="lg" />
+      </Center>
+    );
+  }
 
   const handleOnClose = () => {
     setAddToCartModalOpened(false);
@@ -265,23 +307,24 @@ const BranchProductsPage = () => {
               isClosed={isClosed}
               closedMessage={BRANCH_TEXTS.BRANCH_CLOSED}
               isFiltering={searchQuery.length > 0}
+              isHeaderCollapsed={isHeaderCollapsed}
             />
           }
           categories={
             <MemoizedCategoryTabs
               categories={categories}
               onTabChange={handleTabChange}
-              top={
-                isHeaderCollapsed
-                  ? collapsedHeaderHeight + categoriesTopOffset
-                  : headerHeight + categoriesTopOffset
-              }
+              top={totalTopOffset} // Use unified offset
             />
           }
         />
+        {/*
+          Ensure ProductsContentWrapper always starts below header+tabs area.
+          Adjust topOffset dynamically based on isHeaderCollapsed.
+        */}
         <ProductsContentWrapper
           ref={contentWrapperRef}
-          topOffset={18 + categoriesHeight}
+          topOffset={totalTopOffset + distanceWithCategories}
         >
           <ProductsSectionsContainer
             categories={categories}
