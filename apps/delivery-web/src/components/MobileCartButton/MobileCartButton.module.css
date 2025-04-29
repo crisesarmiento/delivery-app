@@ -1,21 +1,27 @@
 .mobileCartButton {
   /* Container for the button */
   width: 100%;
-  max-width: 367px;
+  height: 40px;
+  /* max-width: 367px; */
   display: flex;
+  position: sticky;
   justify-content: center;
-  bottom: 46px;
+  align-items: center;
+  margin-bottom: 46px;
+
 }
 
 .button {
   /* Button styling based on Figma specs */
   position: relative;
   padding: 0px 12px;
-  width: 367px;
+  width: 100%;
   height: 40px;
   background: #000000;
   box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.03);
   border-radius: 4px;
+  margin-left: 12px;
+  margin-right: 12px;
 }
 
 .addToCartLeft {
