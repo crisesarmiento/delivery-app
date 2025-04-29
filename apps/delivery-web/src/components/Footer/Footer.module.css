@@ -11,7 +11,7 @@
   max-width: 1440px;
   width: 100%;
   margin: 0 auto;
-  padding: 0 80px;
+  padding: 0;
 }
 
 .gridContainer {
@@ -99,7 +99,7 @@
 
 @media (max-width: 768px) {
   .container {
-    padding: 0 16px;
+    padding: 0;
   }
 
   .gridContainer {
