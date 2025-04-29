@@ -17,12 +17,12 @@
 import { useState, useEffect, useRef, useMemo, memo, useCallback } from 'react';
 import useIsMobile from '@/hooks/useIsMobile';
 import { useParams, useRouter } from 'next/navigation';
-import { Box, Flex } from '@mantine/core';
+import { Flex } from '@mantine/core';
 import { IProduct } from '@/types';
 import styles from './page.module.css';
 import ProductsHeader from '@/components/Header/ProductsHeader';
 import CategoryTabs from '@/components/CategoryTabs/CategoryTabs';
-import MobileCartButton from '@/components/MobileCartButton/MobileCartButton';
+import BranchesFooterWrapper from '@/components/BranchesFooterWrapper/BranchesFooterWrapper';
 import { useCart, CartItem as CartContextItem } from '@/context/CartContext';
 import CartDrawerContainer from '@/components/CartDrawer/CartDrawerContainer';
 import { BRANCH_TEXTS, ERROR_TEXTS } from '@/config/constants';
@@ -323,6 +323,7 @@ const BranchProductsPage = () => {
           Ensure ProductsContentWrapper always starts below header+tabs area.
           Adjust topOffset dynamically based on isHeaderCollapsed.
         */}
+
         <ProductsContentWrapper
           ref={contentWrapperRef}
           topOffset={totalTopOffset + distanceWithCategories}
@@ -333,18 +334,10 @@ const BranchProductsPage = () => {
             searchQuery={searchQuery}
             onProductClick={handleProductClick}
           />
-          {isMobile && (
-            <Box className={styles.cartButtonContainer}>
-              <MobileCartButton
-                onClick={openCartDrawer}
-                cartItems={cartItems}
-                cartTotal={cartTotal}
-              />
-            </Box>
-          )}
         </ProductsContentWrapper>
         {<MemoizedCartDrawerContainer isMobile={isMobile} />}
       </Flex>
+      <BranchesFooterWrapper onClick={handleBack} />
     </>
   ) : loading ? (
     <Center style={{ minHeight: '50vh' }}>
