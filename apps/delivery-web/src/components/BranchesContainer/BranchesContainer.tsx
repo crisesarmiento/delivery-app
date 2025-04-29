@@ -1,20 +1,15 @@
 import { Container, Text } from '@mantine/core';
 import BranchCard from '../BranchCard/BranchCard';
 import { BRANCH_TEXTS } from '../../config/constants';
-import { IBranch } from '@/types';
 import styles from './BranchesContainer.module.css';
-
-interface BranchesContainerProps {
-  branches: IBranch[];
-  onBranchClick: (branch: IBranch) => void;
-  isMobile: boolean;
-}
+import { BranchesContainerProps } from './types';
+import useIsMobile from '@/hooks/useIsMobile';
 
 export default function BranchesContainer({
   branches,
   onBranchClick,
-  isMobile,
 }: BranchesContainerProps) {
+  const isMobile = useIsMobile();
   if (!branches.length) {
     return (
       <div className={styles.empty}>
