@@ -4,18 +4,14 @@ import { CATEGORY_TEXTS } from '../../config/constants';
 import { useRef, useEffect, useCallback } from 'react';
 import { useScrollIntoView } from '@mantine/hooks';
 import { useNav } from '@/context/navContext';
-
-interface CategoryTabsProps {
-  categories: string[];
-  onTabChange: (value: string | null) => void;
-  top?: number;
-}
-
+import useIsMobile from '@/hooks/useIsMobile';
+import { CategoryTabsProps } from './types';
 import { forwardRef } from 'react';
 
 const CategoryTabs = forwardRef<HTMLDivElement, CategoryTabsProps>(
   ({ categories, onTabChange, top }, ref) => {
     const { activeTab } = useNav();
+    const isMobile = useIsMobile();
 
     const scrollAreaRef = useRef<HTMLDivElement>(null);
     const previousActiveTabRef = useRef<string>(activeTab);
@@ -68,10 +64,10 @@ const CategoryTabs = forwardRef<HTMLDivElement, CategoryTabsProps>(
         </Box>
         <ScrollArea
           className={styles.categoriesContainer}
-          type="auto"
+          type={isMobile ? 'never' : 'hover'}
           offsetScrollbars={false}
+          scrollbars={isMobile ? false : 'y'}
           styles={{
-            scrollbar: { display: 'none' },
             viewport: {
               overflowX: 'visible',
               overflowY: 'visible',

@@ -1,11 +1,14 @@
 .stickyContainer {
   position: fixed;
-  top: 0; /* Will be overridden dynamically via inline style */
+  top: 0;
+  /* Will be overridden dynamically via inline style */
   width: 100%;
   max-width: 1064px;
-  z-index: 100; /* Ensure it’s below the header (z-index: 101) but above content */
+  z-index: 100;
+  /* Ensure it’s below the header (z-index: 101) but above content */
   background-color: #ffffff;
-  padding: 35px 0px; /* Match the left and right padding of .productPageContainer */
+  padding: 35px 0px;
+  /* Match the left and right padding of .productPageContainer */
   margin-right: 296px;
   margin-bottom: 8px;
   height: auto;
@@ -16,11 +19,6 @@
   align-items: flex-start;
   justify-content: center;
   transition: top 0.3s ease;
-}
-
-/* Hide scrollbar for Chrome, Safari and Opera */
-.categoriesContainer::-webkit-scrollbar {
-  display: none;
 }
 
 .tabsContainer {
@@ -34,12 +32,29 @@
 .categoriesContainer {
   background-color: #ffffff;
   margin-bottom: 8px;
-  width: 100%; /* Use full width of the parent (after padding) */
+  width: 100%;
+  /* Use full width of the parent (after padding) */
   /* height: auto; */
   min-height: 61px;
-  scrollbar-width: none;
   -ms-overflow-style: none;
   overflow-x: auto;
+}
+
+/* Custom scrollbar styles */
+.categoriesContainer:hover::-webkit-scrollbar {
+  height: 6px;
+  background: transparent;
+  border-radius: 4px;
+}
+
+.categoriesContainer:hover::-webkit-scrollbar-thumb {
+  background: #b3ff00;
+  border-radius: 4px;
+}
+
+.categoriesContainer:hover::-webkit-scrollbar-track {
+  background: #e0e0e0;
+  border-radius: 4px;
 }
 
 .tabsList {
@@ -50,7 +65,8 @@
   margin-bottom: 0;
   padding-right: 16px;
   padding-left: 0;
-  width: max-content; /* Ensures horizontal scrolling */
+  width: max-content;
+  /* Ensures horizontal scrolling */
 }
 
 .tab {
@@ -111,10 +127,12 @@
 @media (max-width: 768px) {
   .stickyContainer {
     height: 80px;
-    top: 0; /* Will be overridden dynamically via inline style */
+    top: 0;
+    /* Will be overridden dynamically via inline style */
     z-index: 100;
     width: 100%;
-    padding: 12px 12px 0 12px; /* Match the padding of .productPageContainer on mobile */
+    padding: 12px 12px 0 12px;
+    /* Match the padding of .productPageContainer on mobile */
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -126,6 +144,7 @@
     padding-top: 8px;
     padding-left: 0;
     padding-right: 16px;
+    scrollbar-width: none;
   }
 
   .categoriesTitleContainer {
