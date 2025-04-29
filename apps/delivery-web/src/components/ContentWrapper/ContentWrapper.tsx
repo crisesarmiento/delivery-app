@@ -1,15 +1,16 @@
 import { forwardRef } from 'react';
+import { ContentWrapperProps } from './types';
 import { Box } from '@mantine/core';
-
-interface ContentWrapperProps {
-  topOffset: number;
-  children: React.ReactNode;
-}
+import styles from './ContentWrapper.module.css';
 
 const ContentWrapper = forwardRef<HTMLDivElement | null, ContentWrapperProps>(
   ({ topOffset, children }, ref) => {
     return (
-      <Box style={{ marginTop: topOffset }} ref={ref}>
+      <Box
+        className={styles.contentWrapper}
+        style={{ marginTop: topOffset, width: '100%' }}
+        ref={ref}
+      >
         {children}
       </Box>
     );

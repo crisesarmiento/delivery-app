@@ -1,6 +1,5 @@
 'use client';
 
-import { useMantineTheme } from '@mantine/core';
 import Header from '@/components/Header/Header';
 import ContentWrapper from '../components/ContentWrapper';
 import { useRouter } from 'next/navigation';
@@ -128,7 +127,6 @@ export default function HomePage() {
               setActiveBranch(branch);
               router.push(`/branches/${branch.id}`);
             }}
-            isMobile={isMobile}
           />
         )}
       </ContentWrapper>

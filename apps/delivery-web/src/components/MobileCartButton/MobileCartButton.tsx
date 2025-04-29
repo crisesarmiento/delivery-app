@@ -2,22 +2,11 @@
 
 import { Button, Flex, Text } from '@mantine/core';
 import { IconShoppingCart } from '@tabler/icons-react';
-import { IProduct } from '../../types';
+
 import styles from './MobileCartButton.module.css';
 import { CART_TITLE } from '@/constants/text';
 import { usePathname } from 'next/navigation';
-
-interface CartItem {
-  productId: string;
-  quantity: number;
-  product: IProduct;
-}
-
-interface MobileCartButtonProps {
-  cartItems: CartItem[];
-  cartTotal: number;
-  onClick?: () => void;
-}
+import { MobileCartButtonProps } from './types';
 
 const MobileCartButton = ({ cartTotal, onClick }: MobileCartButtonProps) => {
   const pathname = usePathname();
