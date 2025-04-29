@@ -20,7 +20,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { Flex } from '@mantine/core';
 import { IProduct } from '@/types';
 import styles from './page.module.css';
-import ProductsHeader from '@/components/Header/ProductsHeader';
+import ProductsHeader from '@/components/Header/HeaderProducts/ProductsHeader';
 import CategoryTabs from '@/components/CategoryTabs/CategoryTabs';
 import BranchesFooterWrapper from '@/components/BranchesFooterWrapper/BranchesFooterWrapper';
 import { useCart, CartItem as CartContextItem } from '@/context/CartContext';

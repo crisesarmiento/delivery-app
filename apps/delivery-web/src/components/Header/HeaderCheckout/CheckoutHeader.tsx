@@ -1,21 +1,15 @@
 'use client';
 
 import { Box, Text } from '@mantine/core';
-import { IBranch } from '@/types';
-import { Logo, MenuButton } from './HeaderComponents';
+import Logo from '@/components/Header/Logo/Logo';
+import MenuButton from '@/components/Header/MenuButton/MenuButton';
 import styles from './CheckoutHeader.module.css';
 import { useDisclosure } from '@mantine/hooks';
-import MenuDrawer from '../MenuDrawer/MenuDrawer';
+import MenuDrawer from '../../MenuDrawer/MenuDrawer';
 import { useRouter } from 'next/navigation';
-import { HEADER_TEXTS } from '@/config/constants';
-interface CheckoutHeaderProps {
-  branch: IBranch;
-  isClosed: boolean;
-  closedMessage: string;
-}
+import { CheckoutHeaderProps } from '@/components/Header/types';
 
 export default function CheckoutHeader({
-  branch,
   isClosed = false,
   closedMessage,
 }: CheckoutHeaderProps) {
