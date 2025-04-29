@@ -13,32 +13,17 @@ import {
   NumberInput,
   Flex,
 } from '@mantine/core';
-
 import styles from './page.module.css';
 import CheckoutHeader from '@/components/Header/HeaderCheckout/CheckoutHeader';
-import { branchesMock } from '../../../../mocks/branches.mock';
-import { useCart, CartItem } from '../../../../context/CartContext';
-import { IBranch, IProduct } from '../../../../types';
-import {
-  BRANCH_TEXTS,
-  CHECKOUT_TEXTS,
-  COMMON_TEXTS,
-} from '../../../../config/constants';
+import { useCart } from '@/context/CartContext';
+import { IProduct } from '@/types';
+import { CartItemCustomization, CartItem } from '@/context/types';
+import { BRANCH_TEXTS, CHECKOUT_TEXTS, COMMON_TEXTS } from '@/config/constants';
 import AddToCartModal from '@/components/AddToCartModal/AddToCartModal';
 import ContentWrapper from '@/components/ContentWrapper/ContentWrapper';
 import { isBranchOpen } from '@/utils/branch';
 import QuantityControl from '@/components/QuantityControl/QuantityControl';
 import { useNav } from '@/context/navContext';
-
-interface CartItemCustomization {
-  product: IProduct;
-  quantity: number;
-  uniqueId?: string;
-  ingredients?: Array<{ name: string; quantity: number; price?: number }>;
-  condiments?: string[];
-  comments?: string;
-  totalPrice?: number;
-}
 
 export default function CheckoutPage() {
   const params = useParams();
@@ -68,17 +53,14 @@ export default function CheckoutPage() {
     string | undefined
   >();
 
-  // Find the current branch
-  const currentBranch = activeBranch;
-
-  // Set branch open status
+  // State to branch open status
   const [isBranchClosed, setIsBranchClosed] = useState(false);
 
   // Update branch status on component mount and every minute
   useEffect(() => {
-    if (currentBranch) {
+    if (activeBranch) {
       const checkBranchStatus = () => {
-        const isOpen = isBranchOpen(currentBranch);
+        const isOpen = isBranchOpen(activeBranch);
         setIsBranchClosed(!isOpen);
       };
 
@@ -91,14 +73,14 @@ export default function CheckoutPage() {
       return () => clearInterval(intervalId);
     }
     return undefined;
-  }, [currentBranch]);
+  }, [activeBranch]);
 
   // Redirect if branch is not found
   useEffect(() => {
-    if (!currentBranch && branchId) {
+    if (!activeBranch && branchId) {
       router.push('/branches');
     }
-  }, [currentBranch, branchId, router]);
+  }, [activeBranch, branchId, router]);
 
   useEffect(() => {
     const checkIsMobile = () => {
@@ -248,7 +230,6 @@ export default function CheckoutPage() {
       >
         {/* Header */}
         <CheckoutHeader
-          branch={currentBranch as IBranch}
           isClosed={isBranchClosed}
           closedMessage={BRANCH_TEXTS.BRANCH_CLOSED}
         />

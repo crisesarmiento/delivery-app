@@ -9,23 +9,7 @@ import React, {
   useMemo,
   useCallback,
 } from 'react';
-import { IProduct } from '@/types';
-
-// Define cart item interface with product customizations
-export interface CartItem {
-  uniqueId?: string; // Unique identifier for this specific item
-  product: IProduct;
-  quantity: number;
-  ingredients?: { name: string; quantity: number; price?: number }[];
-  condiments?: string[];
-  comments?: string;
-  totalPrice?: number;
-  customizations?: {
-    ingredients?: { name: string; quantity: number; price?: number }[];
-    condiments?: string[];
-    comments?: string;
-  };
-}
+import { CartItem } from '@/context/types';
 
 // Define cart context interface
 interface CartContextType {

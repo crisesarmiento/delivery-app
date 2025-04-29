@@ -15,10 +15,8 @@ import ModalHeader from './ModalHeader/ModalHeader';
 import ProductInfo from './ProductInfo/ProductInfo';
 
 // ===== Types =====
-import {
-  AddToCartModalProps,
-  CartItemCustomization,
-} from '@/types/addToCartModal/types';
+import { AddToCartModalProps } from '@/types/addToCartModal/types';
+import { CartItemCustomization } from '@/context/types';
 
 // ===== Custom Hooks =====
 import { useIngredients } from '@/hooks/useIngredients';

@@ -23,7 +23,8 @@ import styles from './page.module.css';
 import ProductsHeader from '@/components/Header/HeaderProducts/ProductsHeader';
 import CategoryTabs from '@/components/CategoryTabs/CategoryTabs';
 import BranchesFooterWrapper from '@/components/BranchesFooterWrapper/BranchesFooterWrapper';
-import { useCart, CartItem as CartContextItem } from '@/context/CartContext';
+import { useCart } from '@/context/CartContext';
+import { CartItemCustomization } from '@/context/types';
 import CartDrawerContainer from '@/components/CartDrawer/CartDrawerContainer';
 import { BRANCH_TEXTS, ERROR_TEXTS } from '@/config/constants';
 import BranchNotFoundError from '@/components/ErrorScreen/BranchNotFoundError';
@@ -162,7 +163,7 @@ const BranchProductsPage = () => {
         console.error(ERROR_TEXTS.INVALID_QUANTITY, quantity);
         return;
       }
-      const cartItem: CartContextItem = {
+      const cartItem: CartItemCustomization = {
         product: { ...product, id: product.id },
         quantity,
       };
