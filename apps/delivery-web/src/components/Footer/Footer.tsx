@@ -14,7 +14,6 @@ const Footer = () => {
     return (
       <Box component="footer" className={styles.footer} data-testid="footer">
         <Box className={styles.container} data-testid="footer-container">
-          {/* Centered Powered by */}
           <Box
             className={styles.poweredByContainer}
             style={{
@@ -23,6 +22,7 @@ const Footer = () => {
               display: 'flex',
               flexDirection: 'column',
               width: '100%',
+              marginTop: 12,
             }}
           >
             <Text
@@ -38,8 +38,8 @@ const Footer = () => {
               {FOOTER_TEXTS.SMARTY}
             </Text>
           </Box>
-          <Box className={styles.bottomContainer}>
-            {/* Centered Links */}
+          {/* Main row: links left, social right */}
+          <Box className={styles.mainRow}>
             <Box className={styles.linksContainer}>
               <Link
                 href="#"
@@ -56,61 +56,45 @@ const Footer = () => {
                 <Text>{FOOTER_TEXTS.CONTACT}</Text>
               </Link>
             </Box>
-            <Box
-              className={styles.socialContainer}
-              data-testid="footer-social-container"
-              style={{
-                display: 'flex',
-                justifyContent: 'flex-end',
-                alignItems: 'flex-end',
-                paddingLeft: '16px',
-                marginBottom: '12px',
-              }}
-            >
-              <Box
-                className={styles.socialIconsContainer}
-                data-testid="footer-social-container"
+            <Box className={styles.socialIconsContainer}>
+              <Link
+                href="#"
+                style={{ textDecoration: 'none' }}
+                data-testid="footer-social-facebook"
               >
-                <Link
-                  href="#"
-                  style={{ textDecoration: 'none' }}
-                  data-testid="footer-social-facebook"
-                >
-                  <Image
-                    src="/images/social/facebook.svg"
-                    alt="Facebook"
-                    width={10}
-                    height={10}
-                  />
-                </Link>
-                <Link
-                  href="#"
-                  style={{ textDecoration: 'none' }}
-                  data-testid="footer-social-twitter"
-                >
-                  <Image
-                    src="/images/social/twitter.svg"
-                    alt="Twitter"
-                    width={10}
-                    height={10}
-                  />
-                </Link>
-                <Link
-                  href="#"
-                  style={{ textDecoration: 'none' }}
-                  data-testid="footer-social-instagram"
-                >
-                  <Image
-                    src="/images/social/instagram.svg"
-                    alt="Instagram"
-                    width={10}
-                    height={10}
-                  />
-                </Link>
-              </Box>
+                <Image
+                  src="/images/social/facebook.svg"
+                  alt="Facebook"
+                  width={18}
+                  height={18}
+                />
+              </Link>
+              <Link
+                href="#"
+                style={{ textDecoration: 'none' }}
+                data-testid="footer-social-twitter"
+              >
+                <Image
+                  src="/images/social/twitter.svg"
+                  alt="Twitter"
+                  width={18}
+                  height={18}
+                />
+              </Link>
+              <Link
+                href="#"
+                style={{ textDecoration: 'none' }}
+                data-testid="footer-social-instagram"
+              >
+                <Image
+                  src="/images/social/instagram.svg"
+                  alt="Instagram"
+                  width={18}
+                  height={18}
+                />
+              </Link>
             </Box>
           </Box>
-
           <Box
             className={styles.copyrightContainer}
             style={{
@@ -141,7 +125,7 @@ const Footer = () => {
     );
   }
 
-  // Desktop (default)
+  // Desktop
   return (
     <Box component="footer" className={styles.footer} data-testid="footer">
       <Box className={styles.container} data-testid="footer-container">
@@ -230,7 +214,8 @@ const Footer = () => {
           </Box>
           <Box className={styles.copyrightContainer}>
             <Text className={styles.copyright} data-testid="footer-copyright">
-              {FOOTER_TEXTS.COPYRIGHT}
+              {FOOTER_TEXTS.COPYRIGHT} | {FOOTER_TEXTS.RIGHTS_RESERVED} |{' '}
+              {FOOTER_TEXTS.PRIVACY} | {FOOTER_TEXTS.TERMS}
             </Text>
           </Box>
         </Box>
