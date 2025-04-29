@@ -1,7 +1,7 @@
 // Export all components for easier imports
 
 // ClosedNotification component
-export { default as ClosedNotification } from './ClosedNotification';
+export { default as ClosedNotificationBanner } from './Header/ClosedNotificationBanner';
 
 // Header components
 export { default as Header } from './Header/Header';

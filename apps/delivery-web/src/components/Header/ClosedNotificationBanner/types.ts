@@ -1,3 +1,4 @@
+
 export interface ClosedNotificationBannerProps {
-  message?: string;
+    collapsedHeaderHeight: number;
 }

@@ -5,11 +5,18 @@ import { BRANCH_TEXTS } from '@/config/constants';
 import { ClosedNotificationBannerProps } from './types';
 
 const ClosedNotificationBanner: React.FC<ClosedNotificationBannerProps> = ({
-  message = BRANCH_TEXTS.BRANCH_CLOSED,
-}: ClosedNotificationBannerProps) => {
+  collapsedHeaderHeight,
+}) => {
+  const top = collapsedHeaderHeight;
+
   return (
-    <Box className={styles.closedNotificationBanner}>
-      <Text className={styles.closedMessage}>{message}</Text>
+    <Box
+      className={styles.closedNotificationBanner}
+      style={{
+        top: top,
+      }}
+    >
+      <Text className={styles.closedMessage}>{BRANCH_TEXTS.BRANCH_CLOSED}</Text>
     </Box>
   );
 };

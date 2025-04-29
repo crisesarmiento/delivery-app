@@ -1,3 +1,2 @@
-import ClosedNotification from './ClosedNotification';
-
-export default ClosedNotification;
+import ClosedNotificationBanner from "./ClosedNotificationBanner";
+export default ClosedNotificationBanner;

@@ -17,10 +17,9 @@ export interface ProductsHeaderProps {
   searchValue?: string;
   onSearchChange?: (value: string) => void;
   isClosed?: boolean;
-  closedMessage?: string;
   isFiltering?: boolean;
   isHeaderCollapsed: boolean;
-  collapsedHeaderHeight?: number;
+  collapsedHeaderHeight: number;
 }
 
 export type SearchBarVariant = 'white' | 'light-gray';

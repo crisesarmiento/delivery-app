@@ -1,16 +1,9 @@
 'use client';
 
-import { ReactNode } from 'react';
 import { Box } from '@mantine/core';
 import styles from './ProductsHeaderWrapper.module.css';
 
-interface ProductsHeaderWrapperProps {
-  isHeaderCollapsed: boolean;
-  headerHeight: number;
-  collapsedHeaderHeight: number;
-  header: ReactNode;
-  categories: ReactNode;
-}
+import { ProductsHeaderWrapperProps } from './types';
 
 const ProductsHeaderWrapper: React.FC<ProductsHeaderWrapperProps> = ({
   header,
@@ -19,7 +12,7 @@ const ProductsHeaderWrapper: React.FC<ProductsHeaderWrapperProps> = ({
   return (
     <Box style={{ backgroundColor: '#ffffff' }}>
       {header}
-      {categories} {/* Rely on CategoryTabs' own positioning */}
+      {categories}
       <Box className={styles.productsHeaderWrapper} />
     </Box>
   );

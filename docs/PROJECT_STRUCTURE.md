@@ -118,6 +118,7 @@
 ### Example (format for each component):
 
 #### AddToCartButton
+
 - **Path:** components/AddToCartButton/AddToCartButton.tsx
 - **CSS:** AddToCartButton.module.css
 - **Used by:** (files that import this component)
@@ -125,6 +126,7 @@
 ---
 
 ### AddToCartButton
+
 - **Path:** `components/AddToCartButton/AddToCartButton.tsx`
 - **CSS:** `AddToCartButton.module.css`
   - **Classes Used:**
@@ -163,6 +165,7 @@
 ---
 
 ### CategoryTabs
+
 - **Path:** `components/CategoryTabs/CategoryTabs.tsx`
 - **CSS:** `CategoryTabs.module.css`
   - **Classes Used:**
@@ -200,6 +203,7 @@
 ---
 
 ### ContentWrapper
+
 - **Path:** `components/ContentWrapper/ContentWrapper.tsx`
 - **CSS:** `ContentWrapper.module.css`
   - **Classes Defined:**
@@ -224,6 +228,7 @@
 ---
 
 ### CategorySection
+
 - **Path:** `components/CategorySection/CategorySection.tsx`
 - **CSS:** `CategorySection.module.css`
   - **Classes Used:**
@@ -258,6 +263,7 @@
 ---
 
 ### AddToCartModal
+
 - **Path:** `components/AddToCartModal/AddToCartModal.tsx`
 - **CSS:** `AddToCartModal.module.css`
 - **Exports:** Default export
@@ -287,50 +293,58 @@
 ---
 
 ### BasePage
+
 - **Path:** components/BasePage/BasePage.tsx
 - **CSS:** BasePage.module.css
 - **Used by:**
   - (to be filled by import analysis)
 
 ### BranchCard
+
 - **Path:** components/BranchCard/BranchCard.tsx
 - **CSS:** (none directly, but see subcomponents)
 - **Used by:**
   - components/BranchCard/index.tsx
 
 ### CartClearingModal
+
 - **Path:** components/CartClearingModal/CartClearingModal.tsx
 - **CSS:** CartClearingModal.module.css
 - **Used by:**
   - (to be filled by import analysis)
 
 ### CartDrawer
+
 - **Path:** components/CartDrawer/CartDrawer.tsx
 - **CSS:** (none)
 - **Used by:**
   - (to be filled by import analysis)
 
 ### CategorySection
+
 - **Path:** components/CategorySection/CategorySection.tsx
 - **CSS:** CategorySection.module.css
 - **Used by:**
   - components/CategorySection/index.tsx
 
 ### CategoryTabs
+
 - **Path:** components/CategoryTabs/CategoryTabs.tsx
 - **CSS:** CategoryTabs.module.css
 - **Used by:**
   - (to be filled by import analysis)
 
 ### ClientErrorBoundary
+
 - **Path:** components/ClientErrorBoundary/ClientErrorBoundary.tsx
 - **CSS:** (none)
 - **Used by:**
   - app/ClientLayout.tsx
 
-### ClosedNotification
-- **Path:** `components/ClosedNotification/ClosedNotification.tsx`
-- **CSS:** `ClosedNotification.module.css`
+### ClosedNotificationBanner
+
+- **Path:** `components/ClosedNotificationBanner/ClosedNotificationBanner.tsx`
+- **CSS:** `ClosedNotificationBanner.module.css`
   - **Classes Used:**
     - `.closedNotification`:
       - display: flex;
@@ -372,6 +386,7 @@
 ---
 
 ### ClientErrorBoundary
+
 - **Path:** `components/ClientErrorBoundary/ClientErrorBoundary.tsx`
 - **CSS:** _(none)_
 - **Exports:** Default export
@@ -389,6 +404,7 @@
 ---
 
 ### ContentWrapper
+
 - **Path:** `components/ContentWrapper/ContentWrapper.tsx`
 - **CSS:** `ContentWrapper.module.css`
   - **Classes Defined:**
@@ -413,6 +429,7 @@
 ---
 
 ### ErrorBoundary
+
 - **Path:** `components/ErrorBoundary/ErrorBoundary.tsx`
 - **CSS:** _(none)_
 - **Exports:** Default export (class component)
@@ -435,6 +452,7 @@
 ---
 
 ### BasePage
+
 - **Path:** `components/BasePage/BasePage.tsx`
 - **CSS:** `BasePage.module.css`
   - **Classes Used:**
@@ -466,6 +484,7 @@
 ---
 
 ### BranchCard
+
 - **Path:** `components/BranchCard/BranchCard.tsx`
 - **CSS:** _(none found)_
 - **Exports:** Default export
@@ -485,6 +504,7 @@
 ---
 
 ### CartClearingModal
+
 - **Path:** `components/CartClearingModal/CartClearingModal.tsx`
 - **CSS:** `CartClearingModal.module.css`
   - **Classes Used:**
@@ -510,6 +530,7 @@
 ---
 
 ### DiscountBadge
+
 - **Path:** `components/DiscountBadge/DiscountBadge.tsx`
 - **CSS:** `DiscountBadge.module.css`
   - **Classes Used:**
@@ -531,6 +552,7 @@
 ---
 
 ### Footer
+
 - **Path:** `components/Footer/Footer.tsx`
 - **CSS:** `Footer.module.css`
   - **Classes Used:**
@@ -550,6 +572,7 @@
 ---
 
 ### Header
+
 - **Path:** `components/Header/Header.tsx`
 - **CSS:** `Header.module.css`
   - **Classes Used:**
@@ -578,6 +601,7 @@
 ---
 
 ### HeroBanner
+
 - **Path:** `components/HeroBanner/HeroBanner.tsx`
 - **CSS:** _(inline styles only)_
   - **Overrides:**
@@ -601,6 +625,7 @@
 ---
 
 ### LoadingState
+
 - **Path:** `components/LoadingState/LoadingState.tsx`
 - **CSS:** _(inline styles only)_
   - **Overrides:**
@@ -618,6 +643,7 @@
 ---
 
 ### MenuDrawer
+
 - **Path:** `components/MenuDrawer/MenuDrawer.tsx`
 - **CSS:** _(inline styles only, no CSS module)_
   - **Overrides:**
@@ -640,6 +666,7 @@
 ---
 
 ### MobileCartButton
+
 - **Path:** `components/MobileCartButton/MobileCartButton.tsx`
 - **CSS:** `MobileCartButton.module.css`
   - **Classes Used:**
@@ -663,6 +690,7 @@
 ---
 
 ### ProductCard
+
 - **Path:** `components/ProductCard/ProductCard.tsx`
 - **CSS:** `ProductCard.module.css`
   - **Classes Used:**
@@ -685,6 +713,7 @@
 ---
 
 ### ProductGrid
+
 - **Path:** `components/ProductGrid/ProductGrid.tsx`
 - **CSS:** `ProductGrid.module.css`
   - **Classes Used:**
@@ -707,6 +736,7 @@
 ---
 
 ### ProductsHeaderWrapper
+
 - **Path:** `components/ProductsHeaderWrapper/ProductsHeaderWrapper.tsx`
 - **CSS:** `ProductsHeaderWrapper.module.css`
   - **Classes Used:**
@@ -730,6 +760,7 @@
 ---
 
 ### QuantityControl
+
 - **Path:** `components/QuantityControl/QuantityControl.tsx`
 - **CSS:** `QuantityControl.module.css`
   - **Classes Used:**
@@ -757,6 +788,7 @@
 ---
 
 ### SectionHeader
+
 - **Path:** `components/SectionHeader/SectionHeader.tsx`
 - **CSS:** `SectionHeader.module.css`
   - **Classes Used:**
@@ -784,6 +816,7 @@
 ---
 
 ### CategorySection/ProductCard
+
 - **Path:** `components/CategorySection/ProductCard.tsx`
 - **CSS:** _(ProductCard.module.css missing)_
   - **Classes Used:**
@@ -806,6 +839,7 @@
 ---
 
 ### CartDrawer/CartHeader
+
 - **Path:** `components/CartDrawer/CartHeader.tsx`
 - **CSS:** _(none)_
   - **Overrides:**
@@ -824,6 +858,7 @@
 ---
 
 ### CartDrawer/CartItem
+
 - **Path:** `components/CartDrawer/CartItem.tsx`
 - **CSS:** _(none)_
   - **Overrides:**
@@ -842,6 +877,7 @@
 ---
 
 ### CartDrawer/EmptyCart
+
 - **Path:** `components/CartDrawer/EmptyCart.tsx`
 - **CSS:** _(none)_
   - **Overrides:**
@@ -859,6 +895,7 @@
 ---
 
 ### CartDrawer/CartFooter
+
 - **Path:** `components/CartDrawer/CartFooter.tsx`
 - **CSS:** _(none)_
   - **Overrides:**
@@ -878,6 +915,7 @@
 ---
 
 ### CategoryTabs
+
 - **Path:** `components/CategoryTabs/CategoryTabs.tsx`
 - **CSS:** `CategoryTabs.module.css`
   - **Classes Used:**
@@ -902,6 +940,7 @@
 ---
 
 ### CartDrawer/CartDrawer
+
 - **Path:** `components/CartDrawer/CartDrawer.tsx`
 - **CSS:** _(none)_
   - **Overrides:**
@@ -925,6 +964,7 @@
 ---
 
 ### Header/Header
+
 - **Path:** `components/Header/Header.tsx`
 - **CSS:** `Header.module.css`
   - **Classes Used:**
@@ -951,6 +991,7 @@
 ---
 
 ### Header/CheckoutHeader
+
 - **Path:** `components/Header/CheckoutHeader.tsx`
 - **CSS:** `CheckoutHeader.module.css`
   - **Classes Used:**
@@ -974,6 +1015,7 @@
 ---
 
 ### Header/ProductsHeader
+
 - **Path:** `components/Header/ProductsHeader.tsx`
 - **CSS:** `ProductsHeader.module.css`
   - **Classes Used:**
@@ -994,6 +1036,7 @@
 ---
 
 ### Header/HeaderComponents
+
 - **Path:** `components/Header/HeaderComponents.tsx`
 - **CSS:** Inline styles and Mantine theming
   - **Overrides:**
@@ -1015,6 +1058,7 @@
 ---
 
 ### Footer/Footer
+
 - **Path:** `components/Footer/Footer.tsx`
 - **CSS:** `Footer.module.css`
   - **Classes Used:**
@@ -1035,6 +1079,7 @@
 ---
 
 ### ErrorBoundary/ErrorBoundary
+
 - **Path:** `components/ErrorBoundary/ErrorBoundary.tsx`
 - **CSS:** Inline Mantine styles
   - **Overrides:**
@@ -1054,6 +1099,7 @@
 ---
 
 ### BranchCard/Badge
+
 - **Path:** `components/BranchCard/Badge.tsx`
 - **CSS:** Inline styles only
   - **Overrides:**
@@ -1072,6 +1118,7 @@
 ---
 
 ### BranchCard/BranchHoursTooltip
+
 - **Path:** `components/BranchCard/BranchHoursTooltip.tsx`
 - **CSS:** Inline styles only
   - **Overrides:**
@@ -1094,6 +1141,7 @@
 ---
 
 ### AddToCartButton
+
 - **Path:** `components/AddToCartButton/AddToCartButton.tsx`
 - **CSS:** `AddToCartButton.module.css`
   - **Classes Used:**
@@ -1116,6 +1164,7 @@
 ---
 
 ### AddToCartModal
+
 - **Path:** `components/AddToCartModal/AddToCartModal.tsx`
 - **CSS:** `AddToCartModal.module.css`
   - **Classes Used:**
@@ -1137,6 +1186,7 @@
 ---
 
 ### CartContext
+
 - **Path:** `context/CartContext.tsx`
 - **Exports:**
   - Default export: `CartContext` (React context object)
@@ -1177,6 +1227,7 @@
 ---
 
 ### Types
+
 - **Path:** `types/index.ts`
 - **Exports:**
   - `IOpeningHours`: Structured branch opening hours (mon-thu, fri-sun, with shifts)
@@ -1202,12 +1253,12 @@
 
 (...and so on for each component...)
 
-
 ---
 
 > This document can be expanded with more detailed usage analysis, such as which props are passed, or which hooks are used, if needed.
 
 ## Notes
+
 - This structure omits asset-heavy or build folders as requested.
 - CSS associations are based on convention and import statements.
 - Usage is inferred from import relationships and may be further refined by deeper static analysis.
