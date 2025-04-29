@@ -56,6 +56,7 @@ export interface IProductCustomization {
   maxCondimentSelections?: number;
 }
 
+
 // Branch opening hours type
 export interface IOpeningHours {
   mondayToThursday: {

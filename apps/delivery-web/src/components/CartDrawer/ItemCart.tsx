@@ -1,13 +1,9 @@
 'use client';
 
 import { Box, Text } from '@mantine/core';
-import { CartItem as CartContextItem } from '@/context/CartContext';
+import { CartItem } from '@/context/types';
 
-interface CartItemProps {
-  item: CartContextItem;
-}
-
-const CartItem = ({ item }: CartItemProps) => {
+const ItemCart = ({ item }: { item: CartItem }) => {
   // Calculate the price to display
   const displayPrice = item.totalPrice
     ? item.totalPrice
@@ -64,4 +60,4 @@ const CartItem = ({ item }: CartItemProps) => {
   );
 };
 
-export default CartItem;
+export default ItemCart;

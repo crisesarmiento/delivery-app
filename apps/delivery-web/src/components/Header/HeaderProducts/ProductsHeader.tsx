@@ -13,6 +13,7 @@ import BackButton from '@/components/Header/BackButton/BackButton';
 import { SEARCH_TEXTS } from '@/config/constants';
 import styles from './ProductsHeader.module.css';
 import { ProductsHeaderProps } from '@/components/Header/types';
+import ClosedNotificationBanner from '../ClosedNotificationBanner';
 
 const ProductsHeader = forwardRef<HTMLDivElement, ProductsHeaderProps>(
   (
@@ -22,7 +23,6 @@ const ProductsHeader = forwardRef<HTMLDivElement, ProductsHeaderProps>(
       searchValue = '',
       onSearchChange,
       isClosed = false,
-      closedMessage,
       isFiltering = false,
       isHeaderCollapsed,
       collapsedHeaderHeight,
@@ -108,25 +108,6 @@ const ProductsHeader = forwardRef<HTMLDivElement, ProductsHeaderProps>(
 
     return (
       <>
-        {/* Closed notification banner */}
-        {isClosed && (
-          <Box
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              width: '100%',
-              backgroundColor: '#FF385C',
-              color: 'white',
-              textAlign: 'center',
-              padding: '8px',
-              zIndex: 102,
-            }}
-          >
-            <Text size="sm">{closedMessage}</Text>
-          </Box>
-        )}
-
         <Box className={headerContainerClass} data-testid="header" ref={ref}>
           {/* Top black header section */}
           <Box className={styles.topHeader} data-testid="top-header">
@@ -141,7 +122,11 @@ const ProductsHeader = forwardRef<HTMLDivElement, ProductsHeaderProps>(
                   <Logo />
                 </Box>
               )}
-
+              {isClosed && (
+                <ClosedNotificationBanner
+                  collapsedHeaderHeight={collapsedHeaderHeight}
+                />
+              )}
               {/* Menu button */}
               <Box
                 className={styles.menuButtonContainer}
@@ -287,20 +272,7 @@ const ProductsHeader = forwardRef<HTMLDivElement, ProductsHeaderProps>(
         </Box>
 
         {/* Empty space to push content below fixed header */}
-        <Box
-          className={styles.headerSpacer}
-          style={{
-            height:
-              isHeaderCollapsed && isFiltering
-                ? collapsedHeaderHeight
-                : isClosed
-                ? isMobile
-                  ? '198px'
-                  : '323px' // Add notification height (43px) for closed state
-                : undefined, // Use default from CSS
-          }}
-          data-testid="header-spacer"
-        />
+        <Box className={styles.headerSpacer} data-testid="header-spacer" />
 
         {/* Menu Drawer */}
         <MenuDrawer

@@ -1,6 +1,6 @@
 
 import { IProduct } from '../../types';
-import { CartItem as CartContextItem } from '@/context/CartContext';
+import { CartItem } from '@/context/types';
 
 // Types for AddToCartModal subcomponents
 
@@ -11,16 +11,6 @@ export interface ModalHeaderProps {
   discountedPrice: number;
 }
 
-export interface CartItemCustomization {
-  product: IProduct;
-  quantity: number;
-  uniqueId?: string;
-  ingredients?: Array<{ name: string; quantity: number; price?: number }>;
-  condiments?: string[];
-  comments?: string;
-  totalPrice?: number;
-}
-
 export interface ProductInfoProps {
   product: IProduct;
 }
@@ -29,7 +19,7 @@ export interface AddToCartModalProps {
   product: IProduct;
   opened: boolean;
   onClose: () => void;
-  onAddToCart: (quantity: number, cartItem?: CartContextItem) => void;
+  onAddToCart: (quantity: number, cartItem?: CartItem) => void;
   initialQuantity?: number;
   initialIngredients?: IngredientItem[];
   initialCondiments?: string[];

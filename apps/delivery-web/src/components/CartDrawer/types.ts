@@ -4,5 +4,6 @@ export interface CartDrawerProps {
 }
 
 export interface CartDrawerContainerProps {
-  isMobile: boolean;
+  isHeaderCollapsed: boolean
+  isClosed: boolean;
 }

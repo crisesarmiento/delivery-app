@@ -8,6 +8,7 @@ import { useDisclosure } from '@mantine/hooks';
 import MenuDrawer from '../../MenuDrawer/MenuDrawer';
 import { useRouter } from 'next/navigation';
 import { CheckoutHeaderProps } from '@/components/Header/types';
+import { useNav } from '@/context/navContext';
 
 export default function CheckoutHeader({
   isClosed = false,
@@ -15,6 +16,8 @@ export default function CheckoutHeader({
 }: CheckoutHeaderProps) {
   const [opened, { toggle, close }] = useDisclosure(false);
   const router = useRouter();
+
+  const { activeBranch } = useNav();
 
   const handleNavigate = (route: string) => {
     router.push(route);

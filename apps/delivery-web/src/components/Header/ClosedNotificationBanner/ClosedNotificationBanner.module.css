@@ -1,0 +1,37 @@
+.closedNotificationBanner {
+  /* position: fixed;
+  width: 100%;
+  max-width: 1440px;
+  height: 26px;
+  left: 0px;
+  top: 0px;
+  padding-top: 8px 0 8px 0;
+  gap: 8px;
+  background-color: #FEF1F2;
+  z-index: 102;
+  overflow: visible;
+  display: flex;
+  justify-content: center; */
+  position: absolute;
+  width: 100%;
+  max-width: 1440px;
+  height: 26px;
+  left: 0;
+  top: 0;
+  padding-top: 8px 0 8px 0;
+  gap: 8px;
+  background-color: #FEF1F2;
+  z-index: 102;
+  display: flex;
+  justify-content: center;
+}
+
+
+.closedMessage {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 18px;
+  color: #E02D3C;
+}

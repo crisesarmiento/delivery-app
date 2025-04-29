@@ -8,7 +8,6 @@ import { MenuDrawer } from '../MenuDrawer/MenuDrawer';
 import Logo from './Logo/Logo';
 import SearchBar from './SearchBar/SearchBar';
 import MenuButton from './MenuButton/MenuButton';
-import BackButton from './BackButton/BackButton';
 import { SEARCH_TEXTS, HEADER_TEXTS } from '../../config/constants';
 import styles from './Header.module.css';
 import { HeaderProps } from './types';

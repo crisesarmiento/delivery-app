@@ -23,7 +23,8 @@ import styles from './page.module.css';
 import ProductsHeader from '@/components/Header/HeaderProducts/ProductsHeader';
 import CategoryTabs from '@/components/CategoryTabs/CategoryTabs';
 import BranchesFooterWrapper from '@/components/BranchesFooterWrapper/BranchesFooterWrapper';
-import { useCart, CartItem as CartContextItem } from '@/context/CartContext';
+import { useCart } from '@/context/CartContext';
+import { CartItemCustomization } from '@/context/types';
 import CartDrawerContainer from '@/components/CartDrawer/CartDrawerContainer';
 import { BRANCH_TEXTS, ERROR_TEXTS } from '@/config/constants';
 import BranchNotFoundError from '@/components/ErrorScreen/BranchNotFoundError';
@@ -93,6 +94,11 @@ const BranchProductsPage = () => {
   >(null);
   const [scrollLock, setScrollLock] = useState(false); // NEW: lock scroll events during programmatic scroll
 
+  // Compute isClosed only when activeBranch or now changes
+  const isClosed = useMemo(() => {
+    return activeBranch ? !isBranchOpen(activeBranch, now) : false;
+  }, [activeBranch, now]);
+
   // Collapse header on manual scroll, but ignore during programmatic scroll
   useEffect(() => {
     const handleScroll = () => {
@@ -109,19 +115,25 @@ const BranchProductsPage = () => {
 
   const headerHeight = isMobile ? 200 : 280;
   const collapsedHeaderHeight = isMobile ? 40 : 60;
-  const categoriesTopOffset = isHeaderCollapsed
-    ? isMobile
-      ? 10
-      : 25
-    : isMobile
-    ? 5
-    : 35;
+
+  const categoriesTopOffset = () => {
+    if (isHeaderCollapsed && isMobile) {
+      return isClosed ? 25 : 10;
+    } else if (isHeaderCollapsed && !isMobile) {
+      return isClosed ? 25 + 15 : 25;
+    } else if (!isHeaderCollapsed && isMobile) {
+      return isClosed ? 25 : 5;
+    } else if (!isHeaderCollapsed && !isMobile) {
+      return isClosed ? 25 : 25;
+    }
+    return 0;
+  };
   const distanceWithCategories = isMobile ? 33 : 27;
 
   // Canonical offset: header height + top offset (do NOT add categoriesHeight)
   const totalTopOffset = isHeaderCollapsed
-    ? collapsedHeaderHeight + categoriesTopOffset
-    : headerHeight + categoriesTopOffset;
+    ? collapsedHeaderHeight + categoriesTopOffset()
+    : headerHeight + categoriesTopOffset();
 
   const categories = useMemo(() => {
     const categoryList: string[] = [];
@@ -162,7 +174,7 @@ const BranchProductsPage = () => {
         console.error(ERROR_TEXTS.INVALID_QUANTITY, quantity);
         return;
       }
-      const cartItem: CartContextItem = {
+      const cartItem: CartItemCustomization = {
         product: { ...product, id: product.id },
         quantity,
       };
@@ -175,11 +187,6 @@ const BranchProductsPage = () => {
   const openCartDrawer = useCallback(() => {
     if (isMobile) router.push(`/branches/${branchId}/cart`);
   }, [isMobile, router, branchId]);
-
-  // Compute isClosed only when activeBranch or now changes
-  const isClosed = useMemo(() => {
-    return activeBranch ? !isBranchOpen(activeBranch, now) : false;
-  }, [activeBranch, now]);
 
   const cartItems = cartContextItems.map((item) => ({
     productId: String(item.product.id),
@@ -305,7 +312,6 @@ const BranchProductsPage = () => {
               searchValue={searchQuery}
               onSearchChange={handleSearchChange}
               isClosed={isClosed}
-              closedMessage={BRANCH_TEXTS.BRANCH_CLOSED}
               isFiltering={searchQuery.length > 0}
               isHeaderCollapsed={isHeaderCollapsed}
               collapsedHeaderHeight={collapsedHeaderHeight}
@@ -335,7 +341,11 @@ const BranchProductsPage = () => {
             onProductClick={handleProductClick}
           />
         </ProductsContentWrapper>
-        {<MemoizedCartDrawerContainer isMobile={isMobile} />}
+        {/* Cart Drawer */}
+        <MemoizedCartDrawerContainer
+          isHeaderCollapsed={isHeaderCollapsed}
+          isClosed={isClosed}
+        />
       </Flex>
       <BranchesFooterWrapper onClick={handleBack} />
     </>

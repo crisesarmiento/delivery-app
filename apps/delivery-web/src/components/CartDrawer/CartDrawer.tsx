@@ -5,7 +5,7 @@ import { Box, Text, Divider, Button } from '@mantine/core';
 import { useEffect, useState, useCallback } from 'react';
 import { IconShoppingCart, IconTrash } from '@tabler/icons-react';
 import { CART_TITLE, CART_TOTAL, CART_VIEW_BUTTON } from '@/constants/text';
-import CartItem from './CartItem';
+import ItemCart from './ItemCart';
 import { useCart } from '@/context/CartContext';
 import { useRouter } from 'next/navigation';
 import { CartDrawerProps } from './types';
@@ -161,9 +161,9 @@ const CartDrawer = ({ clearCart }: CartDrawerProps) => {
           const itemKey =
             item.uniqueId || `cart-item-${item.product.id}-${index}`;
           return (
-            <CartItem
+            <ItemCart
               key={itemKey}
-              item={cartItems[index]}
+              item={item}
               data-testid={`cart-item-${index}`}
             />
           );
