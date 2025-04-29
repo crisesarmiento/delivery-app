@@ -20,9 +20,6 @@ export default function BranchesContainer({
 
   return (
     <Container
-      size="xl"
-      py="xl"
-      px={{ base: 0, md: 0, lg: 0 }}
       className={
         isMobile
           ? `${styles.container} ${styles.containerMobile}`

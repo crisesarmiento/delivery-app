@@ -1,7 +1,6 @@
 .card {
   box-sizing: border-box;
-  width: 100%;
-  max-width: 200px;
+  width: 200px;
   height: 242px;
   border-radius: 8px;
   padding: 6px 6px 8px 8px;
