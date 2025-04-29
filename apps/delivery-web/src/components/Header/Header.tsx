@@ -5,19 +5,13 @@ import { Box, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useRouter } from 'next/navigation';
 import { MenuDrawer } from '../MenuDrawer/MenuDrawer';
-import { Logo, MenuButton, SearchBar } from './HeaderComponents';
+import Logo from './Logo/Logo';
+import SearchBar from './SearchBar/SearchBar';
+import MenuButton from './MenuButton/MenuButton';
+import BackButton from './BackButton/BackButton';
 import { SEARCH_TEXTS, HEADER_TEXTS } from '../../config/constants';
 import styles from './Header.module.css';
-
-interface HeaderProps {
-  showSearchBar?: boolean;
-  searchValue?: string;
-  onSearchChange?: (value: string) => void;
-  showClosedNotification?: boolean;
-  closedMessage?: string;
-  isFiltering?: boolean;
-  isHeaderCollapsed: boolean;
-}
+import { HeaderProps } from './types';
 
 const Header = ({
   showSearchBar = true,
@@ -164,11 +158,6 @@ const Header = ({
                   placeholder={placeholder}
                   variant="white"
                   autoFocus={isHeaderCollapsed}
-                  styles={{
-                    root: {
-                      width: '100%',
-                    },
-                  }}
                   data-testid="header-search-bar-collapsed"
                 />
               </Box>
@@ -233,21 +222,6 @@ const Header = ({
           </Box>
         </Box>
       </Box>
-
-      {/* Empty space to push content below fixed header */}
-      {/* <Box
-        style={{
-          height:
-            isHeaderCollapsed && isFiltering
-              ? '0' // Reduced height when header is collapsed and filtering
-              : showClosedNotification
-              ? '0'
-              : '0',
-          transition: 'height 0.3s ease',
-        }}
-        data-testid="header-spacer"
-      /> */}
-
       {/* Mobile Navigation Drawer */}
       <MenuDrawer opened={opened} onClose={close} onNavigate={handleNavigate} />
     </>

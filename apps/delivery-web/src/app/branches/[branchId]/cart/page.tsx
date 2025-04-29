@@ -15,7 +15,7 @@ import {
 } from '@mantine/core';
 
 import styles from './page.module.css';
-import CheckoutHeader from '@/components/Header/CheckoutHeader';
+import CheckoutHeader from '@/components/Header/HeaderCheckout/CheckoutHeader';
 import { branchesMock } from '../../../../mocks/branches.mock';
 import { useCart, CartItem } from '../../../../context/CartContext';
 import { IBranch, IProduct } from '../../../../types';

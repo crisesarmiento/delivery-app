@@ -5,23 +5,14 @@ import useIsMobile from '@/hooks/useIsMobile';
 import { Box, Text, Flex, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useRouter } from 'next/navigation';
-import { MenuDrawer } from '../MenuDrawer/MenuDrawer';
-import { Logo, MenuButton, SearchBar, BackButton } from './HeaderComponents';
-import { IBranch } from '@/types';
-import { SEARCH_TEXTS } from '../../config/constants';
+import { MenuDrawer } from '../../MenuDrawer/MenuDrawer';
+import SearchBar from '@/components/Header/SearchBar/SearchBar';
+import Logo from '@/components/Header/Logo/Logo';
+import MenuButton from '@/components/Header/MenuButton/MenuButton';
+import BackButton from '@/components/Header/BackButton/BackButton';
+import { SEARCH_TEXTS } from '@/config/constants';
 import styles from './ProductsHeader.module.css';
-
-interface ProductsHeaderProps {
-  branch: IBranch;
-  onBackClick?: () => void;
-  searchValue?: string;
-  onSearchChange?: (value: string) => void;
-  isClosed?: boolean;
-  closedMessage?: string;
-  isFiltering?: boolean;
-  isHeaderCollapsed: boolean;
-  collapsedHeaderHeight?: number;
-}
+import { ProductsHeaderProps } from '@/components/Header/types';
 
 const ProductsHeader = forwardRef<HTMLDivElement, ProductsHeaderProps>(
   (
