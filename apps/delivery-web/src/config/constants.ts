@@ -194,8 +194,11 @@ export const FOOTER_TEXTS = {
   SMARTY: 'SMARTY',
   ABOUT_SMARTY: 'Acerca de Smarty',
   CONTACT: 'Contacto',
-  COPYRIGHT:
-    'Copyright 2023 smarty.com | Todos los derechos reservados | Política de privacidad | Términos y Condiciones de Uso',
+  COPYRIGHT: 'Copyright 2023 smarty.com',
+  RIGHTS_RESERVED: 'Todos los derechos reservados',
+  TERMS: 'Términos y Condiciones de Uso',
+  PRIVACY: 'Política de privacidad',
+  TERMS_AND_CONDITIONS: 'Términos y Condiciones de Uso',
   ALT_FACEBOOK: 'Facebook',
   ALT_TWITTER: 'Twitter',
   ALT_INSTAGRAM: 'Instagram',
