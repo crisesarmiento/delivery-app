@@ -56,7 +56,7 @@ const Footer = () => {
                 <Text>{FOOTER_TEXTS.CONTACT}</Text>
               </Link>
             </Box>
-            <Box className={styles.socialIconsContainer}>
+            <Box className={styles.socialContainer}>
               <Link
                 href="#"
                 style={{ textDecoration: 'none' }}
