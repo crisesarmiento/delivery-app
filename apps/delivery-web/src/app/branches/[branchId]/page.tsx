@@ -22,7 +22,6 @@ import { IProduct } from '@/types';
 import styles from './page.module.css';
 import ProductsHeader from '@/components/Header/HeaderProducts/ProductsHeader';
 import CategoryTabs from '@/components/CategoryTabs/CategoryTabs';
-import BranchesFooterWrapper from '@/components/BranchesFooterWrapper/BranchesFooterWrapper';
 import { useCart } from '@/context/CartContext';
 import { CartItemCustomization } from '@/context/types';
 import CartDrawerContainer from '@/components/CartDrawer/CartDrawerContainer';
@@ -36,6 +35,7 @@ import AddToCartModal from '@/components/AddToCartModal/AddToCartModal';
 import { useNav } from '@/context/navContext';
 import { useProducts } from '@/hooks/useProducts';
 import { isBranchOpen } from '@/utils/branch';
+import MobileCartButton from '@/components/MobileCartButton';
 
 const MemoizedProductsHeader = memo(ProductsHeader);
 const MemoizedCategoryTabs = memo(CategoryTabs);
@@ -325,10 +325,6 @@ const BranchProductsPage = () => {
             />
           }
         />
-        {/*
-          Ensure ProductsContentWrapper always starts below header+tabs area.
-          Adjust topOffset dynamically based on isHeaderCollapsed.
-        */}
 
         <ProductsContentWrapper
           ref={contentWrapperRef}
@@ -340,6 +336,9 @@ const BranchProductsPage = () => {
             searchQuery={searchQuery}
             onProductClick={handleProductClick}
           />
+          {isMobile && (
+            <MobileCartButton cartTotal={cartTotal} onClick={openCartDrawer} />
+          )}
         </ProductsContentWrapper>
         {/* Cart Drawer */}
         <MemoizedCartDrawerContainer
@@ -347,7 +346,6 @@ const BranchProductsPage = () => {
           isClosed={isClosed}
         />
       </Flex>
-      <BranchesFooterWrapper onClick={handleBack} />
     </>
   ) : loading ? (
     <Center style={{ minHeight: '50vh' }}>

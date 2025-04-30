@@ -1,5 +1,6 @@
 import { forwardRef } from 'react';
 import { Box } from '@mantine/core';
+import styles from './ProductsContentWrapper.module.css';
 
 interface ContentWrapperProps {
   topOffset: number;
@@ -12,8 +13,8 @@ const ProductsContentWrapper = forwardRef<
 >(({ topOffset, children }, ref) => {
   return (
     <Box
-      className="productsContentWrapper"
-      style={{ marginTop: topOffset }}
+      className={styles.productsContentWrapper}
+      style={{ marginTop: topOffset, marginBottom: '97px' }}
       ref={ref}
     >
       {children}
