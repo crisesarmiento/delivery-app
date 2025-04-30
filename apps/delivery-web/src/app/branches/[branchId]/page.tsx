@@ -341,6 +341,7 @@ const BranchProductsPage = () => {
           <ProductsSectionsContainer
             categories={categories}
             products={branchProducts}
+            isBranchClosed={isClosed}
             searchQuery={searchQuery}
             onProductClick={handleProductClick}
           />

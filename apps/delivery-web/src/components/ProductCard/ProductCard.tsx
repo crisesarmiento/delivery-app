@@ -15,24 +15,33 @@ import { IconShoppingCart } from '@tabler/icons-react';
 import styles from './ProductCard.module.css';
 import DiscountBadge from '../DiscountBadge';
 import { useCart } from '@/context/CartContext';
+import { useDisclosure } from '@mantine/hooks';
 import { BRANCH_TEXTS } from '@/config/constants';
 import QuantityControl from '../QuantityControl';
 import { usePriceCalculation } from '@/hooks/usePriceCalculation';
+import { useNav } from '@/context/navContext';
+import { BranchClosedModal } from '../BranchClosedModal';
+import { useRouter } from 'next/navigation';
 
 interface ProductCardProps {
   product: IProduct;
+  isBranchClosed?: boolean;
   isDisabled?: boolean;
   onProductClick?: (product: IProduct) => void;
 }
 
 const ProductCard = ({
   product,
+  isBranchClosed,
   isDisabled = false,
   onProductClick,
 }: ProductCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [showQuantityControl, setShowQuantityControl] = useState(false);
   const theme = useMantineTheme();
+  const [branchClosedModalOpened, setBranchClosedModalOpened] = useState(false);
+  const [opened, { toggle, close }] = useDisclosure(false);
+  const router = useRouter();
 
   const { updateCartItem, getCartItemsByProductId } = useCart();
 
@@ -50,6 +59,11 @@ const ProductCard = ({
     }
   }, [quantity]);
 
+  const handleNavigate = (route: string) => {
+    router.push(route);
+    close();
+  };
+
   // Use discountPercent from product, default to 0 if not present
   const discountPercent = priceCalculation.discountPercent;
   const hasDiscount = priceCalculation.hasDiscount;
@@ -57,6 +71,17 @@ const ProductCard = ({
 
   return (
     <>
+      {/* Branch Closed Modal */}
+      {isBranchClosed && branchClosedModalOpened && (
+        <BranchClosedModal
+          clicked={branchClosedModalOpened}
+          onNavigate={() => handleNavigate('/branches')}
+          onClose={() => {
+            setBranchClosedModalOpened(false);
+            close();
+          }}
+        />
+      )}
       <Card
         className={styles.productCard}
         onMouseEnter={() => setIsHovered(true)}
@@ -159,7 +184,12 @@ const ProductCard = ({
                     aria-label="Add to cart"
                     onClick={(e) => {
                       e.stopPropagation(); // Prevents bubbling to parent
-                      if (!isDisabled) onProductClick?.(product);
+                      if (isBranchClosed) {
+                        setBranchClosedModalOpened(true);
+                        toggle();
+                      } else if (!isDisabled) {
+                        onProductClick?.(product);
+                      }
                     }}
                     data-testid="product-card-cart-icon"
                     style={{ color: theme.colors.neutral[9] }}

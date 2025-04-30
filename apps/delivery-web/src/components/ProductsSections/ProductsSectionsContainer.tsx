@@ -11,6 +11,7 @@ import { useMantineTheme } from '@mantine/core';
 interface ProductsSectionsContainerProps {
   products: IProduct[];
   categories: string[];
+  isBranchClosed?: boolean;
   searchQuery: string;
   onProductClick?: (product: IProduct) => void;
 }
@@ -18,6 +19,7 @@ interface ProductsSectionsContainerProps {
 const ProductsSectionsContainer = ({
   products,
   categories,
+  isBranchClosed,
   searchQuery,
   onProductClick,
 }: ProductsSectionsContainerProps) => {
@@ -80,6 +82,7 @@ const ProductsSectionsContainer = ({
             key={category}
             category={category}
             products={products}
+            isBranchClosed={isBranchClosed}
             handleSectionToggle={handleSectionToggle}
             onProductClick={onProductClick}
           />
