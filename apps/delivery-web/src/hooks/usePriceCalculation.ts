@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+
 import { IProduct } from '@/types';
 import { IngredientItem } from '../types/addToCartModal/types';
 
@@ -7,20 +7,12 @@ export const usePriceCalculation = (
   ingredients: IngredientItem[],
   quantity: number
 ) => {
-  const { hasDiscount, originalPrice, discountedPrice } = useMemo(() => {
-    const hasDiscount =
-      product.name.toLowerCase().includes('promo') ||
-      (typeof product.id === 'number'
-        ? product.id % 3 === 0
-        : String(product.id).length % 3 === 0);
-    const originalPrice = hasDiscount ? product.price * 1.2 : null;
-    const discountedPrice = hasDiscount ? product.price : product.price;
-    return {
-      hasDiscount,
-      originalPrice,
-      discountedPrice,
-    };
-  }, [product.name, product.id, product.price]);
+  const discountPercent = product.discountPercent || 0;
+const hasDiscount = discountPercent > 0;
+const originalPrice = product.price;
+const discountedPrice = hasDiscount
+  ? Number((originalPrice * (1 - discountPercent / 100)).toFixed(2))
+  : originalPrice;
 
   const calculateTotalPrice = () => {
     let total = hasDiscount ? discountedPrice : product.price;
@@ -39,6 +31,7 @@ export const usePriceCalculation = (
 
   return {
     hasDiscount,
+    discountPercent,
     originalPrice,
     discountedPrice,
     finalPrice,

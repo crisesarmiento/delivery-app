@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { IProduct } from '../../types';
 import {
   Card,
@@ -15,23 +15,33 @@ import { IconShoppingCart } from '@tabler/icons-react';
 import styles from './ProductCard.module.css';
 import DiscountBadge from '../DiscountBadge';
 import { useCart } from '@/context/CartContext';
+import { useDisclosure } from '@mantine/hooks';
 import { BRANCH_TEXTS } from '@/config/constants';
 import QuantityControl from '../QuantityControl';
+import { usePriceCalculation } from '@/hooks/usePriceCalculation';
+import { useNav } from '@/context/navContext';
+import { BranchClosedModal } from '../BranchClosedModal';
+import { useRouter } from 'next/navigation';
 
 interface ProductCardProps {
   product: IProduct;
+  isBranchClosed?: boolean;
   isDisabled?: boolean;
   onProductClick?: (product: IProduct) => void;
 }
 
 const ProductCard = ({
   product,
+  isBranchClosed,
   isDisabled = false,
   onProductClick,
 }: ProductCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [showQuantityControl, setShowQuantityControl] = useState(false);
   const theme = useMantineTheme();
+  const [branchClosedModalOpened, setBranchClosedModalOpened] = useState(false);
+  const [opened, { toggle, close }] = useDisclosure(false);
+  const router = useRouter();
 
   const { updateCartItem, getCartItemsByProductId } = useCart();
 
@@ -41,37 +51,37 @@ const ProductCard = ({
   // Get total quantity of this product in the cart (all versions combined)
   const quantity = cartItems.reduce((total, item) => total + item.quantity, 0);
 
+  const priceCalculation = usePriceCalculation(product, [], quantity);
+
   useEffect(() => {
     if (quantity > 0) {
       setShowQuantityControl(true);
     }
   }, [quantity]);
 
-  // Check if product has discount - use a stable approach
-  const hasDiscount = useMemo(() => {
-    // Check if name includes 'promo' or use a deterministic approach based on product id
-    if (product.name.toLowerCase().includes('promo')) {
-      return true;
-    }
+  const handleNavigate = (route: string) => {
+    router.push(route);
+    close();
+  };
 
-    // Use product ID to determine discount in a type-safe way
-    if (typeof product.id === 'number') {
-      return product.id % 3 === 0;
-    } else {
-      // For string IDs, use the string length
-      const idString = String(product.id);
-      return idString.length % 3 === 0;
-    }
-  }, [product.id, product.name]);
-
-  // Calculate original price (this would typically come from the product data)
-  const originalPrice = hasDiscount ? (product.price * 1.2).toFixed(2) : null;
-
-  // Calculate discount percentage (this would typically come from the product data)
-  const discountPercentage = hasDiscount ? 20 : 0;
+  // Use discountPercent from product, default to 0 if not present
+  const discountPercent = priceCalculation.discountPercent;
+  const hasDiscount = priceCalculation.hasDiscount;
+  const originalPrice = priceCalculation.originalPrice;
 
   return (
     <>
+      {/* Branch Closed Modal */}
+      {isBranchClosed && branchClosedModalOpened && (
+        <BranchClosedModal
+          clicked={branchClosedModalOpened}
+          onNavigate={() => handleNavigate('/branches')}
+          onClose={() => {
+            setBranchClosedModalOpened(false);
+            close();
+          }}
+        />
+      )}
       <Card
         className={styles.productCard}
         onMouseEnter={() => setIsHovered(true)}
@@ -129,7 +139,7 @@ const ProductCard = ({
           {/* Discount badge */}
           {hasDiscount && product.isAvailable && (
             <DiscountBadge
-              discountPercentage={discountPercentage}
+              discountPercentage={discountPercent}
               className={styles.discountBadge}
               data-testid="product-card-discount-badge"
             />
@@ -174,7 +184,12 @@ const ProductCard = ({
                     aria-label="Add to cart"
                     onClick={(e) => {
                       e.stopPropagation(); // Prevents bubbling to parent
-                      if (!isDisabled) onProductClick?.(product);
+                      if (isBranchClosed) {
+                        setBranchClosedModalOpened(true);
+                        toggle();
+                      } else if (!isDisabled) {
+                        onProductClick?.(product);
+                      }
                     }}
                     data-testid="product-card-cart-icon"
                     style={{ color: theme.colors.neutral[9] }}

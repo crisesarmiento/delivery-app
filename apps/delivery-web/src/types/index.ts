@@ -95,6 +95,7 @@ export interface IProduct {
   name: string;
   description?: string;
   price: number;
+  discountPercent?: number; // Percentage discount, e.g. 20 for 20% off
   imageUrl?: string;
   isAvailable: boolean;
   ingredients?: string;

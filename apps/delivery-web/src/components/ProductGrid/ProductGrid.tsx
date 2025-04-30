@@ -9,6 +9,7 @@ import { useRef } from 'react';
 interface ProductGridProps {
   products: IProduct[];
   className?: string;
+  isBranchClosed?: boolean;
   isDisabled?: boolean;
   onProductClick?: (product: IProduct) => void;
 }
@@ -16,6 +17,7 @@ interface ProductGridProps {
 const ProductGrid = ({
   products,
   className = '',
+  isBranchClosed,
   isDisabled = false,
   onProductClick,
 }: ProductGridProps) => {
@@ -31,6 +33,7 @@ const ProductGrid = ({
         <ProductCard
           key={product.id}
           product={product}
+          isBranchClosed={isBranchClosed}
           isDisabled={isDisabled}
           data-testid={`product-grid-item-${product.id}`}
           onProductClick={onProductClick}

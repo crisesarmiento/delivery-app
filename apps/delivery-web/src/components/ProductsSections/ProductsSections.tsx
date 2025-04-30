@@ -6,6 +6,7 @@ import { useNav } from '@/context/navContext';
 interface ProductsSectionsProps {
   category: string;
   products: IProduct[];
+  isBranchClosed?: boolean;
   handleSectionToggle: (category: string, isExpanded: boolean) => void;
   onProductClick?: (product: IProduct) => void;
 }
@@ -13,6 +14,7 @@ interface ProductsSectionsProps {
 const ProductsSections = ({
   category,
   products,
+  isBranchClosed,
   handleSectionToggle,
   onProductClick,
 }: ProductsSectionsProps) => {
@@ -22,6 +24,7 @@ const ProductsSections = ({
       <CategorySection
         title={category}
         products={products}
+        isBranchClosed={isBranchClosed}
         isInitiallyExpanded={expandedSections[category.toLowerCase()] || false}
         onToggleExpand={(isExpanded) =>
           handleSectionToggle(category, isExpanded)

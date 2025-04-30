@@ -8,6 +8,7 @@ import { branchesMock } from './branches.mock';
 const baseProducts: IProductWithCustomization[] = [
   {
     id: 1,
+    discountPercent: 0,
     branchId: 1,
     name: 'Hamburguesa Clásica',
     description: 'Hamburguesa de carne con lechuga, tomate y queso cheddar',
@@ -31,6 +32,7 @@ const baseProducts: IProductWithCustomization[] = [
   },
   {
     id: 2,
+    discountPercent: 10,
     branchId: 1,
     name: 'Hamburguesa con Bacon',
     description:
@@ -56,6 +58,7 @@ const baseProducts: IProductWithCustomization[] = [
   },
   {
     id: 3,
+    discountPercent: 0,
     branchId: 1,
     name: 'Hamburguesa Vegetariana',
     description:
@@ -81,6 +84,7 @@ const baseProducts: IProductWithCustomization[] = [
   },
   {
     id: 4,
+    discountPercent: 20,
     branchId: 1,
     name: 'Promo Barbacoa',
     description: 'Hamburguesa BBQ con papas fritas y bebida',
@@ -106,6 +110,7 @@ const baseProducts: IProductWithCustomization[] = [
   },
   {
     id: 5,
+    discountPercent: 0,
     branchId: 1,
     name: 'Papas Fritas',
     description: 'Crujientes papas fritas',
@@ -127,6 +132,7 @@ const baseProducts: IProductWithCustomization[] = [
   },
   {
     id: 6,
+    discountPercent: 15,
     branchId: 1,
     name: 'Lomo Completo Grande',
     description: 'Sándwich de lomo grande con lechuga, tomate y mayonesa',

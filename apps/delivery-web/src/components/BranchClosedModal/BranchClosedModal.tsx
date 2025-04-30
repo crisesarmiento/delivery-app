@@ -1,36 +1,32 @@
 'use client';
 
 import { Modal, Text, Button, Box, Flex } from '@mantine/core';
-import styles from './CartClearingModal.module.css';
-import { TOOLTIP_TEXTS } from '@/config/constants';
+import styles from './BranchClosedModal.module.css';
 import { IconX } from '@tabler/icons-react';
-import { useCart } from '@/context/CartContext';
-import { CART_CLEARING_TEXTS } from '@/constants/text';
+import { BRANCH_CLOSED_TEXTS } from '@/constants/text';
 import { useDisclosure } from '@mantine/hooks';
 import { useEffect } from 'react';
 
-interface CartClearingModalProps {
+interface BranchClosedModalProps {
   clicked: boolean;
   onNavigate: (route: string) => void;
-  onClose?: () => void;
+  onClose: () => void;
 }
 
-export function CartClearingModal({
+export function BranchClosedModal({
   clicked,
   onNavigate,
   onClose,
-}: CartClearingModalProps) {
-  const { cartItems, clearCart } = useCart();
+}: BranchClosedModalProps) {
   const [opened, { toggle, close, open }] = useDisclosure(false);
 
-  // Sync opened state with clicked prop
   useEffect(() => {
-    if (clicked && cartItems.length > 0) {
+    if (clicked) {
       open();
     } else if (!clicked && opened) {
       close();
     }
-  }, [clicked, cartItems.length, open, close, opened]);
+  }, [clicked, opened, open, close]);
 
   // Clean up body styles on unmount
   useEffect(() => {
@@ -53,10 +49,7 @@ export function CartClearingModal({
 
   const handleConfirm = () => {
     if (opened) {
-      if (cartItems.length > 0) {
-        clearCart();
-        onNavigate('/');
-      }
+      onNavigate('/');
       close();
       if (onClose) onClose();
     }
@@ -76,7 +69,7 @@ export function CartClearingModal({
       withCloseButton={false}
       padding={0}
       radius="lg"
-      size={250}
+      size={350}
       classNames={{
         root: styles.modalOverlay,
         content: styles.modalContent,
@@ -92,12 +85,12 @@ export function CartClearingModal({
         opacity: opened ? 1 : 0,
         blur: 3,
       }}
-      data-testid="cart-clearing-modal"
+      data-testid="branch-closed-modal"
     >
       <Button
         className={styles.closeButton}
         onClick={handleClose}
-        aria-label={TOOLTIP_TEXTS.CLOSE_MODAL}
+        aria-label={BRANCH_CLOSED_TEXTS.CLOSE_MODAL_LABEL}
         variant="subtle"
         p={0}
         radius="xl"
@@ -105,30 +98,32 @@ export function CartClearingModal({
         <IconX size={24} />
       </Button>
       <Flex className={styles.modalHeader}>
-        <Text className={styles.modalTitle}>{CART_CLEARING_TEXTS.TITLE}</Text>
+        <Text className={styles.modalTitle}>{BRANCH_CLOSED_TEXTS.TITLE}</Text>
       </Flex>
       <Box className={styles.modalBody}>
         <Text size="sm" mb="md" className={styles.modalText}>
-          {CART_CLEARING_TEXTS.DESCRIPTION}
+          {BRANCH_CLOSED_TEXTS.DESCRIPTION}
         </Text>
         <Flex className={styles.modalFooter}>
           <Button
             variant="outline"
             className={styles.modalCancelButton}
             onClick={handleClose}
-            data-testid="cancel-clear-cart-button"
+            data-testid="close-branch-closed-modal"
           >
-            {CART_CLEARING_TEXTS.CLOSE_BUTTON}
+            {BRANCH_CLOSED_TEXTS.CLOSE_BUTTON}
           </Button>
           <Button
             className={styles.modalConfirmButton}
             onClick={handleConfirm}
-            data-testid="confirm-clear-cart-button"
+            data-testid="go-home-branch-closed-modal"
           >
-            {CART_CLEARING_TEXTS.CONFIRM_BUTTON}
+            {BRANCH_CLOSED_TEXTS.GO_HOME_BUTTON}
           </Button>
         </Flex>
       </Box>
     </Modal>
   );
 }
+
+export default BranchClosedModal;
