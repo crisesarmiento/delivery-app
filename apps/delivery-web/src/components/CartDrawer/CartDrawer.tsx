@@ -16,6 +16,7 @@ const CartDrawer = ({ clearCart }: CartDrawerProps) => {
   const [headerOffset, setHeaderOffset] = useState(0);
 
   const { currentBranchId, cartItems, cartTotal } = useCart();
+
   const router = useRouter();
 
   // Check if viewport is mobile and calculate position

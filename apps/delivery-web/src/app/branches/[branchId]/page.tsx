@@ -75,7 +75,13 @@ const BranchProductsPage = () => {
 
   const { branchProducts, loading, error } = useProducts(activeBranch?.id);
 
-  const { addToCart: addToCartContext, clearCart, cartTotal } = useCart();
+  const {
+    addToCart: addToCartContext,
+    clearCart,
+    cartTotal,
+    currentBranchId,
+    setCurrentBranchId,
+  } = useCart();
 
   const headerRef = useRef<HTMLDivElement>(null);
   const categoryTabsRef = useRef<HTMLDivElement>(null);
@@ -191,6 +197,10 @@ const BranchProductsPage = () => {
         console.error(ERROR_TEXTS.INVALID_QUANTITY, quantity);
         return;
       }
+      // Ensure branch context is set in the cart
+      if (activeBranch) {
+        setCurrentBranchId(activeBranch.id);
+      }
       const cartItem: CartItemCustomization = {
         product: { ...product, id: product.id },
         quantity,
@@ -198,12 +208,12 @@ const BranchProductsPage = () => {
       addToCartContext(cartItem);
       setTimeout(() => setSelectedProduct(null), 200);
     },
-    [activeBranch, addToCartContext, now]
+    [activeBranch, addToCartContext, now, setCurrentBranchId]
   );
 
   const openCartDrawer = useCallback(() => {
-    if (isMobile) router.push(`/branches/${branchId}/cart`);
-  }, [isMobile, router, branchId]);
+    if (isMobile) router.push(`/branches/${currentBranchId}/cart`);
+  }, [isMobile, router, currentBranchId]);
 
   // Helper to wait for header transition before scrolling
   // Robust scroll logic: force header collapse before scrolling

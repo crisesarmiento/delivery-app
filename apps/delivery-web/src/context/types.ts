@@ -14,7 +14,11 @@ export interface CartItem {
     condiments?: string[];
     comments?: string;
   };
-}   
+  // Discount fields (added for consistency)
+  hasDiscount?: boolean;
+  discountPercentage?: number;
+  originalPrice?: number | null;
+}
 
 export interface CartItemCustomization {
   product: IProduct;
@@ -43,5 +47,5 @@ export interface CartContextType {
   cartItems: CartItem[];
   cartTotal: number;
   currentBranchId: number | null;
-  setBranchId: (branchId: number) => void;
+  setCurrentBranchId: (branchId: number) => void;
 }

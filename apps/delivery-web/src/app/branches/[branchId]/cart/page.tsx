@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import {
   Box,
   Text,
@@ -16,6 +16,7 @@ import {
 import styles from './page.module.css';
 import CheckoutHeader from '@/components/Header/HeaderCheckout/CheckoutHeader';
 import { useCart } from '@/context/CartContext';
+import DiscountBadge from '@/components/DiscountBadge';
 import { IProduct } from '@/types';
 import { CartItemCustomization, CartItem } from '@/context/types';
 import { BRANCH_TEXTS, CHECKOUT_TEXTS, COMMON_TEXTS } from '@/config/constants';
@@ -24,16 +25,28 @@ import ContentWrapper from '@/components/ContentWrapper/ContentWrapper';
 import { isBranchOpen } from '@/utils/branch';
 import QuantityControl from '@/components/QuantityControl/QuantityControl';
 import { useNav } from '@/context/navContext';
+import useIsMobile from '@/hooks/useIsMobile';
 
 export default function CheckoutPage() {
-  const params = useParams();
   const router = useRouter();
   const { activeBranch } = useNav();
-  const branchId = (params?.branchId as string) || '';
-  const { items, updateCartItem, removeFromCart, getTotalPrice } = useCart();
+  const { items, updateCartItem, removeFromCart, cartTotal } = useCart();
+
+  // Calculate total product discount for the summary
+  const productDiscount = items.reduce((sum, item) => {
+    if (item.hasDiscount && item.originalPrice) {
+      // Discount per item is (original - discounted) * quantity
+      const discountPerItem =
+        item.originalPrice - (item.totalPrice || item.product.price);
+      return sum + discountPerItem * item.quantity;
+    }
+    return sum;
+  }, 0);
+
   const contentWrapperRef = useRef<HTMLDivElement | null>(null);
 
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useIsMobile();
+  const branchId = activeBranch?.id;
 
   // State for the form
   const [deliveryMethod, setDeliveryMethod] = useState('delivery');
@@ -82,50 +95,16 @@ export default function CheckoutPage() {
     }
   }, [activeBranch, branchId, router]);
 
-  useEffect(() => {
-    const checkIsMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
+  // Subtotal from cart context
+  const subtotal = cartTotal;
 
-    // Check on initial load
-    checkIsMobile();
-
-    // Set up an event listener for window resize
-    window.addEventListener('resize', checkIsMobile);
-
-    // Clean up the event listener on component unmount
-    return () => window.removeEventListener('resize', checkIsMobile);
-  }, []);
-
-  // Calculate prices
-  const subtotal = getTotalPrice();
-
-  // Calculate product discount (10% of products with discount)
-  const productDiscount = items.reduce((total, item) => {
-    // Check if product has discount based on its name or ID
-    const hasDiscount =
-      item.product.name.toLowerCase().includes('promo') ||
-      (typeof item.product.id === 'number'
-        ? item.product.id % 3 === 0
-        : String(item.product.id).length % 3 === 0);
-
-    if (hasDiscount) {
-      // Calculate 10% of the product price
-      return total + item.product.price * item.quantity * 0.1;
-    }
-    return total;
-  }, 0);
-
-  // Calculate payment method discount (10% of subtotal after product discounts)
-  // Only apply if payment method is transfer or cash
+  // Payment method discount (10% of subtotal)
   const paymentDiscountRate =
     paymentMethod === 'transfer' || paymentMethod === 'cash' ? 0.1 : 0;
-  const paymentDiscount = Math.round(
-    (subtotal - productDiscount) * paymentDiscountRate
-  );
+  const paymentDiscount = Math.round(subtotal * paymentDiscountRate);
 
   const shippingCost = 1500;
-  const total = subtotal - productDiscount - paymentDiscount + shippingCost;
+  const total = subtotal - paymentDiscount + shippingCost;
 
   // Handle checkout
   const handleCheckout = () => {
@@ -515,24 +494,13 @@ export default function CheckoutPage() {
                 {/* Scrollable Products Container */}
                 <Box className={styles.scrollableProductsContainer}>
                   {items.map((item, itemIndex) => {
-                    // Check if product has discount using the same logic as the productDiscount calculation
-                    const hasDiscount =
-                      item.product.name.toLowerCase().includes('promo') ||
-                      (typeof item.product.id === 'number'
-                        ? item.product.id % 3 === 0
-                        : String(item.product.id).length % 3 === 0);
-                    // const discountPercentage = hasDiscount ? 10 : 0;
-
-                    // Use the item's totalPrice (if it has customizations) or calculate based on product price
+                    // Use discount info from cart item
+                    const hasDiscount = item.hasDiscount;
+                    const discountPercentage = item.discountPercentage;
                     const itemBasePrice = item.totalPrice || item.product.price;
-                    const originalPrice = hasDiscount
-                      ? (itemBasePrice * 1.1).toFixed(2)
-                      : null;
-
-                    // Create a stable unique key for each item
+                    const originalPrice = item.originalPrice;
                     const itemKey =
                       item.uniqueId || `item-${item.product.id}-${itemIndex}`;
-
                     return (
                       <Box key={itemKey}>
                         <Box className={styles.productRow}>
@@ -585,15 +553,30 @@ export default function CheckoutPage() {
                               alignItems: 'flex-end',
                             }}
                           >
-                            <Text className={styles.productPrice}>
-                              $
-                              {(itemBasePrice * item.quantity).toLocaleString()}
-                            </Text>
+                            <Box
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 8,
+                              }}
+                            >
+                              <Text className={styles.productPrice}>
+                                $
+                                {(
+                                  itemBasePrice * item.quantity
+                                ).toLocaleString()}
+                              </Text>
+                              {hasDiscount && (
+                                <DiscountBadge
+                                  discountPercentage={discountPercentage}
+                                />
+                              )}
+                            </Box>
                             {hasDiscount && originalPrice && (
                               <Text className={styles.productOriginalPrice}>
                                 $
                                 {(
-                                  parseFloat(originalPrice) * item.quantity
+                                  originalPrice * item.quantity
                                 ).toLocaleString()}
                               </Text>
                             )}
