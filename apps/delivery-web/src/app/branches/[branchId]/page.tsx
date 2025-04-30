@@ -325,14 +325,11 @@ const BranchProductsPage = () => {
             />
           }
         />
-        {/*
-          Ensure ProductsContentWrapper always starts below header+tabs area.
-          Adjust topOffset dynamically based on isHeaderCollapsed.
-        */}
 
         <ProductsContentWrapper
           ref={contentWrapperRef}
           topOffset={totalTopOffset + distanceWithCategories}
+          cartButtonOnClick={openCartDrawer}
         >
           <ProductsSectionsContainer
             categories={categories}

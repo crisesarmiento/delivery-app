@@ -5,23 +5,12 @@ import { IconShoppingCart } from '@tabler/icons-react';
 
 import styles from './MobileCartButton.module.css';
 import { CART_TITLE } from '@/constants/text';
-import { usePathname } from 'next/navigation';
 import { MobileCartButtonProps } from './types';
 
 const MobileCartButton = ({ cartTotal, onClick }: MobileCartButtonProps) => {
-  const pathname = usePathname();
-  if (pathname === '/branches') return null;
-
-  const handleClick = (e: React.MouseEvent) => {
-    if (onClick) {
-      e.preventDefault();
-      onClick();
-    }
-  };
-
   return (
     <Flex className={styles.mobileCartButton}>
-      <Button unstyled className={styles.button} onClick={handleClick}>
+      <Button unstyled className={styles.button} onClick={onClick}>
         <div style={{ width: '100%', position: 'relative', height: '100%' }}>
           <div
             style={{
