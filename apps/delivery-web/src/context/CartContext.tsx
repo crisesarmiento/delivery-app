@@ -26,7 +26,7 @@ const CartContext = createContext<CartContextType>({
   cartItems: [],
   cartTotal: 0,
   currentBranchId: null,
-  setBranchId: () => {},
+  setCurrentBranchId: () => {},
 });
 
 // Custom hook to use the cart context
@@ -81,128 +81,56 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [currentBranchId]);
 
-  // Set current branch ID and clear cart if branch changes
-  const setBranchId = useCallback(
-    (branchId: number) => {
-      // If branch ID changes, clear the cart
-      if (currentBranchId && currentBranchId !== branchId) {
-        setItems([]);
-      }
-      setCurrentBranchId(branchId);
-    },
-    [currentBranchId]
-  );
-
-  // Generate a unique identifier for cart items based on product ID and customizations
-  const generateCartItemId = useCallback((item: CartItem): string => {
-    const productId = item.product.id;
-
-    // Sort and stringify ingredients to ensure consistent ordering
-    const ingredientsStr = item.ingredients
-      ? JSON.stringify(
-          item.ingredients
-            .filter((ing) => ing.quantity > 0) // Only include ingredients with quantity > 0
-            .sort((a, b) => a.name.localeCompare(b.name))
-        )
-      : '';
-
-    // Sort and stringify condiments to ensure consistent ordering
-    const condimentsStr = item.condiments
-      ? JSON.stringify(item.condiments.sort())
-      : '';
-
-    // Include comments in the unique ID
-    const commentsStr = item.comments || '';
-
-    // Combine all parts to create a unique identifier
-    return `${productId}-${ingredientsStr}-${condimentsStr}-${commentsStr}`;
-  }, []);
-
-  // Add a new item or update existing one
-  const addToCart = useCallback(
-    (item: CartItem) => {
-      setItems((prevItems) => {
-        // Generate unique ID for the new item
-        const newItemId = generateCartItemId(item);
-
-        // Find existing item with matching ID (same product + same customizations)
-        const existingItemIndex = prevItems.findIndex(
-          (i) => generateCartItemId(i) === newItemId
-        );
-
-        if (existingItemIndex >= 0) {
-          // Update existing item (same product with same customizations)
-          const updatedItems = [...prevItems];
-          updatedItems[existingItemIndex] = {
-            ...updatedItems[existingItemIndex],
-            quantity: updatedItems[existingItemIndex].quantity + item.quantity,
-            totalPrice: item.totalPrice
-              ? (updatedItems[existingItemIndex].totalPrice || 0) +
-                item.totalPrice
-              : undefined,
-          };
-          return updatedItems;
-        } else {
-          // Add new item (new product or same product with different customizations)
-          // Assign the unique ID to the new item
-          const newItem = {
-            ...item,
-            uniqueId: newItemId,
-          };
-          return [...prevItems, newItem];
-        }
-      });
-    },
-    [generateCartItemId]
-  );
-
-  // Update an existing cart item
-  const updateCartItem = useCallback(
-    (productId: number, updates: Partial<CartItem>, uniqueId?: string) => {
-      setItems((prevItems) => {
-        let existingItemIndex = -1;
-
-        if (uniqueId) {
-          // If uniqueId is provided, use it to find the exact item instance
-          existingItemIndex = prevItems.findIndex(
-            (i) => i.uniqueId === uniqueId
-          );
-        } else {
-          // Fallback to product ID for backward compatibility
-          existingItemIndex = prevItems.findIndex(
-            (i) => i.product.id === productId
-          );
-        }
-
-        if (existingItemIndex >= 0) {
-          const updatedItems = [...prevItems];
-          updatedItems[existingItemIndex] = {
-            ...updatedItems[existingItemIndex],
-            ...updates,
-          };
-
-          // If quantity is 0, remove the item
-          if (updates.quantity === 0) {
-            return updatedItems.filter(
-              (item) => item !== updatedItems[existingItemIndex]
-            );
-          }
-
-          return updatedItems;
-        }
-
-        return prevItems;
-      });
-    },
-    []
-  );
-
   // Remove an item from the cart
   const removeFromCart = useCallback((productId: number) => {
     setItems((prevItems) =>
       prevItems.filter((item) => item.product.id !== productId)
     );
   }, []);
+
+  // Add item to cart, annotating with discount info
+  const addToCart = useCallback((item: CartItem) => {
+    const discountPercent = item.discountPercentage || 0;
+    const hasDiscount = discountPercent > 0;
+    const originalPrice = item.originalPrice;
+    setItems((prevItems) => [
+      ...prevItems,
+      {
+        ...item,
+        hasDiscount,
+        discountPercent,
+        originalPrice,
+      },
+    ]);
+  }, []);
+
+  // Update cart item, ensuring discount info is updated as well
+  const updateCartItem = useCallback(
+    (productId: number, updates: Partial<CartItem>, uniqueId?: string) => {
+      setItems((prevItems) => {
+        return prevItems
+          .map((item) => {
+            const isMatch = uniqueId
+              ? item.uniqueId === uniqueId
+              : item.product.id === productId;
+            if (!isMatch) return item;
+            const updatedItem = { ...item, ...updates };
+            // If the updated quantity is 0 or less, we'll remove this item in the filter below
+            const discountPercent = updatedItem.discountPercentage || 0;
+            const hasDiscount = discountPercent > 0;
+            const originalPrice = updatedItem.originalPrice;
+            return {
+              ...updatedItem,
+              hasDiscount,
+              discountPercent,
+              originalPrice,
+            };
+          })
+          .filter((item) => item.quantity > 0); // Remove items with quantity 0 or less
+      });
+    },
+    []
+  );
 
   // Get quantity of a specific product
   const getCartItemQuantity = useCallback(
@@ -257,7 +185,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       cartItems: items,
       cartTotal: getTotalPrice(),
       currentBranchId,
-      setBranchId,
+      setCurrentBranchId,
     }),
     [
       items,
@@ -270,7 +198,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       getTotalPrice,
       clearCart,
       currentBranchId,
-      setBranchId,
+      setCurrentBranchId,
     ]
   );
 

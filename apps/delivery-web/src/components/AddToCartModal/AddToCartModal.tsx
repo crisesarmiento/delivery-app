@@ -92,8 +92,13 @@ const AddToCartModal = ({
     opened
   );
 
-  const { hasDiscount, originalPrice, discountedPrice, finalPrice } =
-    usePriceCalculation(product, ingredients, quantity);
+  const {
+    hasDiscount,
+    discountPercent,
+    originalPrice,
+    discountedPrice,
+    finalPrice,
+  } = usePriceCalculation(product, ingredients, quantity);
 
   // Reset the initialization when the modal closes
   useEffect(() => {
@@ -124,15 +129,17 @@ const AddToCartModal = ({
   };
 
   const handleAddToCart = () => {
-    // Get selected ingredients and condiments
     const cartItem: CartItemCustomization = {
       product,
       quantity,
-      uniqueId: Date.now().toString(), // Generate a unique ID for this customization
+      uniqueId: Date.now().toString(),
       ingredients: ingredients.filter((ing) => ing.quantity > 0),
       condiments: condiments.filter((c) => c.selected).map((c) => c.name),
       comments,
-      totalPrice: finalPrice, // Pass the calculated finalPrice to the cart
+      totalPrice: finalPrice,
+      hasDiscount,
+      discountPercentage: discountPercent,
+      originalPrice,
     };
 
     onAddToCart(cartItem.quantity, cartItem);

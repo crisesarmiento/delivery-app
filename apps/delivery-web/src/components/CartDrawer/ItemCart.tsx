@@ -4,11 +4,9 @@ import { Box, Text } from '@mantine/core';
 import { CartItem } from '@/context/types';
 
 const ItemCart = ({ item }: { item: CartItem }) => {
-  // Calculate the price to display
   const displayPrice = item.totalPrice
     ? item.totalPrice
     : item.product.price * item.quantity;
-
   return (
     <Box mb={12}>
       <Box
@@ -43,18 +41,20 @@ const ItemCart = ({ item }: { item: CartItem }) => {
             {item.product.name}
           </Text>
         </Box>
-        <Text
-          style={{
-            fontFamily: 'Inter',
-            fontSize: '10px',
-            lineHeight: '18px',
-            fontWeight: 400,
-            color: '#000000',
-            textAlign: 'right',
-          }}
-        >
-          ${displayPrice.toLocaleString()}
-        </Text>
+        <Box style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <Text
+            style={{
+              fontFamily: 'Inter',
+              fontSize: '10px',
+              lineHeight: '18px',
+              fontWeight: 400,
+              color: '#000000',
+              textAlign: 'right',
+            }}
+          >
+            ${displayPrice.toLocaleString()}
+          </Text>
+        </Box>
       </Box>
     </Box>
   );
