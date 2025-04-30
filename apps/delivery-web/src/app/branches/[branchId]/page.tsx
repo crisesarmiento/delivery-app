@@ -36,6 +36,7 @@ import { useNav } from '@/context/navContext';
 import { useProducts } from '@/hooks/useProducts';
 import { isBranchOpen } from '@/utils/branch';
 import MobileCartButton from '@/components/MobileCartButton';
+import { usePriceCalculation } from '@/hooks/usePriceCalculation';
 
 const MemoizedProductsHeader = memo(ProductsHeader);
 const MemoizedCategoryTabs = memo(CategoryTabs);
@@ -89,6 +90,22 @@ const BranchProductsPage = () => {
 
   const isMobile = useIsMobile();
   const [searchQuery, setSearchQuery] = useState('');
+
+  // State for direct add-to-cart (no ingredients)
+  const [directAddProduct, setDirectAddProduct] = useState<IProduct | null>(
+    null
+  );
+  const [directAddQuantity, setDirectAddQuantity] = useState<number>(1);
+  const {
+    hasDiscount: directHasDiscount,
+    discountPercent: directDiscountPercent,
+    originalPrice: directOriginalPrice,
+    finalPrice: directFinalPrice,
+  } = usePriceCalculation(
+    directAddProduct || ({} as IProduct),
+    [],
+    directAddQuantity
+  );
 
   const [now, setNow] = useState(() => new Date());
   useEffect(() => {
@@ -201,14 +218,29 @@ const BranchProductsPage = () => {
       if (activeBranch) {
         setCurrentBranchId(activeBranch.id);
       }
+      setDirectAddProduct(product);
+      setDirectAddQuantity(quantity);
       const cartItem: CartItemCustomization = {
         product: { ...product, id: product.id },
         quantity,
+        hasDiscount: directHasDiscount,
+        discountPercentage: directDiscountPercent,
+        originalPrice: directOriginalPrice,
+        totalPrice: directFinalPrice,
       };
       addToCartContext(cartItem);
       setTimeout(() => setSelectedProduct(null), 200);
     },
-    [activeBranch, addToCartContext, now, setCurrentBranchId]
+    [
+      activeBranch,
+      addToCartContext,
+      now,
+      setCurrentBranchId,
+      directHasDiscount,
+      directDiscountPercent,
+      directOriginalPrice,
+      directFinalPrice,
+    ]
   );
 
   const openCartDrawer = useCallback(() => {

@@ -28,6 +28,10 @@ export interface CartItemCustomization {
   condiments?: string[];
   comments?: string;
   totalPrice?: number;
+  // Discount fields for consistency
+  hasDiscount?: boolean;
+  discountPercentage?: number;
+  originalPrice?: number | null;
 }
 
 export interface CartContextType {
