@@ -329,7 +329,6 @@ const BranchProductsPage = () => {
         <ProductsContentWrapper
           ref={contentWrapperRef}
           topOffset={totalTopOffset + distanceWithCategories}
-          cartButtonOnClick={openCartDrawer}
         >
           <ProductsSectionsContainer
             categories={categories}
