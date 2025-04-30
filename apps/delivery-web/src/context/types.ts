@@ -25,3 +25,23 @@ export interface CartItemCustomization {
   comments?: string;
   totalPrice?: number;
 }
+
+export interface CartContextType {
+  items: CartItem[];
+  addToCart: (item: CartItem) => void;
+  updateCartItem: (
+    productId: number,
+    updates: Partial<CartItem>,
+    uniqueId?: string
+  ) => void;
+  removeFromCart: (productId: number) => void;
+  getCartItemQuantity: (productId: number) => number;
+  getCartItemsByProductId: (productId: number) => CartItem[];
+  getTotalItems: () => number;
+  getTotalPrice: () => number;
+  clearCart: () => void;
+  cartItems: CartItem[];
+  cartTotal: number;
+  currentBranchId: number | null;
+  setBranchId: (branchId: number) => void;
+}

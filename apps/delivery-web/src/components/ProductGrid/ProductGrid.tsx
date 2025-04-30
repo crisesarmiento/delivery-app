@@ -1,18 +1,11 @@
 'use client';
 
 import { Box } from '@mantine/core';
-import { IProduct } from '../../types';
+
 import ProductCard from '../ProductCard/ProductCard';
 import styles from './ProductGrid.module.css';
 import { useRef } from 'react';
-
-interface ProductGridProps {
-  products: IProduct[];
-  className?: string;
-  isBranchClosed?: boolean;
-  isDisabled?: boolean;
-  onProductClick?: (product: IProduct) => void;
-}
+import { ProductGridProps } from './types';
 
 const ProductGrid = ({
   products,

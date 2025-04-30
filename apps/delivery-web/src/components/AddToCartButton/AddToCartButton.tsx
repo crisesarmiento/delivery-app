@@ -1,14 +1,8 @@
 import { ActionIcon } from '@mantine/core';
 import { IconShoppingCart } from '@tabler/icons-react';
-import { IProduct } from '../../types';
 import styles from './AddToCartButton.module.css';
 import { PRODUCT_TEXTS } from '../../config/constants';
-
-interface AddToCartButtonProps {
-  product: IProduct;
-  onAddToCart: (product: IProduct, quantity: number) => void;
-  className?: string;
-}
+import { AddToCartButtonProps } from './types';
 
 const AddToCartButton = ({
   product,

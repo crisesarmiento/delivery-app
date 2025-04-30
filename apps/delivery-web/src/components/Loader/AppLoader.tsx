@@ -1,10 +1,6 @@
 import { Box, Loader as MantineLoader, Text } from '@mantine/core';
 import React from 'react';
-
-interface AppLoaderProps {
-  message?: string;
-  size?: 'sm' | 'md' | 'lg' | number;
-}
+import { AppLoaderProps } from './types';
 
 const AppLoader: React.FC<AppLoaderProps> = ({
   message = 'Cargando...',

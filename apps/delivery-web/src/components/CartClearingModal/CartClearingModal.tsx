@@ -8,12 +8,7 @@ import { useCart } from '@/context/CartContext';
 import { CART_CLEARING_TEXTS } from '@/constants/text';
 import { useDisclosure } from '@mantine/hooks';
 import { useEffect } from 'react';
-
-interface CartClearingModalProps {
-  clicked: boolean;
-  onNavigate: (route: string) => void;
-  onClose?: () => void;
-}
+import { CartClearingModalProps } from './types';
 
 export function CartClearingModal({
   clicked,

@@ -1,15 +1,9 @@
 'use client';
 
-import { Box, BoxProps } from '@mantine/core';
-import { ReactNode, useEffect, useState } from 'react';
+import { Box } from '@mantine/core';
+import { useEffect, useState } from 'react';
 import styles from './BasePage.module.css';
-
-interface BasePageProps extends BoxProps {
-  children: ReactNode;
-  headerSlot?: ReactNode;
-  footerSlot?: ReactNode;
-  sidebarSlot?: ReactNode;
-}
+import { BasePageProps } from './types';
 
 const BasePage = ({
   children,

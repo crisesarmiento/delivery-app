@@ -18,12 +18,7 @@ import { MENU_TEXTS } from '../../config/constants';
 import { CartClearingModal } from '../CartClearingModal/CartClearingModal';
 import { useDisclosure } from '@mantine/hooks';
 import { useCart } from '@/context/CartContext';
-
-interface MenuDrawerProps {
-  opened: boolean;
-  onClose: () => void;
-  onNavigate: (route: string) => void;
-}
+import { MenuDrawerProps } from './types';
 
 export function MenuDrawer({ opened, onClose, onNavigate }: MenuDrawerProps) {
   const theme = useMantineTheme();

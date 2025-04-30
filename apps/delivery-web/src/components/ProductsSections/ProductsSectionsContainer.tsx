@@ -7,14 +7,7 @@ import { NO_PRODUCTS_AVAILABLE } from '@/constants/text';
 import { useEffect } from 'react';
 import { useNav } from '@/context/navContext';
 import { useMantineTheme } from '@mantine/core';
-
-interface ProductsSectionsContainerProps {
-  products: IProduct[];
-  categories: string[];
-  isBranchClosed?: boolean;
-  searchQuery: string;
-  onProductClick?: (product: IProduct) => void;
-}
+import { ProductsSectionsContainerProps } from './types';
 
 const ProductsSectionsContainer = ({
   products,

@@ -10,15 +10,7 @@ import {
   Group,
 } from '@mantine/core';
 import { HERO_BANNER_TEXTS } from '../../config/constants';
-
-interface HeroBannerProps {
-  imageUrl: string;
-  title?: string;
-  subtitle?: string;
-  buttonText?: string;
-  height?: number;
-  onButtonClick?: () => void;
-}
+import { HeroBannerProps } from './types';
 
 export function HeroBanner({
   imageUrl,
