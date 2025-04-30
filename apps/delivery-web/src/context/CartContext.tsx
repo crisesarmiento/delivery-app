@@ -107,24 +107,27 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   // Update cart item, ensuring discount info is updated as well
   const updateCartItem = useCallback(
     (productId: number, updates: Partial<CartItem>, uniqueId?: string) => {
-      setItems((prevItems) =>
-        prevItems.map((item) => {
-          const isMatch = uniqueId
-            ? item.uniqueId === uniqueId
-            : item.product.id === productId;
-          if (!isMatch) return item;
-          const updatedItem = { ...item, ...updates };
-          const discountPercent = updatedItem.discountPercentage || 0;
-          const hasDiscount = discountPercent > 0;
-          const originalPrice = updatedItem.originalPrice;
-          return {
-            ...updatedItem,
-            hasDiscount,
-            discountPercent,
-            originalPrice,
-          };
-        })
-      );
+      setItems((prevItems) => {
+        return prevItems
+          .map((item) => {
+            const isMatch = uniqueId
+              ? item.uniqueId === uniqueId
+              : item.product.id === productId;
+            if (!isMatch) return item;
+            const updatedItem = { ...item, ...updates };
+            // If the updated quantity is 0 or less, we'll remove this item in the filter below
+            const discountPercent = updatedItem.discountPercentage || 0;
+            const hasDiscount = discountPercent > 0;
+            const originalPrice = updatedItem.originalPrice;
+            return {
+              ...updatedItem,
+              hasDiscount,
+              discountPercent,
+              originalPrice,
+            };
+          })
+          .filter((item) => item.quantity > 0); // Remove items with quantity 0 or less
+      });
     },
     []
   );
