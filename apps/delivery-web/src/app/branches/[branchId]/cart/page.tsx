@@ -26,8 +26,15 @@ import { isBranchOpen } from '@/utils/branch';
 import QuantityControl from '@/components/QuantityControl/QuantityControl';
 import { useNav } from '@/context/navContext';
 import useIsMobile from '@/hooks/useIsMobile';
+import { usePriceCalculation } from '@/hooks/usePriceCalculation';
 
 export default function CheckoutPage() {
+  // State for edit modal's product, ingredients, and quantity
+  const [editQuantity, setEditQuantity] = useState<number>(1);
+  const [editIngredients, setEditIngredients] = useState<
+    { name: string; quantity: number; price?: number }[]
+  >([]);
+
   const router = useRouter();
   const { activeBranch } = useNav();
   const { items, updateCartItem, removeFromCart, cartTotal } = useCart();
@@ -65,6 +72,17 @@ export default function CheckoutPage() {
   const [currentItemUniqueId, setCurrentItemUniqueId] = useState<
     string | undefined
   >();
+
+  // Calculate discount info for the edit modal
+  const {
+    hasDiscount: editHasDiscount,
+    discountPercent: editDiscountPercent,
+    originalPrice: editOriginalPrice,
+  } = usePriceCalculation(
+    currentProduct || ({} as IProduct),
+    editIngredients,
+    editQuantity
+  );
 
   // State to branch open status
   const [isBranchClosed, setIsBranchClosed] = useState(false);
@@ -143,8 +161,9 @@ export default function CheckoutPage() {
     const productForEdit = {
       ...item.product,
     };
-
     setCurrentProduct(productForEdit);
+    setEditQuantity(item.quantity || 1);
+    setEditIngredients(item.ingredients || []);
     setEditModalOpen(true);
     // Store the uniqueId to ensure we update the right variant
     setCurrentItemUniqueId(item.uniqueId);
@@ -167,12 +186,17 @@ export default function CheckoutPage() {
       totalPrice?: number;
     }
   ) => {
+    setEditQuantity(quantity);
+    setEditIngredients(customizations?.ingredients || []);
     if (currentProduct) {
       updateCartItem(
         currentProduct.id,
         {
           quantity,
           ...customizations,
+          hasDiscount: editHasDiscount,
+          discountPercentage: editDiscountPercent,
+          originalPrice: editOriginalPrice,
         },
         currentItemUniqueId
       );
