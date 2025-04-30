@@ -53,8 +53,15 @@ const BranchProductsPage = () => {
 
   const params = useParams();
   const router = useRouter();
-  const { activeTab, setActiveTab, activeBranch, setActiveBranch, branches } =
-    useNav();
+  const {
+    activeTab,
+    setActiveTab,
+    activeBranch,
+    setActiveBranch,
+    branches,
+    expandedSections,
+    setExpandedSections,
+  } = useNav();
 
   const branchId = Number(params?.branchId);
   const isValidBranch = branches.some((b) => b.id === branchId);
@@ -68,12 +75,7 @@ const BranchProductsPage = () => {
 
   const { branchProducts, loading, error } = useProducts(activeBranch?.id);
 
-  const {
-    items: cartContextItems,
-    addToCart: addToCartContext,
-    getTotalPrice,
-    clearCart,
-  } = useCart();
+  const { addToCart: addToCartContext, clearCart, cartTotal } = useCart();
 
   const headerRef = useRef<HTMLDivElement>(null);
   const categoryTabsRef = useRef<HTMLDivElement>(null);
@@ -156,9 +158,24 @@ const BranchProductsPage = () => {
     router.push('/');
   }, [clearCart, router]);
 
-  const handleSearchChange = useCallback((value: string) => {
-    setSearchQuery(value);
-  }, []);
+  const handleSearchChange = useCallback(
+    (value: string) => {
+      setSearchQuery(value);
+      // If search is non-empty, try to expand the section containing the first matching product
+      if (value && value.trim().length > 0 && branchProducts.length > 0) {
+        const foundProduct = branchProducts.find(
+          (p) => p.name && p.name.toLowerCase().includes(value.toLowerCase())
+        );
+        if (foundProduct && foundProduct.category) {
+          setExpandedSections({
+            ...expandedSections,
+            [foundProduct.category.toLowerCase()]: true,
+          });
+        }
+      }
+    },
+    [branchProducts, setExpandedSections, expandedSections]
+  );
 
   const addToCart = useCallback(
     (product: IProduct, quantity: number) => {
@@ -187,15 +204,6 @@ const BranchProductsPage = () => {
   const openCartDrawer = useCallback(() => {
     if (isMobile) router.push(`/branches/${branchId}/cart`);
   }, [isMobile, router, branchId]);
-
-  const cartItems = cartContextItems.map((item) => ({
-    productId: String(item.product.id),
-    quantity: item.quantity,
-    product: item.product,
-    totalPrice: item.totalPrice,
-  }));
-
-  const cartTotal = getTotalPrice();
 
   // Helper to wait for header transition before scrolling
   // Robust scroll logic: force header collapse before scrolling
