@@ -10,27 +10,7 @@ import React, {
   useCallback,
 } from 'react';
 import { CartItem } from '@/context/types';
-
-// Define cart context interface
-interface CartContextType {
-  items: CartItem[];
-  addToCart: (item: CartItem) => void;
-  updateCartItem: (
-    productId: number,
-    updates: Partial<CartItem>,
-    uniqueId?: string
-  ) => void;
-  removeFromCart: (productId: number) => void;
-  getCartItemQuantity: (productId: number) => number;
-  getCartItemsByProductId: (productId: number) => CartItem[];
-  getTotalItems: () => number;
-  getTotalPrice: () => number;
-  clearCart: () => void;
-  cartItems: CartItem[];
-  cartTotal: number;
-  currentBranchId: number | null;
-  setBranchId: (branchId: number) => void;
-}
+import { CartContextType } from '@/context/types';
 
 // Create the context with a default empty value
 const CartContext = createContext<CartContextType>({

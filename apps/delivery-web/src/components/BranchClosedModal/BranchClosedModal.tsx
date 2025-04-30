@@ -6,12 +6,7 @@ import { IconX } from '@tabler/icons-react';
 import { BRANCH_CLOSED_TEXTS } from '@/constants/text';
 import { useDisclosure } from '@mantine/hooks';
 import { useEffect } from 'react';
-
-interface BranchClosedModalProps {
-  clicked: boolean;
-  onNavigate: (route: string) => void;
-  onClose: () => void;
-}
+import { BranchClosedModalProps } from './types';
 
 export function BranchClosedModal({
   clicked,

@@ -9,20 +9,7 @@ import {
 import { useState, useEffect } from 'react';
 import styles from './QuantityControl.module.css';
 import { ACCESSIBILITY_TEXTS } from '../../config/constants';
-
-interface QuantityControlProps {
-  initialQuantity?: number;
-  minQuantity?: number;
-  maxQuantity?: number;
-  onChange?: (quantity: number) => void;
-  onAddToCart?: () => void;
-  isDisabled?: boolean;
-  className?: string;
-  buttonClassName?: string;
-  quantityDisplayClassName?: string;
-  isMobile?: boolean;
-  variant?: 'default' | 'footer' | 'ingredient' | 'productCard' | 'checkout';
-}
+import { QuantityControlProps } from './types';
 
 const QuantityControl = ({
   initialQuantity = 0,

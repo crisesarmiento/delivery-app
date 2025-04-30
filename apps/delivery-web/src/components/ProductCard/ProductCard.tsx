@@ -19,16 +19,9 @@ import { useDisclosure } from '@mantine/hooks';
 import { BRANCH_TEXTS } from '@/config/constants';
 import QuantityControl from '../QuantityControl';
 import { usePriceCalculation } from '@/hooks/usePriceCalculation';
-import { useNav } from '@/context/navContext';
 import { BranchClosedModal } from '../BranchClosedModal';
 import { useRouter } from 'next/navigation';
-
-interface ProductCardProps {
-  product: IProduct;
-  isBranchClosed?: boolean;
-  isDisabled?: boolean;
-  onProductClick?: (product: IProduct) => void;
-}
+import { ProductCardProps } from './types';
 
 const ProductCard = ({
   product,

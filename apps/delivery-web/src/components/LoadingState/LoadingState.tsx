@@ -1,9 +1,6 @@
 import { Center, Loader, Text, Box } from '@mantine/core';
 import { LOADING_TEXTS } from '../../config/constants';
-
-interface LoadingStateProps {
-  text?: string;
-}
+import { LoadingStateProps } from './types';
 
 const LoadingState = ({ text = LOADING_TEXTS.LOADING }: LoadingStateProps) => {
   return (

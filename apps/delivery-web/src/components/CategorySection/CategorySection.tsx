@@ -1,20 +1,9 @@
 import { useState, useEffect, memo } from 'react';
 import { Box } from '@mantine/core';
-import { IProduct } from '../../types';
 import ProductGrid from '../ProductGrid';
 import SectionHeader from '../SectionHeader';
 import styles from './CategorySection.module.css';
-
-interface CategorySectionProps {
-  title: string;
-  products: IProduct[];
-  isInitiallyExpanded?: boolean;
-  onToggleExpand?: (isExpanded: boolean) => void;
-  isBranchClosed?: boolean;
-  isDisabled?: boolean;
-  isFixed?: boolean;
-  onProductClick?: (product: IProduct) => void;
-}
+import { CategorySectionProps } from './types';
 
 const CategorySection = memo(
   ({

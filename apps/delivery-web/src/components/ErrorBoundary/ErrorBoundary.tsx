@@ -1,16 +1,7 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { Box, Text, Button } from '@mantine/core';
 import { ERROR_TEXTS } from '../../config/constants';
-
-interface Props {
-  children: ReactNode;
-  fallback?: ReactNode;
-}
-
-interface State {
-  hasError: boolean;
-  error: Error | null;
-}
+import { Props, State } from './types';
 
 class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {

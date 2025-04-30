@@ -1,11 +1,7 @@
 import { forwardRef } from 'react';
 import { Box } from '@mantine/core';
 import styles from './ProductsContentWrapper.module.css';
-
-interface ContentWrapperProps {
-  topOffset: number;
-  children: React.ReactNode;
-}
+import { ContentWrapperProps } from './types';
 
 const ProductsContentWrapper = forwardRef<
   HTMLDivElement | null,

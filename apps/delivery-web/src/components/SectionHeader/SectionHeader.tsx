@@ -4,14 +4,7 @@ import { Flex, Text, Button, useMantineTheme } from '@mantine/core';
 import { IconChevronDown, IconChevronUp } from '@tabler/icons-react';
 import styles from './SectionHeader.module.css';
 import { UI_CONSTANTS } from '../../config/constants';
-
-interface SectionHeaderProps {
-  title: string;
-  isExpanded?: boolean;
-  toggleable?: boolean;
-  onToggle?: () => void;
-  className?: string;
-}
+import { SectionHeaderProps } from './types';
 
 const SectionHeader = ({
   title,

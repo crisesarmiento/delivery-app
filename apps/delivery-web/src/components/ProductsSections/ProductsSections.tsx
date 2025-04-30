@@ -1,15 +1,7 @@
 import { Flex } from '@mantine/core';
 import CategorySection from '@/components/CategorySection';
-import { IProduct } from '@/types';
 import { useNav } from '@/context/navContext';
-
-interface ProductsSectionsProps {
-  category: string;
-  products: IProduct[];
-  isBranchClosed?: boolean;
-  handleSectionToggle: (category: string, isExpanded: boolean) => void;
-  onProductClick?: (product: IProduct) => void;
-}
+import { ProductsSectionsProps } from './types';
 
 const ProductsSections = ({
   category,
