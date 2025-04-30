@@ -2,7 +2,6 @@
 
 import { Box, Text } from '@mantine/core';
 import { CartItem } from '@/context/types';
-import DiscountBadge from '@/components/DiscountBadge';
 
 const ItemCart = ({ item }: { item: CartItem }) => {
   const displayPrice = item.totalPrice
@@ -55,22 +54,6 @@ const ItemCart = ({ item }: { item: CartItem }) => {
           >
             ${displayPrice.toLocaleString()}
           </Text>
-          {item.hasDiscount && (
-            <DiscountBadge discountPercentage={item.discountPercentage || 0} />
-          )}
-          {item.hasDiscount && item.originalPrice && (
-            <Text
-              style={{
-                fontFamily: 'Inter',
-                fontSize: '9px',
-                textDecoration: 'line-through',
-                color: '#939393',
-                marginLeft: 4,
-              }}
-            >
-              ${Number(item.originalPrice).toLocaleString()}
-            </Text>
-          )}
         </Box>
       </Box>
     </Box>
