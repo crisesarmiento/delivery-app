@@ -67,10 +67,10 @@ export const branchesMock: IBranch[] = [
     description: 'Duarte Quirós',
     address: 'Av. Duarte Quirós 789, Centro',
     openingHoursStructured: {
-      mondayToThursday: { open: '08:00', close: '22:00' },
+      mondayToThursday: { open: '00:00', close: '00:00' },
       fridayToSunday: {
-        firstShift: { open: '11:00', close: '14:59' },
-        secondShift: { open: '16:00', close: '21:00' },
+        firstShift: { open: '00:00', close: '00:00' },
+        secondShift: { open: '00:00', close: '00:00' },
       },
     },
     phoneNumber: '555-7890',

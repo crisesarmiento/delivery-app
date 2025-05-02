@@ -49,6 +49,7 @@ export interface CartContextType {
   getTotalPrice: () => number;
   clearCart: () => void;
   cartItems: CartItem[];
+  cartProductsTotal: number;
   cartTotal: number;
   currentBranchId: number | null;
   setCurrentBranchId: (branchId: number) => void;

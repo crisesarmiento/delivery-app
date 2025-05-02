@@ -24,6 +24,7 @@ const CartContext = createContext<CartContextType>({
   getTotalPrice: () => 0,
   clearCart: () => {},
   cartItems: [],
+  cartProductsTotal: 0,
   cartTotal: 0,
   currentBranchId: null,
   setCurrentBranchId: () => {},
@@ -165,6 +166,13 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     );
   }, [items]);
 
+  const getProductsTotal = useCallback((): number => {
+    return items.reduce(
+      (total, item) => total + item.product.price * item.quantity,
+      0
+    );
+  }, [items]);
+
   // Clear all items from cart
   const clearCart = useCallback(() => {
     setItems([]);
@@ -183,6 +191,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       getTotalPrice,
       clearCart,
       cartItems: items,
+      cartProductsTotal: getProductsTotal(),
       cartTotal: getTotalPrice(),
       currentBranchId,
       setCurrentBranchId,
@@ -197,6 +206,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       getTotalItems,
       getTotalPrice,
       clearCart,
+      getProductsTotal,
       currentBranchId,
       setCurrentBranchId,
     ]

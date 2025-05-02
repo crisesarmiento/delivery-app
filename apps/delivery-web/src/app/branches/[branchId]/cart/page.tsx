@@ -37,7 +37,13 @@ export default function CheckoutPage() {
 
   const router = useRouter();
   const { activeBranch } = useNav();
-  const { items, updateCartItem, removeFromCart, cartTotal } = useCart();
+  const {
+    items,
+    updateCartItem,
+    removeFromCart,
+    cartTotal,
+    cartProductsTotal,
+  } = useCart();
 
   // Calculate total product discount for the summary
   const productDiscount = items.reduce((sum, item) => {
@@ -668,7 +674,7 @@ export default function CheckoutPage() {
                       {CHECKOUT_TEXTS.PRODUCTS_LABEL}
                     </Text>
                     <Text className={styles.priceValue}>
-                      ${subtotal.toLocaleString()}
+                      ${cartProductsTotal.toLocaleString()}
                     </Text>
                   </Box>
 
@@ -688,7 +694,7 @@ export default function CheckoutPage() {
                       {CHECKOUT_TEXTS.SUBTOTAL}
                     </Text>
                     <Text className={styles.priceValue}>
-                      ${(subtotal - productDiscount).toLocaleString()}
+                      ${cartTotal.toLocaleString()}
                     </Text>
                   </Box>
 
