@@ -1,0 +1,124 @@
+
+.sectionTitle {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 30px;
+  color: #000000;
+  margin-bottom: 20px;
+}
+
+.sectionSubtitle {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 30px;
+  color: #000000;
+  margin-bottom: 10px;
+}
+
+.deliveryToggle {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 20px;
+}
+
+.toggleButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+  padding: 0 16px;
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.activeToggle {
+  background: #b3ff00;
+  border-radius: 4px 0px 0px 4px;
+  font-weight: 500;
+  color: #000000;
+}
+
+.inactiveToggle {
+  background: #f8fafc;
+  border-radius: 0px 4px 4px 0px;
+  color: #364152;
+}
+
+.formLabel {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  color: #000000;
+  margin-bottom: 4px;
+}
+
+.formField {
+  margin-bottom: 16px;
+}
+
+.textAreaLabel {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  color: #000000;
+  margin-bottom: 4px;
+}
+
+.noteTextarea {
+  width: 100% !important;
+}
+
+.noteTextarea textarea {
+  min-height: 120px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.textAreaCounter {
+  font-size: 12px;
+  color: #888;
+  margin-top: 4px;
+  text-align: right;
+}
+
+.numberInput {
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.formInput {
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.formInputAmount {
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.requiredAsterisk {
+  color: #e02d3c;
+  margin-left: 2px;
+}
+
+.cityProvinceRow {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+}
+
+.cityProvinceItem {
+  flex: 1;
+}
+

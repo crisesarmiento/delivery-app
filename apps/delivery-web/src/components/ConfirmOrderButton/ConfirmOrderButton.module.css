@@ -1,0 +1,19 @@
+.confirmOrderButton {
+  min-width: 465px;
+  height: 40px;
+  background-color: #000000;
+  border-radius: 4px;
+  padding: 0 20px;
+  gap: 171px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.confirmOrderButtonText {
+  font-family: 'Inter';
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  color: #b3ff00;
+}

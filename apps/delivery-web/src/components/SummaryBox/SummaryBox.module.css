@@ -1,0 +1,75 @@
+.summaryBox {
+  background: #ffffff;
+  border: 1px solid #eef2f6;
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.summaryBoxContainer {
+  background: #ffffff;
+  border: 1px solid #eef2f6;
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.summaryTitle {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 30px;
+  color: #000000;
+  margin-bottom: 20px;
+}
+
+.summaryDivider {
+  margin: 12px 0;
+}
+
+.summaryRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.summaryLabel {
+  font-size: 16px;
+  color: #364152;
+}
+
+.summaryValue {
+  font-size: 16px;
+  color: #000000;
+}
+
+.summaryDiscountValue {
+  font-size: 16px;
+  color: #e02d3c;
+}
+
+.summaryRowTotal {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 16px;
+}
+
+.summaryTotalLabel {
+  font-weight: 700;
+  font-size: 18px;
+  color: #000000;
+}
+
+.summaryTotalValue {
+  font-weight: 700;
+  font-size: 18px;
+  color: #b3ff00;
+}
+

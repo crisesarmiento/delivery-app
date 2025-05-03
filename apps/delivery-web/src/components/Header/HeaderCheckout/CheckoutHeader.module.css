@@ -1,3 +1,5 @@
+/* Header styles based on Figma design */
+
 .headerContainer {
   position: fixed;
   top: 0;
@@ -9,6 +11,7 @@
   will-change: transform;
 }
 
+/* Top (black) header section */
 .topHeader {
   position: fixed;
   width: 100%;
@@ -18,16 +21,62 @@
   left: 0;
   top: 0;
   background-color: #000000;
+  z-index: 101;
 }
 
-/* Menu button positioning */
-.menuButtonContainer {
+/* Content container for centered elements */
+.contentContainer {
+  position: relative;
+  width: 100%;
+  max-width: 1440px;
+  height: 100%;
+  margin: 0 auto;
+}
+
+/* Bottom header section with image background */
+.bottomHeader {
+  position: fixed;
+  width: 100%;
+  height: 210px;
+  left: 0;
+  top: 70px;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 100;
+  overflow: visible;
+  display: flex;
+  justify-content: center;
+  will-change: transform;
+}
+
+/* Bottom header background container */
+.bottomHeaderContent {
+  position: relative;
+  width: 100%;
+  max-width: 1440px;
+  height: 100%;
+}
+
+/* Bottom header background image */
+.headerBackground {
+  position: relative;
+  width: 1440px;
+  height: 210px;
+  left: 0;
+  top: 0;
+  background-image: url('/images/hero-banner.jpeg');
+  background-size: cover;
+  background-position: bottom;
+  background-repeat: no-repeat;
+}
+
+/* Dark overlay on bottom header */
+.headerOverlay {
   position: absolute;
-  left: 13px;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
-  z-index: 102;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  background-color: rgba(0, 0, 0, 0.7);
 }
 
 /* Logo positioning */
@@ -43,4 +92,117 @@
   justify-content: center;
   transform: translateY(-50%);
   white-space: nowrap;
+}
+
+/* Menu button positioning */
+.menuButtonContainer {
+  position: absolute;
+  left: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  z-index: 102;
+}
+
+/* SUCURSALES text styling */
+.branchesTitle {
+  position: absolute;
+  left: 80px;
+  top: 25px;
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 38px;
+  display: flex;
+  align-items: center;
+  color: #ffffff;
+  z-index: 101;
+}
+
+/* Search bar container */
+.searchContainer {
+  position: absolute;
+  top: 95px;
+  filter: drop-shadow(0px 4px 16px rgba(0, 0, 0, 0.1));
+  width: 512px;
+  max-width: 512px;
+  height: 24px;
+  left: 80px;
+  transform: none;
+  z-index: 101;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 1;
+}
+
+/* Hide search bar but keep it in the DOM for smoother transitions */
+.hiddenSearch {
+  visibility: visible;
+  pointer-events: none;
+}
+
+/* Left black overlay for bottom header */
+.leftBlackOverlay {
+  position: absolute;
+  width: 50%;
+  height: 210px;
+  left: 0px;
+  top: 0px;
+  background: #000000;
+  z-index: 100;
+}
+
+/* Header with collapsed state */
+.collapsedHeader .bottomHeader {
+  transform: translateY(-210px);
+}
+
+.collapsedHeader .searchContainer {
+  position: absolute;
+  right: 5%;
+  top: 13px;
+  left: auto;
+  transform: none;
+  max-width: 512px;
+  height: 24px;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .logoContainer {
+    position: absolute;
+    left: calc(13px + 46px);
+    right: auto;
+    transform: translateY(-50%);
+    white-space: nowrap;
+  }
+
+  .leftBlackOverlay {
+    width: 100%;
+  }
+
+  .menuButtonContainer {
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .branchesTitle {
+    left: 16px;
+    font-size: 28px;
+    line-height: 32px;
+  }
+
+  .searchContainer {
+    max-width: calc(100% - 32px);
+    left: 16px;
+    width: calc(100% - 32px);
+    transform: none;
+  }
+
+  .collapsedHeader .searchContainer {
+    right: 16px;
+    max-width: 180px;
+  }
 }
