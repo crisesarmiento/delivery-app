@@ -23,7 +23,7 @@ import styles from './page.module.css';
 import ProductsHeader from '@/components/Header/HeaderProducts/ProductsHeader';
 import CategoryTabs from '@/components/CategoryTabs/CategoryTabs';
 import { useCart } from '@/context/CartContext';
-import { CartItemCustomization } from '@/context/types';
+import { buildCartItemFromPartial } from '@/utils/cartUtils';
 import CartDrawerContainer from '@/components/CartDrawer/CartDrawerContainer';
 import { BRANCH_TEXTS, ERROR_TEXTS } from '@/config/constants';
 import BranchNotFoundError from '@/components/ErrorScreen/BranchNotFoundError';
@@ -205,14 +205,16 @@ const BranchProductsPage = () => {
       // Calculate discount info directly for this add
       const { hasDiscount, discountPercent, originalPrice, finalPrice } =
         calculatePrice(product, [], quantity);
-      const cartItem: CartItemCustomization = {
-        product: { ...product, id: product.id },
-        quantity,
-        hasDiscount,
-        discountPercentage: discountPercent,
-        originalPrice,
-        totalPrice: finalPrice,
-      };
+      const cartItem = buildCartItemFromPartial(
+        {
+          hasDiscount,
+          discountPercentage: discountPercent,
+          originalPrice,
+          totalPrice: finalPrice,
+        },
+        { ...product, id: product.id },
+        quantity
+      );
       addToCartContext(cartItem);
       setTimeout(() => setSelectedProduct(null), 200);
     },

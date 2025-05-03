@@ -19,20 +19,7 @@ export interface CartItem {
   discountPercentage?: number;
   originalPrice?: number | null;
 }
-
-export interface CartItemCustomization {
-  product: IProduct;
-  quantity: number;
-  uniqueId?: string;
-  ingredients?: Array<{ name: string; quantity: number; price?: number }>;
-  condiments?: string[];
-  comments?: string;
-  totalPrice?: number;
-  // Discount fields for consistency
-  hasDiscount?: boolean;
-  discountPercentage?: number;
-  originalPrice?: number | null;
-}
+// Define cart context type
 
 export interface CartContextType {
   items: CartItem[];

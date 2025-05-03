@@ -9,7 +9,7 @@ import OrderList from '@/components/OrderList/OrderList';
 import SummaryBox from '@/components/SummaryBox/SummaryBox';
 import ConfirmOrderButton from '@/components/ConfirmOrderButton/ConfirmOrderButton';
 import { useCart } from '@/context/CartContext';
-import { CartItemCustomization, CartItem } from '@/context/types';
+import { CartItem } from '@/context/types';
 import AddToCartModal from '@/components/AddToCartModal/AddToCartModal';
 import ContentWrapper from '@/components/ContentWrapper/ContentWrapper';
 import { useNav } from '@/context/navContext';
@@ -179,22 +179,8 @@ export default function CheckoutPage() {
             product={currentProduct}
             opened={editModalOpen}
             onClose={handleCloseEditModal}
-            onAddToCart={(
-              quantity: number,
-              cartItem?: CartItemCustomization
-            ) => {
-              if (cartItem) {
-                const { ingredients, condiments, comments, totalPrice } =
-                  cartItem;
-                handleAddToCart(quantity, {
-                  ingredients,
-                  condiments,
-                  comments,
-                  totalPrice,
-                });
-              } else {
-                handleAddToCart(quantity);
-              }
+            onAddToCart={(cartItem: CartItem) => {
+              handleAddToCart(cartItem);
             }}
             initialQuantity={editQuantity}
           />

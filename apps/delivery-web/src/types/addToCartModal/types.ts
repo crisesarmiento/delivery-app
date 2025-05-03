@@ -19,7 +19,7 @@ export interface AddToCartModalProps {
   product: IProduct;
   opened: boolean;
   onClose: () => void;
-  onAddToCart: (quantity: number, cartItem?: CartItem) => void;
+  onAddToCart: (cartItem: CartItem) => void;
   initialQuantity?: number;
   initialIngredients?: IngredientItem[];
   initialCondiments?: string[];

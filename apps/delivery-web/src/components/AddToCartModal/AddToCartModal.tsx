@@ -16,7 +16,7 @@ import ProductInfo from './ProductInfo/ProductInfo';
 
 // ===== Types =====
 import { AddToCartModalProps } from '@/types/addToCartModal/types';
-import { CartItemCustomization } from '@/context/types';
+import { buildCartItemFromPartial } from '@/utils/cartUtils';
 
 // ===== Custom Hooks =====
 import { useIngredients } from '@/hooks/useIngredients';
@@ -129,20 +129,20 @@ const AddToCartModal = ({
   };
 
   const handleAddToCart = () => {
-    const cartItem: CartItemCustomization = {
+    const cartItem = buildCartItemFromPartial(
+      {
+        ingredients: ingredients.filter((ing) => ing.quantity > 0),
+        condiments: condiments.filter((c) => c.selected).map((c) => c.name),
+        comments,
+        totalPrice: finalPrice,
+        hasDiscount,
+        discountPercentage: discountPercent,
+        originalPrice,
+      },
       product,
-      quantity,
-      uniqueId: Date.now().toString(),
-      ingredients: ingredients.filter((ing) => ing.quantity > 0),
-      condiments: condiments.filter((c) => c.selected).map((c) => c.name),
-      comments,
-      totalPrice: finalPrice,
-      hasDiscount,
-      discountPercentage: discountPercent,
-      originalPrice,
-    };
-
-    onAddToCart(cartItem.quantity, cartItem);
+      quantity
+    );
+    onAddToCart(cartItem);
   };
 
   return (
