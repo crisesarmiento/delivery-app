@@ -52,6 +52,7 @@ const IngredientsSection = ({
 
               <Box className={styles.ingredientQuantityWrapper}>
                 <QuantityControl
+                  quantity={ingredient.quantity}
                   initialQuantity={ingredient.quantity}
                   minQuantity={0}
                   maxQuantity={QUANTITY_CONSTANTS.QUANTITY_MAX_VALUE}

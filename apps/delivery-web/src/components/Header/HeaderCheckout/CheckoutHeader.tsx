@@ -9,7 +9,7 @@ import Logo from '@/components/Header/Logo/Logo';
 import SearchBar from '@/components/Header/SearchBar/SearchBar';
 import MenuButton from '@/components/Header/MenuButton/MenuButton';
 import { SEARCH_TEXTS, HEADER_TEXTS } from '@/config/constants';
-import styles from './Header.module.css';
+import styles from './CheckoutHeader.module.css';
 import { HeaderProps } from '@/components/Header/types';
 
 const CheckoutHeader = ({

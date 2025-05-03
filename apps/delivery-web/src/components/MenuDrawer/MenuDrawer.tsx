@@ -25,8 +25,10 @@ export function MenuDrawer({ opened, onClose, onNavigate }: MenuDrawerProps) {
   const [hoveredItem, setHoveredItem] = useState<number | null>(null);
   const [clicked, { close: closeClicked, open: openClicked }] =
     useDisclosure(false);
-  const { cartItems } = useCart();
-
+  const { items, currentBranchId } = useCart();
+  const cartItems = items.filter(
+    (item) => item.product.branchId === currentBranchId
+  );
   // Add a class to the body when the drawer is opened to prevent scrolling
   useEffect(() => {
     if (opened) {

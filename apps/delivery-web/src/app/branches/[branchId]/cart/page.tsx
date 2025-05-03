@@ -15,6 +15,7 @@ import ContentWrapper from '@/components/ContentWrapper/ContentWrapper';
 import { useNav } from '@/context/navContext';
 import CheckoutHeader from '@/components/Header/HeaderCheckout/CheckoutHeader';
 import { CheckoutProvider } from '@/context/CheckoutContext';
+import useIsMobile from '@/hooks/useIsMobile';
 
 export default function CheckoutPage() {
   const [editQuantity, setEditQuantity] = useState<number>(1);
@@ -27,15 +28,15 @@ export default function CheckoutPage() {
   const [currentItemUniqueId, setCurrentItemUniqueId] = useState<
     string | undefined
   >(undefined);
+  // Removed handleEditProduct and updateCartItemQuantity; item management is now centralized in OrderItem.
 
   const router = useRouter();
   const { activeBranch } = useNav();
-  const { items, updateCartItem, removeFromCart } = useCart();
+  const { items, updateCartItem, removeFromCart, addToCart } = useCart();
 
   // Header height logic (mirroring /app/page.tsx)
   const headerRef = useRef<HTMLDivElement>(null);
-  const isMobile =
-    typeof window !== 'undefined' ? window.innerWidth <= 768 : false;
+  const isMobile = useIsMobile();
   const headerHeight = isMobile ? 200 : 280;
   const collapsedHeaderHeight = isMobile ? 40 : 70;
   const [headerActualHeight, setHeaderActualHeight] = useState(
@@ -78,15 +79,6 @@ export default function CheckoutPage() {
     return sum;
   }, 0);
 
-  // Handle product quantity update
-  const handleQuantityUpdate = (productId: number, newQuantity: number) => {
-    if (newQuantity === 0) {
-      removeFromCart(productId);
-    } else {
-      updateCartItem(productId, { quantity: newQuantity });
-    }
-  };
-
   // Open edit modal for a product
   const handleEditProduct = (item: CartItem) => {
     const productForEdit = {
@@ -101,33 +93,6 @@ export default function CheckoutPage() {
 
   // Close edit modal
   const handleCloseEditModal = () => {
-    setEditModalOpen(false);
-    setCurrentProduct(null);
-    setCurrentItemUniqueId(undefined);
-  };
-
-  // Handle add to cart (update) from modal
-  const handleAddToCart = (
-    quantity: number,
-    customizations?: {
-      ingredients?: { name: string; quantity: number; price?: number }[];
-      condiments?: string[];
-      comments?: string;
-      totalPrice?: number;
-    }
-  ) => {
-    setEditQuantity(quantity);
-    setEditIngredients(customizations?.ingredients || []);
-    if (currentProduct) {
-      updateCartItem(
-        currentProduct.id,
-        {
-          quantity,
-          ...customizations,
-        },
-        currentItemUniqueId
-      );
-    }
     setEditModalOpen(false);
     setCurrentProduct(null);
     setCurrentItemUniqueId(undefined);
@@ -161,11 +126,7 @@ export default function CheckoutPage() {
             </div>
             <DeliveryDetails />
             <Divider className={styles.divider} />
-            <OrderList
-              items={items}
-              onEditProduct={handleEditProduct}
-              onQuantityUpdate={handleQuantityUpdate}
-            />
+            <OrderList items={items} />
             <SummaryBox />
             <ConfirmOrderButton
               onClick={() => {
@@ -179,9 +140,7 @@ export default function CheckoutPage() {
             product={currentProduct}
             opened={editModalOpen}
             onClose={handleCloseEditModal}
-            onAddToCart={(cartItem: CartItem) => {
-              handleAddToCart(cartItem);
-            }}
+            onAddToCart={addToCart}
             initialQuantity={editQuantity}
           />
         )}

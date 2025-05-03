@@ -2,7 +2,7 @@ import { IProduct } from '@/types';
 
 // Define cart item interface with product customizations
 export interface CartItem {
-  uniqueId?: string; // Unique identifier for this specific item
+  uniqueId: string; // Unique identifier for this specific item
   product: IProduct;
   quantity: number;
   ingredients?: { name: string; quantity: number; price?: number }[];
@@ -25,17 +25,18 @@ export interface CartContextType {
   items: CartItem[];
   addToCart: (item: CartItem) => void;
   updateCartItem: (
-    productId: number,
-    updates: Partial<CartItem>,
-    uniqueId?: string
+    updatedItem: Partial<CartItem>,
+    uniqueId: string
   ) => void;
-  removeFromCart: (productId: number) => void;
-  getCartItemQuantity: (productId: number) => number;
+  updateCartItemQuantity: (uniqueId: string, newQuantity: number) => void;
+  removeFromCart: (uniqueId: string) => void;
+  getCartItemQuantity: (uniqueId: string) => number;
+  getCartItem: (uniqueId: string) => CartItem | null;
   getCartItemsByProductId: (productId: number) => CartItem[];
   getTotalItems: () => number;
   getTotalPrice: () => number;
+  getCartItemsByBranchId: (branchId: number) => CartItem[];
   clearCart: () => void;
-  cartItems: CartItem[];
   cartProductsTotal: number;
   cartTotal: number;
   currentBranchId: number | null;

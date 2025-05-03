@@ -23,9 +23,7 @@ import styles from './page.module.css';
 import ProductsHeader from '@/components/Header/HeaderProducts/ProductsHeader';
 import CategoryTabs from '@/components/CategoryTabs/CategoryTabs';
 import { useCart } from '@/context/CartContext';
-import { buildCartItemFromPartial } from '@/utils/cartUtils';
 import CartDrawerContainer from '@/components/CartDrawer/CartDrawerContainer';
-import { BRANCH_TEXTS, ERROR_TEXTS } from '@/config/constants';
 import BranchNotFoundError from '@/components/ErrorScreen/BranchNotFoundError';
 import { Loader, Center } from '@mantine/core';
 import ProductsHeaderWrapper from '@/components/ProductsHeaderWrapper';
@@ -36,7 +34,7 @@ import { useNav } from '@/context/navContext';
 import { useProducts } from '@/hooks/useProducts';
 import { isBranchOpen } from '@/utils/branch';
 import MobileCartButton from '@/components/MobileCartButton';
-import { calculatePrice } from '@/hooks/usePriceCalculation';
+import { CartItem } from '@/context/types';
 
 const MemoizedProductsHeader = memo(ProductsHeader);
 const MemoizedCategoryTabs = memo(CategoryTabs);
@@ -78,10 +76,11 @@ const BranchProductsPage = () => {
 
   const {
     addToCart: addToCartContext,
+    updateCartItem,
+    items,
     clearCart,
     cartTotal,
     currentBranchId,
-    setCurrentBranchId,
   } = useCart();
 
   const headerRef = useRef<HTMLDivElement>(null);
@@ -184,43 +183,6 @@ const BranchProductsPage = () => {
     [branchProducts, setExpandedSections, expandedSections]
   );
 
-  const addToCart = useCallback(
-    (product: IProduct, quantity: number) => {
-      if (activeBranch && !isBranchOpen(activeBranch, now)) {
-        alert(BRANCH_TEXTS.BRANCH_CLOSED_ALERT);
-        return;
-      }
-      if (!product || !product.id) {
-        console.error(ERROR_TEXTS.INVALID_PRODUCT, product);
-        return;
-      }
-      if (quantity <= 0) {
-        console.error(ERROR_TEXTS.INVALID_QUANTITY, quantity);
-        return;
-      }
-      // Ensure branch context is set in the cart
-      if (activeBranch) {
-        setCurrentBranchId(activeBranch.id);
-      }
-      // Calculate discount info directly for this add
-      const { hasDiscount, discountPercent, originalPrice, finalPrice } =
-        calculatePrice(product, [], quantity);
-      const cartItem = buildCartItemFromPartial(
-        {
-          hasDiscount,
-          discountPercentage: discountPercent,
-          originalPrice,
-          totalPrice: finalPrice,
-        },
-        { ...product, id: product.id },
-        quantity
-      );
-      addToCartContext(cartItem);
-      setTimeout(() => setSelectedProduct(null), 200);
-    },
-    [activeBranch, addToCartContext, now, setCurrentBranchId]
-  );
-
   const openCartDrawer = useCallback(() => {
     if (isMobile) router.push(`/branches/${currentBranchId}/cart`);
   }, [isMobile, router, currentBranchId]);
@@ -319,14 +281,38 @@ const BranchProductsPage = () => {
 
   return activeBranch ? (
     <>
-      {selectedProduct && (
-        <AddToCartModal
-          product={selectedProduct}
-          opened={addToCartModalOpened}
-          onClose={handleOnClose}
-          onAddToCart={(quantity) => addToCart(selectedProduct, quantity)}
-        />
-      )}
+      {selectedProduct &&
+        (() => {
+          // Helper to find cart item by product and (optionally) customizations
+          const cartItem = items.find(
+            (item: CartItem) => item.product.id === selectedProduct.id
+            // Add further checks for ingredients/condiments/comments if needed
+          );
+
+          // Handler for adding a new item to cart
+          const handleAddToCart = (cartItemToAdd: CartItem) => {
+            if (cartItem) {
+              updateCartItem(cartItemToAdd, cartItem.uniqueId);
+            } else {
+              addToCartContext(cartItemToAdd);
+            }
+            handleOnClose();
+          };
+
+          return (
+            <AddToCartModal
+              product={selectedProduct}
+              opened={addToCartModalOpened}
+              onClose={handleOnClose}
+              onAddToCart={handleAddToCart}
+              initialQuantity={cartItem ? cartItem.quantity : 1}
+              initialIngredients={cartItem?.ingredients}
+              initialCondiments={cartItem?.condiments}
+              initialComments={cartItem?.comments}
+            />
+          );
+        })()}
+
       <Flex direction="column" className={styles.productPageContainer}>
         <ProductsHeaderWrapper
           isHeaderCollapsed={isHeaderCollapsed}

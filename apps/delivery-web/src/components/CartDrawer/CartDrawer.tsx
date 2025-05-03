@@ -15,7 +15,7 @@ const CartDrawer = ({ clearCart }: CartDrawerProps) => {
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
   const [headerOffset, setHeaderOffset] = useState(0);
 
-  const { currentBranchId, cartItems, cartTotal } = useCart();
+  const { currentBranchId, items, cartTotal } = useCart();
 
   const router = useRouter();
 
@@ -157,7 +157,7 @@ const CartDrawer = ({ clearCart }: CartDrawerProps) => {
         }}
         data-testid="cart-drawer-items-container"
       >
-        {cartItems.map((item, index) => {
+        {items.map((item, index) => {
           // Create a stable unique key for each cart item
           const itemKey =
             item.uniqueId || `cart-item-${item.product.id}-${index}`;

@@ -17,13 +17,15 @@ const CartContext = createContext<CartContextType>({
   items: [],
   addToCart: () => {},
   updateCartItem: () => {},
+  updateCartItemQuantity: () => {},
   removeFromCart: () => {},
   getCartItemQuantity: () => 0,
+  getCartItem: () => null,
   getCartItemsByProductId: () => [],
   getTotalItems: () => 0,
   getTotalPrice: () => 0,
+  getCartItemsByBranchId: () => [],
   clearCart: () => {},
-  cartItems: [],
   cartProductsTotal: 0,
   cartTotal: 0,
   currentBranchId: null,
@@ -83,9 +85,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   }, [currentBranchId]);
 
   // Remove an item from the cart
-  const removeFromCart = useCallback((productId: number) => {
+  const removeFromCart = useCallback((uniqueId: string) => {
     setItems((prevItems) =>
-      prevItems.filter((item) => item.product.id !== productId)
+      prevItems.filter((item) => item.uniqueId !== uniqueId)
     );
   }, []);
 
@@ -107,36 +109,32 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   // Update cart item, ensuring discount info is updated as well
   const updateCartItem = useCallback(
-    (productId: number, updates: Partial<CartItem>, uniqueId?: string) => {
+    (updatedItem: Partial<CartItem>, uniqueId: string) => {
+      const updates = { ...updatedItem };
+      // If the updated quantity is 0 or less, we'll remove this item in the filter below
+      const discountPercent = updatedItem.discountPercentage || 0;
+      const hasDiscount = discountPercent > 0;
+      const originalPrice = updatedItem.originalPrice;
       setItems((prevItems) => {
-        return prevItems
-          .map((item) => {
-            const isMatch = uniqueId
-              ? item.uniqueId === uniqueId
-              : item.product.id === productId;
-            if (!isMatch) return item;
-            const updatedItem = { ...item, ...updates };
-            // If the updated quantity is 0 or less, we'll remove this item in the filter below
-            const discountPercent = updatedItem.discountPercentage || 0;
-            const hasDiscount = discountPercent > 0;
-            const originalPrice = updatedItem.originalPrice;
-            return {
-              ...updatedItem,
-              hasDiscount,
-              discountPercent,
-              originalPrice,
-            };
-          })
-          .filter((item) => item.quantity > 0); // Remove items with quantity 0 or less
+        return prevItems.map((prevItem) => {
+          if (prevItem.uniqueId !== uniqueId) return prevItem;
+          return {
+            ...prevItem,
+            ...updates,
+            hasDiscount,
+            discountPercent,
+            originalPrice,
+          };
+        });
       });
     },
-    []
+    [setItems]
   );
 
   // Get quantity of a specific product
   const getCartItemQuantity = useCallback(
-    (productId: number): number => {
-      const item = items.find((item) => item.product.id === productId);
+    (uniqueId: string): number => {
+      const item = items.find((item) => item.uniqueId === uniqueId);
       return item ? item.quantity : 0;
     },
     [items]
@@ -178,19 +176,47 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     setItems([]);
   }, []);
 
+  // Add a dedicated quantity update method
+  const updateCartItemQuantity = useCallback(
+    (uniqueId: string, newQuantity: number) => {
+      setItems((prev) =>
+        prev.map((item) =>
+          item.uniqueId === uniqueId ? { ...item, quantity: newQuantity } : item
+        )
+      );
+    },
+    []
+  );
+
+  const getCartItem = useCallback(
+    (uniqueId: string): CartItem | null => {
+      return items.find((item) => item.uniqueId === uniqueId) || null;
+    },
+    [items]
+  );
+
+  const getCartItemsByBranchId = useCallback(
+    (branchId: number): CartItem[] => {
+      return items.filter((item) => item.product.branchId === branchId);
+    },
+    [items]
+  );
+
   // Memoize the context value to prevent unnecessary re-renders
   const contextValue = useMemo(
     () => ({
       items,
       addToCart,
       updateCartItem,
+      updateCartItemQuantity,
       removeFromCart,
       getCartItemQuantity,
+      getCartItem,
       getCartItemsByProductId,
       getTotalItems,
       getTotalPrice,
+      getCartItemsByBranchId,
       clearCart,
-      cartItems: items,
       cartProductsTotal: getProductsTotal(),
       cartTotal: getTotalPrice(),
       currentBranchId,
@@ -200,13 +226,16 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       items,
       addToCart,
       updateCartItem,
+      updateCartItemQuantity,
       removeFromCart,
       getCartItemQuantity,
+      getCartItem,
       getCartItemsByProductId,
       getTotalItems,
-      getTotalPrice,
+      getCartItemsByBranchId,
       clearCart,
       getProductsTotal,
+      getTotalPrice,
       currentBranchId,
       setCurrentBranchId,
     ]

@@ -3,32 +3,14 @@ import { Box } from '@mantine/core';
 import { Text, Divider } from '@mantine/core';
 import { CHECKOUT_TEXTS } from '@/config/constants';
 import { useCart } from '@/context/CartContext';
-import { usePriceCalculation } from '@/hooks/usePriceCalculation';
-import { useCheckout } from '@/context/CheckoutContext';
 
 const SummaryBox = () => {
-  const { paymentMethod, paymentAmount } = useCheckout();
-  const { items, cartTotal, cartProductsTotal } = useCart();
-
-  const itemsDiscount = items.map((item) => {
-    const { hasDiscount, discountPercent, originalPrice } = usePriceCalculation(
-      item.product,
-      item.product?.ingredients,
-      item.quantity
-    );
-    if (hasDiscount && originalPrice) {
-      return { hasDiscount, discountPercent, originalPrice };
-    }
-    return { hasDiscount: false, discountPercent: 0, originalPrice: 0 };
-  });
-
-  const hasDiscount = itemsDiscount.some((item) => item.hasDiscount);
-  const productDiscountValue = itemsDiscount.reduce((sum, item) => {
-    if (item.hasDiscount) {
-      return sum + item.discountPercent * item.originalPrice;
-    }
-    return sum;
-  }, 0);
+  // Get checkout and cart context data
+  // Removed paymentMethod and paymentAmount as they are not used
+  // const { paymentMethod, paymentAmount } = useCheckout();
+  const { cartProductsTotal, cartTotal } = useCart();
+  const totalDiscount = cartProductsTotal - cartTotal;
+  const hasDiscount = totalDiscount > 0;
 
   return (
     <Box className={styles.summaryBoxContainer}>
@@ -48,7 +30,7 @@ const SummaryBox = () => {
             {CHECKOUT_TEXTS.PRODUCT_DISCOUNT}
           </Text>
           <Text className={styles.summaryDiscountValue}>
-            - {productDiscountValue.toLocaleString()}
+            - {totalDiscount.toLocaleString()}
           </Text>
         </Box>
       )}

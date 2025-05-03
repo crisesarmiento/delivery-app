@@ -15,17 +15,17 @@ export function CartClearingModal({
   onNavigate,
   onClose,
 }: CartClearingModalProps) {
-  const { cartItems, clearCart } = useCart();
+  const { items, clearCart } = useCart();
   const [opened, { toggle, close, open }] = useDisclosure(false);
 
   // Sync opened state with clicked prop
   useEffect(() => {
-    if (clicked && cartItems.length > 0) {
+    if (clicked && items.length > 0) {
       open();
     } else if (!clicked && opened) {
       close();
     }
-  }, [clicked, cartItems.length, open, close, opened]);
+  }, [clicked, items.length, open, close, opened]);
 
   // Clean up body styles on unmount
   useEffect(() => {
@@ -48,7 +48,7 @@ export function CartClearingModal({
 
   const handleConfirm = () => {
     if (opened) {
-      if (cartItems.length > 0) {
+      if (items.length > 0) {
         clearCart();
         onNavigate('/');
       }

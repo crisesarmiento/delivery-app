@@ -1,56 +1,83 @@
 import styles from './OrderItem.module.css';
-import { Box } from '@mantine/core';
-
-import { Text, Button } from '@mantine/core';
+import { Box, Button, Image, Text } from '@mantine/core';
 import QuantityControl from '@/components/QuantityControl/QuantityControl';
 import DiscountBadge from '@/components/DiscountBadge';
 import { OrderItemProps } from './types';
+import { useCart } from '@/context/CartContext';
 
-const OrderItem = ({
-  item,
-  onEditProduct,
-  onQuantityUpdate,
-}: OrderItemProps) => {
-  const hasDiscount = item.hasDiscount && item.originalPrice;
-  const discountPercentage = hasDiscount
-    ? Math.round(
-        100 -
-          ((item.totalPrice || item.product.price) / item.originalPrice) * 100
-      ) : 0;
-    : 0;
+import AddToCartModal from '@/components/AddToCartModal/AddToCartModal';
+import { useState } from 'react';
 
+const OrderItem = ({ item }: OrderItemProps) => {
+  const { updateCartItemQuantity, updateCartItem } = useCart();
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const discountPercentage = item.hasDiscount
+    ? item.discountPercentage
+    : undefined;
+
+  const hasDiscount = discountPercentage !== undefined;
   return (
     <Box className={styles.productRow}>
-      {item.product.image && (
-        <img
-          src={item.product.image}
+      {item.product.imageUrl && (
+        <Image
+          src={item.product.imageUrl}
           alt={item.product.name}
           className={styles.productImage}
         />
       )}
       <Box className={styles.productDetails}>
         <Text className={styles.productName}>{item.product.name}</Text>
-        {hasDiscount && <DiscountBadge percentage={discountPercentage} />}
+        {hasDiscount && (
+          <DiscountBadge discountPercentage={discountPercentage} />
+        )}
         <Text className={styles.productPrice}>
-          {(item.totalPrice || item.product.price).toLocaleString()}
+          {item.product.price.toLocaleString()}
         </Text>
         {hasDiscount && (
           <Text className={styles.priceLabel}>
-            {item.originalPrice.toLocaleString()}
+            {item.originalPrice?.toLocaleString()}
           </Text>
         )}
         <Box className={styles.quantityControls}>
-          <QuantityControl quantity={item.quantity} onChange={onQuantityUpdate} />
+          <QuantityControl
+            quantity={item.quantity}
+            onChange={(newQuantity: number) => {
+              updateCartItemQuantity(item.uniqueId, newQuantity);
+            }}
+          />
           <Button
             className={styles.editLink}
             size="xs"
             variant="outline"
-            onClick={onEditProduct}
+            onClick={() => setEditModalOpen(true)}
           >
             Editar
           </Button>
         </Box>
       </Box>
+      <AddToCartModal
+        product={item.product}
+        opened={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        onAddToCart={(editedItem) => {
+          updateCartItem(
+            {
+              ...editedItem,
+              quantity: editedItem.quantity,
+              ingredients: editedItem.ingredients,
+              condiments: editedItem.condiments,
+              comments: editedItem.comments,
+              totalPrice: editedItem.totalPrice,
+            },
+            item.uniqueId
+          );
+          setEditModalOpen(false);
+        }}
+        initialQuantity={item.quantity}
+        initialIngredients={item.ingredients}
+        initialCondiments={item.condiments}
+        initialComments={item.comments}
+      />
     </Box>
   );
 };

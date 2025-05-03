@@ -196,6 +196,7 @@ const ProductCard = ({
                   onMouseLeave={() => setShowQuantityControl(false)}
                 >
                   <QuantityControl
+                    quantity={quantity}
                     variant="productCard"
                     initialQuantity={quantity}
                     onChange={(newQuantity) => {
@@ -203,18 +204,13 @@ const ProductCard = ({
                         if (cartItems.length === 1) {
                           // Remove single item
                           updateCartItem(
-                            product.id,
                             { quantity: 0 },
                             cartItems[0].uniqueId
                           );
                         } else {
                           // Remove all items of this product
                           cartItems.forEach((item) => {
-                            updateCartItem(
-                              product.id,
-                              { quantity: 0 },
-                              item.uniqueId
-                            );
+                            updateCartItem({ quantity: 0 }, item.uniqueId);
                           });
                         }
                         setShowQuantityControl(false);
@@ -222,7 +218,6 @@ const ProductCard = ({
                         if (cartItems.length === 1) {
                           // Decrease single item
                           updateCartItem(
-                            product.id,
                             { quantity: cartItems[0].quantity - 1 },
                             cartItems[0].uniqueId
                           );
@@ -231,24 +226,18 @@ const ProductCard = ({
                           const firstItem = cartItems[0];
                           if (firstItem.quantity > 1) {
                             updateCartItem(
-                              product.id,
                               { quantity: firstItem.quantity - 1 },
                               firstItem.uniqueId
                             );
                           } else {
                             // If first item has quantity 1, remove it
-                            updateCartItem(
-                              product.id,
-                              { quantity: 0 },
-                              firstItem.uniqueId
-                            );
+                            updateCartItem({ quantity: 0 }, firstItem.uniqueId);
                           }
                         }
                       } else if (newQuantity > quantity) {
                         if (cartItems.length === 1) {
                           // Increase single item
                           updateCartItem(
-                            product.id,
                             { quantity: cartItems[0].quantity + 1 },
                             cartItems[0].uniqueId
                           );

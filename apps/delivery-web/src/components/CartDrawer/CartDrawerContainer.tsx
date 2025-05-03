@@ -10,7 +10,7 @@ const CartDrawerContainer: FC<CartDrawerContainerProps> = ({
   isHeaderCollapsed,
   isClosed,
 }) => {
-  const { cartItems, clearCart } = useCart();
+  const { items, clearCart } = useCart();
   const isMobile = useIsMobile();
   if (isMobile) return null;
 
@@ -23,11 +23,7 @@ const CartDrawerContainer: FC<CartDrawerContainerProps> = ({
         top: isHeaderCollapsed ? (isClosed ? '35px' : '0') : '0',
       }}
     >
-      {cartItems.length > 0 ? (
-        <CartDrawer clearCart={clearCart} />
-      ) : (
-        <EmptyCart />
-      )}
+      {items.length > 0 ? <CartDrawer clearCart={clearCart} /> : <EmptyCart />}
     </Box>
   );
 };

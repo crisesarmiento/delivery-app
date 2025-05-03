@@ -16,6 +16,7 @@ const ModalFooter = ({
 }: ModalFooterProps) => (
   <Flex className={styles.footer} direction={isMobile ? 'column' : 'row'}>
     <QuantityControl
+      quantity={quantity}
       initialQuantity={quantity}
       minQuantity={1}
       onChange={(newQuantity) => setQuantity(newQuantity)}

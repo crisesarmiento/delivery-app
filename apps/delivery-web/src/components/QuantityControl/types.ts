@@ -1,8 +1,9 @@
 export interface QuantityControlProps {
+  quantity: number;
+  onChange: (quantity: number) => void;
   initialQuantity?: number;
   minQuantity?: number;
   maxQuantity?: number;
-  onChange?: (quantity: number) => void;
   onAddToCart?: () => void;
   isDisabled?: boolean;
   className?: string;
