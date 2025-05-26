@@ -1,3 +1,4 @@
 {
-  "nxConsole.nxWorkspacePath": ""
+  "nxConsole.nxWorkspacePath": "",
+  "postman.settings.dotenv-detection-notification-visibility": false
 }
